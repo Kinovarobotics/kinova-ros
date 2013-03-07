@@ -10,27 +10,30 @@
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
-#include <jaco_arm/jacolib.h>
-#include "jaco_arm/Kinova.API.UsbCommandLayerUbuntu.h"
-#include "jaco_arm/KinovaTypes.h"
+#include <jaco_driver/jacolib.h>
+#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "jaco_driver/KinovaTypes.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+#include <jaco_driver/jaco_arm.h>
 
 
 namespace jaco_arm {
 
 class JacoArm {
 public:
-	JacoArm();
+	JacoArm(ros::NodeHandle nh, std::string ArmPose);
 	void GoToPosition(const geometry_msgs::PoseStampedConstPtr& position);
-
+	void GetPostion(void);
 
 private:
 
 	ros::NodeHandle nh_;
-	ros::Subscriber position_sub;		///Publisher for sending xyz_position messages to controller
-
+	ros::Subscriber sub;
+	tf::TransformBroadcaster br;
+	jaco_arm::jaco_kinematics kinematics;
 
 //     ros::Publisher vel_pub_;
 //   ros::Subscriber joy_sub_;

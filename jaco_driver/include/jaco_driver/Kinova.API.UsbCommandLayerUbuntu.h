@@ -5,7 +5,7 @@
 #endif
 
 #include <vector>
-#include <jaco_arm/KinovaTypes.h>
+#include <jaco_driver/KinovaTypes.h>
 
 //namespace jaco_arm {
 // ***** E R R O R   C O D E S ******

@@ -8,8 +8,8 @@
 #ifndef JACOLIB_H_
 #define JACOLIB_H_
 
-#include "jaco_arm/Kinova.API.UsbCommandLayerUbuntu.h"
-#include "jaco_arm/KinovaTypes.h"
+#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "jaco_driver/KinovaTypes.h"
 #include <dlfcn.h>
 #include <iostream>
 #include <ros/ros.h>

@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
-	std::string JacoPosition("JacoPosition"); ///String containing the topic name for cartesian commands
+	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
 
-	ros::Publisher pub = nh.advertise<geometry_msgs::PoseStamped>(JacoPosition,
+	ros::Publisher pub = nh.advertise<geometry_msgs::PoseStamped>(ArmPose,
 			2);
 
 	while (ros::ok()) {

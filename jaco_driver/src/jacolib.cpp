@@ -4,7 +4,7 @@
  *  Created on: Feb 16, 2013
  *      Author: mdedonato
  */
-#include "jaco_arm/jacolib.h"
+#include "jaco_driver/jacolib.h"
 
 #define JACO_USB_LIBRARY 			"Kinova.API.USBCommandLayerUbuntu.so"
 
