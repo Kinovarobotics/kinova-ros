@@ -26,7 +26,27 @@
 namespace jaco_arm {
 class jaco_kinematics {
 
-private:
+public:
+
+	static inline float Q1(float joint_angle) {
+		return (-1 * (joint_angle - 180));
+	}
+	static inline float Q2(float joint_angle) {
+		return (joint_angle - 270);
+	}
+	static inline float Q3(float joint_angle) {
+		return (-1 * (joint_angle - 90));
+	}
+	static inline float Q4(float joint_angle) {
+		return (-1 * (joint_angle - 180));
+	}
+	static inline float Q5(float joint_angle) {
+		return (-1 * (joint_angle - 180));
+	}
+	static inline float Q6(float joint_angle) {
+		return (-1 * (joint_angle - (180+80)));
+	}
+
 	/* Robot Length Values (Meters) */
 	static inline double D1(void) {
 		return 0.2102; 			//Base to elbow (Meters)
@@ -92,6 +112,18 @@ public:
 		return (degrees * (M_PI / 180));
 	}
 
+	/* API Rotation Matrix */
+	/*******    	  	    *******
+	 * cos(aa)		sin(aa)		0 *
+	 * -sin(aa)		cos(aa)		0 *
+	 * 0			0			1 *
+	 *******			    *******/
+	inline void Origin_Rotation(float offset, tf::Quaternion& rotation_q) {
+		tf::Matrix3x3 rot_matrix(cos(offset), sin(offset), 0, -sin(offset),
+				cos(offset), 0, 0, 0, 1);
+		rot_matrix.getRotation(rotation_q);
+	}
+
 	/* Joint 1 Rotation Matrix */
 	/*******									  *******
 	 * cos(q1)		-sin(q1)*cos(0)		sin(q1)*sin(0)	*
@@ -112,10 +144,8 @@ public:
 	 * D1        *
 	 ****     ****/
 	inline void J1_Translation(float q1, tf::Vector3& translation_v) {
-		translation_v.setValue(0*cos(q1),0*sin(q1), this->D1());
+		translation_v.setValue(0 * cos(q1), 0 * sin(q1), this->D1());
 	}
-
-
 
 	/* Joint 2 Rotation Matrix */
 	/*******									 		  *******
@@ -124,11 +154,12 @@ public:
 	 * 0			sin(-pi/2)				cos(-pi/2)          *
 	 *******											  *******/
 	inline void J2_Rotation(float q2, tf::Quaternion& rotation_q) {
-			tf::Matrix3x3 rot_matrix(cos(q2), -sin(q2)*cos(-1*M_PI_2), sin(q2)*sin(-1*M_PI_2),
-					sin(q2), cos(q2) * cos(-1*M_PI_2), -cos(q2) * sin(-1*M_PI_2), 0, sin(-1*M_PI_2),
-					cos(-1*M_PI_2));
-			rot_matrix.getRotation(rotation_q);
-		}
+		tf::Matrix3x3 rot_matrix(cos(q2), -sin(q2) * cos(-1 * M_PI_2),
+				sin(q2) * sin(-1 * M_PI_2), sin(q2), cos(q2) * cos(-1 * M_PI_2),
+				-cos(q2) * sin(-1 * M_PI_2), 0, sin(-1 * M_PI_2),
+				cos(-1 * M_PI_2));
+		rot_matrix.getRotation(rotation_q);
+	}
 
 	/* Joint 2 Translation Vector */
 	/****     ****
@@ -137,11 +168,8 @@ public:
 	 * 0         *
 	 ****     ****/
 	inline void J2_Translation(float q2, tf::Vector3& translation_v) {
-		translation_v.setValue(0*cos(q2),0*sin(q2), 0);
+		translation_v.setValue(0 * cos(q2), 0 * sin(q2), 0);
 	}
-
-
-
 
 	/* Joint 3 Rotation Matrix */
 	/*******									  *******
@@ -163,10 +191,8 @@ public:
 	 * 0          *
 	 ****      ****/
 	inline void J3_Translation(float q3, tf::Vector3& translation_v) {
-		translation_v.setValue(this->D2()*cos(q3),this->D2()*sin(q3), 0);
+		translation_v.setValue(this->D2() * cos(q3), this->D2() * sin(q3), 0);
 	}
-
-
 
 	/* Joint 4 Rotation Matrix */
 	/*******									 		  *******
@@ -175,12 +201,12 @@ public:
 	 * 0			sin(-pi/2)				cos(-pi/2)          *
 	 *******											  *******/
 	inline void J4_Rotation(float q4, tf::Quaternion& rotation_q) {
-			tf::Matrix3x3 rot_matrix(cos(q4), -sin(q4)*cos(-1*M_PI_2), sin(q4)*sin(-1*M_PI_2),
-					sin(q4), cos(q4) * cos(-1*M_PI_2), -cos(q4) * sin(-1*M_PI_2), 0, sin(-1*M_PI_2),
-					cos(-1*M_PI_2));
-			rot_matrix.getRotation(rotation_q);
-		}
-
+		tf::Matrix3x3 rot_matrix(cos(q4), -sin(q4) * cos(-1 * M_PI_2),
+				sin(q4) * sin(-1 * M_PI_2), sin(q4), cos(q4) * cos(-1 * M_PI_2),
+				-cos(q4) * sin(-1 * M_PI_2), 0, sin(-1 * M_PI_2),
+				cos(-1 * M_PI_2));
+		rot_matrix.getRotation(rotation_q);
+	}
 
 	/* Joint 4 Translation Vector */
 	/****     ****
@@ -189,10 +215,8 @@ public:
 	 * d4b       *
 	 ****     ****/
 	inline void J4_Translation(float q4, tf::Vector3& translation_v) {
-		translation_v.setValue(0*cos(q4),0*sin(q4), this->d4b());
+		translation_v.setValue(0 * cos(q4), 0 * sin(q4), this->d4b());
 	}
-
-
 
 	/* Joint 5 Rotation Matrix */
 	/*******									 		 *******
@@ -201,11 +225,12 @@ public:
 	 * 0			sin(2*aa)				cos(2*aa)          *
 	 *******										     *******/
 	inline void J5_Rotation(float q5, tf::Quaternion& rotation_q) {
-			tf::Matrix3x3 rot_matrix(cos(q5), -sin(q5)*cos(2*this->aa()), sin(q5)*sin(2*this->aa()),
-					sin(q5), cos(q5) * cos(2*this->aa()), -cos(q5) * sin(2*this->aa()), 0, sin(2*this->aa()),
-					cos(2*this->aa()));
-			rot_matrix.getRotation(rotation_q);
-		}
+		tf::Matrix3x3 rot_matrix(cos(q5), -sin(q5) * cos(2 * this->aa()),
+				sin(q5) * sin(2 * this->aa()), sin(q5),
+				cos(q5) * cos(2 * this->aa()), -cos(q5) * sin(2 * this->aa()),
+				0, sin(2 * this->aa()), cos(2 * this->aa()));
+		rot_matrix.getRotation(rotation_q);
+	}
 
 	/* Joint 5 Translation Vector */
 	/****     ****
@@ -214,11 +239,8 @@ public:
 	 * d5b       *
 	 ****     ****/
 	inline void J5_Translation(float q5, tf::Vector3& translation_v) {
-		translation_v.setValue(0*cos(q5),0*sin(q5), this->d5b());
+		translation_v.setValue(0 * cos(q5), 0 * sin(q5), this->d5b());
 	}
-
-
-
 
 	/* Joint 6 Rotation Matrix */
 	/*******									 		 *******
@@ -227,11 +249,12 @@ public:
 	 * 0			sin(2*aa)				cos(2*aa)          *
 	 *******										     *******/
 	inline void J6_Rotation(float q6, tf::Quaternion& rotation_q) {
-			tf::Matrix3x3 rot_matrix(cos(q6), -sin(q6)*cos(2*this->aa()), sin(q6)*sin(2*this->aa()),
-					sin(q6), cos(q6) * cos(2*this->aa()), -cos(q6) * sin(2*this->aa()), 0, sin(2*this->aa()),
-					cos(2*this->aa()));
-			rot_matrix.getRotation(rotation_q);
-		}
+		tf::Matrix3x3 rot_matrix(cos(q6), -sin(q6) * cos(2 * this->aa()),
+				sin(q6) * sin(2 * this->aa()), sin(q6),
+				cos(q6) * cos(2 * this->aa()), -cos(q6) * sin(2 * this->aa()),
+				0, sin(2 * this->aa()), cos(2 * this->aa()));
+		rot_matrix.getRotation(rotation_q);
+	}
 
 	/* Joint 6 Translation Vector */
 	/****     ****
@@ -240,7 +263,7 @@ public:
 	 * d6b       *
 	 ****     ****/
 	inline void J6_Translation(float q6, tf::Vector3& translation_v) {
-		translation_v.setValue(0*cos(q6),0*sin(q6), this->d6b());
+		translation_v.setValue(0 * cos(q6), 0 * sin(q6), this->d6b());
 	}
 
 };

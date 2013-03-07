@@ -27,8 +27,23 @@ namespace jaco_arm {
 class JacoArm {
 public:
 	JacoArm(ros::NodeHandle nh, std::string ArmPose);
+		void SetAngles(AngularInfo angles);
+	void SetPosition(CartesianInfo position);
+	void SetFingers(FingersPosition fingers);
+	void GetAngles(AngularInfo &angles);
+	void GetPosition(CartesianInfo &position);
+	void GetFingers(FingersPosition &fingers);
+
+	void TimerCallback(const ros::TimerEvent&);
+
 	void GoToPosition(const geometry_msgs::PoseStampedConstPtr& position);
-	void GetPostion(void);
+	void GoHome(void);
+	void PrintPosition(void);
+	void CalculatePostion(void);
+	void PrintAngles(void);
+
+
+
 
 private:
 
@@ -36,7 +51,7 @@ private:
 	ros::Subscriber sub;
 	tf::TransformBroadcaster br;
 	jaco_arm::jaco_kinematics kinematics;
-
+	ros::Timer timer;
 //     ros::Publisher vel_pub_;
 //   ros::Subscriber joy_sub_;
 
