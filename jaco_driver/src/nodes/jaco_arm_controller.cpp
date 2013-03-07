@@ -32,8 +32,9 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	if (api_result != 1) {
 		ROS_FATAL("Could not initialize arm");
 		ROS_FATAL("Jaco_InitAPI returned: %d", api_result);
-		//	ros::shutdown();
-
+#ifndef DEBUG_WITHOUT_ARM
+		ros::shutdown();
+#endif
 	} else {
 		ROS_INFO("API Initialized Successfully!");
 
@@ -83,20 +84,26 @@ void JacoArm::GoToPosition(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 
 	Jaco_SendBasicTrajectory(Jaco_Position);
 
-	//Jaco_StopControlAPI();
-
 }
 
 void JacoArm::GetPostion(void) {
 	AngularPosition arm_angles;
 	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
 
-	//Jaco_GetAngularPosition(&arm_angles);//Query arm for joint angles
-
+#ifndef DEBUG_WITHOUT_ARM
+	Jaco_GetAngularPosition(&arm_angles); //Query arm for joint angles
+#else if
+			//Populate with dummy values
+			arm_angles.Actuators.Actuator1 = 180;
+			arm_angles.Actuators.Actuator2 = 180;
+			arm_angles.Actuators.Actuator3 = 180;
+			arm_angles.Actuators.Actuator4 = 180;
+			arm_angles.Actuators.Actuator5 = 180;
+			arm_angles.Actuators.Actuator6 = 180;
+#endif
 	tf::Transform transform;
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
-
 
 	/**********************Joint_1**********************/
 	/* Joint 1 Rotation */
@@ -129,7 +136,6 @@ void JacoArm::GetPostion(void) {
 			tf::StampedTransform(transform, ros::Time::now(), "jaco_base",
 					"jaco_joint_1"));
 	/***************************************************/
-
 
 	/**********************Joint_2**********************/
 	/* Joint 2 Rotation */
@@ -196,100 +202,100 @@ void JacoArm::GetPostion(void) {
 	/***************************************************/
 
 	/**********************Joint_4**********************/
-		/* Joint 4 Rotation */
-		rotation_q.setValue(0, 0, 0, 0); //zero rotation
+	/* Joint 4 Rotation */
+	rotation_q.setValue(0, 0, 0, 0); //zero rotation
 
-		//get joint 4 rotation matrix
-		kinematics.J4_Rotation(
-				kinematics.deg_to_rad(arm_angles.Actuators.Actuator4), rotation_q);
+	//get joint 4 rotation matrix
+	kinematics.J4_Rotation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator4), rotation_q);
 
-		/* Display Results */
-		ROS_INFO(
-				"Joint 4 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
+	/* Display Results */
+	ROS_INFO(
+			"Joint 4 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
 
-		transform.setRotation(rotation_q); //Set Rotation
+	transform.setRotation(rotation_q); //Set Rotation
 
-		/* Joint 4 Translation */
-		translation_v.setValue(0, 0, 0); //zero translation
-		//get joint 4 translation vector
-		kinematics.J4_Translation(
-				kinematics.deg_to_rad(arm_angles.Actuators.Actuator4),
-				translation_v);
-		/* Display Results */
-		ROS_INFO(
-				"Joint 4 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
+	/* Joint 4 Translation */
+	translation_v.setValue(0, 0, 0); //zero translation
+	//get joint 4 translation vector
+	kinematics.J4_Translation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator4),
+			translation_v);
+	/* Display Results */
+	ROS_INFO(
+			"Joint 4 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
 
-		transform.setOrigin(translation_v);	//Set Translation
+	transform.setOrigin(translation_v);	//Set Translation
 
-		/* Broadcast Transform */
-		br.sendTransform(
-				tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_3",
-						"jaco_joint_4"));
-		/***************************************************/
+	/* Broadcast Transform */
+	br.sendTransform(
+			tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_3",
+					"jaco_joint_4"));
+	/***************************************************/
 
-		/**********************Joint_5**********************/
-			/* Joint 5 Rotation */
-			rotation_q.setValue(0, 0, 0, 0); //zero rotation
+	/**********************Joint_5**********************/
+	/* Joint 5 Rotation */
+	rotation_q.setValue(0, 0, 0, 0); //zero rotation
 
-			//get joint 5 rotation matrix
-			kinematics.J5_Rotation(
-					kinematics.deg_to_rad(arm_angles.Actuators.Actuator5), rotation_q);
+	//get joint 5 rotation matrix
+	kinematics.J5_Rotation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator5), rotation_q);
 
-			/* Display Results */
-			ROS_INFO(
-					"Joint 5 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
+	/* Display Results */
+	ROS_INFO(
+			"Joint 5 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
 
-			transform.setRotation(rotation_q); //Set Rotation
+	transform.setRotation(rotation_q); //Set Rotation
 
-			/* Joint 5 Translation */
-			translation_v.setValue(0, 0, 0); //zero translation
-			//get joint 5 translation vector
-			kinematics.J5_Translation(
-					kinematics.deg_to_rad(arm_angles.Actuators.Actuator5),
-					translation_v);
-			/* Display Results */
-			ROS_INFO(
-					"Joint 5 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
+	/* Joint 5 Translation */
+	translation_v.setValue(0, 0, 0); //zero translation
+	//get joint 5 translation vector
+	kinematics.J5_Translation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator5),
+			translation_v);
+	/* Display Results */
+	ROS_INFO(
+			"Joint 5 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
 
-			transform.setOrigin(translation_v);	//Set Translation
+	transform.setOrigin(translation_v);	//Set Translation
 
-			/* Broadcast Transform */
-			br.sendTransform(
-					tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_4",
-							"jaco_joint_5"));
-			/***************************************************/
+	/* Broadcast Transform */
+	br.sendTransform(
+			tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_4",
+					"jaco_joint_5"));
+	/***************************************************/
 
-			/**********************Joint_6**********************/
-				/* Joint 6 Rotation */
-				rotation_q.setValue(0, 0, 0, 0); //zero rotation
+	/**********************Joint_6**********************/
+	/* Joint 6 Rotation */
+	rotation_q.setValue(0, 0, 0, 0); //zero rotation
 
-				//get joint 6 rotation matrix
-				kinematics.J6_Rotation(
-						kinematics.deg_to_rad(arm_angles.Actuators.Actuator6), rotation_q);
+	//get joint 6 rotation matrix
+	kinematics.J6_Rotation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator6), rotation_q);
 
-				/* Display Results */
-				ROS_INFO(
-						"Joint 6 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
+	/* Display Results */
+	ROS_INFO(
+			"Joint 6 Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
 
-				transform.setRotation(rotation_q); //Set Rotation
+	transform.setRotation(rotation_q); //Set Rotation
 
-				/* Joint 6 Translation */
-				translation_v.setValue(0, 0, 0); //zero translation
-				//get joint 6 translation vector
-				kinematics.J6_Translation(
-						kinematics.deg_to_rad(arm_angles.Actuators.Actuator6),
-						translation_v);
-				/* Display Results */
-				ROS_INFO(
-						"Joint 6 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
+	/* Joint 6 Translation */
+	translation_v.setValue(0, 0, 0); //zero translation
+	//get joint 6 translation vector
+	kinematics.J6_Translation(
+			kinematics.deg_to_rad(arm_angles.Actuators.Actuator6),
+			translation_v);
+	/* Display Results */
+	ROS_INFO(
+			"Joint 6 Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
 
-				transform.setOrigin(translation_v);	//Set Translation
+	transform.setOrigin(translation_v);	//Set Translation
 
-				/* Broadcast Transform */
-				br.sendTransform(
-						tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_5",
-								"jaco_joint_6"));
-				/***************************************************/
+	/* Broadcast Transform */
+	br.sendTransform(
+			tf::StampedTransform(transform, ros::Time::now(), "jaco_joint_5",
+					"jaco_joint_6"));
+	/***************************************************/
 }
 
 int main(int argc, char **argv) {

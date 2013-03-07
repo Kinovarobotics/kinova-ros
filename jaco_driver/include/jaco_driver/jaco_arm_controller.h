@@ -19,6 +19,8 @@
 #include <tf/transform_broadcaster.h>
 #include <jaco_driver/jaco_arm.h>
 
+/* Define to debug without arm */
+//#define DEBUG_WITHOUT_ARM
 
 namespace jaco_arm {
 
