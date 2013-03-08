@@ -68,80 +68,13 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 					"jaco_api_origin"));
 	/*********************************************************/
 
-	this->sub = nh.subscribe(ArmPose, 1, &JacoArm::GoToPosition, this);
+	this->sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
 	this->timer = nh.createTimer(ros::Duration(0.1), &JacoArm::TimerCallback,
 			this);
 
 }
 
-void SetAngles(AngularInfo angles) {
-
-}
-
-void SetPosition(CartesianInfo position) {
-
-}
-
-void SetFingers(FingersPosition fingers) {
-
-}
-
-void GetAngles(AngularInfo &angles) {
-
-}
-
-void GetPosition(CartesianInfo &position) {
-
-}
-
-void GetFingers(FingersPosition &fingers) {
-
-}
-
-void JacoArm::GoToPosition(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
-	TrajectoryPoint Jaco_Position;
-
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-
-	double x, y, z;
-	tf::Quaternion q;
-	tf::quaternionMsgToTF(arm_pose->pose.orientation, q);
-
-	tf::Matrix3x3 bt_q(q);
-
-	bt_q.getEulerYPR(z, y, x);
-
-	ROS_INFO("X = %f", arm_pose->pose.position.x);
-	ROS_INFO("Y = %f", arm_pose->pose.position.y);
-	ROS_INFO("Z = %f", arm_pose->pose.position.z);
-
-	ROS_INFO("Theta X = %f", x);
-	ROS_INFO("Theta Y = %f", y);
-	ROS_INFO("Theta Z = %f", z);
-
-	Jaco_EraseAllTrajectories();
-	Jaco_StopControlAPI();
-
-	Jaco_StartControlAPI();
-
-	Jaco_Position.Position.Type = CARTESIAN_POSITION;
-
-	Jaco_Position.Position.CartesianPosition.X =
-			(float) arm_pose->pose.position.x;
-	Jaco_Position.Position.CartesianPosition.Y =
-			(float) arm_pose->pose.position.y;
-	Jaco_Position.Position.CartesianPosition.Z =
-			(float) arm_pose->pose.position.z;
-
-	Jaco_Position.Position.CartesianPosition.ThetaX = (float) x;
-	Jaco_Position.Position.CartesianPosition.ThetaY = (float) y;
-	Jaco_Position.Position.CartesianPosition.ThetaZ = (float) z;
-
-	Jaco_SendBasicTrajectory(Jaco_Position);
-
-}
-
-void JacoArm::GoHome(void) {
+void JacoArm::SetAngles(AngularInfo angles) {
 	TrajectoryPoint Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -153,56 +86,171 @@ void JacoArm::GoHome(void) {
 
 	Jaco_Position.Position.Type = ANGULAR_POSITION;
 
-	Jaco_Position.Position.Actuators.Actuator1 = 270.385651;
-	Jaco_Position.Position.Actuators.Actuator2 = 150.203217;
-	Jaco_Position.Position.Actuators.Actuator3 = 26.541765;
-	Jaco_Position.Position.Actuators.Actuator4 = 267.597351;
-	Jaco_Position.Position.Actuators.Actuator5 = 5.570505;
-	Jaco_Position.Position.Actuators.Actuator6 = 99.634575;
+	Jaco_Position.Position.Actuators.Actuator1 = angles.Actuator1;
+	Jaco_Position.Position.Actuators.Actuator2 = angles.Actuator2;
+	Jaco_Position.Position.Actuators.Actuator3 = angles.Actuator3;
+	Jaco_Position.Position.Actuators.Actuator4 = angles.Actuator4;
+	Jaco_Position.Position.Actuators.Actuator5 = angles.Actuator5;
+	Jaco_Position.Position.Actuators.Actuator6 = angles.Actuator6;
+
+	Jaco_SendBasicTrajectory(Jaco_Position);
+}
+
+void JacoArm::SetPosition(CartesianInfo position) {
+
+	TrajectoryPoint Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	Jaco_EraseAllTrajectories();
+	Jaco_StopControlAPI();
+
+	Jaco_StartControlAPI();
+
+	Jaco_Position.Position.Type = CARTESIAN_POSITION;
+
+	Jaco_Position.Position.CartesianPosition.X = position.X;
+	Jaco_Position.Position.CartesianPosition.Y = position.Y;
+	Jaco_Position.Position.CartesianPosition.Z = position.Z;
+	Jaco_Position.Position.CartesianPosition.ThetaX = position.ThetaX;
+	Jaco_Position.Position.CartesianPosition.ThetaY = position.ThetaY;
+	Jaco_Position.Position.CartesianPosition.ThetaZ = position.ThetaZ;
 
 	Jaco_SendBasicTrajectory(Jaco_Position);
 
-//	ROS_INFO("X = %f", Jaco_Position.Position.CartesianPosition.X);
-//	ROS_INFO("Y = %f", Jaco_Position.Position.CartesianPosition.Y);
-//	ROS_INFO("Z = %f", Jaco_Position.Position.CartesianPosition.Z);
-//
-//	ROS_INFO("Theta X = %f", Jaco_Position.Position.CartesianPosition.ThetaX);
-//	ROS_INFO("Theta Y = %f", Jaco_Position.Position.CartesianPosition.ThetaY);
-//	ROS_INFO("Theta Z = %f", Jaco_Position.Position.CartesianPosition.ThetaZ);
+}
 
+void JacoArm::SetFingers(FingersPosition fingers) {
+
+	TrajectoryPoint Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	Jaco_EraseAllTrajectories();
+	Jaco_StopControlAPI();
+
+	Jaco_StartControlAPI();
+
+	Jaco_Position.Position.HandMode = POSITION_MODE;
+
+	Jaco_Position.Position.Fingers.Finger1 = fingers.Finger1;
+	Jaco_Position.Position.Fingers.Finger2 = fingers.Finger2;
+	Jaco_Position.Position.Fingers.Finger3 = fingers.Finger3;
+
+	Jaco_SendBasicTrajectory(Jaco_Position);
 
 }
 
-void JacoArm::PrintPosition(void) {
+void JacoArm::GetAngles(AngularInfo &angles) {
+	AngularPosition Jaco_Position;
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+	Jaco_GetAngularPosition(Jaco_Position);
+
+	angles.Actuator1 = Jaco_Position.Actuators.Actuator1;
+	angles.Actuator2 = Jaco_Position.Actuators.Actuator2;
+	angles.Actuator3 = Jaco_Position.Actuators.Actuator3;
+	angles.Actuator4 = Jaco_Position.Actuators.Actuator4;
+	angles.Actuator5 = Jaco_Position.Actuators.Actuator5;
+	angles.Actuator6 = Jaco_Position.Actuators.Actuator6;
+
+}
+
+void JacoArm::GetPosition(CartesianInfo &position) {
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 	Jaco_GetCartesianPosition(Jaco_Position);
 
-	ROS_INFO("X = %f", Jaco_Position.Coordinates.X);
-	ROS_INFO("Y = %f", Jaco_Position.Coordinates.Y);
-	ROS_INFO("Z = %f", Jaco_Position.Coordinates.Z);
-
-	ROS_INFO("Theta X = %f", Jaco_Position.Coordinates.ThetaX);
-	ROS_INFO("Theta Y = %f", Jaco_Position.Coordinates.ThetaY);
-	ROS_INFO("Theta Z = %f", Jaco_Position.Coordinates.ThetaZ);
+	position.X = Jaco_Position.Coordinates.X;
+	position.Y = Jaco_Position.Coordinates.Y;
+	position.Z = Jaco_Position.Coordinates.Z;
+	position.ThetaX = Jaco_Position.Coordinates.ThetaX;
+	position.ThetaY = Jaco_Position.Coordinates.ThetaY;
+	position.ThetaZ = Jaco_Position.Coordinates.ThetaZ;
 
 }
 
-void JacoArm::PrintAngles(void) {
-	AngularPosition Jaco_Position;
+void JacoArm::GetFingers(FingersPosition &fingers) {
+	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-	Jaco_GetAngularPosition(Jaco_Position);
+	Jaco_GetCartesianPosition(Jaco_Position);
 
-	ROS_INFO("Joint 1 = %f", Jaco_Position.Actuators.Actuator1);
-	ROS_INFO("Joint 2 = %f", Jaco_Position.Actuators.Actuator2);
-	ROS_INFO("Joint 3 = %f", Jaco_Position.Actuators.Actuator3);
+	fingers.Finger1 = Jaco_Position.Fingers.Finger1;
+	fingers.Finger2 = Jaco_Position.Fingers.Finger2;
+	fingers.Finger3 = Jaco_Position.Fingers.Finger3;
 
-	ROS_INFO("Joint 4 = %f", Jaco_Position.Actuators.Actuator4);
-	ROS_INFO("Joint 5 = %f", Jaco_Position.Actuators.Actuator5);
-	ROS_INFO("Joint 6 = %f", Jaco_Position.Actuators.Actuator6);
+}
 
+void JacoArm::PrintAngles(AngularInfo angles) {
+
+	ROS_INFO("Jaco Arm Angles (Degrees)");
+	ROS_INFO("Joint 1 = %f", angles.Actuator1);
+	ROS_INFO("Joint 2 = %f", angles.Actuator2);
+	ROS_INFO("Joint 3 = %f", angles.Actuator3);
+
+	ROS_INFO("Joint 4 = %f", angles.Actuator4);
+	ROS_INFO("Joint 5 = %f", angles.Actuator5);
+	ROS_INFO("Joint 6 = %f", angles.Actuator6);
+
+}
+
+void JacoArm::PrintPosition(CartesianInfo position) {
+
+	ROS_INFO("Jaco Arm Position (Meters)");
+	ROS_INFO("X = %f", position.X);
+	ROS_INFO("Y = %f", position.Y);
+	ROS_INFO("Z = %f", position.Z);
+
+	ROS_INFO("Jaco Arm Rotations (Radians)");
+	ROS_INFO("Theta X = %f", position.ThetaX);
+	ROS_INFO("Theta Y = %f", position.ThetaY);
+	ROS_INFO("Theta Z = %f", position.ThetaZ);
+
+}
+
+void JacoArm::PrintFingers(FingersPosition fingers) {
+
+	ROS_INFO("Jaco Arm Finger Positions");
+	ROS_INFO("Finger 1 = %f", fingers.Finger1);
+	ROS_INFO("Finger 2 = %f", fingers.Finger2);
+	ROS_INFO("Finger 3 = %f", fingers.Finger3);
+
+}
+
+void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
+	CartesianInfo Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	double x, y, z;
+	tf::Quaternion q;
+	tf::quaternionMsgToTF(arm_pose->pose.orientation, q);
+
+	tf::Matrix3x3 bt_q(q);
+
+	bt_q.getEulerYPR(z, y, x);
+
+	Jaco_Position.X = (float) arm_pose->pose.position.x;
+	Jaco_Position.Y = (float) arm_pose->pose.position.y;
+	Jaco_Position.Z = (float) arm_pose->pose.position.z;
+
+	Jaco_Position.ThetaX = (float) x;
+	Jaco_Position.ThetaY = (float) y;
+	Jaco_Position.ThetaZ = (float) z;
+
+	this->PrintPosition(Jaco_Position);
+	this->SetPosition(Jaco_Position);
+
+}
+
+void JacoArm::GoHome(void) {
+	FingersPosition fingers_home = { 53, 53, 53 };
+	AngularInfo joint_home = { 270.385651, 150.203217, 26.541765, 267.597351,
+			5.570505, 99.634575 };
+
+	this->SetFingers(fingers_home); //send fingers to home position
+	this->SetAngles(joint_home); //send joints to home position
 }
 
 void JacoArm::CalculatePostion(void) {
@@ -307,8 +355,8 @@ void JacoArm::CalculatePostion(void) {
 
 	//get joint 3 rotation matrix
 	kinematics.J3_Rotation(
-			kinematics.deg_to_rad(kinematics.Q3(arm_angles.Actuators.Actuator3)),
-					rotation_q);
+			kinematics.deg_to_rad(
+					kinematics.Q3(arm_angles.Actuators.Actuator3)), rotation_q);
 
 	/* Display Results */
 	ROS_INFO(
@@ -341,7 +389,8 @@ void JacoArm::CalculatePostion(void) {
 
 	//get joint 4 rotation matrix
 	kinematics.J4_Rotation(
-			kinematics.deg_to_rad(kinematics.Q4(arm_angles.Actuators.Actuator4)), rotation_q);
+			kinematics.deg_to_rad(
+					kinematics.Q4(arm_angles.Actuators.Actuator4)), rotation_q);
 
 	/* Display Results */
 	ROS_INFO(
@@ -353,7 +402,8 @@ void JacoArm::CalculatePostion(void) {
 	translation_v.setValue(0, 0, 0); //zero translation
 	//get joint 4 translation vector
 	kinematics.J4_Translation(
-			kinematics.deg_to_rad(kinematics.Q4(arm_angles.Actuators.Actuator4)),
+			kinematics.deg_to_rad(
+					kinematics.Q4(arm_angles.Actuators.Actuator4)),
 			translation_v);
 	/* Display Results */
 	ROS_INFO(
@@ -373,7 +423,8 @@ void JacoArm::CalculatePostion(void) {
 
 	//get joint 5 rotation matrix
 	kinematics.J5_Rotation(
-			kinematics.deg_to_rad(kinematics.Q5(arm_angles.Actuators.Actuator5)), rotation_q);
+			kinematics.deg_to_rad(
+					kinematics.Q5(arm_angles.Actuators.Actuator5)), rotation_q);
 
 	/* Display Results */
 	ROS_INFO(
@@ -385,7 +436,8 @@ void JacoArm::CalculatePostion(void) {
 	translation_v.setValue(0, 0, 0); //zero translation
 	//get joint 5 translation vector
 	kinematics.J5_Translation(
-			kinematics.deg_to_rad(kinematics.Q5(arm_angles.Actuators.Actuator5)),
+			kinematics.deg_to_rad(
+					kinematics.Q5(arm_angles.Actuators.Actuator5)),
 			translation_v);
 	/* Display Results */
 	ROS_INFO(
@@ -405,7 +457,8 @@ void JacoArm::CalculatePostion(void) {
 
 	//get joint 6 rotation matrix
 	kinematics.J6_Rotation(
-			kinematics.deg_to_rad(kinematics.Q6(arm_angles.Actuators.Actuator6)), rotation_q);
+			kinematics.deg_to_rad(
+					kinematics.Q6(arm_angles.Actuators.Actuator6)), rotation_q);
 
 	/* Display Results */
 	ROS_INFO(
@@ -417,7 +470,8 @@ void JacoArm::CalculatePostion(void) {
 	translation_v.setValue(0, 0, 0); //zero translation
 	//get joint 6 translation vector
 	kinematics.J6_Translation(
-			kinematics.deg_to_rad(kinematics.Q6(arm_angles.Actuators.Actuator6)),
+			kinematics.deg_to_rad(
+					kinematics.Q6(arm_angles.Actuators.Actuator6)),
 			translation_v);
 	/* Display Results */
 	ROS_INFO(
@@ -433,7 +487,7 @@ void JacoArm::CalculatePostion(void) {
 }
 
 void JacoArm::TimerCallback(const ros::TimerEvent&) {
-	this->CalculatePostion();
+	this->CalculatePostion();	//Update TF Tree
 }
 
 int main(int argc, char **argv) {

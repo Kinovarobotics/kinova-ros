@@ -21,29 +21,24 @@
 
 /* Define to debug without arm */
 //#define DEBUG_WITHOUT_ARM
-
 namespace jaco_arm {
 
 class JacoArm {
 public:
 	JacoArm(ros::NodeHandle nh, std::string ArmPose);
-		void SetAngles(AngularInfo angles);
+	void SetAngles(AngularInfo angles);
 	void SetPosition(CartesianInfo position);
 	void SetFingers(FingersPosition fingers);
 	void GetAngles(AngularInfo &angles);
 	void GetPosition(CartesianInfo &position);
 	void GetFingers(FingersPosition &fingers);
-
-	void TimerCallback(const ros::TimerEvent&);
-
-	void GoToPosition(const geometry_msgs::PoseStampedConstPtr& position);
+	void PrintAngles(AngularInfo angles);
+	void PrintPosition(CartesianInfo position);
+	void PrintFingers(FingersPosition fingers);
 	void GoHome(void);
-	void PrintPosition(void);
+	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& position);
 	void CalculatePostion(void);
-	void PrintAngles(void);
-
-
-
+	void TimerCallback(const ros::TimerEvent&);
 
 private:
 
@@ -52,9 +47,6 @@ private:
 	tf::TransformBroadcaster br;
 	jaco_arm::jaco_kinematics kinematics;
 	ros::Timer timer;
-//     ros::Publisher vel_pub_;
-//   ros::Subscriber joy_sub_;
-
 };
 
 }
