@@ -18,6 +18,7 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <jaco_driver/jaco_arm.h>
+#include <time.h>
 
 /* Define to debug without arm */
 //#define DEBUG_WITHOUT_ARM
@@ -26,9 +27,9 @@ namespace jaco_arm {
 class JacoArm {
 public:
 	JacoArm(ros::NodeHandle nh, std::string ArmPose);
-	void SetAngles(AngularInfo angles);
-	void SetPosition(CartesianInfo position);
-	void SetFingers(FingersPosition fingers);
+	void SetAngles(AngularInfo angles,  int timeout = 0, bool push = true);
+	void SetPosition(CartesianInfo position,  int timeout = 0, bool push = true);
+	void SetFingers(FingersPosition fingers,  int timeout = 0, bool push = true);
 	void GetAngles(AngularInfo &angles);
 	void GetPosition(CartesianInfo &position);
 	void GetFingers(FingersPosition &fingers);
