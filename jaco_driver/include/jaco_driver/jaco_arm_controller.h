@@ -8,21 +8,27 @@
 #ifndef JACO_ARM_CONTROL_H_
 #define JACO_ARM_CONTROL_H_
 
+
+/* Define to debug without arm */
+//#define DEBUG_WITHOUT_ARM
+
+//#define PRINT_DEBUG_INFO
+
 #include <ros/ros.h>
 #include <std_msgs/String.h>
-#include <jaco_driver/jacolib.h>
+#include <jaco_driver/jaco_api.h>
 #include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
 #include "jaco_driver/KinovaTypes.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
-#include <jaco_driver/jaco_arm.h>
+#include <jaco_driver/jaco_arm_kinematics.h>
 #include <time.h>
 
-/* Define to debug without arm */
-//#define DEBUG_WITHOUT_ARM
-namespace jaco_arm {
+
+
+namespace jaco {
 
 class JacoArm {
 public:
@@ -42,12 +48,14 @@ public:
 	void TimerCallback(const ros::TimerEvent&);
 
 private:
-
+	jaco::JacoAPI* API;
+	jaco::JacoKinematics kinematics;
 	ros::NodeHandle nh_;
 	ros::Subscriber sub;
-	tf::TransformBroadcaster br;
-	jaco_arm::jaco_kinematics kinematics;
 	ros::Timer timer;
+
+
+
 };
 
 }

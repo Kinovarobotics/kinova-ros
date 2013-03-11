@@ -29,13 +29,15 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
 
-rosbuild_add_library(${PROJECT_NAME} src/jacolib.cpp)
+rosbuild_add_library(jacoapi src/jaco_api.cpp)
+#rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 
 
 #Testers
-rosbuild_add_executable(test_jaco_arm_control src/nodes/test_jaco_arm_controller.cpp )
+#rosbuild_add_executable(test_jaco_arm_control src/nodes/test_jaco_arm_controller.cpp )
 #Nodes
-rosbuild_add_executable(jaco_arm_control src/nodes/jaco_arm_controller.cpp)
-#rosbuild_add_executable(camera_to_arm src/nodes/camera_to_arm.cpp)
-target_link_libraries(jaco_arm_control ${PROJECT_NAME})
+rosbuild_add_executable(jaco_arm_control src/nodes/jaco_arm_controller.cpp src/jaco_arm_kinematics.cpp)
+
+
+target_link_libraries(jaco_arm_control jacoapi)
