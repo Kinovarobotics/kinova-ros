@@ -30,14 +30,14 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 
 rosbuild_add_library(jacoapi src/jaco_api.cpp)
-#rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
+rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 
 
 #Testers
 #rosbuild_add_executable(test_jaco_arm_control src/nodes/test_jaco_arm_controller.cpp )
 #Nodes
-rosbuild_add_executable(jaco_arm_control src/nodes/jaco_arm_controller.cpp src/jaco_arm_kinematics.cpp)
+rosbuild_add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
 
 
-target_link_libraries(jaco_arm_control jacoapi)
+target_link_libraries(jaco_arm_driver jacoapi jacokinematics)
