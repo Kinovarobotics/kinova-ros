@@ -580,7 +580,7 @@ int main(int argc, char **argv) {
 	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
 
 	if (argc < 1) {
-		ROS_INFO( "Usage: jaco_arm_controller cartesian_info_topic");
+		ROS_INFO( "Usage: jaco_arm_driver cartesian_info_topic");
 		return 1;
 	} else {
 		//Grab the topic parameters, print warnings if using default values
