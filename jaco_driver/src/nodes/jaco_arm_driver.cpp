@@ -476,20 +476,20 @@ void JacoArm::PrintFingers(FingersPosition fingers) {
 
 void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	CartesianInfo Jaco_Position;
-
+	geometry_msgs::PoseStamped api_pose;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-
+	listener.transformPose("jaco_api_origin", *arm_pose, api_pose);
 	double x, y, z;
 	tf::Quaternion q;
-	tf::quaternionMsgToTF(arm_pose->pose.orientation, q);
+	tf::quaternionMsgToTF(api_pose.pose.orientation, q);
 
 	tf::Matrix3x3 bt_q(q);
 
 	bt_q.getEulerYPR(z, y, x);
 
-	Jaco_Position.X = (float) arm_pose->pose.position.x;
-	Jaco_Position.Y = (float) arm_pose->pose.position.y;
-	Jaco_Position.Z = (float) arm_pose->pose.position.z;
+	Jaco_Position.X = (float) api_pose.pose.position.x;
+	Jaco_Position.Y = (float) api_pose.pose.position.y;
+	Jaco_Position.Z = (float) api_pose.pose.position.z;
 
 	Jaco_Position.ThetaX = (float) x;
 	Jaco_Position.ThetaY = (float) y;
