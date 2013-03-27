@@ -44,29 +44,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
 
-//	/**********************API Origin Offset**********************/
-//	/* API Rotation */
-//	rotation_q.setValue(0, 0, 0, 0); //zero rotation
-//
-//	//get api rotation matrix
-//	kinematics.Origin_Rotation(kinematics.aa(), rotation_q);
-//
-//	/* Display Results */
-//	ROS_INFO(
-//			"API Origin Offset: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
-//
-//	transform.setRotation(rotation_q); //Set Rotation
-//
-//	/* API Translation */
-//	translation_v.setValue(0, 0, 0); //zero translation
-//
-//	transform.setOrigin(translation_v);	//Set Translation
-//
-//	/* Broadcast Transform */
-//	br.sendTransform(
-//			tf::StampedTransform(transform, ros::Time::now(), "jaco_base",
-//					"jaco_api_origin"));
-//	/*********************************************************/
+
 
 	this->sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
 	this->timer = nh.createTimer(ros::Duration(0.1), &JacoArm::TimerCallback,
