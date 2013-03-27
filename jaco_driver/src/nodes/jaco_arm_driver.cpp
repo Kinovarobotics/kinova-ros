@@ -476,9 +476,33 @@ void JacoArm::PrintFingers(FingersPosition fingers) {
 
 void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	CartesianInfo Jaco_Position;
-	geometry_msgs::PoseStamped api_pose;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	geometry_msgs::PoseStamped api_pose;
+	ROS_INFO("Raw MSG");
+	ROS_INFO("X = %f", arm_pose->pose.position.x);
+	ROS_INFO("Y = %f", arm_pose->pose.position.y);
+	ROS_INFO("Z = %f", arm_pose->pose.position.z);
+
+	ROS_INFO("RX = %f", arm_pose->pose.orientation.x);
+	ROS_INFO("RY = %f", arm_pose->pose.orientation.y);
+	ROS_INFO("RZ = %f", arm_pose->pose.orientation.z);
+	ROS_INFO("RW = %f", arm_pose->pose.orientation.w);
+
+
+
 	listener.transformPose("jaco_api_origin", *arm_pose, api_pose);
+
+	ROS_INFO("Raw MSG");
+	ROS_INFO("X = %f", api_pose.pose.position.x);
+	ROS_INFO("Y = %f", api_pose.pose.position.y);
+	ROS_INFO("Z = %f", api_pose.pose.position.z);
+
+	ROS_INFO("RX = %f", api_pose.pose.orientation.x);
+	ROS_INFO("RY = %f", api_pose.pose.orientation.y);
+	ROS_INFO("RZ = %f", api_pose.pose.orientation.z);
+	ROS_INFO("RW = %f", api_pose.pose.orientation.w);
+
 	double x, y, z;
 	tf::Quaternion q;
 	tf::quaternionMsgToTF(api_pose.pose.orientation, q);
