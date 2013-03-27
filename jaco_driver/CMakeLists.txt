@@ -35,7 +35,7 @@ rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 
 #Testers
-#rosbuild_add_executable(test_jaco_arm_control src/nodes/test_jaco_arm_controller.cpp )
+rosbuild_add_executable(test_jaco_arm_control src/nodes/test_jaco_arm_controller.cpp )
 #Nodes
 rosbuild_add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
 

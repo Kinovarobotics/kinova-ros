@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
-	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
+	std::string ArmPose("ObjectPose"); ///String containing the topic name for cartesian commands
 
 	ros::Publisher pub = nh.advertise<geometry_msgs::PoseStamped>(ArmPose,
 			2);
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 		q.setRPY(rx,ry,rz);
 
 		tf::quaternionTFToMsg(q,test_msg.pose.orientation);
-
+		test_msg.header.frame_id = "/arm_base";
 		pub.publish(test_msg);
 		ros::spinOnce();
 

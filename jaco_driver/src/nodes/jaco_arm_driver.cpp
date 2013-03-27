@@ -493,7 +493,7 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 
 	listener.transformPose("jaco_api_origin", *arm_pose, api_pose);
 
-	ROS_INFO("Raw MSG");
+	ROS_INFO("Transformed MSG");
 	ROS_INFO("X = %f", api_pose.pose.position.x);
 	ROS_INFO("Y = %f", api_pose.pose.position.y);
 	ROS_INFO("Z = %f", api_pose.pose.position.z);
