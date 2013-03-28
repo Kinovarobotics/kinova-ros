@@ -490,6 +490,7 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	ROS_INFO("RW = %f", arm_pose->pose.orientation.w);
 
 
+	listener.waitForTransform("jaco_api_origin", arm_pose->header.frame_id, arm_pose->header.stamp, ros::Duration(1.0) );
 
 	listener.transformPose("jaco_api_origin", *arm_pose, api_pose);
 
