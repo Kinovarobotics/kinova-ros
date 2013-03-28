@@ -25,7 +25,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	API = new JacoAPI();
 	ROS_INFO("Initiating API");
 	last_update_time = ros::Time::now();
-	update_time = 5;
+	update_time = ros::Duration(5.0);
 	int api_result = 0; //stores result from the API
 
 	api_result = (API->InitAPI)();
