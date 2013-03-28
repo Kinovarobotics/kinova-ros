@@ -44,7 +44,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
 
-
+	CalculatePostion();
 
 	this->sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
 	this->timer = nh.createTimer(ros::Duration(0.1), &JacoArm::TimerCallback,
@@ -490,9 +490,9 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	ROS_INFO("RW = %f", arm_pose->pose.orientation.w);
 
 
-	listener.waitForTransform("jaco_api_origin", arm_pose->header.frame_id, arm_pose->header.stamp, ros::Duration(1.0) );
+	listener.waitForTransform("/jaco_api_origin", arm_pose->header.frame_id, arm_pose->header.stamp, ros::Duration(1.0) );
 
-	listener.transformPose("jaco_api_origin", *arm_pose, api_pose);
+	listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
 
 	ROS_INFO("Transformed MSG");
 	ROS_INFO("X = %f", api_pose.pose.position.x);
