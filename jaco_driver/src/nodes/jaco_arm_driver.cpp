@@ -24,7 +24,8 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	ROS_INFO("Initiating Library");
 	API = new JacoAPI();
 	ROS_INFO("Initiating API");
-
+	last_update_time = ros::Time::now();
+	update_time = 5;
 	int api_result = 0; //stores result from the API
 
 	api_result = (API->InitAPI)();
@@ -489,9 +490,8 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	ROS_INFO("RZ = %f", arm_pose->pose.orientation.z);
 	ROS_INFO("RW = %f", arm_pose->pose.orientation.w);
 
-
-	while(!listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id, arm_pose->header.stamp ))
-	{
+	while (!listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
+			arm_pose->header.stamp)) {
 		ros::spinOnce();
 	}
 
@@ -523,8 +523,13 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose) {
 	Jaco_Position.ThetaY = (float) y;
 	Jaco_Position.ThetaZ = (float) z;
 
-	this->PrintPosition(Jaco_Position);
-	this->SetPosition(Jaco_Position);
+
+	if (ros::Time::now() - last_update_time > update_time) {
+		this->PrintPosition(Jaco_Position);
+
+		last_update_time = ros::Time::now();
+		this->SetPosition(Jaco_Position);
+	}
 
 }
 
@@ -560,7 +565,6 @@ void JacoArm::CalculatePostion(void) {
 	//ROS_INFO("Joint 4 = %f", arm_angles.Actuators.Actuator4);
 	//ROS_INFO("Joint 5 = %f", arm_angles.Actuators.Actuator5);
 	//ROS_INFO("Joint 6 = %f", arm_angles.Actuators.Actuator6);
-
 
 	//Update the forward Kinematics
 	kinematics.UpdateForward(

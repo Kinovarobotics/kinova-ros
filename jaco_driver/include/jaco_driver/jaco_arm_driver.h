@@ -58,7 +58,8 @@ private:
 
 	tf::TransformListener listener;
 
-
+	ros::Time last_update_time;
+	ros::Duration update_time;
 };
 
 }
