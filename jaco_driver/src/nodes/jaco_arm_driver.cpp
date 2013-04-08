@@ -45,6 +45,9 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose) {
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
 
+
+
+
 	CalculatePostion();
 
 	this->sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
