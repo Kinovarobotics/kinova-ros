@@ -71,19 +71,19 @@ public:
 		}
 
 	static inline double J3ToJ4(void) {
-		return 0.2073;			//Front Arm Length (Meters)
+		return 0.2070;			//Front Arm Length (Meters)
 	}
 
 	static inline double J4ToJ5(void) {
-		return 0.0740;			//First Wrist Length (Meters)
+		return 0.0750;			//First Wrist Length (Meters)
 	}
 
 	static inline double J5ToJ6(void) {
-		return 0.0740;			//Second Wrist Length (Meters)
+		return 0.0750;			//Second Wrist Length (Meters)
 	}
 
 	static inline double J6ToEnd(void) {
-		return 0.1880;			//Wrist to Center of Hand(Meters)
+		return 0.1850;			//Wrist to Center of Hand(Meters)
 	}
 
 

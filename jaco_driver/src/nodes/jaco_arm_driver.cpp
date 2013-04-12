@@ -96,7 +96,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose,
 	this->ArmPose_sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
 	this->JointVelocity_sub = nh.subscribe(JointVelocity, 1,
 			&JacoArm::VelocityMSG_Sub, this);
-	this->timer = nh.createTimer(ros::Duration(0.05), &JacoArm::TimerCallback,
+	this->timer = nh.createTimer(ros::Duration(0.01), &JacoArm::TimerCallback,
 			this);
 
 }
