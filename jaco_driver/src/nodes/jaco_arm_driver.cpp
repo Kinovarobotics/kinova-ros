@@ -21,7 +21,7 @@ using namespace std;
 using namespace jaco;
 
 JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose,
-		std::string JointVelocity) {
+		std::string JointVelocity,std::string JointAngles) {
 	ROS_INFO("Initiating Library");
 	API = new JacoAPI();
 	ROS_INFO("Initiating API");
@@ -90,12 +90,16 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose,
 //		fingers_home = { 40, 40, 40 };
 //
 //		this->SetFingers(fingers_home, 5); //send fingers to home position
-	CalculatePostion();
-//		this->GoHome();
 
+//		this->GoHome();
+	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(JointAngles,
+			2);
+	CalculatePostion();
 	this->ArmPose_sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
 	this->JointVelocity_sub = nh.subscribe(JointVelocity, 1,
 			&JacoArm::VelocityMSG_Sub, this);
+
+
 	this->timer = nh.createTimer(ros::Duration(0.01), &JacoArm::TimerCallback,
 			this);
 
@@ -627,6 +631,8 @@ void JacoArm::GoHome(void) {
 
 void JacoArm::CalculatePostion(void) {
 	AngularPosition arm_angles;
+	jaco_driver::joint_angles current_angles;
+
 	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
 
 #ifndef DEBUG_WITHOUT_ARM
@@ -649,8 +655,20 @@ void JacoArm::CalculatePostion(void) {
 	//ROS_INFO("Joint 5 = %f", arm_angles.Actuators.Actuator5);
 	//ROS_INFO("Joint 6 = %f", arm_angles.Actuators.Actuator6);
 
-	//Update the forward Kinematics
-	kinematics.UpdateForward(
+
+			//Broadcast joint angles
+
+			current_angles.Angle_J1 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator1);
+			current_angles.Angle_J2 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator2);
+			current_angles.Angle_J3 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator3);
+			current_angles.Angle_J4 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator4);
+			current_angles.Angle_J5 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator5);
+			current_angles.Angle_J6 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator6);
+
+			JointAngles_pub.publish(current_angles);
+
+			//Update the forward Kinematics
+			kinematics.UpdateForward(
 			kinematics.deg_to_rad(arm_angles.Actuators.Actuator1),
 			kinematics.deg_to_rad(arm_angles.Actuators.Actuator2),
 			kinematics.deg_to_rad(arm_angles.Actuators.Actuator3),
@@ -672,10 +690,12 @@ int main(int argc, char **argv) {
 
 	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
 	std::string JointVelocity("JointVelocity"); ///String containing the topic name for JointVelocity
+	std::string JointAngles("JointAngles"); ///String containing the topic name for JointAngles
+
 
 	if (argc < 1) {
 		ROS_INFO(
-				"Usage: jaco_arm_driver cartesian_info_topic joint_velocity_topic");
+				"Usage: jaco_arm_driver cartesian_info_topic joint_velocity_topic joint_angles_topic");
 		return 1;
 	} else {
 		//Grab the topic parameters, print warnings if using default values
@@ -685,16 +705,20 @@ int main(int argc, char **argv) {
 		if (!param_nh.getParam(JointVelocity, JointVelocity))
 			ROS_WARN(
 					"Parameter <%s> Not Set. Using Default Joint Velocity Topic <%s>!", JointVelocity.c_str(), JointVelocity.c_str());
+		if (!param_nh.getParam(JointAngles, JointAngles))
+				ROS_WARN(
+						"Parameter <%s> Not Set. Using Default Joint Angles Topic <%s>!", JointAngles.c_str(), JointAngles.c_str());
 	}
 
 //Print out received topics
 	ROS_DEBUG("Got Jaco Position Topic Name: <%s>", ArmPose.c_str());
 	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", JointVelocity.c_str());
+	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", JointAngles.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
 //create the arm object
-	JacoArm jaco(nh, ArmPose, JointVelocity);
+	JacoArm jaco(nh, ArmPose, JointVelocity,JointAngles);
 
 	ros::spin();
 	//jaco.GoHome();

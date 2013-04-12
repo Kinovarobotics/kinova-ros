@@ -25,6 +25,7 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include "jaco_driver/joint_velocity.h"
+#include "jaco_driver/joint_angles.h"
 #include <jaco_driver/jaco_arm_kinematics.h>
 #include <time.h>
 
@@ -34,7 +35,7 @@ namespace jaco {
 
 class JacoArm {
 public:
-	JacoArm(ros::NodeHandle nh, std::string ArmPose,std::string JointVelocity);
+	JacoArm(ros::NodeHandle nh, std::string ArmPose,std::string JointVelocity, std::string JointAngles);
 	void SetAngles(AngularInfo angles,  int timeout = 0, bool push = true);
 	void SetPosition(CartesianInfo position,  int timeout = 0, bool push = true);
 	void SetFingers(FingersPosition fingers,  int timeout = 0, bool push = true);
@@ -57,7 +58,7 @@ private:
 	ros::NodeHandle nh_;
 	ros::Subscriber ArmPose_sub;
 	ros::Subscriber JointVelocity_sub;
-
+	ros::Publisher JointAngles_pub;
 	ros::Timer timer;
 
 	tf::TransformListener listener;
