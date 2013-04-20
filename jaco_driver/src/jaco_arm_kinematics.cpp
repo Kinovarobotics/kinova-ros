@@ -65,57 +65,56 @@ void JacoKinematics::UpdateForward(float q1, float q2, float q3, float q4,
 				tf::StampedTransform(transform, ros::Time::now(), "arm_base",
 						"jaco_base"));
 		/***************************************************/
+		/**********************API**********************/
+				/* API Rotation */
+				rotation_q.setValue(0, 0, 0, 0); //zero rotation
+				rot_matrix.setValue(0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-	/**********************API**********************/
-		/* API Rotation */
-		rotation_q.setValue(0, 0, 0, 0); //zero rotation
-		rot_matrix.setValue(0, 0, 0, 0, 0, 0, 0, 0, 0);
 
+				/* API Rotation Matrix */
+				/*******						    	 *******
+				 * cos(11*PI/72)		-sin(11*PI/72)		0 *
+				 * sin(11*PI/72)		cos(11*PI/72)     	0 *
+				 * 0					0					1 *
+				 *******				 			    *******/
 
-		/* API Rotation Matrix */
-		/*******						    	            *******
-		 * cos(deg_to_rad(15))		-sin(deg_to_rad(15))		0 *
-		 * sin(deg_to_rad(15))		cos(deg_to_rad(15))     	0 *
-		 * 0					    0					        1 *
-		 *******				 			                *******/
-		//rot_matrix.setValue(cos(deg_to_rad(16.5)), -sin(deg_to_rad(16.5)), 0, sin(deg_to_rad(16.5)), cos(deg_to_rad(16.5)), 0, 0, 0, 1);
-		rot_matrix.setValue(1,0,0,0,1,0,0,0,1);
+				rot_matrix.setValue(cos(11*M_PI/72), -sin(11*M_PI/72), 0, sin(11*M_PI/72), cos(11*M_PI/72), 0, 0, 0, 1);
+				rot_matrix.getRotation(rotation_q);
 
-		rot_matrix.getRotation(rotation_q);
+			#ifdef PRINT_DEBUG_INFO
+				/* Display Results */
+				ROS_INFO(
+						"API Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
+			#endif
+				transform.setRotation(rotation_q); //Set Rotation
 
-	#ifdef PRINT_DEBUG_INFO
-		/* Display Results */
-		ROS_INFO(
-				"API Rotation: X = %f, Y = %f, Z = %f, W = %f", rotation_q.getX(), rotation_q.getY(), rotation_q.getZ(), rotation_q.getW());
-	#endif
-		transform.setRotation(rotation_q); //Set Rotation
+				/* API Translation */
+				translation_v.setValue(0, 0, 0); //zero translation
+				//get API translation vector
 
-		/* API Translation */
-		translation_v.setValue(0, 0, 0); //zero translation
-		//get API translation vector
+				/* API Translation Vector */
+				/****     ****
+				 * 0 		 *
+				 * 0		 *
+				 * 0        *
+				 ****     ****/
+				translation_v.setValue(0, 0, 0);
 
-		/* API Translation Vector */
-		/****     ****
-		 * 0 		 *
-		 * 0		 *
-		 * 0        *
-		 ****     ****/
-		translation_v.setValue(0, 0, 0.028);
+			#ifdef PRINT_DEBUG_INFO
 
-	#ifdef PRINT_DEBUG_INFO
+				/* Display Results */
+				ROS_INFO(
+						"API Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
+			#endif
 
-		/* Display Results */
-		ROS_INFO(
-				"API Translation: X = %f, Y = %f, Z = %f", translation_v.getX(), translation_v.getY(), translation_v.getZ());
-	#endif
+				transform.setOrigin(translation_v);	//Set Translation
 
-		transform.setOrigin(translation_v);	//Set Translation
+				/* Broadcast Transform */
+				br.sendTransform(
+						tf::StampedTransform(transform, ros::Time::now(), "arm_base",
+								"jaco_api_origin"));
+				/***************************************************/
 
-		/* Broadcast Transform */
-		br.sendTransform(
-				tf::StampedTransform(transform, ros::Time::now(), "jaco_base",
-						"jaco_api_origin"));
-		/***************************************************/
 
 	/**********************Joint_1**********************/
 	/* Joint 1 Rotation */

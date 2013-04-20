@@ -9,7 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/jaco_driver</url>
   <depend package="roscpp"/>
-  <depend package="rospy"/>
+  <depend package="rospy"/>  
   <depend package="tf"/>  
     <depend package="nav_msgs"/>
   <depend package="geometry_msgs"/>

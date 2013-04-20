@@ -28,7 +28,6 @@ rosbuild_genmsg()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
-
 rosbuild_add_library(jacoapi src/jaco_api.cpp)
 rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
@@ -37,9 +36,13 @@ rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 #Testers
 rosbuild_add_executable(test_jaco_arm_control src/testers/test_jaco_arm_controller.cpp )
 rosbuild_add_executable(test_jaco_arm_vel src/testers/test_jaco_arm_vel.cpp )
+rosbuild_add_executable(test_jaco_arm_car_vel src/testers/test_jaco_arm_car_vel.cpp )
+
 
 #Nodes
 rosbuild_add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
+rosbuild_add_executable(jaco_tf_updater src/nodes/jaco_tf_updater.cpp )
 
 
 target_link_libraries(jaco_arm_driver jacoapi jacokinematics)
+target_link_libraries(jaco_tf_updater jacokinematics)

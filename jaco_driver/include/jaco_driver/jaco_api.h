@@ -14,6 +14,7 @@
 #include <iostream>
 #include <ros/ros.h>
 
+
 namespace jaco {
 #define JACO_USB_LIBRARY 			"Kinova.API.USBCommandLayerUbuntu.so"
 
