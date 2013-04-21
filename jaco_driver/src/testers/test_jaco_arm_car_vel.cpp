@@ -67,8 +67,8 @@ void CartesianVelTest::callback(jaco_driver::JacoDriverConfig &config, uint32_t 
 	 y_vel=config.Y_Pose;
 	 z_vel=config.Z_Pose;
 	 rx_vel=config.X_Rotate;
-	 ry_vel=config.X_Rotate;
-	 rz_vel=config.X_Rotate;
+	 ry_vel=config.Y_Rotate;
+	 rz_vel=config.Z_Rotate;
 
 	//	ROS_INFO("Reconfigure");
 
