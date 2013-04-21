@@ -68,6 +68,8 @@ private:
 	ros::Timer status_timer;
 	ros::Timer cartesian_vel_timer;
 	ros::Timer joint_vel_timer;
+	bool cartesian_vel_timer_flag;
+	bool joint_vel_timer_flag;
 
 	jaco::JacoKinematics kinematics;
 

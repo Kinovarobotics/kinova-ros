@@ -28,9 +28,9 @@ void TimerCallback(const ros::TimerEvent&)
 	jaco_driver::cartesian_velocity test_msg;
 
 			test_msg.Velocity_X = 0.0;
-			test_msg.Velocity_Y = 0;
+			test_msg.Velocity_Y = 10;
 			test_msg.Velocity_Z = 0;
-			test_msg.Velocity_TX = 10;
+			test_msg.Velocity_TX = 0;
 			test_msg.Velocity_TY = 0;
 			test_msg.Velocity_TZ = 0;
 

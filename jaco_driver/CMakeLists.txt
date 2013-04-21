@@ -28,9 +28,17 @@ rosbuild_genmsg()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
+
+#add dynamic reconfigure api
+rosbuild_find_ros_package(dynamic_reconfigure)
+include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
+gencfg()
+
+
+
+
 rosbuild_add_library(jacoapi src/jaco_api.cpp)
 rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
-
 
 
 #Testers

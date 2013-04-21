@@ -109,9 +109,10 @@ JacoArm::JacoArm(ros::NodeHandle nh, std::string ArmPose, std::string JointVeloc
 
 	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
 	joint_vel_timer.stop();
+	joint_vel_timer_flag = false;
 	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
 	cartesian_vel_timer.stop();
-
+	cartesian_vel_timer_flag = false;
 	BroadCastAngles();
 
 }
@@ -417,13 +418,13 @@ void JacoArm::SetCartesianVelocities(CartesianInfo velocities) {
 
 
 	ROS_INFO("Arm Vel");
-	ROS_INFO("X = %f", velocities.X);
-	ROS_INFO("Y = %f", velocities.Y);
-	ROS_INFO("Z = %f", velocities.Z);
+	ROS_INFO("X = %f", Jaco_Velocity.Position.CartesianPosition.X);
+	ROS_INFO("Y = %f", Jaco_Velocity.Position.CartesianPosition.Y);
+	ROS_INFO("Z = %f", Jaco_Velocity.Position.CartesianPosition.Z);
 
-	ROS_INFO("RX = %f", velocities.ThetaX);
-	ROS_INFO("RY = %f", velocities.ThetaY);
-	ROS_INFO("RZ = %f", velocities.ThetaZ);
+	ROS_INFO("RX = %f", Jaco_Velocity.Position.CartesianPosition.ThetaX);
+	ROS_INFO("RY = %f", Jaco_Velocity.Position.CartesianPosition.ThetaY);
+	ROS_INFO("RZ = %f", Jaco_Velocity.Position.CartesianPosition.ThetaZ);
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 
@@ -622,7 +623,11 @@ void JacoArm::VelocityMSG_Sub(const jaco_driver::joint_velocityConstPtr& joint_v
 	joint_velocities.Actuator6 = joint_vel->Velocity_J6;
 	last_joint_update = ros::Time().now();
 
-	joint_vel_timer.start();
+	if(joint_vel_timer_flag == false)
+	{
+		joint_vel_timer.start();
+		joint_vel_timer_flag = true;
+	}
 
 }
 
@@ -666,7 +671,12 @@ void JacoArm::CartesianVelocityMSG_Sub(const geometry_msgs::TwistStampedConstPtr
 
 	last_cartesian_update = ros::Time().now();
 
-	cartesian_vel_timer.start();
+	if(cartesian_vel_timer_flag == false)
+	{
+		cartesian_vel_timer.start();
+		cartesian_vel_timer_flag = true;
+	}
+
 	//ROS_INFO("Timer Started");
 
 }
@@ -675,6 +685,7 @@ void JacoArm::CartesianVelTimer(const ros::TimerEvent&) {
 	this->SetCartesianVelocities(cartesian_velocities);
 	if ((ros::Time().now().toSec() - last_cartesian_update.toSec()) > 1) {
 		cartesian_vel_timer.stop();
+		cartesian_vel_timer_flag = false;
 	}
 }
 
@@ -683,6 +694,7 @@ void JacoArm::JointVelTimer(const ros::TimerEvent&) {
 	this->SetVelocities(joint_velocities);
 	if ((ros::Time().now().toSec() - last_joint_update.toSec()) > 1) {
 		joint_vel_timer.stop();
+		joint_vel_timer_flag = false;
 	}
 }
 
@@ -695,56 +707,56 @@ void JacoArm::GoHome(void) {
 }
 
 void JacoArm::BroadCastAngles(void) {
-	AngularInfo arm_angles;
+	AngularPosition arm_angles;
 	jaco_driver::joint_angles current_angles;
 
 	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
 
 #ifndef DEBUG_WITHOUT_ARM
-	GetAngles(arm_angles); //Query arm for joint angles
+	API->GetAngularCurrent(arm_angles); //Query arm for joint angles
 #else
 			//Populate with dummy values
-			arm_angles.Actuator1 = 30;
-			arm_angles.Actuator2 = 30;
-			arm_angles.Actuator3 = 0;
-			arm_angles.Actuator4 = 0;
-			arm_angles.Actuator5 = 0;
-			arm_angles.Actuator6 = 0;
+			arm_angles.Actuators.Actuator1 = 30;
+			arm_angles.Actuators.Actuator2 = 30;
+			arm_angles.Actuators.Actuator3 = 0;
+			arm_angles.Actuators.Actuator4 = 0;
+			arm_angles.Actuators.Actuator5 = 0;
+			arm_angles.Actuators.Actuator6 = 0;
 #endif
 
 	//Broadcast joint angles
 
-	current_angles.Angle_J1 = kinematics.deg_to_rad(arm_angles.Actuator1);
-	current_angles.Angle_J2 = kinematics.deg_to_rad(arm_angles.Actuator2);
-	current_angles.Angle_J3 = kinematics.deg_to_rad(arm_angles.Actuator3);
-	current_angles.Angle_J4 = kinematics.deg_to_rad(arm_angles.Actuator4);
-	current_angles.Angle_J5 = kinematics.deg_to_rad(arm_angles.Actuator5);
-	current_angles.Angle_J6 = kinematics.deg_to_rad(arm_angles.Actuator6);
+	current_angles.Angle_J1 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator1);
+	current_angles.Angle_J2 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator2);
+	current_angles.Angle_J3 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator3);
+	current_angles.Angle_J4 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator4);
+	current_angles.Angle_J5 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator5);
+	current_angles.Angle_J6 = kinematics.deg_to_rad(arm_angles.Actuators.Actuator6);
 
 	JointAngles_pub.publish(current_angles);
 }
 
 void JacoArm::BroadCastPosition(void) {
-	CartesianInfo position;
+	CartesianPosition position;
 	geometry_msgs::PoseStamped current_position;
 
 	memset(&position, 0, sizeof(position)); //zero structure
 
-	GetPosition(position); //Query arm for position
+	API->GetCartesianPosition(position); //Query arm for position
 
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
 
 	//Broadcast position
 
-	current_position.pose.position.x = position.X;
-	current_position.pose.position.y = position.Y;
-	current_position.pose.position.z = position.Z;
+	current_position.pose.position.x = position.Coordinates.X;
+	current_position.pose.position.y = position.Coordinates.Y;
+	current_position.pose.position.z = position.Coordinates.Z;
 
 
 	tf::Quaternion position_quaternion;
 
-	position_quaternion.setRPY(position.ThetaX,position.ThetaY,position.ThetaZ);
+	position_quaternion.setRPY(position.Coordinates.ThetaX,position.Coordinates.ThetaY,position.Coordinates.ThetaZ);
 
 	tf::quaternionTFToMsg(position_quaternion,current_position.pose.orientation);
 
