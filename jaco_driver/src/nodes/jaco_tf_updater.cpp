@@ -39,8 +39,8 @@ using namespace jaco;
     void JacoTFTree::CalculatePostion(void) {
 
     	//Update the forward Kinematics
-    	kinematics.UpdateForward(current_angles.Angle_J1, current_angles.Angle_J2, current_angles.Angle_J3,
-    			current_angles.Angle_J4, current_angles.Angle_J5, current_angles.Angle_J6);
+    	kinematics.UpdateForward(kinematics.deg_to_rad(current_angles.Angle_J1), kinematics.deg_to_rad(current_angles.Angle_J2), kinematics.deg_to_rad(current_angles.Angle_J3),
+    			kinematics.deg_to_rad(current_angles.Angle_J4), kinematics.deg_to_rad(current_angles.Angle_J5), kinematics.deg_to_rad(current_angles.Angle_J6));
 
     }
 

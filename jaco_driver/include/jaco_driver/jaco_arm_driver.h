@@ -21,9 +21,8 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include "jaco_driver/joint_velocity.h"
-#include "jaco_driver/cartesian_velocity.h"
+#include "jaco_driver/finger_position.h"
 #include "jaco_driver/joint_angles.h"
-#include <jaco_driver/jaco_arm_kinematics.h>
 #include <time.h>
 
 
@@ -31,7 +30,7 @@ namespace jaco {
 
 class JacoArm {
 public:
-	JacoArm(ros::NodeHandle nh, std::string ArmPose, std::string JointVelocity, std::string JointAngles,std::string CartesianVelocity,std::string ToolPosition);
+	JacoArm(ros::NodeHandle nh, std::string ArmPose, std::string JointVelocity, std::string JointAngles,std::string CartesianVelocity,std::string ToolPosition,std::string SetFingerPosition,std::string FingerPosition);
 	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 	void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
 	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
@@ -54,16 +53,22 @@ public:
 	void StatusTimer(const ros::TimerEvent&);
 	void VelocityMSG_Sub(const jaco_driver::joint_velocityConstPtr& joint_vel);
 	void CartesianVelocityMSG_Sub(	const geometry_msgs::TwistStampedConstPtr&  cartesian_vel);
+	void SetFingerPositionMSG_Sub(const jaco_driver::finger_positionConstPtr& finger_pos);
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
-
+	void BroadCastFingerPosition(void);
 private:
 	jaco::JacoAPI* API;
+	/* Subscribers */
 	ros::Subscriber ArmPose_sub;
 	ros::Subscriber JointVelocity_sub;
 	ros::Subscriber CartesianVelocity_sub;
+	ros::Subscriber SetFingerPosition_sub;
+
+	/* Publishers */
 	ros::Publisher JointAngles_pub;
 	ros::Publisher ToolPosition_pub;
+	ros::Publisher FingerPosition_pub;
 
 	ros::Timer status_timer;
 	ros::Timer cartesian_vel_timer;
@@ -71,7 +76,6 @@ private:
 	bool cartesian_vel_timer_flag;
 	bool joint_vel_timer_flag;
 
-	jaco::JacoKinematics kinematics;
 
 	AngularInfo joint_velocities;
 	CartesianInfo cartesian_velocities;

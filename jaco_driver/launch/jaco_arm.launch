@@ -1,0 +1,12 @@
+<launch>
+
+  <include file="$(find jaco_driver)/launch/jaco_arm.launch">
+
+<node name="aero_arm_controller" pkg="aero_arm" type="arm_controller" output="screen">
+
+  </node>
+  <node name="aero_arm_velocity_controller" pkg="aero_arm" type="arm_velocity_control" output="screen">
+
+
+  </node>
+</launch>

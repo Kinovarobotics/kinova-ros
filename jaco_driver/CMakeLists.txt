@@ -52,5 +52,5 @@ rosbuild_add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
 rosbuild_add_executable(jaco_tf_updater src/nodes/jaco_tf_updater.cpp )
 
 
-target_link_libraries(jaco_arm_driver jacoapi jacokinematics)
+target_link_libraries(jaco_arm_driver jacoapi)
 target_link_libraries(jaco_tf_updater jacokinematics)
