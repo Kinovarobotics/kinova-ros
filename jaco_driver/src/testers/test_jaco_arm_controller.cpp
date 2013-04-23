@@ -19,11 +19,56 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <ros/ros.h>
-
+#include <jaco_driver/JacoPositionConfig.h>
+#include <dynamic_reconfigure/server.h>
 using namespace std;
 
 
 
+ros::Publisher *pub;
+
+float x_pose=0;
+float	 y_pose=0;
+float	 z_pose=0;
+float	 rx_pose=0;
+float	 ry_pose=0;
+float	 rz_pose=0;
+
+
+void callback(jaco_driver::JacoPositionConfig &config, uint32_t level) {
+
+	 x_pose=config.X_Pose;
+	 y_pose=config.Y_Pose;
+	 z_pose=config.Z_Pose;
+	 rx_pose=config.RX_Pose;
+	 ry_pose=config.RY_Pose;
+	 rz_pose=config.RZ_Pose;
+
+	//	ROS_INFO("Reconfigure");
+
+
+}
+
+
+
+void TimerCallback(const ros::TimerEvent&)
+{
+	geometry_msgs::PoseStamped test_msg;
+
+			test_msg.pose.position.x = x_pose;
+			test_msg.pose.position.y = y_pose;
+			test_msg.pose.position.z = z_pose;
+
+			tf::Quaternion q;
+
+			q.setRPY(rx_pose,ry_pose,rz_pose);
+
+			tf::quaternionTFToMsg(q,test_msg.pose.orientation);
+			test_msg.header.frame_id = "/arm_base";
+			test_msg.header.stamp = ros::Time().now();
+			pub->publish(test_msg);
+
+}
 
 int main(int argc, char **argv) {
 
@@ -32,43 +77,18 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
-	std::string ArmPose("ObjectPose"); ///String containing the topic name for cartesian commands
+	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
 
-	ros::Publisher pub = nh.advertise<geometry_msgs::PoseStamped>(ArmPose,
+	ros::Publisher pub2 = nh.advertise<geometry_msgs::PoseStamped>(ArmPose,
 			2);
 
-	while (ros::ok()) {
-		double x, y, z, rx, ry, rz;
-		geometry_msgs::PoseStamped test_msg;
+	pub = &pub2;
+	dynamic_reconfigure::Server<jaco_driver::JacoPositionConfig>  dr_server;
+ dynamic_reconfigure::Server<jaco_driver::JacoPositionConfig>::CallbackType	dr_call = boost::bind(&callback, _1, _2);
+	dr_server.setCallback(dr_call);
+	  ros::Timer	timer = nh.createTimer(ros::Duration(0.1),&TimerCallback);
 
-		std::cout << "Enter X:";
-		std::cin >> x;
-		std::cout << "Enter Y:";
-		std::cin >> y;
-		std::cout << "Enter Z:";
-		std::cin >> z;
-		std::cout << "Enter RX:";
-		std::cin >> rx;
-		std::cout << "Enter RY:";
-		std::cin >> ry;
-		std::cout << "Enter RZ:";
-		std::cin >> rz;
-
-		test_msg.pose.position.x = x;
-		test_msg.pose.position.y = y;
-		test_msg.pose.position.z = z;
-
-		tf::Quaternion q;
-
-		q.setRPY(rx,ry,rz);
-
-		tf::quaternionTFToMsg(q,test_msg.pose.orientation);
-		test_msg.header.frame_id = "/arm_base";
-		pub.publish(test_msg);
-		ros::spinOnce();
-
-	}
-
+		ros::spin();
 
 }
 

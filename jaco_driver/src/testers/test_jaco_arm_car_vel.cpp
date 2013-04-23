@@ -61,14 +61,14 @@ void CartesianVelTest::TimerCallback(const ros::TimerEvent&)
 
 }
 
-void CartesianVelTest::callback(jaco_driver::JacoDriverConfig &config, uint32_t level) {
+void CartesianVelTest::callback(jaco_driver::JacoVelocityConfig &config, uint32_t level) {
 
-	 x_vel=config.X_Pose;
-	 y_vel=config.Y_Pose;
-	 z_vel=config.Z_Pose;
-	 rx_vel=config.X_Rotate;
-	 ry_vel=config.Y_Rotate;
-	 rz_vel=config.Z_Rotate;
+	 x_vel=config.X_Vel;
+	 y_vel=config.Y_Vel;
+	 z_vel=config.Z_Vel;
+	 rx_vel=config.RX_Vel;
+	 ry_vel=config.RY_Vel;
+	 rz_vel=config.RZ_Vel;
 
 	//	ROS_INFO("Reconfigure");
 
