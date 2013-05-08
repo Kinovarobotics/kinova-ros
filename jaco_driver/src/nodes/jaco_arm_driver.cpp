@@ -781,14 +781,14 @@ void JacoArm::BroadCastAngles(void) {
 			arm_angles.Actuators.Actuator6 = 0;
 #endif
 
-
-			ROS_INFO("Jaco Arm Angles (Degrees)");
-			ROS_INFO("Joint 1 = %f", arm_angles.Actuators.Actuator1);
-			ROS_INFO("Joint 2 = %f", arm_angles.Actuators.Actuator2);
-			ROS_INFO("Joint 3 = %f", arm_angles.Actuators.Actuator3);
-			ROS_INFO("Joint 4 = %f", arm_angles.Actuators.Actuator4);
-			ROS_INFO("Joint 5 = %f", arm_angles.Actuators.Actuator5);
-			ROS_INFO("Joint 6 = %f", arm_angles.Actuators.Actuator6);
+//
+//			ROS_INFO("Jaco Arm Angles (Degrees)");
+//			ROS_INFO("Joint 1 = %f", arm_angles.Actuators.Actuator1);
+//			ROS_INFO("Joint 2 = %f", arm_angles.Actuators.Actuator2);
+//			ROS_INFO("Joint 3 = %f", arm_angles.Actuators.Actuator3);
+//			ROS_INFO("Joint 4 = %f", arm_angles.Actuators.Actuator4);
+//			ROS_INFO("Joint 5 = %f", arm_angles.Actuators.Actuator5);
+//			ROS_INFO("Joint 6 = %f", arm_angles.Actuators.Actuator6);
 
 
 	//Broadcast joint angles
