@@ -458,15 +458,15 @@ void JacoArm::SetCartesianVelocities(CartesianInfo velocities) {
 	Jaco_Velocity.Position.CartesianPosition.ThetaX = velocities.ThetaX;
 	Jaco_Velocity.Position.CartesianPosition.ThetaY = velocities.ThetaY;
 	Jaco_Velocity.Position.CartesianPosition.ThetaZ = velocities.ThetaZ;
-
-	ROS_INFO("Arm Vel");
-	ROS_INFO("X = %f", Jaco_Velocity.Position.CartesianPosition.X);
-	ROS_INFO("Y = %f", Jaco_Velocity.Position.CartesianPosition.Y);
-	ROS_INFO("Z = %f", Jaco_Velocity.Position.CartesianPosition.Z);
-
-	ROS_INFO("RX = %f", Jaco_Velocity.Position.CartesianPosition.ThetaX);
-	ROS_INFO("RY = %f", Jaco_Velocity.Position.CartesianPosition.ThetaY);
-	ROS_INFO("RZ = %f", Jaco_Velocity.Position.CartesianPosition.ThetaZ);
+//
+//	ROS_INFO("Arm Vel");
+//	ROS_INFO("X = %f", Jaco_Velocity.Position.CartesianPosition.X);
+//	ROS_INFO("Y = %f", Jaco_Velocity.Position.CartesianPosition.Y);
+//	ROS_INFO("Z = %f", Jaco_Velocity.Position.CartesianPosition.Z);
+//
+//	ROS_INFO("RX = %f", Jaco_Velocity.Position.CartesianPosition.ThetaX);
+//	ROS_INFO("RY = %f", Jaco_Velocity.Position.CartesianPosition.ThetaY);
+//	ROS_INFO("RZ = %f", Jaco_Velocity.Position.CartesianPosition.ThetaZ);
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 
