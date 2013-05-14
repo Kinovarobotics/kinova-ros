@@ -1,5 +1,5 @@
 <package>
-  <description brief="aero_arm_description">aero_arm_description</description>
+  <description brief="jaco_model">jaco_model</description>
   <depend package="gazebo" />
   <author>me</author>
   <license>BSD</license>
