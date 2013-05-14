@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jaco_arm">
+<xacro:property name="width" value=".2" />
+<xacro:property name="bodylen" value=".6" />
+<link name="link_base">
+        <visual>
+ <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+                <geometry>
+                         <mesh
+          filename="package://jaco_model/meshes/link_base.dae"/>
+                </geometry>
+                <material name="carbon_fiber">
+ 			<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                </material>
+        </visual>
+        <collision>
+ <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+                <geometry>
+                         <mesh
+          filename="package://jaco_model/meshes/link_base.dae"/>
+                </geometry>
+        </collision>
+</link>
+</robot>
+
