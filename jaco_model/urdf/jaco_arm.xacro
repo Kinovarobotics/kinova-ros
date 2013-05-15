@@ -1,29 +1,66 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jaco_arm">
-<xacro:property name="width" value=".2" />
-<xacro:property name="bodylen" value=".6" />
-<link name="link_base">
-        <visual>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="jaco_arm_link">
+  <property name="M_PI" value="3.1415926535897931" />
+<xacro:macro name="jaco_link" params="link_name link_origin_xyz link_origin_rpy">
+<link name="${link_name}">
+      <visual>
  <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-                <geometry>
+        xyz="${link_origin_xyz}"
+        rpy="${link_origin_rpy}" />
+                 <geometry>
                          <mesh
-          filename="package://jaco_model/meshes/link_base.dae"/>
+          filename="package://jaco_model/meshes/${link_name}.dae"/>
                 </geometry>
                 <material name="carbon_fiber">
  			<color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
                 </material>
         </visual>
         <collision>
- <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+  <origin
+        xyz="${link_origin_xyz}"
+        rpy="${link_origin_rpy}" />
                 <geometry>
                          <mesh
-          filename="package://jaco_model/meshes/link_base.dae"/>
+          filename="package://jaco_model/meshes/${link_name}.dae"/>
                 </geometry>
         </collision>
 </link>
-</robot>
+</xacro:macro>
 
+<xacro:macro name="jaco_joint" params="joint_name parent child">
+<joint name="${joint_name}" type="continuous">
+    <parent link="${parent}"/>
+    <child link="${child}"/>
+ </joint>
+</xacro:macro>
+
+
+
+
+  <property name="link_base" value="jaco_link_base" />
+  <property name="link_1" value="jaco_link_1" />
+  <property name="link_2" value="jaco_link_2" />
+  <property name="link_3" value="jaco_link_3" />
+  <property name="link_4" value="jaco_link_4" />
+  <property name="link_5" value="jaco_link_5" />
+  <property name="link_hand" value="jaco_link_hand" />
+
+  <property name="joint_1" value="jaco_joint_1" />
+  <property name="joint_2" value="jaco_joint_2" />
+  <property name="joint_3" value="jaco_joint_3" />
+  <property name="joint_4" value="jaco_joint_4" />
+  <property name="joint_5" value="jaco_joint_5" />
+  <property name="joint_6" value="jaco_joint_6" />
+
+<xacro:jaco_link link_name="${link_base}" link_origin_xyz="0 0 0" link_origin_rpy="0 0 0"/>
+<xacro:jaco_link link_name="${link_1}" link_origin_xyz="0 0 0.1535" link_origin_rpy="${M_PI} 0 0"/>
+<xacro:jaco_joint joint_name="${joint_1}" parent="${link_base}" child="${link_1}"/>
+<xacro:jaco_link link_name="${link_2}" link_origin_xyz="0 0 0.272" link_origin_rpy="0 ${M_PI/2} -${M_PI/2}"/>
+<xacro:jaco_joint joint_name="${joint_2}" parent="${link_1}" child="${link_2}"/>
+<xacro:jaco_link link_name="${link_3}" link_origin_xyz="0 0 -0.138" link_origin_rpy="0 -${M_PI/2} -${M_PI/2}"/>
+<xacro:jaco_joint joint_name="${joint_3}" parent="${link_2}" child="${link_3}"/>
+<xacro:jaco_link link_name="${link_4}" link_origin_xyz="0 0 -0.138" link_origin_rpy="0 -${M_PI/2} -${M_PI/2}"/>
+<xacro:jaco_joint joint_name="${joint_4}" parent="${link_3}" child="${link_4}"/>
+
+
+</robot>
