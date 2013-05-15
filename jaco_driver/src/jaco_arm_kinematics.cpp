@@ -293,7 +293,7 @@ void JacoKinematics::UpdateForward(float q1, float q2, float q3, float q4,
 	 * sin(q2)	 *
 	 * D2        *
 	 ****     ****/
-	translation_v.setValue(0, 0, this->J3Offset());
+	translation_v.setValue(0, 0, -this->J3Offset());
 
 #ifdef PRINT_DEBUG_INFO
 

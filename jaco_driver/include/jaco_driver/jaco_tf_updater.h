@@ -19,6 +19,7 @@
 
 namespace jaco {
 
+
 class JacoTFTree {
 public:
 	JacoTFTree(ros::NodeHandle nh, std::string JointAngles);
