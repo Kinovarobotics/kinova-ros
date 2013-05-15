@@ -59,8 +59,10 @@
 <xacro:jaco_joint joint_name="${joint_2}" parent="${link_1}" child="${link_2}"/>
 <xacro:jaco_link link_name="${link_3}" link_origin_xyz="0 0 -0.138" link_origin_rpy="0 -${M_PI/2} -${M_PI/2}"/>
 <xacro:jaco_joint joint_name="${joint_3}" parent="${link_2}" child="${link_3}"/>
-<xacro:jaco_link link_name="${link_4}" link_origin_xyz="0 0 -0.138" link_origin_rpy="0 -${M_PI/2} -${M_PI/2}"/>
+<xacro:jaco_link link_name="${link_4}" link_origin_xyz="0 -0.01125 0.069" link_origin_rpy="${M_PI} 0 ${M_PI/2}"/>
 <xacro:jaco_joint joint_name="${joint_4}" parent="${link_3}" child="${link_4}"/>
-
-
+<xacro:jaco_link link_name="${link_5}" link_origin_xyz="0 0.02305 0.13488" link_origin_rpy="0 -${M_PI/2+M_PI/36*7} ${M_PI/2}"/>
+<xacro:jaco_joint joint_name="${joint_5}" parent="${link_4}" child="${link_5}"/>
+<xacro:jaco_link link_name="${link_hand}" link_origin_xyz="0 0.05735 0.20076" link_origin_rpy="${M_PI/2} ${M_PI/2} 0"/>
+<xacro:jaco_joint joint_name="${joint_6}" parent="${link_5}" child="${link_hand}"/>
 </robot>
