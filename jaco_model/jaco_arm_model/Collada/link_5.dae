@@ -6,8 +6,8 @@
 			<authoring_tool>PhysX	Rocket,	PhysX	Viewer,	or CreateDynamics</authoring_tool>
 			<comments>questions	to:	jratcliff@ageia.com</comments>
 		</contributor>
-		 <created>2013-05-15T04:45:16.873Z</created>
-		 <modified>2013-05-15T04:45:16.873Z</modified>
+		 <created>2013-05-15T04:44:59.771Z</created>
+		 <modified>2013-05-15T04:44:59.771Z</modified>
 		<unit	meter="1"	name="meter"/>
 		<up_axis>Y_UP</up_axis>
 	</asset>
