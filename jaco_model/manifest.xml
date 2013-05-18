@@ -1,6 +1,17 @@
 <package>
-  <description brief="jaco_model">jaco_model</description>
-  <depend package="gazebo" />
-  <author>me</author>
+  <description brief="AERO_description">
+
+     AERO_description
+
+  </description>
+  <author>bpwiselybabu</author>
   <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/AERO_description</url>
+  <depend package="urdf" /> <!-- Testing -->
+  <depend package="xacro" /> <!-- Testing -->
+  <depend package="husky_description" />
+
 </package>
+
+
