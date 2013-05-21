@@ -811,7 +811,7 @@ void JacoArm::BroadCastPosition(void) {
 
 	API->GetCartesianPosition(position); //Query arm for position
 
-	current_position.header.frame_id = "/jaco_api_origin";
+	current_position.header.frame_id = "/arm_mount";//TODO "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
 
 	//Broadcast position
