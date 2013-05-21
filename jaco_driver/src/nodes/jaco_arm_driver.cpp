@@ -811,7 +811,7 @@ void JacoArm::BroadCastPosition(void) {
 
 	API->GetCartesianPosition(position); //Query arm for position
 
-	current_position.header.frame_id = "/arm_mount";//TODO "/jaco_api_origin";
+	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
 
 	//Broadcast position
@@ -827,7 +827,27 @@ void JacoArm::BroadCastPosition(void) {
 
 	tf::quaternionTFToMsg(position_quaternion, current_position.pose.orientation);
 
-	ToolPosition_pub.publish(current_position);
+	/*remove this */
+
+	try {
+
+
+		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
+				current_position.header.stamp, ros::Duration(1.0));
+
+		geometry_msgs::PoseStamped current_position_mount;
+
+		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+
+
+	ToolPosition_pub.publish(current_position_mount);
+
+	} catch (std::exception& e) {
+		ROS_ERROR_STREAM_THROTTLE(1, e.what());
+	}
+		/* to here */
+	//ToolPosition_pub.publish(current_position);
+
 }
 
 void JacoArm::BroadCastFingerPosition(void) {
