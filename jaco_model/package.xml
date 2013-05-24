@@ -15,7 +15,9 @@
   <url type="repository">https://github.com/ros-planning/moveit_setup_assistant</url>
 
   <run_depend>moveit_ros_move_group</run_depend>
-  ]
+  <build_depend>jaco_model</build_depend>
+  <run_depend>jaco_model</run_depend>
+
 
   <buildtool_depend>catkin</buildtool_depend>
   

@@ -1,8 +1,8 @@
 moveit_setup_assistant_config:
   URDF:
-    package: ""
-    relative_path: /home/mdedonato/groovy_workspace/jaco_arm/jaco_model/urdf/standalone_arm.urdf
+    package: jaco_model
+    relative_path: urdf/standalone_arm.urdf
   SRDF:
     relative_path: config/jaco.srdf
   CONFIG:
-    generated_timestamp: 1368901644
+    generated_timestamp: 1368979282

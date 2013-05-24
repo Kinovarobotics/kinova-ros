@@ -29,3 +29,15 @@ arm:
     - RRTStarkConfigDefault
   projection_evaluator: joints(jaco_joint_1,jaco_joint_2)
   longest_valid_segment_fraction: 0.05
+hand:
+  planner_configs:
+    - SBLkConfigDefault
+    - LBKPIECEkConfigDefault
+    - RRTkConfigDefault
+    - RRTConnectkConfigDefault
+    - ESTkConfigDefault
+    - KPIECEkConfigDefault
+    - BKPIECEkConfigDefault
+    - RRTStarkConfigDefault
+  projection_evaluator: joints(jaco_joint_finger_1,jaco_joint_finger_2)
+  longest_valid_segment_fraction: 0.05

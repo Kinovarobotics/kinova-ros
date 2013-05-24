@@ -10,7 +10,6 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="arm">
-        <link name="root" />
         <link name="jaco_link_base" />
         <link name="jaco_link_1" />
         <link name="jaco_link_2" />
@@ -18,8 +17,6 @@
         <link name="jaco_link_4" />
         <link name="jaco_link_5" />
         <link name="jaco_link_hand" />
-        <joint name="base" />
-        <joint name="jaco_joint_base" />
         <joint name="jaco_joint_1" />
         <joint name="jaco_joint_2" />
         <joint name="jaco_joint_3" />
@@ -27,41 +24,88 @@
         <joint name="jaco_joint_5" />
         <joint name="jaco_joint_6" />
     </group>
+    <group name="hand">
+        <link name="jaco_link_finger_1" />
+        <link name="jaco_link_finger_2" />
+        <link name="jaco_link_finger_3" />
+        <joint name="jaco_joint_finger_1" />
+        <joint name="jaco_joint_finger_2" />
+        <joint name="jaco_joint_finger_3" />
+    </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="arm">
-        <joint name="jaco_joint_1" value="0" />
-        <joint name="jaco_joint_2" value="2.4355" />
-        <joint name="jaco_joint_3" value="1.5884" />
-        <joint name="jaco_joint_4" value="0" />
+        <joint name="jaco_joint_1" value="-3.1415" />
+        <joint name="jaco_joint_2" value="2.6473" />
+        <joint name="jaco_joint_3" value="0.4236" />
+        <joint name="jaco_joint_4" value="-1.4472" />
         <joint name="jaco_joint_5" value="0" />
-        <joint name="jaco_joint_6" value="0" />
+        <joint name="jaco_joint_6" value="-3.1062" />
     </group_state>
+    <group_state name="closed" group="hand">
+        <joint name="jaco_joint_finger_1" value="0.6981" />
+        <joint name="jaco_joint_finger_2" value="0.6981" />
+        <joint name="jaco_joint_finger_3" value="0.6981" />
+    </group_state>
+    <group_state name="open" group="hand">
+        <joint name="jaco_joint_finger_1" value="0" />
+        <joint name="jaco_joint_finger_2" value="0" />
+        <joint name="jaco_joint_finger_3" value="0" />
+    </group_state>
+    <group_state name="pinch" group="hand">
+        <joint name="jaco_joint_finger_1" value="0.6981" />
+        <joint name="jaco_joint_finger_2" value="0" />
+        <joint name="jaco_joint_finger_3" value="0.6981" />
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="hand" parent_link="jaco_link_hand" group="hand" parent_group="arm" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="base" type="fixed" parent_frame="world" child_link="root" />
+    <virtual_joint name="FixedBase" type="fixed" parent_frame="world" child_link="root" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="jaco_link_1" link2="jaco_link_2" reason="Adjacent" />
     <disable_collisions link1="jaco_link_1" link2="jaco_link_3" reason="Never" />
-    <disable_collisions link1="jaco_link_1" link2="jaco_link_4" reason="Default" />
-    <disable_collisions link1="jaco_link_1" link2="jaco_link_5" reason="Default" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_4" reason="Never" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_5" reason="Never" />
     <disable_collisions link1="jaco_link_1" link2="jaco_link_base" reason="Adjacent" />
-    <disable_collisions link1="jaco_link_1" link2="jaco_link_hand" reason="Default" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_hand" reason="Never" />
     <disable_collisions link1="jaco_link_1" link2="root" reason="Never" />
     <disable_collisions link1="jaco_link_2" link2="jaco_link_3" reason="Adjacent" />
-    <disable_collisions link1="jaco_link_2" link2="jaco_link_4" reason="Default" />
-    <disable_collisions link1="jaco_link_2" link2="jaco_link_5" reason="Default" />
-    <disable_collisions link1="jaco_link_2" link2="jaco_link_base" reason="Default" />
-    <disable_collisions link1="jaco_link_2" link2="jaco_link_hand" reason="Default" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_4" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_5" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_hand" reason="Never" />
     <disable_collisions link1="jaco_link_2" link2="root" reason="Never" />
     <disable_collisions link1="jaco_link_3" link2="jaco_link_4" reason="Adjacent" />
     <disable_collisions link1="jaco_link_3" link2="jaco_link_5" reason="Never" />
-    <disable_collisions link1="jaco_link_3" link2="jaco_link_base" reason="Default" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_3" reason="Never" />
     <disable_collisions link1="jaco_link_3" link2="jaco_link_hand" reason="Never" />
     <disable_collisions link1="jaco_link_3" link2="root" reason="Never" />
     <disable_collisions link1="jaco_link_4" link2="jaco_link_5" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_3" reason="Never" />
     <disable_collisions link1="jaco_link_4" link2="jaco_link_hand" reason="Never" />
     <disable_collisions link1="jaco_link_4" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_base" reason="Default" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_3" reason="Never" />
     <disable_collisions link1="jaco_link_5" link2="jaco_link_hand" reason="Adjacent" />
     <disable_collisions link1="jaco_link_5" link2="root" reason="Never" />
     <disable_collisions link1="jaco_link_base" link2="root" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_1" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_1" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_1" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_1" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_2" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_2" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_2" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_3" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_3" link2="root" reason="Never" />
     <disable_collisions link1="jaco_link_hand" link2="root" reason="Never" />
 </robot>
