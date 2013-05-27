@@ -1,8 +1,0 @@
-moveit_setup_assistant_config:
-  URDF:
-    package: jaco_model
-    relative_path: urdf/standalone_arm.urdf
-  SRDF:
-    relative_path: config/jaco.srdf
-  CONFIG:
-    generated_timestamp: 1368979282
