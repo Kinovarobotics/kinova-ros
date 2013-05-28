@@ -30,7 +30,7 @@ namespace jaco {
 
 class JacoArm {
 public:
-	JacoArm(ros::NodeHandle nh, std::string ArmPose, std::string JointVelocity, std::string JointAngles,std::string CartesianVelocity,std::string ToolPosition,std::string SetFingerPosition,std::string FingerPosition);
+	JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
 	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 	void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
 	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
