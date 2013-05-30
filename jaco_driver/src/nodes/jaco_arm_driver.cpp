@@ -596,10 +596,8 @@ void JacoArm::GetAngles(AngularInfo &angles)
 
 void JacoArm::GetConfig(ClientConfigurations &config)
 {
-
 	memset(&config, 0, sizeof(config)); //zero structure
 	API->GetClientConfigurations(config);
-
 }
 
 void JacoArm::GetPosition(CartesianInfo &position)
@@ -787,7 +785,7 @@ void JacoArm::VelocityMSG(const jaco_driver::joint_velocityConstPtr& joint_vel)
 
 }
 
-void JacoArm::SoftwarePauseMSG(const jaco_driver::software_pauseConstPtr& software_pause)
+void JacoArm::SoftwarePauseMSG(const robot_base_msgs::SoftwareStopConstPtr& software_pause)
 {
 
 //TODO add software pause

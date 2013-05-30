@@ -1,0 +1,70 @@
+\hypertarget{struct_user_position}{\section{User\-Position Struct Reference}
+\label{struct_user_position}\index{User\-Position@{User\-Position}}
+}
+
+
+\par
+Contains all the information about a position. \par
+Values could represent an absolute position, a velocity or a delay of time. It depends of the called function. \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: If you send this structure, always define all variables, there is no initial values. Otherwise, there will be random information sent to the arm.} \par
+If you don't need a variable, set it to 0 (It's the case in many situations). \par
+Suggestion\-: use the function memset(\&your\-Structure, 0, sizeof(your\-Structure)) from the std lib and set the memory. \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: Be sure that the \hyperlink{struct_user_position}{User\-Position} is well defined, otherwise the arm could try to reach undesired position}  
+
+
+
+
+{\ttfamily \#include $<$Kinova\-Types.\-h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_kinova_types_8h_a0a1c22d235ef1b13cfcd1419d10babc9}{P\-O\-S\-I\-T\-I\-O\-N\-\_\-\-T\-Y\-P\-E} \hyperlink{struct_user_position_a93c748d4ee51239fcbcd487d88e52ffa}{Type}
+\item 
+float \hyperlink{struct_user_position_aa18896c1238a50c8ad81c66dfd76ac5e}{Delay}
+\item 
+\hyperlink{struct_cartesian_info}{Cartesian\-Info} \hyperlink{struct_user_position_ab363c40971853637f728978e604c438f}{Cartesian\-Position}
+\item 
+\hyperlink{struct_angular_info}{Angular\-Info} \hyperlink{struct_user_position_ab0c5b71622c1e0d3033572578e947cf3}{Actuators}
+\item 
+\hyperlink{_kinova_types_8h_ad7050e4cfb6e844e9be962fba8eeb817}{H\-A\-N\-D\-\_\-\-M\-O\-D\-E} \hyperlink{struct_user_position_a83779902810d0e5e16d533e0f964c0df}{Hand\-Mode}
+\item 
+\hyperlink{struct_fingers_position}{Fingers\-Position} \hyperlink{struct_user_position_a727907bb6a98b0f3d10aaa8011b67927}{Fingers}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\par
+Contains all the information about a position. \par
+Values could represent an absolute position, a velocity or a delay of time. It depends of the called function. \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: If you send this structure, always define all variables, there is no initial values. Otherwise, there will be random information sent to the arm.} \par
+If you don't need a variable, set it to 0 (It's the case in many situations). \par
+Suggestion\-: use the function memset(\&your\-Structure, 0, sizeof(your\-Structure)) from the std lib and set the memory. \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: Be sure that the \hyperlink{struct_user_position}{User\-Position} is well defined, otherwise the arm could try to reach undesired position} 
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_user_position_ab0c5b71622c1e0d3033572578e947cf3}{\index{User\-Position@{User\-Position}!Actuators@{Actuators}}
+\index{Actuators@{Actuators}!UserPosition@{User\-Position}}
+\subsubsection[{Actuators}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Angular\-Info} User\-Position\-::\-Actuators}}\label{struct_user_position_ab0c5b71622c1e0d3033572578e947cf3}
+Actuator values, depends of the type \hypertarget{struct_user_position_ab363c40971853637f728978e604c438f}{\index{User\-Position@{User\-Position}!Cartesian\-Position@{Cartesian\-Position}}
+\index{Cartesian\-Position@{Cartesian\-Position}!UserPosition@{User\-Position}}
+\subsubsection[{Cartesian\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Cartesian\-Info} User\-Position\-::\-Cartesian\-Position}}\label{struct_user_position_ab363c40971853637f728978e604c438f}
+Cartesian position values, depends of the type \hypertarget{struct_user_position_aa18896c1238a50c8ad81c66dfd76ac5e}{\index{User\-Position@{User\-Position}!Delay@{Delay}}
+\index{Delay@{Delay}!UserPosition@{User\-Position}}
+\subsubsection[{Delay}]{\setlength{\rightskip}{0pt plus 5cm}float User\-Position\-::\-Delay}}\label{struct_user_position_aa18896c1238a50c8ad81c66dfd76ac5e}
+Delay of time to execute another trajectory after this one (s). \hypertarget{struct_user_position_a727907bb6a98b0f3d10aaa8011b67927}{\index{User\-Position@{User\-Position}!Fingers@{Fingers}}
+\index{Fingers@{Fingers}!UserPosition@{User\-Position}}
+\subsubsection[{Fingers}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Fingers\-Position} User\-Position\-::\-Fingers}}\label{struct_user_position_a727907bb6a98b0f3d10aaa8011b67927}
+Finger position value, depends of the type \hypertarget{struct_user_position_a83779902810d0e5e16d533e0f964c0df}{\index{User\-Position@{User\-Position}!Hand\-Mode@{Hand\-Mode}}
+\index{Hand\-Mode@{Hand\-Mode}!UserPosition@{User\-Position}}
+\subsubsection[{Hand\-Mode}]{\setlength{\rightskip}{0pt plus 5cm}{\bf H\-A\-N\-D\-\_\-\-M\-O\-D\-E} User\-Position\-::\-Hand\-Mode}}\label{struct_user_position_a83779902810d0e5e16d533e0f964c0df}
+Type of fingers positioning \hypertarget{struct_user_position_a93c748d4ee51239fcbcd487d88e52ffa}{\index{User\-Position@{User\-Position}!Type@{Type}}
+\index{Type@{Type}!UserPosition@{User\-Position}}
+\subsubsection[{Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf P\-O\-S\-I\-T\-I\-O\-N\-\_\-\-T\-Y\-P\-E} User\-Position\-::\-Type}}\label{struct_user_position_a93c748d4ee51239fcbcd487d88e52ffa}
+Type of the position, can be an absolute position, a velocity or a time delay 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_kinova_types_8h}{Kinova\-Types.\-h}\end{DoxyCompactItemize}

@@ -1,0 +1,577 @@
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h}{\section{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h File Reference}
+\label{_kinova_8_a_p_i_8_usb_command_layer_8h}\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}Kinova\-Types.\-h\char`\"{}}\\*
+{\ttfamily \#include $<$windows.\-h$>$}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I}~\-\_\-\-\_\-declspec(dllimport)
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_ac7bef5d85e3dcd73eef56ad39ffc84a9}{W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N}
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_ad9c707fcd3b8b900a267bb3112251768}{E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I}~2001
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a695917dd27731b8875a1ccf2cb370b61}{E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L}~2002
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_aaf06cf2cdd21e707734113d20e0a167c}{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T}~2003
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a50277f315c115b1fc66870c649ea526b}{J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D}~2004
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_afe14542a6cbdafc59256248a7305fb00}{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L}~2005
+\item 
+\#define \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_aaeb890c653dc6657b1238afe3ce1a0f9}{C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N}~10001
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a2c912041b2b6522558346bdc8a2a0561}{Get\-Jaco\-Count} (D\-W\-O\-R\-D \&)
+\begin{DoxyCompactList}\small\item\em Get the number of connected arms. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a56b1ab8abe52c3a59b90384dda0db1d8}{Init\-A\-P\-I} (void)
+\begin{DoxyCompactList}\small\item\em Init the A\-P\-I, must be called before any A\-P\-I session. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_ad23b6d9722f624a613d081b6a9f081a7}{Close\-A\-P\-I} (void)
+\begin{DoxyCompactList}\small\item\em Stop the A\-P\-I, must be called at the end of an A\-P\-I session. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a3e75ba7c7ac4f1b1367d765adce3c482}{Get\-Code\-Version} (std\-::vector$<$ int $>$ \&Response)
+\begin{DoxyCompactList}\small\item\em Get the code version. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_ade26097fa8382a572c854485120656c0}{Get\-Cartesian\-Position} (\hyperlink{struct_cartesian_position}{Cartesian\-Position} \&Response)
+\begin{DoxyCompactList}\small\item\em Get absolute cartesian position (m, rad). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a30a4eb093de6d1e0aa64f0a357c4e13f}{Get\-Angular\-Position} (\hyperlink{struct_angular_position}{Angular\-Position} \&Response)
+\begin{DoxyCompactList}\small\item\em Get absolute angular position (degrees). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a1ecbefeb39af6e4ad7824fd3c4f6886c}{Get\-Cartesian\-Force} (\hyperlink{struct_cartesian_position}{Cartesian\-Position} \&Response)
+\begin{DoxyCompactList}\small\item\em Get cartesian force (N). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a4d66d086cee312d65442864279eaf1d0}{Get\-Angular\-Force} (\hyperlink{struct_angular_position}{Angular\-Position} \&Response)
+\begin{DoxyCompactList}\small\item\em Get actuators applied force (Nm). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a9bd075f1367b288362da33458356028a}{Get\-Angular\-Current} (\hyperlink{struct_angular_position}{Angular\-Position} \&Response)
+\begin{DoxyCompactList}\small\item\em Get actuator current consumption (A). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_aa20472c82c2c7f6ff23ae3f9ea167afc}{Get\-Actual\-Trajectory\-Info} (\hyperlink{struct_trajectory_point}{Trajectory\-Point} \&Response)
+\begin{DoxyCompactList}\small\item\em Get info about actual ongoing trajectory. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a187d35c7938742a5676b1b5a5ea723c2}{Get\-Global\-Trajectory\-Info} (\hyperlink{struct_trajectory_f_i_f_o}{Trajectory\-F\-I\-F\-O} \&Response)
+\begin{DoxyCompactList}\small\item\em Get information about trajectories F\-I\-F\-O. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a02eeb030a207ea5ef4e550d5637041a7}{Get\-Sensors\-Info} (\hyperlink{struct_sensors_info}{Sensors\-Info} \&Response)
+\begin{DoxyCompactList}\small\item\em Get sensors values (voltage(\-V), current(\-A), \mbox{[}X,Y,Z\mbox{]} accelerations(m/s$^\wedge$2 , Actuators temperature(deg. C) and finger temperature(deg. C) ). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_aa384a644b1a077f0a1c8c9b291ca1a1e}{Get\-Singularity\-Vector} (\hyperlink{struct_singularity_vector}{Singularity\-Vector} \&Response)
+\begin{DoxyCompactList}\small\item\em \par
+Get information about singularities from the actual hand position. \par
+Singularities concern the hand translation and it's rotation (changement or orientation) \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a6f4854390d3fb4965145a8c2ae6204f9}{Set\-Angular\-Control} ()
+\begin{DoxyCompactList}\small\item\em Set the joystick (virtual or real one) control to angular mode (moves actuators one by one). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a080b70f185520a65cb59ec0dc46ab499}{Set\-Cartesian\-Control} ()
+\begin{DoxyCompactList}\small\item\em Set the joystick (virtual or real one) control to cartesian (X,Y,Z). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a52dea13a3d7d82871bcd1a7ba3f4f002}{Start\-Control\-A\-P\-I} ()
+\begin{DoxyCompactList}\small\item\em Allow the A\-P\-I to control the arm. This function must be called before any control over the arm using A\-P\-I (Ex.\-: \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{Send\-Basic\-Trajectory()} ) If the joystick is used while A\-P\-I control, it's desactivated and need to call the function again to recover control. This method has only effect on the arm movements, other kind of methods work without calling a \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a52dea13a3d7d82871bcd1a7ba3f4f002}{Start\-Control\-A\-P\-I()} before. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a69954c145802d6a348deb8979cf827ca}{Stop\-Control\-A\-P\-I} ()
+\begin{DoxyCompactList}\small\item\em Disable A\-P\-I control over the arm. Control functions has no more effects on the arm (Ex.\-: \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{Send\-Basic\-Trajectory()} ). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a4febe8e7181e613348a679e5d0364f2a}{Restore\-Factory\-Default} ()
+\begin{DoxyCompactList}\small\item\em Restore the arm \hyperlink{struct_client_configurations}{Client\-Configurations} to its factory default settings (Clear all current settings). \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a32951d1a05740727b65ee5dcd74da679}{Send\-Joystick\-Command} (\hyperlink{struct_joystick_command}{Joystick\-Command} joystick\-Command)
+\begin{DoxyCompactList}\small\item\em Send a virtual joystick command (This has the same behavior than the hard-\/wired joystick). The control has to be refresh in a control loop around each 10ms. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_ab7132ffb74a37fe85655755ab56fc7f2}{Send\-Advance\-Trajectory} (\hyperlink{struct_trajectory_point}{Trajectory\-Point} trajectory)
+\begin{DoxyCompactList}\small\item\em Send all trajectory infos to the arm. The trajectory is push into the F\-I\-F\-O. If it's a velocity trajectory, refresh the command each 10ms to keep movement. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{Send\-Basic\-Trajectory} (\hyperlink{struct_trajectory_point}{Trajectory\-Point} trajectory)
+\begin{DoxyCompactList}\small\item\em Send only essential \hyperlink{struct_trajectory_point}{Trajectory\-Point} info (Positions for moving) to the arm (faster than Send\-Advance\-Trajectory) The trajectory is push into the F\-I\-F\-O. If it's a velocity trajectory, refresh the command each 10ms to keep movement. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_adce70d928751755256398fc6ba893b2b}{Get\-Client\-Configurations} (\hyperlink{struct_client_configurations}{Client\-Configurations} \&config)
+\begin{DoxyCompactList}\small\item\em Get a \hyperlink{struct_client_configurations}{Client\-Configurations} from the arm. \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_aa6fc5e08bcff2e86c911396912aa3047}{Set\-Client\-Configurations} (\hyperlink{struct_client_configurations}{Client\-Configurations} config)
+\begin{DoxyCompactList}\small\item\em Set arm client configuration \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a78f311641439c6430548b52551fde2e6}{Erase\-All\-Trajectories} ()
+\begin{DoxyCompactList}\small\item\em Erase all trajectories in the F\-I\-F\-O (The arm stops immediatly) \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a01f4442b0f9ba2c17cff89684078d919}{Get\-Position\-Current\-Actuators} (std\-::vector$<$ float $>$ \&Response)
+\begin{DoxyCompactList}\small\item\em Get current position of actuators (degrees) \end{DoxyCompactList}\item 
+\hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a61b1c7a9b0caaf04de03c92c790ef6e4}{Set\-Actuator\-P\-I\-D} (unsigned int address, float P, float I, float D)
+\begin{DoxyCompactList}\small\item\em Set an actuator P\-I\-D \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_aaeb890c653dc6657b1238afe3ce1a0f9}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N@{C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N}}
+\index{C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N@{C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N}]{\setlength{\rightskip}{0pt plus 5cm}\#define C\-O\-M\-M\-A\-N\-D\-\_\-\-L\-A\-Y\-E\-R\-\_\-\-V\-E\-R\-S\-I\-O\-N~10001}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_aaeb890c653dc6657b1238afe3ce1a0f9}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_ad9c707fcd3b8b900a267bb3112251768}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I@{E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I}}
+\index{E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I@{E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\-R\-R\-O\-R\-\_\-\-I\-N\-I\-T\-\_\-\-A\-P\-I~2001}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_ad9c707fcd3b8b900a267bb3112251768}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a695917dd27731b8875a1ccf2cb370b61}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L@{E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L}}
+\index{E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L@{E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L}]{\setlength{\rightskip}{0pt plus 5cm}\#define E\-R\-R\-O\-R\-\_\-\-L\-O\-A\-D\-\_\-\-C\-O\-M\-M\-\_\-\-D\-L\-L~2002}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a695917dd27731b8875a1ccf2cb370b61}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a50277f315c115b1fc66870c649ea526b}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D@{J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D}}
+\index{J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D@{J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D}]{\setlength{\rightskip}{0pt plus 5cm}\#define J\-A\-C\-O\-\_\-\-C\-O\-M\-M\-\_\-\-F\-A\-I\-L\-E\-D~2004}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a50277f315c115b1fc66870c649ea526b}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_aaf06cf2cdd21e707734113d20e0a167c}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T@{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T}}
+\index{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T@{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T}]{\setlength{\rightskip}{0pt plus 5cm}\#define J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-F\-I\-R\-S\-T~2003}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_aaf06cf2cdd21e707734113d20e0a167c}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_afe14542a6cbdafc59256248a7305fb00}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L@{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L}}
+\index{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L@{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L}]{\setlength{\rightskip}{0pt plus 5cm}\#define J\-A\-C\-O\-\_\-\-N\-A\-C\-K\-\_\-\-N\-O\-R\-M\-A\-L~2005}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_afe14542a6cbdafc59256248a7305fb00}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I@{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I}}
+\index{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I@{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}\#define K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I~\-\_\-\-\_\-declspec(dllimport)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_abe06f11f1aa8abc575ebd4474e559d25}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_ac7bef5d85e3dcd73eef56ad39ffc84a9}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N@{W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N}}
+\index{W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N@{W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N}]{\setlength{\rightskip}{0pt plus 5cm}\#define W\-I\-N32\-\_\-\-L\-E\-A\-N\-\_\-\-A\-N\-D\-\_\-\-M\-E\-A\-N}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_ac7bef5d85e3dcd73eef56ad39ffc84a9}
+
+
+\subsection{Function Documentation}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_ad23b6d9722f624a613d081b6a9f081a7}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Close\-A\-P\-I@{Close\-A\-P\-I}}
+\index{Close\-A\-P\-I@{Close\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Close\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Close\-A\-P\-I (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_ad23b6d9722f624a613d081b6a9f081a7}
+
+
+Stop the A\-P\-I, must be called at the end of an A\-P\-I session. 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a78f311641439c6430548b52551fde2e6}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Erase\-All\-Trajectories@{Erase\-All\-Trajectories}}
+\index{Erase\-All\-Trajectories@{Erase\-All\-Trajectories}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Erase\-All\-Trajectories}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Erase\-All\-Trajectories (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a78f311641439c6430548b52551fde2e6}
+
+
+Erase all trajectories in the F\-I\-F\-O (The arm stops immediatly) 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_aa20472c82c2c7f6ff23ae3f9ea167afc}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Actual\-Trajectory\-Info@{Get\-Actual\-Trajectory\-Info}}
+\index{Get\-Actual\-Trajectory\-Info@{Get\-Actual\-Trajectory\-Info}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Actual\-Trajectory\-Info}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Actual\-Trajectory\-Info (
+\begin{DoxyParamCaption}
+\item[{{\bf Trajectory\-Point} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_aa20472c82c2c7f6ff23ae3f9ea167afc}
+
+
+Get info about actual ongoing trajectory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_trajectory_point}{Trajectory\-Point} struture to be filled \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a9bd075f1367b288362da33458356028a}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Angular\-Current@{Get\-Angular\-Current}}
+\index{Get\-Angular\-Current@{Get\-Angular\-Current}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Angular\-Current}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Angular\-Current (
+\begin{DoxyParamCaption}
+\item[{{\bf Angular\-Position} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a9bd075f1367b288362da33458356028a}
+
+
+Get actuator current consumption (A). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_angular_position}{Angular\-Position} structure to be filled with electrical currents in Ampers \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a4d66d086cee312d65442864279eaf1d0}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Angular\-Force@{Get\-Angular\-Force}}
+\index{Get\-Angular\-Force@{Get\-Angular\-Force}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Angular\-Force}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Angular\-Force (
+\begin{DoxyParamCaption}
+\item[{{\bf Angular\-Position} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a4d66d086cee312d65442864279eaf1d0}
+
+
+Get actuators applied force (Nm). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_angular_position}{Angular\-Position} structure to be filled with applied force in Newton-\/meters \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a30a4eb093de6d1e0aa64f0a357c4e13f}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Angular\-Position@{Get\-Angular\-Position}}
+\index{Get\-Angular\-Position@{Get\-Angular\-Position}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Angular\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Angular\-Position (
+\begin{DoxyParamCaption}
+\item[{{\bf Angular\-Position} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a30a4eb093de6d1e0aa64f0a357c4e13f}
+
+
+Get absolute angular position (degrees). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_angular_position}{Angular\-Position} struture to be filled with absolute angular positions in degrees \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a1ecbefeb39af6e4ad7824fd3c4f6886c}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Cartesian\-Force@{Get\-Cartesian\-Force}}
+\index{Get\-Cartesian\-Force@{Get\-Cartesian\-Force}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Cartesian\-Force}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Cartesian\-Force (
+\begin{DoxyParamCaption}
+\item[{{\bf Cartesian\-Position} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a1ecbefeb39af6e4ad7824fd3c4f6886c}
+
+
+Get cartesian force (N). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_cartesian_position}{Cartesian\-Position} struture to be filled with cartesian forces in Newton\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_ade26097fa8382a572c854485120656c0}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Cartesian\-Position@{Get\-Cartesian\-Position}}
+\index{Get\-Cartesian\-Position@{Get\-Cartesian\-Position}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Cartesian\-Position}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Cartesian\-Position (
+\begin{DoxyParamCaption}
+\item[{{\bf Cartesian\-Position} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_ade26097fa8382a572c854485120656c0}
+
+
+Get absolute cartesian position (m, rad). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_cartesian_position}{Cartesian\-Position} struture to be filled with absolute position in meters and rad \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_adce70d928751755256398fc6ba893b2b}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Client\-Configurations@{Get\-Client\-Configurations}}
+\index{Get\-Client\-Configurations@{Get\-Client\-Configurations}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Client\-Configurations}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Client\-Configurations (
+\begin{DoxyParamCaption}
+\item[{{\bf Client\-Configurations} \&}]{config}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_adce70d928751755256398fc6ba893b2b}
+
+
+Get a \hyperlink{struct_client_configurations}{Client\-Configurations} from the arm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em config} & A \hyperlink{struct_client_configurations}{Client\-Configurations} structure to be filled\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a3e75ba7c7ac4f1b1367d765adce3c482}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Code\-Version@{Get\-Code\-Version}}
+\index{Get\-Code\-Version@{Get\-Code\-Version}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Code\-Version}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Code\-Version (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ int $>$ \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a3e75ba7c7ac4f1b1367d765adce3c482}
+
+
+Get the code version. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A vector to be filled with all version numbers\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a187d35c7938742a5676b1b5a5ea723c2}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Global\-Trajectory\-Info@{Get\-Global\-Trajectory\-Info}}
+\index{Get\-Global\-Trajectory\-Info@{Get\-Global\-Trajectory\-Info}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Global\-Trajectory\-Info}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Global\-Trajectory\-Info (
+\begin{DoxyParamCaption}
+\item[{{\bf Trajectory\-F\-I\-F\-O} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a187d35c7938742a5676b1b5a5ea723c2}
+
+
+Get information about trajectories F\-I\-F\-O. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_trajectory_f_i_f_o}{Trajectory\-F\-I\-F\-O} structure to be filled containing information about the F\-I\-F\-O\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a2c912041b2b6522558346bdc8a2a0561}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Jaco\-Count@{Get\-Jaco\-Count}}
+\index{Get\-Jaco\-Count@{Get\-Jaco\-Count}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Jaco\-Count}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Jaco\-Count (
+\begin{DoxyParamCaption}
+\item[{D\-W\-O\-R\-D \&}]{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a2c912041b2b6522558346bdc8a2a0561}
+
+
+Get the number of connected arms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em A D\-W\-O\-R\-D} & The number connected arms\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a01f4442b0f9ba2c17cff89684078d919}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Position\-Current\-Actuators@{Get\-Position\-Current\-Actuators}}
+\index{Get\-Position\-Current\-Actuators@{Get\-Position\-Current\-Actuators}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Position\-Current\-Actuators}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Position\-Current\-Actuators (
+\begin{DoxyParamCaption}
+\item[{std\-::vector$<$ float $>$ \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a01f4442b0f9ba2c17cff89684078d919}
+
+
+Get current position of actuators (degrees) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A vector to be filled containing position of all activated actuators in degrees\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a02eeb030a207ea5ef4e550d5637041a7}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Sensors\-Info@{Get\-Sensors\-Info}}
+\index{Get\-Sensors\-Info@{Get\-Sensors\-Info}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Sensors\-Info}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Sensors\-Info (
+\begin{DoxyParamCaption}
+\item[{{\bf Sensors\-Info} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a02eeb030a207ea5ef4e550d5637041a7}
+
+
+Get sensors values (voltage(\-V), current(\-A), \mbox{[}X,Y,Z\mbox{]} accelerations(m/s$^\wedge$2 , Actuators temperature(deg. C) and finger temperature(deg. C) ). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_sensors_info}{Sensors\-Info} structure to be filled\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_aa384a644b1a077f0a1c8c9b291ca1a1e}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Get\-Singularity\-Vector@{Get\-Singularity\-Vector}}
+\index{Get\-Singularity\-Vector@{Get\-Singularity\-Vector}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Get\-Singularity\-Vector}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Get\-Singularity\-Vector (
+\begin{DoxyParamCaption}
+\item[{{\bf Singularity\-Vector} \&}]{Response}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_aa384a644b1a077f0a1c8c9b291ca1a1e}
+
+
+\par
+Get information about singularities from the actual hand position. \par
+Singularities concern the hand translation and it's rotation (changement or orientation) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em Response} & A \hyperlink{struct_singularity_vector}{Singularity\-Vector} structure to be filled\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a56b1ab8abe52c3a59b90384dda0db1d8}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Init\-A\-P\-I@{Init\-A\-P\-I}}
+\index{Init\-A\-P\-I@{Init\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Init\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Init\-A\-P\-I (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a56b1ab8abe52c3a59b90384dda0db1d8}
+
+
+Init the A\-P\-I, must be called before any A\-P\-I session. 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a4febe8e7181e613348a679e5d0364f2a}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Restore\-Factory\-Default@{Restore\-Factory\-Default}}
+\index{Restore\-Factory\-Default@{Restore\-Factory\-Default}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Restore\-Factory\-Default}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Restore\-Factory\-Default (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a4febe8e7181e613348a679e5d0364f2a}
+
+
+Restore the arm \hyperlink{struct_client_configurations}{Client\-Configurations} to its factory default settings (Clear all current settings). 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_ab7132ffb74a37fe85655755ab56fc7f2}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Send\-Advance\-Trajectory@{Send\-Advance\-Trajectory}}
+\index{Send\-Advance\-Trajectory@{Send\-Advance\-Trajectory}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Send\-Advance\-Trajectory}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Send\-Advance\-Trajectory (
+\begin{DoxyParamCaption}
+\item[{{\bf Trajectory\-Point}}]{trajectory}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_ab7132ffb74a37fe85655755ab56fc7f2}
+
+
+Send all trajectory infos to the arm. The trajectory is push into the F\-I\-F\-O. If it's a velocity trajectory, refresh the command each 10ms to keep movement. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trajectory} & A \hyperlink{struct_trajectory_point}{Trajectory\-Point} structure to send \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Send\-Basic\-Trajectory@{Send\-Basic\-Trajectory}}
+\index{Send\-Basic\-Trajectory@{Send\-Basic\-Trajectory}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Send\-Basic\-Trajectory}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Send\-Basic\-Trajectory (
+\begin{DoxyParamCaption}
+\item[{{\bf Trajectory\-Point}}]{trajectory}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}
+
+
+Send only essential \hyperlink{struct_trajectory_point}{Trajectory\-Point} info (Positions for moving) to the arm (faster than Send\-Advance\-Trajectory) The trajectory is push into the F\-I\-F\-O. If it's a velocity trajectory, refresh the command each 10ms to keep movement. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trajectory} & A \hyperlink{struct_trajectory_point}{Trajectory\-Point} structure to send \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a32951d1a05740727b65ee5dcd74da679}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Send\-Joystick\-Command@{Send\-Joystick\-Command}}
+\index{Send\-Joystick\-Command@{Send\-Joystick\-Command}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Send\-Joystick\-Command}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Send\-Joystick\-Command (
+\begin{DoxyParamCaption}
+\item[{{\bf Joystick\-Command}}]{joystick\-Command}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a32951d1a05740727b65ee5dcd74da679}
+
+
+Send a virtual joystick command (This has the same behavior than the hard-\/wired joystick). The control has to be refresh in a control loop around each 10ms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{struct_joystick_command}{Joystick\-Command}} & A \hyperlink{struct_joystick_command}{Joystick\-Command} filled structure with desired joystick controller values\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a61b1c7a9b0caaf04de03c92c790ef6e4}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Set\-Actuator\-P\-I\-D@{Set\-Actuator\-P\-I\-D}}
+\index{Set\-Actuator\-P\-I\-D@{Set\-Actuator\-P\-I\-D}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Set\-Actuator\-P\-I\-D}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Set\-Actuator\-P\-I\-D (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{address, }
+\item[{float}]{P, }
+\item[{float}]{I, }
+\item[{float}]{D}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a61b1c7a9b0caaf04de03c92c790ef6e4}
+
+
+Set an actuator P\-I\-D 
+
+
+\begin{DoxyParams}{Parameters}
+{\em address} & Actuator address, from 16 (first actuator) to 21\\
+\hline
+{\em P} & Kp have to be between 0 and 3(high vibrations), tune with increments of 0.\-1\\
+\hline
+{\em I} & Ki have to be around 0.\-01, tune with increments of 0.\-01\\
+\hline
+{\em D} & Kd set it to 0 , useless for now\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a6f4854390d3fb4965145a8c2ae6204f9}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Set\-Angular\-Control@{Set\-Angular\-Control}}
+\index{Set\-Angular\-Control@{Set\-Angular\-Control}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Set\-Angular\-Control}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Set\-Angular\-Control (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a6f4854390d3fb4965145a8c2ae6204f9}
+
+
+Set the joystick (virtual or real one) control to angular mode (moves actuators one by one). 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a080b70f185520a65cb59ec0dc46ab499}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Set\-Cartesian\-Control@{Set\-Cartesian\-Control}}
+\index{Set\-Cartesian\-Control@{Set\-Cartesian\-Control}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Set\-Cartesian\-Control}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Set\-Cartesian\-Control (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a080b70f185520a65cb59ec0dc46ab499}
+
+
+Set the joystick (virtual or real one) control to cartesian (X,Y,Z). 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_aa6fc5e08bcff2e86c911396912aa3047}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Set\-Client\-Configurations@{Set\-Client\-Configurations}}
+\index{Set\-Client\-Configurations@{Set\-Client\-Configurations}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Set\-Client\-Configurations}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Set\-Client\-Configurations (
+\begin{DoxyParamCaption}
+\item[{{\bf Client\-Configurations}}]{config}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_aa6fc5e08bcff2e86c911396912aa3047}
+
+
+Set arm client configuration 
+
+
+\begin{DoxyParams}{Parameters}
+{\em config} & A defined \hyperlink{struct_client_configurations}{Client\-Configurations} structure to send and set\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a52dea13a3d7d82871bcd1a7ba3f4f002}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Start\-Control\-A\-P\-I@{Start\-Control\-A\-P\-I}}
+\index{Start\-Control\-A\-P\-I@{Start\-Control\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Start\-Control\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Start\-Control\-A\-P\-I (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a52dea13a3d7d82871bcd1a7ba3f4f002}
+
+
+Allow the A\-P\-I to control the arm. This function must be called before any control over the arm using A\-P\-I (Ex.\-: \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{Send\-Basic\-Trajectory()} ) If the joystick is used while A\-P\-I control, it's desactivated and need to call the function again to recover control. This method has only effect on the arm movements, other kind of methods work without calling a \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a52dea13a3d7d82871bcd1a7ba3f4f002}{Start\-Control\-A\-P\-I()} before. 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}
+\hypertarget{_kinova_8_a_p_i_8_usb_command_layer_8h_a69954c145802d6a348deb8979cf827ca}{\index{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}!Stop\-Control\-A\-P\-I@{Stop\-Control\-A\-P\-I}}
+\index{Stop\-Control\-A\-P\-I@{Stop\-Control\-A\-P\-I}!Kinova.API.UsbCommandLayer.h@{Kinova.\-A\-P\-I.\-Usb\-Command\-Layer.\-h}}
+\subsubsection[{Stop\-Control\-A\-P\-I}]{\setlength{\rightskip}{0pt plus 5cm}{\bf K\-I\-N\-O\-V\-A\-A\-P\-I\-U\-S\-B\-C\-O\-M\-M\-A\-N\-D\-L\-A\-Y\-E\-R\-\_\-\-A\-P\-I} D\-W\-O\-R\-D Stop\-Control\-A\-P\-I (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{_kinova_8_a_p_i_8_usb_command_layer_8h_a69954c145802d6a348deb8979cf827ca}
+
+
+Disable A\-P\-I control over the arm. Control functions has no more effects on the arm (Ex.\-: \hyperlink{_kinova_8_a_p_i_8_usb_command_layer_8h_a7a00cee4a8177c28e41c3e1f3b3f1864}{Send\-Basic\-Trajectory()} ). 
+
+\begin{DoxyReturn}{Returns}
+Error code
+\end{DoxyReturn}

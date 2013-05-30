@@ -1,0 +1,153 @@
+\hypertarget{struct_client_configurations}{\section{Client\-Configurations Struct Reference}
+\label{struct_client_configurations}\index{Client\-Configurations@{Client\-Configurations}}
+}
+
+
+\par
+Contains all the information about a client configuration \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: If you send this structure, always define all variables, there is no initial values. Otherwise, there will be random information sent to the arm.} \par
+If you don't need a variable, set it to 0 (It's the case in many situations) \par
+Suggestion\-: use the function memset(\&your\-Structure, 0, sizeof(your\-Structure)) from the std lib and set the memory  
+
+
+
+
+{\ttfamily \#include $<$Kinova\-Types.\-h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char \hyperlink{struct_client_configurations_af6f24946f2f285f1075291b4bcca49d6}{Client\-I\-D} \mbox{[}20\mbox{]}
+\item 
+char \hyperlink{struct_client_configurations_a5c4ef3ba3bcbd4f749fa3862a510e2fd}{Client\-Name} \mbox{[}20\mbox{]}
+\item 
+char \hyperlink{struct_client_configurations_a6c2d5ccc0c22fcf0a622ed00cb00b707}{Organization} \mbox{[}20\mbox{]}
+\item 
+char \hyperlink{struct_client_configurations_ae8b80eeae05a07973875ff48a40cf8b4}{Serial} \mbox{[}20\mbox{]}
+\item 
+char \hyperlink{struct_client_configurations_a7fe79480a20eea089303d95b615ae807}{Model} \mbox{[}20\mbox{]}
+\item 
+\hyperlink{_kinova_types_8h_a440ce9d9a9bb4ab164bd4cd018595a28}{A\-R\-M\-\_\-\-L\-A\-T\-E\-R\-A\-L\-I\-T\-Y} \hyperlink{struct_client_configurations_ab1da95ec401d00e7ea9bcff26fbfc0c3}{Laterality}
+\item 
+float \hyperlink{struct_client_configurations_adbd9eed48ee80ee3ccfdb69872c8de27}{Max\-Linear\-Speed}
+\item 
+float \hyperlink{struct_client_configurations_ab7f703d78b05223499d278d9bbb4bebf}{Max\-Angular\-Speed}
+\item 
+float \hyperlink{struct_client_configurations_af79f54907501602fb29a7a301ccd2921}{Max\-Linear\-Acceleration}
+\item 
+float \hyperlink{struct_client_configurations_a564aab9ca96f42161d7969c81bff1331}{Max\-Angular\-Acceleration}
+\item 
+float \hyperlink{struct_client_configurations_a9c68b6f56291d1be104928f7db071579}{Max\-Force}
+\item 
+float \hyperlink{struct_client_configurations_a64e61dc032b95f127cd798a9759818d8}{Sensibility}
+\item 
+float \hyperlink{struct_client_configurations_a05043c8fe2f31f3c216a97edc2411664}{Drinking\-Height}
+\item 
+int \hyperlink{struct_client_configurations_aa41bf35ba1a1dd92f54a30814d42f795}{Complex\-Retract\-Active}
+\item 
+float \hyperlink{struct_client_configurations_ad7d6245d4683b6e31d0438466ea6bb80}{Retracted\-Position\-Angle}
+\item 
+int \hyperlink{struct_client_configurations_a4058c290c5bac0504e511f0f50e5914b}{Retracted\-Position\-Count}
+\item 
+\hyperlink{struct_user_position}{User\-Position} \hyperlink{struct_client_configurations_aaebc19d45af665f9db9322d74021ec22}{Retract\-Positions} \mbox{[}\hyperlink{_kinova_types_8h_a663862aeb115e7f11080df128498e924}{N\-B\-\_\-\-A\-D\-V\-A\-N\-C\-E\-\_\-\-R\-E\-T\-R\-A\-C\-T\-\_\-\-P\-O\-S\-I\-T\-I\-O\-N}\mbox{]}
+\item 
+float \hyperlink{struct_client_configurations_a494c5a866ae44191aafdc66ab69033c3}{Drinking\-Distance}
+\item 
+int \hyperlink{struct_client_configurations_a55cb748c864cd65d8136da316b46df61}{Fingers2and3\-Inverted}
+\item 
+float \hyperlink{struct_client_configurations_a1029013b8d5d2d9ea902ab628c98a7e0}{Drinking\-Lenght}
+\item 
+int \hyperlink{struct_client_configurations_ab0dca6d6259625fafd1c725533337460}{Delete\-Pre\-Programmed\-Positions\-At\-Retract}
+\item 
+int \hyperlink{struct_client_configurations_a16b087061d560a4f185e779352d6e2e3}{Enable\-Flash\-Error\-Log}
+\item 
+int \hyperlink{struct_client_configurations_ae0c7b4d0a3f91271e8138985807be8c6}{Enable\-Flash\-Position\-Log}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\par
+Contains all the information about a client configuration \par
+{\bfseries W\-A\-R\-N\-I\-N\-G\-: If you send this structure, always define all variables, there is no initial values. Otherwise, there will be random information sent to the arm.} \par
+If you don't need a variable, set it to 0 (It's the case in many situations) \par
+Suggestion\-: use the function memset(\&your\-Structure, 0, sizeof(your\-Structure)) from the std lib and set the memory 
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{struct_client_configurations_af6f24946f2f285f1075291b4bcca49d6}{\index{Client\-Configurations@{Client\-Configurations}!Client\-I\-D@{Client\-I\-D}}
+\index{Client\-I\-D@{Client\-I\-D}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Client\-I\-D}]{\setlength{\rightskip}{0pt plus 5cm}char Client\-Configurations\-::\-Client\-I\-D\mbox{[}20\mbox{]}}}\label{struct_client_configurations_af6f24946f2f285f1075291b4bcca49d6}
+Client I\-D, ex\-: M\-A\-X232 \hypertarget{struct_client_configurations_a5c4ef3ba3bcbd4f749fa3862a510e2fd}{\index{Client\-Configurations@{Client\-Configurations}!Client\-Name@{Client\-Name}}
+\index{Client\-Name@{Client\-Name}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Client\-Name}]{\setlength{\rightskip}{0pt plus 5cm}char Client\-Configurations\-::\-Client\-Name\mbox{[}20\mbox{]}}}\label{struct_client_configurations_a5c4ef3ba3bcbd4f749fa3862a510e2fd}
+Client Name, ex\-: Maxime Tremblay \hypertarget{struct_client_configurations_aa41bf35ba1a1dd92f54a30814d42f795}{\index{Client\-Configurations@{Client\-Configurations}!Complex\-Retract\-Active@{Complex\-Retract\-Active}}
+\index{Complex\-Retract\-Active@{Complex\-Retract\-Active}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Complex\-Retract\-Active}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Complex\-Retract\-Active}}\label{struct_client_configurations_aa41bf35ba1a1dd92f54a30814d42f795}
+Is the arm in complex retract mode (a custum position) \hypertarget{struct_client_configurations_ab0dca6d6259625fafd1c725533337460}{\index{Client\-Configurations@{Client\-Configurations}!Delete\-Pre\-Programmed\-Positions\-At\-Retract@{Delete\-Pre\-Programmed\-Positions\-At\-Retract}}
+\index{Delete\-Pre\-Programmed\-Positions\-At\-Retract@{Delete\-Pre\-Programmed\-Positions\-At\-Retract}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Delete\-Pre\-Programmed\-Positions\-At\-Retract}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Delete\-Pre\-Programmed\-Positions\-At\-Retract}}\label{struct_client_configurations_ab0dca6d6259625fafd1c725533337460}
+Are the preprogrammed retract positions deleted \hypertarget{struct_client_configurations_a494c5a866ae44191aafdc66ab69033c3}{\index{Client\-Configurations@{Client\-Configurations}!Drinking\-Distance@{Drinking\-Distance}}
+\index{Drinking\-Distance@{Drinking\-Distance}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Drinking\-Distance}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Drinking\-Distance}}\label{struct_client_configurations_a494c5a866ae44191aafdc66ab69033c3}
+Y distance of the center of rotation from hand center (m), has a purpose for rehab \hypertarget{struct_client_configurations_a05043c8fe2f31f3c216a97edc2411664}{\index{Client\-Configurations@{Client\-Configurations}!Drinking\-Height@{Drinking\-Height}}
+\index{Drinking\-Height@{Drinking\-Height}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Drinking\-Height}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Drinking\-Height}}\label{struct_client_configurations_a05043c8fe2f31f3c216a97edc2411664}
+X distance of the center of rotation from hand center (m), has a purpose for rehab \hypertarget{struct_client_configurations_a1029013b8d5d2d9ea902ab628c98a7e0}{\index{Client\-Configurations@{Client\-Configurations}!Drinking\-Lenght@{Drinking\-Lenght}}
+\index{Drinking\-Lenght@{Drinking\-Lenght}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Drinking\-Lenght}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Drinking\-Lenght}}\label{struct_client_configurations_a1029013b8d5d2d9ea902ab628c98a7e0}
+Z distance of the center of rotation from hand center (m), has a purpose for rehab \hypertarget{struct_client_configurations_a16b087061d560a4f185e779352d6e2e3}{\index{Client\-Configurations@{Client\-Configurations}!Enable\-Flash\-Error\-Log@{Enable\-Flash\-Error\-Log}}
+\index{Enable\-Flash\-Error\-Log@{Enable\-Flash\-Error\-Log}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Enable\-Flash\-Error\-Log}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Enable\-Flash\-Error\-Log}}\label{struct_client_configurations_a16b087061d560a4f185e779352d6e2e3}
+Enable logging of flash memory errors \hypertarget{struct_client_configurations_ae0c7b4d0a3f91271e8138985807be8c6}{\index{Client\-Configurations@{Client\-Configurations}!Enable\-Flash\-Position\-Log@{Enable\-Flash\-Position\-Log}}
+\index{Enable\-Flash\-Position\-Log@{Enable\-Flash\-Position\-Log}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Enable\-Flash\-Position\-Log}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Enable\-Flash\-Position\-Log}}\label{struct_client_configurations_ae0c7b4d0a3f91271e8138985807be8c6}
+Enable logging of positions stored in flash memory \hypertarget{struct_client_configurations_a55cb748c864cd65d8136da316b46df61}{\index{Client\-Configurations@{Client\-Configurations}!Fingers2and3\-Inverted@{Fingers2and3\-Inverted}}
+\index{Fingers2and3\-Inverted@{Fingers2and3\-Inverted}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Fingers2and3\-Inverted}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Fingers2and3\-Inverted}}\label{struct_client_configurations_a55cb748c864cd65d8136da316b46df61}
+Is the fingers 2 and 3 control is inverted for left handed mode \hypertarget{struct_client_configurations_ab1da95ec401d00e7ea9bcff26fbfc0c3}{\index{Client\-Configurations@{Client\-Configurations}!Laterality@{Laterality}}
+\index{Laterality@{Laterality}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Laterality}]{\setlength{\rightskip}{0pt plus 5cm}{\bf A\-R\-M\-\_\-\-L\-A\-T\-E\-R\-A\-L\-I\-T\-Y} Client\-Configurations\-::\-Laterality}}\label{struct_client_configurations_ab1da95ec401d00e7ea9bcff26fbfc0c3}
+For R\-E\-H\-A\-B\-: Laterality of the arm\-: can be right handed or left handed \hypertarget{struct_client_configurations_a564aab9ca96f42161d7969c81bff1331}{\index{Client\-Configurations@{Client\-Configurations}!Max\-Angular\-Acceleration@{Max\-Angular\-Acceleration}}
+\index{Max\-Angular\-Acceleration@{Max\-Angular\-Acceleration}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Max\-Angular\-Acceleration}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Max\-Angular\-Acceleration}}\label{struct_client_configurations_a564aab9ca96f42161d7969c81bff1331}
+Absolute arm angular acceleration (rad/s$^\wedge$2), range 0 to 2 \hypertarget{struct_client_configurations_ab7f703d78b05223499d278d9bbb4bebf}{\index{Client\-Configurations@{Client\-Configurations}!Max\-Angular\-Speed@{Max\-Angular\-Speed}}
+\index{Max\-Angular\-Speed@{Max\-Angular\-Speed}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Max\-Angular\-Speed}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Max\-Angular\-Speed}}\label{struct_client_configurations_ab7f703d78b05223499d278d9bbb4bebf}
+Absolute arm angular speed (rad/s) (theta\-X, theta\-Y and theta\-Z), range 0 to 0.\-6 \hypertarget{struct_client_configurations_a9c68b6f56291d1be104928f7db071579}{\index{Client\-Configurations@{Client\-Configurations}!Max\-Force@{Max\-Force}}
+\index{Max\-Force@{Max\-Force}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Max\-Force}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Max\-Force}}\label{struct_client_configurations_a9c68b6f56291d1be104928f7db071579}
+\begin{DoxyVerb}  Absolute linear force (X,Y,Z), 0 to 20N. 
+\end{DoxyVerb}
+ T\-H\-E L\-I\-N\-E\-A\-R F\-O\-R\-C\-E I\-S R\-E\-A\-L\-L\-Y A\-P\-P\-R\-O\-X\-I\-M\-A\-T\-I\-V\-E. \hypertarget{struct_client_configurations_af79f54907501602fb29a7a301ccd2921}{\index{Client\-Configurations@{Client\-Configurations}!Max\-Linear\-Acceleration@{Max\-Linear\-Acceleration}}
+\index{Max\-Linear\-Acceleration@{Max\-Linear\-Acceleration}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Max\-Linear\-Acceleration}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Max\-Linear\-Acceleration}}\label{struct_client_configurations_af79f54907501602fb29a7a301ccd2921}
+Absolute arm linear acceleration (m/s$^\wedge$2), range 0 to 0.\-8 \hypertarget{struct_client_configurations_adbd9eed48ee80ee3ccfdb69872c8de27}{\index{Client\-Configurations@{Client\-Configurations}!Max\-Linear\-Speed@{Max\-Linear\-Speed}}
+\index{Max\-Linear\-Speed@{Max\-Linear\-Speed}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Max\-Linear\-Speed}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Max\-Linear\-Speed}}\label{struct_client_configurations_adbd9eed48ee80ee3ccfdb69872c8de27}
+Absolute arm linear speed (m/s), range 0 to 0.\-15 \hypertarget{struct_client_configurations_a7fe79480a20eea089303d95b615ae807}{\index{Client\-Configurations@{Client\-Configurations}!Model@{Model}}
+\index{Model@{Model}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Model}]{\setlength{\rightskip}{0pt plus 5cm}char Client\-Configurations\-::\-Model\mbox{[}20\mbox{]}}}\label{struct_client_configurations_a7fe79480a20eea089303d95b615ae807}
+Arm model, ex\-: 3.\-0.\-1 \hypertarget{struct_client_configurations_a6c2d5ccc0c22fcf0a622ed00cb00b707}{\index{Client\-Configurations@{Client\-Configurations}!Organization@{Organization}}
+\index{Organization@{Organization}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Organization}]{\setlength{\rightskip}{0pt plus 5cm}char Client\-Configurations\-::\-Organization\mbox{[}20\mbox{]}}}\label{struct_client_configurations_a6c2d5ccc0c22fcf0a622ed00cb00b707}
+Organization, ex\-: Kinova \hypertarget{struct_client_configurations_ad7d6245d4683b6e31d0438466ea6bb80}{\index{Client\-Configurations@{Client\-Configurations}!Retracted\-Position\-Angle@{Retracted\-Position\-Angle}}
+\index{Retracted\-Position\-Angle@{Retracted\-Position\-Angle}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Retracted\-Position\-Angle}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Retracted\-Position\-Angle}}\label{struct_client_configurations_ad7d6245d4683b6e31d0438466ea6bb80}
+Angle of the joint 2 while using normal retract \hypertarget{struct_client_configurations_a4058c290c5bac0504e511f0f50e5914b}{\index{Client\-Configurations@{Client\-Configurations}!Retracted\-Position\-Count@{Retracted\-Position\-Count}}
+\index{Retracted\-Position\-Count@{Retracted\-Position\-Count}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Retracted\-Position\-Count}]{\setlength{\rightskip}{0pt plus 5cm}int Client\-Configurations\-::\-Retracted\-Position\-Count}}\label{struct_client_configurations_a4058c290c5bac0504e511f0f50e5914b}
+Number of recorded retract positions \hypertarget{struct_client_configurations_aaebc19d45af665f9db9322d74021ec22}{\index{Client\-Configurations@{Client\-Configurations}!Retract\-Positions@{Retract\-Positions}}
+\index{Retract\-Positions@{Retract\-Positions}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Retract\-Positions}]{\setlength{\rightskip}{0pt plus 5cm}{\bf User\-Position} Client\-Configurations\-::\-Retract\-Positions\mbox{[}{\bf N\-B\-\_\-\-A\-D\-V\-A\-N\-C\-E\-\_\-\-R\-E\-T\-R\-A\-C\-T\-\_\-\-P\-O\-S\-I\-T\-I\-O\-N}\mbox{]}}}\label{struct_client_configurations_aaebc19d45af665f9db9322d74021ec22}
+Array of recorded retract positions \hypertarget{struct_client_configurations_a64e61dc032b95f127cd798a9759818d8}{\index{Client\-Configurations@{Client\-Configurations}!Sensibility@{Sensibility}}
+\index{Sensibility@{Sensibility}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Sensibility}]{\setlength{\rightskip}{0pt plus 5cm}float Client\-Configurations\-::\-Sensibility}}\label{struct_client_configurations_a64e61dc032b95f127cd798a9759818d8}
+Sensibility of the joystick(\%)(virtual or hard-\/wired), range 0 to 100 \hypertarget{struct_client_configurations_ae8b80eeae05a07973875ff48a40cf8b4}{\index{Client\-Configurations@{Client\-Configurations}!Serial@{Serial}}
+\index{Serial@{Serial}!ClientConfigurations@{Client\-Configurations}}
+\subsubsection[{Serial}]{\setlength{\rightskip}{0pt plus 5cm}char Client\-Configurations\-::\-Serial\mbox{[}20\mbox{]}}}\label{struct_client_configurations_ae8b80eeae05a07973875ff48a40cf8b4}
+Serial number, ex\-: P\-J 0000 0000 0000 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{_kinova_types_8h}{Kinova\-Types.\-h}\end{DoxyCompactItemize}

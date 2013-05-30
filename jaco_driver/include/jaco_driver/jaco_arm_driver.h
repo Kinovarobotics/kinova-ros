@@ -23,7 +23,7 @@
 #include "jaco_driver/joint_velocity.h"
 #include "jaco_driver/finger_position.h"
 #include "jaco_driver/joint_angles.h"
-#include "jaco_driver/software_pause.h"
+#include <robot_base_msgs/SoftwareStop.h>
 
 #include <time.h>
 
@@ -60,7 +60,7 @@ namespace jaco
 			void BroadCastAngles(void);
 			void BroadCastPosition(void);
 			void BroadCastFingerPosition(void);
-			void SoftwarePauseMSG(const jaco_driver::software_pauseConstPtr& software_pause);
+			void SoftwarePauseMSG(const robot_base_msgs::SoftwareStopConstPtr& software_pause);
 
 		private:
 			jaco::JacoAPI* API;
