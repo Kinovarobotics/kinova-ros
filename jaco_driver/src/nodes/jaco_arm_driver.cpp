@@ -901,26 +901,26 @@ void JacoArm::BroadCastPosition(void)
 
 	/* The following code is for testing */
 	/*remove this */
-
-	try
-	{
-
-		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
-				current_position.header.stamp, ros::Duration(1.0));
-
-		geometry_msgs::PoseStamped current_position_mount;
-
-		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
-
-		ToolPosition_pub.publish(current_position_mount);
-
-	} catch (std::exception& e)
-	{
-		ROS_ERROR_STREAM_THROTTLE(1, e.what());
-	}
+//
+//	try
+//	{
+//
+//		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
+//				current_position.header.stamp, ros::Duration(1.0));
+//
+//		geometry_msgs::PoseStamped current_position_mount;
+//
+//		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+//
+//		ToolPosition_pub.publish(current_position_mount);
+//
+//	} catch (std::exception& e)
+//	{
+//		ROS_ERROR_STREAM_THROTTLE(1, e.what());
+//	}
 	/* to here */
 
-	//ToolPosition_pub.publish(current_position);
+	ToolPosition_pub.publish(current_position);
 }
 
 void JacoArm::BroadCastFingerPosition(void)
