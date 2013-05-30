@@ -878,6 +878,7 @@ void JacoArm::BroadCastPosition(void)
 {
 	CartesianPosition position;
 	geometry_msgs::PoseStamped current_position;
+	ROS_INFO("prior x = %f, y = %f, z = %f",position.Coordinates.X,position.Coordinates.Y,position.Coordinates.Z);
 
 	memset(&position, 0, sizeof(position)); //zero structure
 
