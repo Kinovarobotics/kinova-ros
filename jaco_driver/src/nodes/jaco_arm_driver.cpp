@@ -883,8 +883,13 @@ void JacoArm::BroadCastPosition(void)
 
 	API->GetCartesianPosition(position); //Query arm for position
 
+
+
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
+0
+	ROS_INFO("x = %f, y = %f, z = %f",position.Coordinates.X,position.Coordinates.Y,position.Coordinates.Z);
+
 
 	//Broadcast position
 
@@ -901,7 +906,7 @@ void JacoArm::BroadCastPosition(void)
 
 	/* The following code is for testing */
 	/*remove this */
-//
+
 //	try
 //	{
 //
