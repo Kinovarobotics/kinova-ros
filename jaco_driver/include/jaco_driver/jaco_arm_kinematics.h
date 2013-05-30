@@ -54,7 +54,7 @@ public:
 
 	/* Robot Length Values (Meters) */
 	static inline double BaseToJ1(void) {
-		return 0.1370; 			//Base to J1 (Meters)
+		return 0.1370+0.0174; 			//Base to J1 (Meters)
 	}
 
 	/* Robot Length Values (Meters) */

@@ -23,48 +23,56 @@ using namespace jaco;
 JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 {
 
-	std::string ArmPose("ArmPose"); ///String containing the topic name for Cartesian commands
-	std::string JointVelocity("JointVelocity"); ///String containing the topic name for JointVelocity
-	std::string JointAngles("JointAngles"); ///String containing the topic name for JointAngles
-	std::string CartesianVelocity("CartesianVelocity"); ///String containing the topic name for CartesianVelocity
-	std::string ToolPosition("ToolPosition"); ///String containing the topic name for ToolPosition
-	std::string SetFingerPosition("SetFingerPosition"); ///String containing the topic name for SetFingerPosition
-	std::string FingerPosition("FingerPosition"); ///String containing the topic name for FingerPosition
+	std::string arm_pose_topic("arm_pose_topic"); ///String containing the topic name for Cartesian commands
+	std::string joint_velocity_topic("joint_velocity_topic"); ///String containing the topic name for JointVelocity
+	std::string joint_angles_topic("joint_angles_topic"); ///String containing the topic name for JointAngles
+	std::string cartesian_velocity_topic("cartesian_velocity_topic"); ///String containing the topic name for CartesianVelocity
+	std::string tool_position_topic("tool_position_topic"); ///String containing the topic name for ToolPosition
+	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
+	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
+	std::string software_pause_topic("software_pause_topic"); ///String containing the topic name for SoftwarePause
 
 	//Grab the topic parameters, print warnings if using default values
-	if (!param_nh.getParam(ArmPose, ArmPose))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Jaco Position Topic <%s>!", ArmPose.c_str(),
-				ArmPose.c_str());
-	if (!param_nh.getParam(JointVelocity, JointVelocity))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Velocity Topic <%s>!", JointVelocity.c_str(),
-				JointVelocity.c_str());
-	if (!param_nh.getParam(JointAngles, JointAngles))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Angles Topic <%s>!", JointAngles.c_str(),
-				JointAngles.c_str());
-	if (!param_nh.getParam(CartesianVelocity, CartesianVelocity))
+	if (!param_nh.getParam(arm_pose_topic, arm_pose_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Jaco Position Topic <%s>!", arm_pose_topic.c_str(),
+				arm_pose_topic.c_str());
+	if (!param_nh.getParam(joint_velocity_topic, joint_velocity_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Velocity Topic <%s>!",
+				joint_velocity_topic.c_str(), joint_velocity_topic.c_str());
+	if (!param_nh.getParam(joint_angles_topic, joint_angles_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Angles Topic <%s>!", joint_angles_topic.c_str(),
+				joint_angles_topic.c_str());
+	if (!param_nh.getParam(cartesian_velocity_topic, cartesian_velocity_topic))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Cartesian Velocity Topic <%s>!",
-				CartesianVelocity.c_str(), CartesianVelocity.c_str());
-	if (!param_nh.getParam(ToolPosition, ToolPosition))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Tool Position Topic <%s>!", ToolPosition.c_str(),
-				ToolPosition.c_str());
-	if (!param_nh.getParam(SetFingerPosition, SetFingerPosition))
+				cartesian_velocity_topic.c_str(), cartesian_velocity_topic.c_str());
+	if (!param_nh.getParam(tool_position_topic, tool_position_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Tool Position Topic <%s>!",
+				tool_position_topic.c_str(), tool_position_topic.c_str());
+	if (!param_nh.getParam(set_finger_position_topic, set_finger_position_topic))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Set Finger Position Topic <%s>!",
-				SetFingerPosition.c_str(), SetFingerPosition.c_str());
-	if (!param_nh.getParam(FingerPosition, FingerPosition))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Finger Position Topic <%s>!", FingerPosition.c_str(),
-				FingerPosition.c_str());
+				set_finger_position_topic.c_str(), set_finger_position_topic.c_str());
+	if (!param_nh.getParam(finger_position_topic, finger_position_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Finger Position Topic <%s>!",
+				finger_position_topic.c_str(), finger_position_topic.c_str());
+	if (!param_nh.getParam(software_pause_topic, software_pause_topic))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Software Pause Topic <%s>!",
+				software_pause_topic.c_str(), software_pause_topic.c_str());
 
 //Print out received topics
-	ROS_DEBUG("Got Jaco Position Topic Name: <%s>", ArmPose.c_str());
-	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", JointVelocity.c_str());
-	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", JointAngles.c_str());
-	ROS_DEBUG("Got Cartesian Velocity Topic Name: <%s>", CartesianVelocity.c_str());
-	ROS_DEBUG("Got Tool Position Topic Name: <%s>", ToolPosition.c_str());
-	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", SetFingerPosition.c_str());
-	ROS_DEBUG("Got Finger Position Topic Name: <%s>", FingerPosition.c_str());
+	ROS_DEBUG("Got Jaco Position Topic Name: <%s>", arm_pose_topic.c_str());
+	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", joint_velocity_topic.c_str());
+	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles_topic.c_str());
+	ROS_DEBUG("Got Cartesian Velocity Topic Name: <%s>", cartesian_velocity_topic.c_str());
+	ROS_DEBUG("Got Tool Position Topic Name: <%s>", tool_position_topic.c_str());
+	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
+	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
+	ROS_DEBUG("Got SoftwarePause Topic Name: <%s>", software_pause_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
+	this->software_pause = false;
+
+	this->SoftwarePause_sub = nh.subscribe(software_pause_topic, 1, &JacoArm::SoftwarePauseMSG, this);
 
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
@@ -87,7 +95,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	} else
 	{
 		ROS_INFO("API Initialized Successfully!");
-
 	}
 
 	tf::Transform transform;
@@ -96,9 +103,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	API->EraseAllTrajectories();
 	API->StopControlAPI();
 	API->StartControlAPI();
-	JoystickCommand home_command;
-	home_command.ButtonValue[3] = 1;
-
 
 	/* Homing the Arm */
 	double start_secs;
@@ -114,11 +118,10 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 		start_secs = (double) time(NULL);
 		current_sec = (double) time(NULL);
 	}
-
-	API->SendJoystickCommand(home_command);
+	JoystickCommand home_command;
 
 	//while we have not timed out
-	while ((current_sec - start_secs) < 15)
+	while ((current_sec - start_secs) < 20)
 	{
 		//If ros is still running use rostime, else use system time
 		if (ros::ok())
@@ -129,10 +132,19 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 			current_sec = (double) time(NULL);
 		}
 
+		if (software_pause != true)
+		{
+			home_command.ButtonValue[3] = 1;
+			API->SendJoystickCommand(home_command);
+		} else
+		{
+
+		}
+		ros::spinOnce();
+
 	}
 	home_command.ButtonValue[3] = 0;
 	API->SendJoystickCommand(home_command);
-
 
 	/* Homing the Fingers */
 	API->StartControlAPI();
@@ -156,16 +168,16 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	PrintConfig(configuration);
 
 	/* Set up Publishers */
-	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(JointAngles, 2);
-	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(ToolPosition, 2);
-	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(FingerPosition, 2);
+	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
+	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
+	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(finger_position_topic, 2);
 
 	/* Set up Subscribers*/
-	this->ArmPose_sub = nh.subscribe(ArmPose, 1, &JacoArm::PoseMSG_Sub, this);
-	this->JointVelocity_sub = nh.subscribe(JointVelocity, 1, &JacoArm::VelocityMSG_Sub, this);
-	this->CartesianVelocity_sub = nh.subscribe(CartesianVelocity, 1, &JacoArm::CartesianVelocityMSG_Sub,
+	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
+	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
+	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG,
 			this);
-	this->SetFingerPosition_sub = nh.subscribe(SetFingerPosition, 1, &JacoArm::SetFingerPositionMSG_Sub,
+	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
 			this);
 
 	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
@@ -176,6 +188,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
 	cartesian_vel_timer.stop();
 	cartesian_vel_timer_flag = false;
+
 	BroadCastAngles();
 
 }
@@ -743,7 +756,7 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 
 }
 
-void JacoArm::SetFingerPositionMSG_Sub(const jaco_driver::finger_positionConstPtr& finger_pos)
+void JacoArm::SetFingerPositionMSG(const jaco_driver::finger_positionConstPtr& finger_pos)
 {
 	FingersPosition Finger_Position;
 	memset(&Finger_Position, 0, sizeof(Finger_Position)); //zero structure
@@ -755,7 +768,7 @@ void JacoArm::SetFingerPositionMSG_Sub(const jaco_driver::finger_positionConstPt
 
 }
 
-void JacoArm::VelocityMSG_Sub(const jaco_driver::joint_velocityConstPtr& joint_vel)
+void JacoArm::VelocityMSG(const jaco_driver::joint_velocityConstPtr& joint_vel)
 {
 
 	joint_velocities.Actuator1 = joint_vel->Velocity_J1;
@@ -774,7 +787,14 @@ void JacoArm::VelocityMSG_Sub(const jaco_driver::joint_velocityConstPtr& joint_v
 
 }
 
-void JacoArm::CartesianVelocityMSG_Sub(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
+void JacoArm::SoftwarePauseMSG(const jaco_driver::software_pauseConstPtr& software_pause)
+{
+
+//TODO add software pause
+
+}
+
+void JacoArm::CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
 {
 
 	cartesian_velocities.X = cartesian_vel->twist.linear.x;
@@ -791,7 +811,6 @@ void JacoArm::CartesianVelocityMSG_Sub(const geometry_msgs::TwistStampedConstPtr
 		cartesian_vel_timer.start();
 		cartesian_vel_timer_flag = true;
 	}
-
 
 }
 void JacoArm::CartesianVelTimer(const ros::TimerEvent&)
@@ -882,26 +901,26 @@ void JacoArm::BroadCastPosition(void)
 
 	/* The following code is for testing */
 	/*remove this */
-//
-//	try
-//	{
-//
-//		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
-//				current_position.header.stamp, ros::Duration(1.0));
-//
-//		geometry_msgs::PoseStamped current_position_mount;
-//
-//		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
-//
-//		ToolPosition_pub.publish(current_position_mount);
-//
-//	} catch (std::exception& e)
-//	{
-//		ROS_ERROR_STREAM_THROTTLE(1, e.what());
-//	}
+
+	try
+	{
+
+		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
+				current_position.header.stamp, ros::Duration(1.0));
+
+		geometry_msgs::PoseStamped current_position_mount;
+
+		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+
+		ToolPosition_pub.publish(current_position_mount);
+
+	} catch (std::exception& e)
+	{
+		ROS_ERROR_STREAM_THROTTLE(1, e.what());
+	}
 	/* to here */
 
-ToolPosition_pub.publish(current_position);
+	//ToolPosition_pub.publish(current_position);
 }
 
 void JacoArm::BroadCastFingerPosition(void)

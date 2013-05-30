@@ -23,78 +23,80 @@
 #include "jaco_driver/joint_velocity.h"
 #include "jaco_driver/finger_position.h"
 #include "jaco_driver/joint_angles.h"
+#include "jaco_driver/software_pause.h"
+
 #include <time.h>
 
+namespace jaco
+{
 
-namespace jaco {
+	class JacoArm
+	{
+		public:
+			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
+			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
+			void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
+			void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
+			void SetVelocities(AngularInfo joint_vel);
+			void SetCartesianVelocities(CartesianInfo velocities);
+			void GetAngles(AngularInfo &angles);
+			void GetPosition(CartesianInfo &position);
+			void GetFingers(FingersPosition &fingers);
+			void GetConfig(ClientConfigurations &config);
+			void PrintAngles(AngularInfo angles);
+			void PrintPosition(CartesianInfo position);
+			void PrintFingers(FingersPosition fingers);
+			void PrintConfig(ClientConfigurations config);
+			void GoHome(void);
+			void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& position);
+			void CalculatePostion(void);
+			void PositionTimer(const ros::TimerEvent&);
+			void CartesianVelTimer(const ros::TimerEvent&);
+			void JointVelTimer(const ros::TimerEvent&);
+			void StatusTimer(const ros::TimerEvent&);
+			void VelocityMSG(const jaco_driver::joint_velocityConstPtr& joint_vel);
+			void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
+			void SetFingerPositionMSG(const jaco_driver::finger_positionConstPtr& finger_pos);
+			void BroadCastAngles(void);
+			void BroadCastPosition(void);
+			void BroadCastFingerPosition(void);
+			void SoftwarePauseMSG(const jaco_driver::software_pauseConstPtr& software_pause);
 
-class JacoArm {
-public:
-	JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
-	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
-	void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void GetAngles(AngularInfo &angles);
-	void GetPosition(CartesianInfo &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(AngularInfo angles);
-	void PrintPosition(CartesianInfo position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void GoHome(void);
-	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& position);
-	void CalculatePostion(void);
-	void PositionTimer(const ros::TimerEvent&);
-	void CartesianVelTimer(const ros::TimerEvent&);
-	void JointVelTimer(const ros::TimerEvent&);
-	void StatusTimer(const ros::TimerEvent&);
-	void VelocityMSG_Sub(const jaco_driver::joint_velocityConstPtr& joint_vel);
-	void CartesianVelocityMSG_Sub(	const geometry_msgs::TwistStampedConstPtr&  cartesian_vel);
-	void SetFingerPositionMSG_Sub(const jaco_driver::finger_positionConstPtr& finger_pos);
-	void BroadCastAngles(void);
-	void BroadCastPosition(void);
-	void BroadCastFingerPosition(void);
-private:
-	jaco::JacoAPI* API;
-	/* Subscribers */
-	ros::Subscriber ArmPose_sub;
-	ros::Subscriber JointVelocity_sub;
-	ros::Subscriber CartesianVelocity_sub;
-	ros::Subscriber SetFingerPosition_sub;
+		private:
+			jaco::JacoAPI* API;
+			/* Subscribers */
+			ros::Subscriber ArmPose_sub;
+			ros::Subscriber JointVelocity_sub;
+			ros::Subscriber CartesianVelocity_sub;
+			ros::Subscriber SetFingerPosition_sub;
+			ros::Subscriber SoftwarePause_sub;
+			/* Publishers */
+			ros::Publisher JointAngles_pub;
+			ros::Publisher ToolPosition_pub;
+			ros::Publisher FingerPosition_pub;
 
-	/* Publishers */
-	ros::Publisher JointAngles_pub;
-	ros::Publisher ToolPosition_pub;
-	ros::Publisher FingerPosition_pub;
+			ros::Timer status_timer;
+			ros::Timer cartesian_vel_timer;
+			ros::Timer joint_vel_timer;
+			bool cartesian_vel_timer_flag;
+			bool joint_vel_timer_flag;
 
-	ros::Timer status_timer;
-	ros::Timer cartesian_vel_timer;
-	ros::Timer joint_vel_timer;
-	bool cartesian_vel_timer_flag;
-	bool joint_vel_timer_flag;
+			AngularInfo joint_velocities;
+			CartesianInfo cartesian_velocities;
 
+			ros::Time last_joint_update;
+			ros::Time last_cartesian_update;
 
-	AngularInfo joint_velocities;
-	CartesianInfo cartesian_velocities;
+			tf::TransformListener listener;
 
+			ros::Time last_update_time;
+			ros::Duration update_time;
 
-ros::Time last_joint_update;
-ros::Time last_cartesian_update;
+			/* Remove this */
+			tf::TransformListener tf_listener;
 
-
-
-	tf::TransformListener listener;
-
-	ros::Time last_update_time;
-	ros::Duration update_time;
-
-	/* Remove this */
-	tf::TransformListener tf_listener;
-
-};
+			bool software_pause;
+	};
 
 }
 

@@ -22,12 +22,14 @@ namespace jaco {
 
 class JacoTFTree {
 public:
-	JacoTFTree(ros::NodeHandle nh, std::string JointAngles);
+	JacoTFTree(ros::NodeHandle nh, ros::NodeHandle param_nh);
 
 private:
 	void JointAnglesMSG(const jaco_driver::joint_anglesConstPtr& joint_angles);
 	void CalculatePostion(void);
 	void TFUpdateTimer(const ros::TimerEvent&);
+
+
 	jaco::JacoKinematics kinematics;
 	jaco_driver::joint_angles current_angles;
 	ros::Time last_angle_update;
