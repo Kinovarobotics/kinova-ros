@@ -887,7 +887,7 @@ void JacoArm::BroadCastPosition(void)
 
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
-0
+
 	ROS_INFO("x = %f, y = %f, z = %f",position.Coordinates.X,position.Coordinates.Y,position.Coordinates.Z);
 
 
