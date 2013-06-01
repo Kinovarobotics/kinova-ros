@@ -83,6 +83,9 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	int api_result = 0; //stores result from the API
 	ros::Duration(5.0).sleep();
 
+
+	api_result = (API->InitAPI)();
+	API->CloseAPI();
 	api_result = (API->InitAPI)();
 
 	if (api_result != 1)
@@ -97,101 +100,210 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	{
 		ROS_INFO("API Initialized Successfully!");
 	}
-	ros::Duration(2.0).sleep();
 
-	tf::Transform transform;
-	tf::Quaternion rotation_q(0, 0, 0, 0);
-	tf::Vector3 translation_v(0, 0, 0);
-	API->EraseAllTrajectories();
-	API->StopControlAPI();
-
-	API->StartControlAPI();
-
-	ros::Duration(2.0).sleep();
-
-	if (!HomeState())
-	{
-		ros::Duration(2.0).sleep();
-
-		ROS_INFO("Homing Arm...");
-
-		/* Homing the Arm */
-		double start_secs;
-		double current_sec;
-
-		//If ros is still running use rostime, else use system time
-		if (ros::ok())
-		{
-			start_secs = ros::Time::now().toSec();
-			current_sec = ros::Time::now().toSec();
-		} else
-		{
-			start_secs = (double) time(NULL);
-			current_sec = (double) time(NULL);
-		}
-		JoystickCommand home_command;
-		memset(&home_command, 0, sizeof(home_command)); //zero structure
-		for (int i = 0; i < 16; i++)
-		{
-			home_command.ButtonValue[i] = 0;
-		}
-
-		home_command.InclineForwardBackward = 0;
-		home_command.InclineLeftRight = 0;
-		home_command.MoveForwardBackward = 0;
-		home_command.MoveLeftRight = 0;
-		home_command.PushPull = 0;
-		home_command.Rotate = 0;
-
-		home_command.ButtonValue[2] = 1;
-		home_command.ButtonValue[3] = 1;
-
-					API->SendJoystickCommand(home_command);
-					ROS_INFO("Sending Command");
-
-			//while we have not timed out
-			while ((current_sec - start_secs) < 20)
-			{
-				//If ros is still running use rostime, else use system time
-				if (ros::ok())
-				{
-					current_sec = ros::Time::now().toSec();
-				} else
-				{
-					current_sec = (double) time(NULL);
-				}
-
-				if (software_pause != true)
-				{
-					//ros::Duration(1.0).sleep();
+	/* Set Default Configuration */
 
 
+	API->RestoreFactoryDefault();
+	ClientConfigurations configuration;
+	GetConfig(configuration);
+	//configuration.RetractedPositionCount = 0;
+	//configuration.MaxForce = 5;
 
-					ros::Duration(1.0).sleep();
+	SetConfig(configuration);
 
+	GetConfig(configuration);
+	PrintConfig(configuration);
 
-				} else
-				{
-//TODO Pause
-				}
-				ros::spinOnce();
+		 while (!HomeState() && ros::ok())
+		{API->EraseAllTrajectories();
+		API->StopControlAPI();
 
-			}
-			home_command.ButtonValue[3] = 0;
+				API->StartControlAPI();
 
+			JoystickCommand home_command;
+			memset(&home_command, 0, sizeof(home_command)); //zero structure
+
+			AngularPosition Old_Jaco_Angles;
+			AngularPosition Jaco_Angles;
+			ROS_INFO("Checking Homing State...");
+
+			memset(&Old_Jaco_Angles, 0, sizeof(Old_Jaco_Angles)); //zero structure
+			API->GetAngularPosition(Old_Jaco_Angles);
+
+			home_command.ButtonValue[2] = 1;
+			API->SendJoystickCommand(home_command);
+			ROS_INFO("On");
+			ros::Duration(2.0).sleep();
 			home_command.ButtonValue[2] = 0;
 			API->SendJoystickCommand(home_command);
+			ROS_INFO("Off");
 
-	} else
-	{
-		ROS_INFO("Arm already in Home State.");
-	}
-	ROS_INFO("Homing Fingers...");
+			memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
+			API->GetAngularPosition(Jaco_Angles);
+
+			if ((Jaco_Angles.Actuators.Actuator1 <= (Old_Jaco_Angles.Actuators.Actuator1 + 1))
+					&& (Jaco_Angles.Actuators.Actuator1 >= (Old_Jaco_Angles.Actuators.Actuator1 - 1))
+					&& (Jaco_Angles.Actuators.Actuator2 <= (Old_Jaco_Angles.Actuators.Actuator2 + 1))
+					&& (Jaco_Angles.Actuators.Actuator2 >= (Old_Jaco_Angles.Actuators.Actuator2 - 1))
+					&& (Jaco_Angles.Actuators.Actuator3 <= (Old_Jaco_Angles.Actuators.Actuator3 + 1))
+					&& (Jaco_Angles.Actuators.Actuator3 >= (Old_Jaco_Angles.Actuators.Actuator3 - 1))
+					&& (Jaco_Angles.Actuators.Actuator4 <= (Old_Jaco_Angles.Actuators.Actuator4 + 1))
+					&& (Jaco_Angles.Actuators.Actuator4 >= (Old_Jaco_Angles.Actuators.Actuator4 - 1))
+					&& (Jaco_Angles.Actuators.Actuator5 <= (Old_Jaco_Angles.Actuators.Actuator5 + 1))
+					&& (Jaco_Angles.Actuators.Actuator5 >= (Old_Jaco_Angles.Actuators.Actuator5 - 1))
+					&& (Jaco_Angles.Actuators.Actuator6 <= (Old_Jaco_Angles.Actuators.Actuator6 + 1))
+					&& (Jaco_Angles.Actuators.Actuator6 >= (Old_Jaco_Angles.Actuators.Actuator6 - 1)))
+			{
+				API->StartControlAPI();
+
+				home_command.ButtonValue[0] = 1;
+				API->SendJoystickCommand(home_command);
+				ROS_INFO("On");
+//				ros::Duration(1.0).sleep();
+//				home_command.ButtonValue[0] = 0;
+//				API->SendJoystickCommand(home_command);
+//				ROS_INFO("Off");
+
+			}
+
+			home_command.ButtonValue[2] = 1;
+			API->SendJoystickCommand(home_command);
+			ROS_INFO("On");
+			ros::Duration(15.0).sleep();
+			home_command.ButtonValue[2] = 0;
+			API->SendJoystickCommand(home_command);
+			ROS_INFO("Off");
+
+			if (!HomeState())
+			{
+				API->StartControlAPI();
+
+				home_command.ButtonValue[2] = 1;
+				API->SendJoystickCommand(home_command);
+				ROS_INFO("On");
+				ros::Duration(15.0).sleep();
+				home_command.ButtonValue[2] = 0;
+				API->SendJoystickCommand(home_command);
+				ROS_INFO("Off");
+			}
+
+		}
+
+
+//
+//		for (int i = 0; i < 16; i++)
+//				{
+//			for(int x=0;x<1;x++)
+//			{
+//			ROS_INFO("Trying %d...",i);
+//					home_command.ButtonValue[i] = 1;
+//										API->SendJoystickCommand(home_command);
+//										ROS_INFO("On");
+//
+//					ros::Duration(2.0).sleep();
+//					home_command.ButtonValue[i] = 0;
+//					API->SendJoystickCommand(home_command);
+//					ROS_INFO("Off");
+//
+//					ros::Duration(2.0).sleep();
+//			}
+//				}
+
+//	tf::Transform transform;
+//	tf::Quaternion rotation_q(0, 0, 0, 0);
+//	tf::Vector3 translation_v(0, 0, 0);
+//	//API->EraseAllTrajectories();
+//
+//	API->StartControlAPI();
+//
+//	ros::Duration(2.0).sleep();
+//
+//	if (!HomeState())
+//	{
+//		ros::Duration(2.0).sleep();
+//
+//		ROS_INFO("Homing Arm...");
+//
+//		/* Homing the Arm */
+//		double start_secs;
+//		double current_sec;
+//
+//		//If ros is still running use rostime, else use system time
+//		if (ros::ok())
+//		{
+//			start_secs = ros::Time::now().toSec();
+//			current_sec = ros::Time::now().toSec();
+//		} else
+//		{
+//			start_secs = (double) time(NULL);
+//			current_sec = (double) time(NULL);
+//		}
+//		JoystickCommand home_command;
+//		memset(&home_command, 0, sizeof(home_command)); //zero structure
+//		for (int i = 0; i < 16; i++)
+//		{
+//			home_command.ButtonValue[i] = 0;
+//		}
+//
+//		home_command.InclineForwardBackward = 0;
+//		home_command.InclineLeftRight = 0;
+//		home_command.MoveForwardBackward = 0;
+//		home_command.MoveLeftRight = 0;
+//		home_command.PushPull = 0;
+//		home_command.Rotate = 0;
+//
+//		home_command.ButtonValue[2] = 1;
+//		home_command.ButtonValue[3] = 1;
+//
+//					API->SendJoystickCommand(home_command);
+//					ROS_INFO("Sending Command");
+//
+//			//while we have not timed out
+//			while ((current_sec - start_secs) < 20)
+//			{
+//				//If ros is still running use rostime, else use system time
+//				if (ros::ok())
+//				{
+//					current_sec = ros::Time::now().toSec();
+//				} else
+//				{
+//					current_sec = (double) time(NULL);
+//				}
+//
+//				if (software_pause != true)
+//				{
+//					//ros::Duration(1.0).sleep();
+//
+//
+//
+//					ros::Duration(1.0).sleep();
+//
+//
+//				} else
+//				{
+////TODO Pause
+//				}
+//				ros::spinOnce();
+//
+//			}
+//
+//			API->StopControlAPI();
+//
+//			home_command.ButtonValue[3] = 0;
+//
+//			home_command.ButtonValue[2] = 0;
+//			API->SendJoystickCommand(home_command);
+//
+//	} else
+//	{
+//		ROS_INFO("Arm already in Home State.");
+//	}
+//	ROS_INFO("Homing Fingers...");
 
 	/* Homing the Fingers */
 
-	ros::Duration(2.0).sleep();
-
+	//ros::Duration(2.0).sleep();
 //		/* Homing the Arm */
 //			double start_secs;
 //			double current_sec;
@@ -234,49 +346,44 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 //			}
 //			finger_command.ButtonValue[7] = 0;
 //			API->SendJoystickCommand(finger_command);
-
-	FingersPosition fingers_home = { 0, 0, 0 };
-
-	this->SetFingers(fingers_home, 5); //send fingers to home position
-
-	fingers_home =
-	{	40, 40, 40};
-
-	this->SetFingers(fingers_home, 5); //send fingers to home position
-
-	/* Storing arm in home position */
-	this->GoHome();
-
-	ClientConfigurations configuration;
-	GetConfig(configuration);
-
-	PrintConfig(configuration);
-
-	/* Set up Publishers */
-	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
-	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
-	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(finger_position_topic, 2);
-
-	/* Set up Subscribers*/
-	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
-	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
-	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG,
-			this);
-	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
-			this);
-
-	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
-
-	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
-	joint_vel_timer.stop();
-	joint_vel_timer_flag = false;
-	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
-	cartesian_vel_timer.stop();
-	cartesian_vel_timer_flag = false;
-
-	BroadCastAngles();
-	ROS_INFO("Arm ready to use.");
-
+//	API->StartControlAPI();
+//
+//	FingersPosition fingers_home = { 0, 0, 0 };
+//
+//	this->SetFingers(fingers_home, 5); //send fingers to home position
+//
+//	fingers_home =
+//	{	40, 40, 40};
+//
+//	this->SetFingers(fingers_home, 5); //send fingers to home position
+//
+//	/* Storing arm in home position */
+//	this->GoHome();
+//
+//	/* Set up Publishers */
+//	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
+//	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
+//	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(finger_position_topic, 2);
+//
+//	/* Set up Subscribers*/
+//	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
+//	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
+//	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG,
+//			this);
+//	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
+//			this);
+//
+//	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
+//
+//	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
+//	joint_vel_timer.stop();
+//	joint_vel_timer_flag = false;
+//	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
+//	cartesian_vel_timer.stop();
+//	cartesian_vel_timer_flag = false;
+//
+//	BroadCastAngles();
+//	ROS_INFO("Arm ready to use.");
 }
 
 bool JacoArm::HomeState(void)
@@ -284,7 +391,7 @@ bool JacoArm::HomeState(void)
 	AngularPosition Old_Jaco_Angles;
 	AngularPosition Jaco_Angles;
 	ROS_INFO("Checking Homing State...");
-
+	memset(&Old_Jaco_Angles, 0, sizeof(Old_Jaco_Angles)); //zero structure
 	memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
 	API->GetAngularPosition(Jaco_Angles);
 
@@ -971,13 +1078,6 @@ void JacoArm::GoHome(void)
 	this->SetFingers(fingers_home, 5); //send fingers to home position
 	this->SetAngles(joint_home, 5); //send joints to home position
 
-	CartesianPosition Jaco_Position;
-
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-	API->GetCartesianPosition(Jaco_Position);
-
-
-	SetPosition(Jaco_Position.Coordinates);
 }
 
 void JacoArm::BroadCastAngles(void)
@@ -1046,22 +1146,22 @@ void JacoArm::BroadCastPosition(void)
 	/* The following code is for testing */
 	/*remove this */
 
-	try
-	{
-
-		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
-				current_position.header.stamp, ros::Duration(1.0));
-
-		geometry_msgs::PoseStamped current_position_mount;
-
-		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
-
-		ToolPosition_pub.publish(current_position_mount);
-
-	} catch (std::exception& e)
-	{
-		ROS_ERROR_STREAM_THROTTLE(1, e.what());
-	}
+//	try
+//	{
+//
+//		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
+//				current_position.header.stamp, ros::Duration(1.0));
+//
+//		geometry_msgs::PoseStamped current_position_mount;
+//
+//		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+//
+//		ToolPosition_pub.publish(current_position_mount);
+//
+//	} catch (std::exception& e)
+//	{
+//		ROS_ERROR_STREAM_THROTTLE(1, e.what());
+//	}
 	/* to here */
 
 	ToolPosition_pub.publish(current_position);
