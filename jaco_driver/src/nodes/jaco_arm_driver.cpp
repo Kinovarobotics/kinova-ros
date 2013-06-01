@@ -81,6 +81,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	last_update_time = ros::Time::now();
 	update_time = ros::Duration(5.0);
 	int api_result = 0; //stores result from the API
+	ros::Duration(5.0).sleep();
 
 	api_result = (API->InitAPI)();
 
@@ -96,59 +97,143 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	{
 		ROS_INFO("API Initialized Successfully!");
 	}
+	ros::Duration(2.0).sleep();
 
 	tf::Transform transform;
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
 	API->EraseAllTrajectories();
 	API->StopControlAPI();
+
 	API->StartControlAPI();
 
-	/* Homing the Arm */
-	double start_secs;
-	double current_sec;
+	ros::Duration(2.0).sleep();
 
-	//If ros is still running use rostime, else use system time
-	if (ros::ok())
+	if (!HomeState())
 	{
-		start_secs = ros::Time::now().toSec();
-		current_sec = ros::Time::now().toSec();
-	} else
-	{
-		start_secs = (double) time(NULL);
-		current_sec = (double) time(NULL);
-	}
-	JoystickCommand home_command;
+		ros::Duration(2.0).sleep();
 
-	//while we have not timed out
-	while ((current_sec - start_secs) < 20)
-	{
+		ROS_INFO("Homing Arm...");
+
+		/* Homing the Arm */
+		double start_secs;
+		double current_sec;
+
 		//If ros is still running use rostime, else use system time
 		if (ros::ok())
 		{
+			start_secs = ros::Time::now().toSec();
 			current_sec = ros::Time::now().toSec();
 		} else
 		{
+			start_secs = (double) time(NULL);
 			current_sec = (double) time(NULL);
 		}
-
-		if (software_pause != true)
+		JoystickCommand home_command;
+		memset(&home_command, 0, sizeof(home_command)); //zero structure
+		for (int i = 0; i < 16; i++)
 		{
-			home_command.ButtonValue[3] = 1;
-			API->SendJoystickCommand(home_command);
-		} else
-		{
-
+			home_command.ButtonValue[i] = 0;
 		}
-		ros::spinOnce();
 
+		home_command.InclineForwardBackward = 0;
+		home_command.InclineLeftRight = 0;
+		home_command.MoveForwardBackward = 0;
+		home_command.MoveLeftRight = 0;
+		home_command.PushPull = 0;
+		home_command.Rotate = 0;
+
+		home_command.ButtonValue[2] = 1;
+		home_command.ButtonValue[3] = 1;
+
+					API->SendJoystickCommand(home_command);
+					ROS_INFO("Sending Command");
+
+			//while we have not timed out
+			while ((current_sec - start_secs) < 20)
+			{
+				//If ros is still running use rostime, else use system time
+				if (ros::ok())
+				{
+					current_sec = ros::Time::now().toSec();
+				} else
+				{
+					current_sec = (double) time(NULL);
+				}
+
+				if (software_pause != true)
+				{
+					//ros::Duration(1.0).sleep();
+
+
+
+					ros::Duration(1.0).sleep();
+
+
+				} else
+				{
+//TODO Pause
+				}
+				ros::spinOnce();
+
+			}
+			home_command.ButtonValue[3] = 0;
+
+			home_command.ButtonValue[2] = 0;
+			API->SendJoystickCommand(home_command);
+
+	} else
+	{
+		ROS_INFO("Arm already in Home State.");
 	}
-	home_command.ButtonValue[3] = 0;
-	API->SendJoystickCommand(home_command);
+	ROS_INFO("Homing Fingers...");
 
 	/* Homing the Fingers */
-	API->StartControlAPI();
+
 	ros::Duration(2.0).sleep();
+
+//		/* Homing the Arm */
+//			double start_secs;
+//			double current_sec;
+//
+//			//If ros is still running use rostime, else use system time
+//			if (ros::ok())
+//			{
+//				start_secs = ros::Time::now().toSec();
+//				current_sec = ros::Time::now().toSec();
+//			} else
+//			{
+//				start_secs = (double) time(NULL);
+//				current_sec = (double) time(NULL);
+//			}
+//			JoystickCommand finger_command;
+//
+//			//while we have not timed out
+//			while ((current_sec - start_secs) < 5)
+//			{
+//				//If ros is still running use rostime, else use system time
+//				if (ros::ok())
+//				{
+//					current_sec = ros::Time::now().toSec();
+//				} else
+//				{
+//					current_sec = (double) time(NULL);
+//				}
+//
+//				if (software_pause != true)
+//				{
+//					finger_command.ButtonValue[7] = 1;
+//					finger_command.MoveLeftRight = 5;
+//					API->SendJoystickCommand(finger_command);
+//				} else
+//				{
+//	//TODO Pause
+//				}
+//				ros::spinOnce();
+//
+//			}
+//			finger_command.ButtonValue[7] = 0;
+//			API->SendJoystickCommand(finger_command);
 
 	FingersPosition fingers_home = { 0, 0, 0 };
 
@@ -190,7 +275,50 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	cartesian_vel_timer_flag = false;
 
 	BroadCastAngles();
+	ROS_INFO("Arm ready to use.");
 
+}
+
+bool JacoArm::HomeState(void)
+{
+	AngularPosition Old_Jaco_Angles;
+	AngularPosition Jaco_Angles;
+	ROS_INFO("Checking Homing State...");
+
+	memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
+	API->GetAngularPosition(Jaco_Angles);
+
+	Old_Jaco_Angles.Actuators.Actuator1 = Jaco_Angles.Actuators.Actuator1;
+	Old_Jaco_Angles.Actuators.Actuator2 = Jaco_Angles.Actuators.Actuator2;
+	Old_Jaco_Angles.Actuators.Actuator3 = Jaco_Angles.Actuators.Actuator3;
+	Old_Jaco_Angles.Actuators.Actuator4 = Jaco_Angles.Actuators.Actuator4;
+	Old_Jaco_Angles.Actuators.Actuator5 = Jaco_Angles.Actuators.Actuator5;
+	Old_Jaco_Angles.Actuators.Actuator6 = Jaco_Angles.Actuators.Actuator6;
+
+	Jaco_Angles.Actuators.Actuator3 += 5;
+
+	SetAngles(Jaco_Angles.Actuators, 5);
+	ros::Duration(1.0).sleep();
+
+	memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
+	API->GetAngularPosition(Jaco_Angles);
+	ros::Duration(1.0).sleep();
+
+	SetAngles(Old_Jaco_Angles.Actuators, 5);
+	ros::Duration(1.0).sleep();
+	if ((Jaco_Angles.Actuators.Actuator3 > (Old_Jaco_Angles.Actuators.Actuator3 + 1))
+			|| (Jaco_Angles.Actuators.Actuator3 < (Old_Jaco_Angles.Actuators.Actuator3 - 1)))
+	{
+		return true;
+	} else
+	{
+		return false;
+	}
+}
+
+void JacoArm::SetConfig(ClientConfigurations config)
+{
+	API->SetClientConfigurations(config);
 }
 
 void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
@@ -216,13 +344,13 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 
 	API->SendAdvanceTrajectory(Jaco_Position);
 
-	//if we want to timeout
+//if we want to timeout
 	if (timeout != 0)
 	{
 		double start_secs;
 		double current_sec;
 
-		//If ros is still runniing use rostime, else use system time
+		//If ros is still running use rostime, else use system time
 		if (ros::ok())
 		{
 			start_secs = ros::Time::now().toSec();
@@ -248,7 +376,7 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 		while ((current_sec - start_secs) < timeout)
 		{
 
-			//If ros is still runniing use rostime, else use system time
+			//If ros is still running use rostime, else use system time
 			if (ros::ok())
 			{
 				current_sec = ros::Time::now().toSec();
@@ -314,6 +442,7 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 				break;
 			}
 		}
+
 	}
 }
 
@@ -343,13 +472,13 @@ void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 
 	API->SendAdvanceTrajectory(Jaco_Position);
 
-	//if we want to timeout
+//if we want to timeout
 	if (timeout != 0)
 	{
 		double start_secs;
 		double current_sec;
 
-		//If ros is still runniing use rostime, else use system time
+		//If ros is still running use rostime, else use system time
 		if (ros::ok())
 		{
 			start_secs = ros::Time::now().toSec();
@@ -456,6 +585,8 @@ void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
+	ros::Duration(2.0).sleep();
+
 	if (push == true)
 	{
 		API->EraseAllTrajectories();
@@ -473,7 +604,7 @@ void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 
 	API->SendAdvanceTrajectory(Jaco_Position);
 
-	//if we want to timeout
+//if we want to timeout
 	if (timeout != 0)
 	{
 		double start_secs;
@@ -835,10 +966,18 @@ void JacoArm::JointVelTimer(const ros::TimerEvent&)
 void JacoArm::GoHome(void)
 {
 	FingersPosition fingers_home = { 40, 40, 40 };
-	AngularInfo joint_home = { 270.385651, 150.203217, 24, 267.597351, 5.570505, 99.634575 };
+	AngularInfo joint_home = { 180.0, 150.203217, 24, 267.597351, 5.570505, 99.634575 };
 
 	this->SetFingers(fingers_home, 5); //send fingers to home position
 	this->SetAngles(joint_home, 5); //send joints to home position
+
+	CartesianPosition Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+	API->GetCartesianPosition(Jaco_Position);
+
+
+	SetPosition(Jaco_Position.Coordinates);
 }
 
 void JacoArm::BroadCastAngles(void)
@@ -860,7 +999,7 @@ void JacoArm::BroadCastAngles(void)
 			arm_angles.Actuators.Actuator6 = 0;
 #endif
 
-	//Broadcast joint angles
+//Broadcast joint angles
 
 	current_angles.Angle_J1 = arm_angles.Actuators.Actuator1;
 	current_angles.Angle_J2 = arm_angles.Actuators.Actuator2;
@@ -876,21 +1015,22 @@ void JacoArm::BroadCastPosition(void)
 {
 	CartesianPosition position;
 	geometry_msgs::PoseStamped current_position;
-	ROS_INFO("prior x = %f, y = %f, z = %f",position.Coordinates.X,position.Coordinates.Y,position.Coordinates.Z);
+	ROS_INFO("prior x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
+			position.Coordinates.Z);
 
 	memset(&position, 0, sizeof(position)); //zero structure
 
 	API->GetCartesianPosition(position); //Query arm for position
 
-
+	ROS_INFO("x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
+			position.Coordinates.Z);
+	ROS_INFO("finger 1 = %f, finger 2 = %f, finger 3 = %f,", position.Fingers.Finger1,
+			position.Fingers.Finger2, position.Fingers.Finger3);
 
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
 
-	ROS_INFO("x = %f, y = %f, z = %f",position.Coordinates.X,position.Coordinates.Y,position.Coordinates.Z);
-
-
-	//Broadcast position
+//Broadcast position
 
 	current_position.pose.position.x = position.Coordinates.X;
 	current_position.pose.position.y = position.Coordinates.Y;

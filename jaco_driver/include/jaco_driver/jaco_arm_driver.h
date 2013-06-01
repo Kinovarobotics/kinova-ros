@@ -34,11 +34,13 @@ namespace jaco
 	{
 		public:
 			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
+			bool HomeState(void);
 			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 			void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
 			void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
 			void SetVelocities(AngularInfo joint_vel);
 			void SetCartesianVelocities(CartesianInfo velocities);
+			void SetConfig(ClientConfigurations config);
 			void GetAngles(AngularInfo &angles);
 			void GetPosition(CartesianInfo &position);
 			void GetFingers(FingersPosition &fingers);
