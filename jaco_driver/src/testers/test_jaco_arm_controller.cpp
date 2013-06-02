@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
-	std::string ArmPose("ArmPose"); ///String containing the topic name for cartesian commands
+	std::string ArmPose("object_pose"); ///String containing the topic name for cartesian commands
 
 	ros::Publisher pub2 = nh.advertise<geometry_msgs::PoseStamped>(ArmPose,
 			2);

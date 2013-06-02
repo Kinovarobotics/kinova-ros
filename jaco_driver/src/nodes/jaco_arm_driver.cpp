@@ -115,80 +115,80 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	GetConfig(configuration);
 	PrintConfig(configuration);
 
-		 while (!HomeState() && ros::ok())
-		{API->EraseAllTrajectories();
-		API->StopControlAPI();
-
-				API->StartControlAPI();
-
-			JoystickCommand home_command;
-			memset(&home_command, 0, sizeof(home_command)); //zero structure
-
-			AngularPosition Old_Jaco_Angles;
-			AngularPosition Jaco_Angles;
-			ROS_INFO("Checking Homing State...");
-
-			memset(&Old_Jaco_Angles, 0, sizeof(Old_Jaco_Angles)); //zero structure
-			API->GetAngularPosition(Old_Jaco_Angles);
-
-			home_command.ButtonValue[2] = 1;
-			API->SendJoystickCommand(home_command);
-			ROS_INFO("On");
-			ros::Duration(2.0).sleep();
-			home_command.ButtonValue[2] = 0;
-			API->SendJoystickCommand(home_command);
-			ROS_INFO("Off");
-
-			memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
-			API->GetAngularPosition(Jaco_Angles);
-
-			if ((Jaco_Angles.Actuators.Actuator1 <= (Old_Jaco_Angles.Actuators.Actuator1 + 1))
-					&& (Jaco_Angles.Actuators.Actuator1 >= (Old_Jaco_Angles.Actuators.Actuator1 - 1))
-					&& (Jaco_Angles.Actuators.Actuator2 <= (Old_Jaco_Angles.Actuators.Actuator2 + 1))
-					&& (Jaco_Angles.Actuators.Actuator2 >= (Old_Jaco_Angles.Actuators.Actuator2 - 1))
-					&& (Jaco_Angles.Actuators.Actuator3 <= (Old_Jaco_Angles.Actuators.Actuator3 + 1))
-					&& (Jaco_Angles.Actuators.Actuator3 >= (Old_Jaco_Angles.Actuators.Actuator3 - 1))
-					&& (Jaco_Angles.Actuators.Actuator4 <= (Old_Jaco_Angles.Actuators.Actuator4 + 1))
-					&& (Jaco_Angles.Actuators.Actuator4 >= (Old_Jaco_Angles.Actuators.Actuator4 - 1))
-					&& (Jaco_Angles.Actuators.Actuator5 <= (Old_Jaco_Angles.Actuators.Actuator5 + 1))
-					&& (Jaco_Angles.Actuators.Actuator5 >= (Old_Jaco_Angles.Actuators.Actuator5 - 1))
-					&& (Jaco_Angles.Actuators.Actuator6 <= (Old_Jaco_Angles.Actuators.Actuator6 + 1))
-					&& (Jaco_Angles.Actuators.Actuator6 >= (Old_Jaco_Angles.Actuators.Actuator6 - 1)))
-			{
-				API->StartControlAPI();
-
-				home_command.ButtonValue[0] = 1;
-				API->SendJoystickCommand(home_command);
-				ROS_INFO("On");
-//				ros::Duration(1.0).sleep();
-//				home_command.ButtonValue[0] = 0;
+//		 while (!HomeState() && ros::ok())
+//		{API->EraseAllTrajectories();
+//		API->StopControlAPI();
+//
+//				API->StartControlAPI();
+//
+//			JoystickCommand home_command;
+//			memset(&home_command, 0, sizeof(home_command)); //zero structure
+//
+//			AngularPosition Old_Jaco_Angles;
+//			AngularPosition Jaco_Angles;
+//			ROS_INFO("Checking Homing State...");
+//
+//			memset(&Old_Jaco_Angles, 0, sizeof(Old_Jaco_Angles)); //zero structure
+//			API->GetAngularPosition(Old_Jaco_Angles);
+//
+//			home_command.ButtonValue[2] = 1;
+//			API->SendJoystickCommand(home_command);
+//			ROS_INFO("On");
+//			ros::Duration(2.0).sleep();
+//			home_command.ButtonValue[2] = 0;
+//			API->SendJoystickCommand(home_command);
+//			ROS_INFO("Off");
+//
+//			memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
+//			API->GetAngularPosition(Jaco_Angles);
+//
+//			if ((Jaco_Angles.Actuators.Actuator1 <= (Old_Jaco_Angles.Actuators.Actuator1 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator1 >= (Old_Jaco_Angles.Actuators.Actuator1 - 1))
+//					&& (Jaco_Angles.Actuators.Actuator2 <= (Old_Jaco_Angles.Actuators.Actuator2 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator2 >= (Old_Jaco_Angles.Actuators.Actuator2 - 1))
+//					&& (Jaco_Angles.Actuators.Actuator3 <= (Old_Jaco_Angles.Actuators.Actuator3 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator3 >= (Old_Jaco_Angles.Actuators.Actuator3 - 1))
+//					&& (Jaco_Angles.Actuators.Actuator4 <= (Old_Jaco_Angles.Actuators.Actuator4 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator4 >= (Old_Jaco_Angles.Actuators.Actuator4 - 1))
+//					&& (Jaco_Angles.Actuators.Actuator5 <= (Old_Jaco_Angles.Actuators.Actuator5 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator5 >= (Old_Jaco_Angles.Actuators.Actuator5 - 1))
+//					&& (Jaco_Angles.Actuators.Actuator6 <= (Old_Jaco_Angles.Actuators.Actuator6 + 1))
+//					&& (Jaco_Angles.Actuators.Actuator6 >= (Old_Jaco_Angles.Actuators.Actuator6 - 1)))
+//			{
+//				API->StartControlAPI();
+//
+//				home_command.ButtonValue[0] = 1;
+//				API->SendJoystickCommand(home_command);
+//				ROS_INFO("On");
+////				ros::Duration(1.0).sleep();
+////				home_command.ButtonValue[0] = 0;
+////				API->SendJoystickCommand(home_command);
+////				ROS_INFO("Off");
+//
+//			}
+//
+//			home_command.ButtonValue[2] = 1;
+//			API->SendJoystickCommand(home_command);
+//			ROS_INFO("On");
+//			ros::Duration(15.0).sleep();
+//			home_command.ButtonValue[2] = 0;
+//			API->SendJoystickCommand(home_command);
+//			ROS_INFO("Off");
+//
+//			if (!HomeState())
+//			{
+//				API->StartControlAPI();
+//
+//				home_command.ButtonValue[2] = 1;
+//				API->SendJoystickCommand(home_command);
+//				ROS_INFO("On");
+//				ros::Duration(15.0).sleep();
+//				home_command.ButtonValue[2] = 0;
 //				API->SendJoystickCommand(home_command);
 //				ROS_INFO("Off");
-
-			}
-
-			home_command.ButtonValue[2] = 1;
-			API->SendJoystickCommand(home_command);
-			ROS_INFO("On");
-			ros::Duration(15.0).sleep();
-			home_command.ButtonValue[2] = 0;
-			API->SendJoystickCommand(home_command);
-			ROS_INFO("Off");
-
-			if (!HomeState())
-			{
-				API->StartControlAPI();
-
-				home_command.ButtonValue[2] = 1;
-				API->SendJoystickCommand(home_command);
-				ROS_INFO("On");
-				ros::Duration(15.0).sleep();
-				home_command.ButtonValue[2] = 0;
-				API->SendJoystickCommand(home_command);
-				ROS_INFO("Off");
-			}
-
-		}
+//			}
+//
+//		}
 
 
 //
@@ -346,44 +346,52 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 //			}
 //			finger_command.ButtonValue[7] = 0;
 //			API->SendJoystickCommand(finger_command);
-//	API->StartControlAPI();
-//
-//	FingersPosition fingers_home = { 0, 0, 0 };
-//
-//	this->SetFingers(fingers_home, 5); //send fingers to home position
-//
-//	fingers_home =
-//	{	40, 40, 40};
-//
-//	this->SetFingers(fingers_home, 5); //send fingers to home position
-//
-//	/* Storing arm in home position */
-//	this->GoHome();
-//
-//	/* Set up Publishers */
-//	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
-//	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
-//	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(finger_position_topic, 2);
-//
-//	/* Set up Subscribers*/
-//	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
-//	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
-//	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG,
-//			this);
-//	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
-//			this);
-//
-//	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
-//
-//	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
-//	joint_vel_timer.stop();
-//	joint_vel_timer_flag = false;
-//	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
-//	cartesian_vel_timer.stop();
-//	cartesian_vel_timer_flag = false;
-//
-//	BroadCastAngles();
-//	ROS_INFO("Arm ready to use.");
+
+	FingersPosition fingers_home = { 0, 0, 0 };
+
+	this->SetFingers(fingers_home, 5); //send fingers to home position
+
+	fingers_home =
+	{	40, 40, 40};
+
+	this->SetFingers(fingers_home, 5); //send fingers to home position
+
+
+	/* Storing arm in home position */
+	//this->GoHome();
+
+	/* Set up Publishers */
+	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
+	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
+	this->FingerPosition_pub = nh.advertise<jaco_driver::finger_position>(finger_position_topic, 2);
+
+	/* Set up Subscribers*/
+	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
+	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
+	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG,
+			this);
+	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
+			this);
+
+	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
+
+	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
+	joint_vel_timer.stop();
+	joint_vel_timer_flag = false;
+	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
+	cartesian_vel_timer.stop();
+	cartesian_vel_timer_flag = false;
+
+	BroadCastAngles();
+	ROS_INFO("Arm ready to use.");
+
+	TrajectoryPoint Jaco_Velocity;
+
+	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
+	API->StartControlAPI();
+	Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
+
+	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
 bool JacoArm::HomeState(void)
@@ -1115,17 +1123,20 @@ void JacoArm::BroadCastPosition(void)
 {
 	CartesianPosition position;
 	geometry_msgs::PoseStamped current_position;
-	ROS_INFO("prior x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
-			position.Coordinates.Z);
+//	ROS_INFO("prior x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
+//			position.Coordinates.Z);
 
 	memset(&position, 0, sizeof(position)); //zero structure
 
-	API->GetCartesianPosition(position); //Query arm for position
 
-	ROS_INFO("x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
-			position.Coordinates.Z);
-	ROS_INFO("finger 1 = %f, finger 2 = %f, finger 3 = %f,", position.Fingers.Finger1,
-			position.Fingers.Finger2, position.Fingers.Finger3);
+
+
+	API->GetCartesianPosition(position); //Query arm for position
+//
+//	ROS_INFO("x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
+//			position.Coordinates.Z);
+//	ROS_INFO("finger 1 = %f, finger 2 = %f, finger 3 = %f,", position.Fingers.Finger1,
+//			position.Fingers.Finger2, position.Fingers.Finger3);
 
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
@@ -1145,7 +1156,7 @@ void JacoArm::BroadCastPosition(void)
 
 	/* The following code is for testing */
 	/*remove this */
-
+//
 //	try
 //	{
 //
@@ -1155,8 +1166,25 @@ void JacoArm::BroadCastPosition(void)
 //		geometry_msgs::PoseStamped current_position_mount;
 //
 //		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+//		ROS_INFO("Position in %s",current_position_mount.header.frame_id.c_str());
+//		ROS_INFO("x=%f",current_position_mount.pose.position.x);
+//		ROS_INFO("y=%f",current_position_mount.pose.position.y);
+//		ROS_INFO("z=%f",current_position_mount.pose.position.z);
 //
-//		ToolPosition_pub.publish(current_position_mount);
+//
+//		tf::Quaternion q;
+//		tf::quaternionMsgToTF(current_position_mount.pose.orientation, q);
+//
+//		tf::Matrix3x3 bt_q(q);
+//
+//		double yaw,pitch,roll;
+//		bt_q.getRPY(roll,pitch,yaw);
+//
+//
+//		ROS_INFO("roll=%f",roll);
+//		ROS_INFO("pitch=%f",pitch);
+//		ROS_INFO("yaw=%f",yaw);
+//
 //
 //	} catch (std::exception& e)
 //	{
@@ -1201,6 +1229,6 @@ int main(int argc, char **argv)
 	JacoArm jaco(nh, param_nh);
 
 	ros::spin();
-	jaco.GoHome();
+//	jaco.GoHome();
 }
 
