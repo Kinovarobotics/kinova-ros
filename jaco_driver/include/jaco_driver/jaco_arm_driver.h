@@ -94,6 +94,7 @@ namespace jaco
 			ros::Time last_update_time;
 			ros::Duration update_time;
 
+
 			/* Remove this */
 			tf::TransformListener tf_listener;
 
