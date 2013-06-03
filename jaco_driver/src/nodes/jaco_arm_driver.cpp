@@ -210,96 +210,96 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 //			}
 //				}
 
-//	tf::Transform transform;
-//	tf::Quaternion rotation_q(0, 0, 0, 0);
-//	tf::Vector3 translation_v(0, 0, 0);
-//	//API->EraseAllTrajectories();
-//
-//	API->StartControlAPI();
-//
-//	ros::Duration(2.0).sleep();
-//
-//	if (!HomeState())
-//	{
-//		ros::Duration(2.0).sleep();
-//
-//		ROS_INFO("Homing Arm...");
-//
-//		/* Homing the Arm */
-//		double start_secs;
-//		double current_sec;
-//
-//		//If ros is still running use rostime, else use system time
-//		if (ros::ok())
-//		{
-//			start_secs = ros::Time::now().toSec();
-//			current_sec = ros::Time::now().toSec();
-//		} else
-//		{
-//			start_secs = (double) time(NULL);
-//			current_sec = (double) time(NULL);
-//		}
-//		JoystickCommand home_command;
-//		memset(&home_command, 0, sizeof(home_command)); //zero structure
-//		for (int i = 0; i < 16; i++)
-//		{
-//			home_command.ButtonValue[i] = 0;
-//		}
-//
-//		home_command.InclineForwardBackward = 0;
-//		home_command.InclineLeftRight = 0;
-//		home_command.MoveForwardBackward = 0;
-//		home_command.MoveLeftRight = 0;
-//		home_command.PushPull = 0;
-//		home_command.Rotate = 0;
-//
-//		home_command.ButtonValue[2] = 1;
-//		home_command.ButtonValue[3] = 1;
-//
-//					API->SendJoystickCommand(home_command);
-//					ROS_INFO("Sending Command");
-//
-//			//while we have not timed out
-//			while ((current_sec - start_secs) < 20)
-//			{
-//				//If ros is still running use rostime, else use system time
-//				if (ros::ok())
-//				{
-//					current_sec = ros::Time::now().toSec();
-//				} else
-//				{
-//					current_sec = (double) time(NULL);
-//				}
-//
-//				if (software_pause != true)
-//				{
-//					//ros::Duration(1.0).sleep();
-//
-//
-//
-//					ros::Duration(1.0).sleep();
-//
-//
-//				} else
-//				{
-////TODO Pause
-//				}
-//				ros::spinOnce();
-//
-//			}
-//
-//			API->StopControlAPI();
-//
-//			home_command.ButtonValue[3] = 0;
-//
-//			home_command.ButtonValue[2] = 0;
-//			API->SendJoystickCommand(home_command);
-//
-//	} else
-//	{
-//		ROS_INFO("Arm already in Home State.");
-//	}
-//	ROS_INFO("Homing Fingers...");
+	tf::Transform transform;
+	tf::Quaternion rotation_q(0, 0, 0, 0);
+	tf::Vector3 translation_v(0, 0, 0);
+	//API->EraseAllTrajectories();
+
+	API->StartControlAPI();
+
+	ros::Duration(2.0).sleep();
+
+	if (!HomeState())
+	{
+		ros::Duration(2.0).sleep();
+
+		ROS_INFO("Homing Arm...");
+
+		/* Homing the Arm */
+		double start_secs;
+		double current_sec;
+
+		//If ros is still running use rostime, else use system time
+		if (ros::ok())
+		{
+			start_secs = ros::Time::now().toSec();
+			current_sec = ros::Time::now().toSec();
+		} else
+		{
+			start_secs = (double) time(NULL);
+			current_sec = (double) time(NULL);
+		}
+		JoystickCommand home_command;
+		memset(&home_command, 0, sizeof(home_command)); //zero structure
+		for (int i = 0; i < 16; i++)
+		{
+			home_command.ButtonValue[i] = 0;
+		}
+
+		home_command.InclineForwardBackward = 0;
+		home_command.InclineLeftRight = 0;
+		home_command.MoveForwardBackward = 0;
+		home_command.MoveLeftRight = 0;
+		home_command.PushPull = 0;
+		home_command.Rotate = 0;
+
+		home_command.ButtonValue[2] = 1;
+		home_command.ButtonValue[3] = 1;
+
+					API->SendJoystickCommand(home_command);
+					ROS_INFO("Sending Command");
+
+			//while we have not timed out
+			while ((current_sec - start_secs) < 20)
+			{
+				//If ros is still running use rostime, else use system time
+				if (ros::ok())
+				{
+					current_sec = ros::Time::now().toSec();
+				} else
+				{
+					current_sec = (double) time(NULL);
+				}
+
+				if (software_pause != true)
+				{
+					//ros::Duration(1.0).sleep();
+
+
+
+					ros::Duration(1.0).sleep();
+
+
+				} else
+				{
+//TODO Pause
+				}
+				ros::spinOnce();
+
+			}
+
+			API->StopControlAPI();
+
+			home_command.ButtonValue[3] = 0;
+
+			home_command.ButtonValue[2] = 0;
+			API->SendJoystickCommand(home_command);
+
+	} else
+	{
+		ROS_INFO("Arm already in Home State.");
+	}
+	ROS_INFO("Homing Fingers...");
 
 	/* Homing the Fingers */
 
