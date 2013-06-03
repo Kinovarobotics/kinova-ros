@@ -1168,39 +1168,39 @@ void JacoArm::BroadCastPosition(void)
 	/* The following code is for testing */
 	/*remove this */
 
-	try
-	{
-
-		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
-				current_position.header.stamp, ros::Duration(1.0));
-
-		geometry_msgs::PoseStamped current_position_mount;
-
-		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
-		ROS_INFO("Position in %s",current_position_mount.header.frame_id.c_str());
-		ROS_INFO("x=%f",current_position_mount.pose.position.x);
-		ROS_INFO("y=%f",current_position_mount.pose.position.y);
-		ROS_INFO("z=%f",current_position_mount.pose.position.z);
-
-
-		tf::Quaternion q;
-		tf::quaternionMsgToTF(current_position_mount.pose.orientation, q);
-
-		tf::Matrix3x3 bt_q(q);
-
-		double yaw,pitch,roll;
-		bt_q.getRPY(roll,pitch,yaw);
-
-
-		ROS_INFO("roll=%f",roll);
-		ROS_INFO("pitch=%f",pitch);
-		ROS_INFO("yaw=%f",yaw);
-
-
-	} catch (std::exception& e)
-	{
-		ROS_ERROR_STREAM_THROTTLE(1, e.what());
-	}
+//	try
+//	{
+//
+//		tf_listener.waitForTransform("/arm_mount", current_position.header.frame_id,
+//				current_position.header.stamp, ros::Duration(1.0));
+//
+//		geometry_msgs::PoseStamped current_position_mount;
+//
+//		tf_listener.transformPose("/arm_mount", current_position, current_position_mount);
+//		ROS_INFO("Position in %s",current_position_mount.header.frame_id.c_str());
+//		ROS_INFO("x=%f",current_position_mount.pose.position.x);
+//		ROS_INFO("y=%f",current_position_mount.pose.position.y);
+//		ROS_INFO("z=%f",current_position_mount.pose.position.z);
+//
+//
+//		tf::Quaternion q;
+//		tf::quaternionMsgToTF(current_position_mount.pose.orientation, q);
+//
+//		tf::Matrix3x3 bt_q(q);
+//
+//		double yaw,pitch,roll;
+//		bt_q.getRPY(roll,pitch,yaw);
+//
+//
+//		ROS_INFO("roll=%f",roll);
+//		ROS_INFO("pitch=%f",pitch);
+//		ROS_INFO("yaw=%f",yaw);
+//
+//
+//	} catch (std::exception& e)
+//	{
+//		ROS_ERROR_STREAM_THROTTLE(1, e.what());
+//	}
 	/* to here */
 
 	ToolPosition_pub.publish(current_position);
