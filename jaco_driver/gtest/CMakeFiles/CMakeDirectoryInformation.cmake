@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 SET(CMAKE_RELATIVE_PATH_TOP_SOURCE "/usr/src/gtest")
-SET(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/bpwiselybabu/groovy_workspace/ros-jaco-arm/jaco_driver")
+SET(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/mdedonato/groovy_workspace/jaco_arm/jaco_driver")
 
 # Force unix paths in dependencies.
 SET(CMAKE_FORCE_UNIX_PATHS 1)

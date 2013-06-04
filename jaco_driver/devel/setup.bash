@@ -2,4 +2,4 @@
 # generated from catkin/cmake/templates/setup.bash.in
 
 CATKIN_SHELL=bash
-. "/home/bpwiselybabu/groovy_workspace/ros-jaco-arm/jaco_driver/devel/setup.sh"
+. "/home/mdedonato/groovy_workspace/jaco_arm/jaco_driver/devel/setup.sh"

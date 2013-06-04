@@ -6,6 +6,6 @@ if [ $# -eq 0 ] ; then
   /bin/echo "Calling env.sh without arguments is not supported anymore. Instead spawn a subshell and source a setup file manually."
   exit 1
 else
-  . "/home/bpwiselybabu/groovy_workspace/ros-jaco-arm/jaco_driver/devel/setup.sh"
+  . "/home/mdedonato/groovy_workspace/jaco_arm/jaco_driver/devel/setup.sh"
   exec "$@"
 fi
