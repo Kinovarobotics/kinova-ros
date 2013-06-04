@@ -297,7 +297,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 		ROS_INFO("Arm already in Home State.");
 	}
 	ROS_INFO("Homing Fingers...");
-
+	API->StartControlAPI();
 	/* Homing the Fingers */
 
 	//ros::Duration(2.0).sleep();
@@ -706,7 +706,7 @@ void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
-	ros::Duration(2.0).sleep();
+	ros::Duration(4.0).sleep();
 
 	if (push == true)
 	{
@@ -724,7 +724,7 @@ void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 	Jaco_Position.Position.Fingers.Finger3 = fingers.Finger3;
 
 	API->SendAdvanceTrajectory(Jaco_Position);
-
+ROS_INFO("Sending Fingers");
 //if we want to timeout
 	if (timeout != 0)
 	{
