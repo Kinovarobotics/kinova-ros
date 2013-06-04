@@ -84,8 +84,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	ros::Duration(5.0).sleep();
 
 	api_result = (API->InitAPI)();
-	API->CloseAPI();
-	api_result = (API->InitAPI)();
+
 
 	if (api_result != 1)
 	{
@@ -99,19 +98,20 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	{
 		ROS_INFO("API Initialized Successfully!");
 	}
+	ros::Duration(2.0).sleep();
 
 	/* Set Default Configuration */
 
-	API->RestoreFactoryDefault();
-	ClientConfigurations configuration;
-	GetConfig(configuration);
+	//API->RestoreFactoryDefault();
+	//ClientConfigurations configuration;
+	//GetConfig(configuration);
 	//configuration.RetractedPositionCount = 0;
 	//configuration.MaxForce = 5;
 
-	SetConfig(configuration);
+//	SetConfig(configuration);
 
-	GetConfig(configuration);
-	PrintConfig(configuration);
+//	GetConfig(configuration);
+//	PrintConfig(configuration);
 
 //		 while (!HomeState() && ros::ok())
 //		{API->EraseAllTrajectories();
@@ -210,7 +210,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	tf::Transform transform;
 	tf::Quaternion rotation_q(0, 0, 0, 0);
 	tf::Vector3 translation_v(0, 0, 0);
-	//API->EraseAllTrajectories();
+	API->EraseAllTrajectories();
 
 	API->StartControlAPI();
 
@@ -250,7 +250,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 		home_command.PushPull = 0;
 		home_command.Rotate = 0;
 
-		home_command.ButtonValue[2] = 1;
 		home_command.ButtonValue[3] = 1;
 
 					API->SendJoystickCommand(home_command);
@@ -287,7 +286,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 			API->StopControlAPI();
 
-			home_command.ButtonValue[3] = 0;
 
 			home_command.ButtonValue[2] = 0;
 			API->SendJoystickCommand(home_command);
@@ -300,7 +298,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	API->StartControlAPI();
 	/* Homing the Fingers */
 
-	//ros::Duration(2.0).sleep();
+	ros::Duration(2.0).sleep();
 //		/* Homing the Arm */
 //			double start_secs;
 //			double current_sec;
