@@ -63,7 +63,7 @@ namespace jaco
 			void BroadCastPosition(void);
 			void BroadCastFingerPosition(void);
 			void SoftwarePauseMSG(const robot_base_msgs::SoftwareStopConstPtr& software_pause);
-
+			void SetJointAnglesCb(const jaco_driver::joint_anglesConstPtr& angles);
 		private:
 			jaco::JacoAPI* API;
 			/* Subscribers */
@@ -72,6 +72,8 @@ namespace jaco
 			ros::Subscriber CartesianVelocity_sub;
 			ros::Subscriber SetFingerPosition_sub;
 			ros::Subscriber SoftwarePause_sub;
+			ros::Subscriber	SetJoint_sub;
+
 			/* Publishers */
 			ros::Publisher JointAngles_pub;
 			ros::Publisher ToolPosition_pub;

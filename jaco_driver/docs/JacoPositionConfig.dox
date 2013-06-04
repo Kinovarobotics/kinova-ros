@@ -1,0 +1,11 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~X_Pose" : \b [double] X Pose min: -1.0, default: 0.0, max: 1.0
+- \b "~Y_Pose" : \b [double] Y Pose min: -1.0, default: 0.0, max: 1.0
+- \b "~Z_Pose" : \b [double] Z Pose min: -1.0, default: 0.0, max: 1.0
+- \b "~RX_Pose" : \b [double] RX Pose min: -5.0, default: 0.0, max: 5.0
+- \b "~RY_Pose" : \b [double] RY Pose min: -5.0, default: 0.0, max: 5.0
+- \b "~RZ_Pose" : \b [double] RZ Pose min: -5.0, default: 0.0, max: 5.0
+

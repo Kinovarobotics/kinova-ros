@@ -1,0 +1,11 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~X_Vel" : \b [double] X Vel min: -0.037, default: 0.0, max: 0.037
+- \b "~Y_Vel" : \b [double] Y Vel min: -0.037, default: 0.0, max: 0.037
+- \b "~Z_Vel" : \b [double] Z Vel min: -0.037, default: 0.0, max: 0.037
+- \b "~RX_Vel" : \b [double] RX Vel min: -1.0, default: 0.0, max: 1.0
+- \b "~RY_Vel" : \b [double] RY Vel min: -1.0, default: 0.0, max: 1.0
+- \b "~RZ_Vel" : \b [double] RZ Vel min: -1.0, default: 0.0, max: 1.0
+

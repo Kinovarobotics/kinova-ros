@@ -17,6 +17,7 @@
   <depend package="sensor_msgs"/>
   <depend package="dynamic_reconfigure"/>
   <depend package="robot_base_msgs"/>
+  <depend package="aero_srr_msgs"/>
 
 </package>
 

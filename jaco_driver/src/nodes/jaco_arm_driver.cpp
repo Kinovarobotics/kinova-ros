@@ -31,6 +31,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
 	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
 	std::string software_pause_topic("software_pause_topic"); ///String containing the topic name for SoftwarePause
+	std::string set_joints_topic("set_joint_angle_topic");
 
 	//Grab the topic parameters, print warnings if using default values
 	if (!param_nh.getParam(arm_pose_topic, arm_pose_topic))
@@ -58,6 +59,10 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 		ROS_WARN("Parameter <%s> Not Set. Using Default Software Pause Topic <%s>!",
 				software_pause_topic.c_str(), software_pause_topic.c_str());
 
+	if (!param_nh.getParam(set_joints_topic, set_joints_topic))
+			ROS_WARN("Parameter <%s> Not Set. Using Default Jaco Position Topic <%s>!", set_joints_topic.c_str(),
+					set_joints_topic.c_str());
+
 //Print out received topics
 	ROS_DEBUG("Got Jaco Position Topic Name: <%s>", arm_pose_topic.c_str());
 	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", joint_velocity_topic.c_str());
@@ -67,6 +72,8 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
 	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
 	ROS_DEBUG("Got SoftwarePause Topic Name: <%s>", software_pause_topic.c_str());
+
+	ROS_DEBUG("Got Set Joint Topic Name: <%s>", set_joints_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
@@ -114,6 +121,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	GetConfig(configuration);
 	PrintConfig(configuration);
+
 
 //		 while (!HomeState() && ros::ok())
 //		{API->EraseAllTrajectories();
@@ -358,7 +366,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 
 	/* Storing arm in home position */
-	//this->GoHome();
+	this->GoHome();
 
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
@@ -382,6 +390,11 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	cartesian_vel_timer.stop();
 	cartesian_vel_timer_flag = false;
 
+	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG,
+			this);
+
+	this->SetJoint_sub=nh.subscribe(set_joints_topic,1,&JacoArm::SetJointAnglesCb,this);
+
 	BroadCastAngles();
 	ROS_INFO("Arm ready to use.");
 
@@ -393,7 +406,24 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
-
+void JacoArm::SetJointAnglesCb(const jaco_driver::joint_anglesConstPtr& joints)
+{
+	AngularInfo angles;
+	ROS_INFO("Recieved angles %f, %f, %f, %f, %f, %f",joints->Angle_J1,
+													joints->Angle_J2,
+													joints->Angle_J3,
+													joints->Angle_J4,
+													joints->Angle_J5,
+													joints->Angle_J6);
+	angles.Actuator1=joints->Angle_J1;
+	angles.Actuator2=joints->Angle_J2;
+	angles.Actuator3=joints->Angle_J3;
+	angles.Actuator4=joints->Angle_J4;
+	angles.Actuator5=joints->Angle_J5;
+	angles.Actuator6=joints->Angle_J6;
+	SetAngles(angles, 5);
+	ros::Duration(1.0).sleep();
+}
 bool JacoArm::HomeState(void)
 {
 	AngularPosition Old_Jaco_Angles;
@@ -877,7 +907,9 @@ void JacoArm::GetFingers(FingersPosition &fingers)
 
 void JacoArm::PrintConfig(ClientConfigurations config)
 {
-
+	std::vector<int> version;
+	API->GetCodeVersion(version);
+	ROS_INFO("Jaco API code version = %d.%d.%d",version[0],version[1],version[2]);
 	ROS_INFO("Jaco Config");
 	ROS_INFO("ClientID = %s", config.ClientID);
 	ROS_INFO("ClientName = %s", config.ClientName);

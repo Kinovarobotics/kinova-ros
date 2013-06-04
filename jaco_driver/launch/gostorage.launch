@@ -1,0 +1,16 @@
+<launch>
+    <arg name="state_topic_def" default="/aero/supervisor/state" />
+    <arg name="joint_topic_def" default="/set_joint_angles" />
+
+<node name="goStorage" pkg="jaco_driver" type="go_2_storage" output="screen">
+	<param name="state_topic" value="$(arg state_topic_def)" />
+	<param name="joint_topic" value="$(arg joint_topic_def)" />
+        <param name="joint1" value="376.85" />
+	<param name="joint2" value="151.65" />
+	<param name="joint3" value="38.6" />
+	<param name="joint4" value="229.32" />
+	<param name="joint5" value="83.82" />
+	<param name="joint6" value="79.86" />
+
+</node>
+</launch>

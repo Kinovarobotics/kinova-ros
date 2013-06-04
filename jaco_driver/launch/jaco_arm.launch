@@ -7,6 +7,7 @@
 	  <arg name="set_finger_position_topic" default="/set_finger_position" />
 	  <arg name="finger_position_topic" default="/finger_position" />
 	  <arg name="software_pause_topic" default="/software_pause" />
+	  <arg name="set_joints_topic" default="/set_joint_angles" />
 	
 
 <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen">
@@ -18,6 +19,7 @@
 	<param name="set_finger_position_topic" value="$(arg set_finger_position_topic)" />
 	<param name="finger_position_topic" value="$(arg finger_position_topic)" />
 	<param name="software_pause_topic" value="$(arg software_pause_topic)" />
+	<param name="set_joint_angle_topic" value="$(arg set_joints_topic)" />
   </node>
   
   <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen">

@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/bpwiselybabu/groovy_workspace/ros-jaco-arm/jaco_driver/devel/setup.sh
