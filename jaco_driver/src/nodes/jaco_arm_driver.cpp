@@ -31,6 +31,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
 	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
 	std::string software_pause_topic("software_pause_topic"); ///String containing the topic name for SoftwarePause
+	std::string aero_state("aero_state"); ///String containing the topic name for aero_state
 
 	//Grab the topic parameters, print warnings if using default values
 	if (!param_nh.getParam(arm_pose_topic, arm_pose_topic))
@@ -57,6 +58,9 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	if (!param_nh.getParam(software_pause_topic, software_pause_topic))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Software Pause Topic <%s>!",
 				software_pause_topic.c_str(), software_pause_topic.c_str());
+	if (!param_nh.getParam(aero_state, aero_state))
+		ROS_WARN("Parameter <%s> Not Set. Using Default Aero State Topic <%s>!", aero_state.c_str(),
+				aero_state.c_str());
 
 //Print out received topics
 	ROS_DEBUG("Got Jaco Position Topic Name: <%s>", arm_pose_topic.c_str());
@@ -348,6 +352,8 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	/* Storing arm in home position */
 
 	this->GoHome();
+
+	this->aero_state_sub = nh.subscribe(aero_state, 1, &JacoArm::AeroStateMSG, this);
 
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);

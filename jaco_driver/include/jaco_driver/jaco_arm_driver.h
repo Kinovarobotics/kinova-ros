@@ -35,7 +35,7 @@ namespace jaco
 	{
 		public:
 			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
-			void JacoArm::AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state);
+			void AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state);
 			bool HomeState(void);
 			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 			void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
@@ -75,6 +75,8 @@ namespace jaco
 			ros::Subscriber SetFingerPosition_sub;
 			ros::Subscriber SoftwarePause_sub;
 			ros::Subscriber	SetJoint_sub;
+			ros::Subscriber aero_state_sub;
+
 
 			/* Publishers */
 			ros::Publisher JointAngles_pub;
