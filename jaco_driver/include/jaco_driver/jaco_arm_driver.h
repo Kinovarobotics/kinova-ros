@@ -24,6 +24,7 @@
 #include "jaco_driver/finger_position.h"
 #include "jaco_driver/joint_angles.h"
 #include <robot_base_msgs/SoftwareStop.h>
+#include <aero_srr_msgs/AeroState.h>
 
 #include <time.h>
 
@@ -34,6 +35,7 @@ namespace jaco
 	{
 		public:
 			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
+			void JacoArm::AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state);
 			bool HomeState(void);
 			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 			void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
@@ -95,7 +97,7 @@ namespace jaco
 
 			ros::Time last_update_time;
 			ros::Duration update_time;
-
+			uint8_t previous_state;
 
 			/* Remove this */
 			tf::TransformListener tf_listener;
