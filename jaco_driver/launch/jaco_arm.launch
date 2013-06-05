@@ -6,7 +6,7 @@
 	  <arg name="tool_position_topic" default="/tool_position" />
 	  <arg name="set_finger_position_topic" default="/set_finger_position" />
 	  <arg name="finger_position_topic" default="/finger_position" />
-	  <arg name="software_pause_topic" default="/software_pause" />
+	  <arg name="software_pause_topic" default="/aero/software_stop" />
 	  <arg name="set_joints_topic" default="/set_joint_angles" />
 	
 
