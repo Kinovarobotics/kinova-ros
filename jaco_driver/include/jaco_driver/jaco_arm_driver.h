@@ -23,6 +23,8 @@
 #include "jaco_driver/joint_velocity.h"
 #include "jaco_driver/finger_position.h"
 #include "jaco_driver/joint_angles.h"
+#include "jaco_driver/zero_arm.h"
+
 #include <robot_base_msgs/SoftwareStop.h>
 #include <aero_srr_msgs/AeroState.h>
 
@@ -37,6 +39,7 @@ namespace jaco
 			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
 			void AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state);
 			bool HomeState(void);
+			void ZeroArm(void);
 			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
 			void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
 			void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
@@ -59,6 +62,8 @@ namespace jaco
 			void JointVelTimer(const ros::TimerEvent&);
 			void StatusTimer(const ros::TimerEvent&);
 			void VelocityMSG(const jaco_driver::joint_velocityConstPtr& joint_vel);
+			void ZeroArmMSG(const jaco_driver::zero_armConstPtr& zero);
+
 			void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
 			void SetFingerPositionMSG(const jaco_driver::finger_positionConstPtr& finger_pos);
 			void BroadCastAngles(void);
@@ -76,12 +81,15 @@ namespace jaco
 			ros::Subscriber SoftwarePause_sub;
 			ros::Subscriber	SetJoint_sub;
 			ros::Subscriber aero_state_sub;
+			ros::Subscriber ZeroArm_sub;
 
 
 			/* Publishers */
 			ros::Publisher JointAngles_pub;
 			ros::Publisher ToolPosition_pub;
 			ros::Publisher FingerPosition_pub;
+			ros::Publisher ZeroArm_pub;
+
 
 			ros::Timer status_timer;
 			ros::Timer cartesian_vel_timer;
