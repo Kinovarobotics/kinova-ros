@@ -38,7 +38,6 @@ include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
 
 
 rosbuild_add_library(jacoapi src/jaco_api.cpp)
-rosbuild_add_library(GS src/goStorage.cpp)
 rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 
@@ -50,10 +49,8 @@ rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 #Nodes
 rosbuild_add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
-rosbuild_add_executable(go_2_storage src/nodes/storageNode.cpp )
 rosbuild_add_executable(jaco_tf_updater src/nodes/jaco_tf_updater.cpp )
 
 
 target_link_libraries(jaco_arm_driver jacoapi)
-target_link_libraries(go_2_storage GS)
 target_link_libraries(jaco_tf_updater jacokinematics)

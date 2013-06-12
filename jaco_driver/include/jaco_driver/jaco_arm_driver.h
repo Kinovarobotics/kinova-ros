@@ -25,8 +25,7 @@
 #include "jaco_driver/joint_angles.h"
 #include "jaco_driver/zero_arm.h"
 
-#include <robot_base_msgs/SoftwareStop.h>
-#include <aero_srr_msgs/AeroState.h>
+#include <jaco_driver/SoftwareStop.h>
 
 #include <time.h>
 
@@ -37,7 +36,6 @@ namespace jaco
 	{
 		public:
 			JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
-			void AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state);
 			bool HomeState(void);
 			void ZeroArm(void);
 			void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
@@ -69,7 +67,7 @@ namespace jaco
 			void BroadCastAngles(void);
 			void BroadCastPosition(void);
 			void BroadCastFingerPosition(void);
-			void SoftwarePauseMSG(const robot_base_msgs::SoftwareStopConstPtr& software_pause);
+			void SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause);
 			void SetJointAnglesCb(const jaco_driver::joint_anglesConstPtr& angles);
 		private:
 			jaco::JacoAPI* API;
@@ -80,7 +78,6 @@ namespace jaco
 			ros::Subscriber SetFingerPosition_sub;
 			ros::Subscriber SoftwarePause_sub;
 			ros::Subscriber	SetJoint_sub;
-			ros::Subscriber aero_state_sub;
 			ros::Subscriber ZeroArm_sub;
 
 

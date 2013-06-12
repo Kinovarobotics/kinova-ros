@@ -339,7 +339,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	/* Storing arm in home position */
 
 	this->GoHome();
-	this->aero_state_sub = nh.subscribe(aero_state, 1, &JacoArm::AeroStateMSG, this);
 
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::joint_angles>(joint_angles_topic, 2);
@@ -378,28 +377,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
-void JacoArm::AeroStateMSG(const aero_srr_msgs::AeroStateConstPtr& aero_state)
-{
-	ROS_INFO("State = %d", aero_state->state);
-	switch (aero_state->state)
-	{
 
-		case aero_srr_msgs::AeroState::PICKUP:
-
-			break;
-		default:
-
-			if (previous_state == aero_srr_msgs::AeroState::PICKUP)
-			{
-				this->GoHome();
-
-			}
-			break;
-
-	}
-	previous_state = aero_state->state;
-
-}
 
 bool JacoArm::HomeState(void)
 {
@@ -1111,7 +1089,7 @@ void JacoArm::ZeroArmMSG(const jaco_driver::zero_armConstPtr& zero_req)
 	ZeroArm_pub.publish(zero_stat);
 
 }
-void JacoArm::SoftwarePauseMSG(const robot_base_msgs::SoftwareStopConstPtr& software_pause)
+void JacoArm::SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause)
 {
 
 //TODO add software pause
