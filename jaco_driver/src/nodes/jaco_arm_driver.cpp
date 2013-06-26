@@ -260,7 +260,7 @@ Note that if the arm is already in the "home" position, this routine will cause 
 
 	home_command.ButtonValue[2] = 1;
 	API->SendJoystickCommand(home_command);
-	ros::Duration(15.0).sleep();			// The maximum amount of time it should take to return home.
+	ros::Duration(25.0).sleep();			// The maximum amount of time it should take to return home.
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 
@@ -299,8 +299,12 @@ Sends a joint angle command to the Jaco arm.
 			API->StopControlAPI();
 		}
 
+		//API->StopControlAPI();
 		API->StartControlAPI();
+		API->SetAngularControl();
 
+		Jaco_Position.LimitationsActive = false;
+		Jaco_Position.Position.Delay = 0.0;
 		Jaco_Position.Position.Type = ANGULAR_POSITION;
 
 		Jaco_Position.Position.Actuators.Actuator1 = angles.Actuator1;
@@ -420,7 +424,6 @@ Sends a joint angle command to the Jaco arm.
 					break;
 				}
 			}
-
 		}
 	}
 }
@@ -444,8 +447,12 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 			API->StopControlAPI();
 		}
 
+		//API->StopControlAPI();
 		API->StartControlAPI();
+		API->SetCartesianControl();
 
+		Jaco_Position.LimitationsActive = false;
+		Jaco_Position.Position.Delay = 0.0;
 		Jaco_Position.Position.Type = CARTESIAN_POSITION;
 
 		Jaco_Position.Position.CartesianPosition.X = position.X;
@@ -475,9 +482,9 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 				current_sec = (double) time(NULL);
 			}
 
-			CartesianPosition cur_position; //holds the current position of the arm
+			CartesianPosition cur_position;	//holds the current position of the arm
 
-			const float Postion_Range = 5; //dead zone for position
+			const float Postion_Range = 5; 	//dead zone for position
 			const float Rotation_Range = 5; //dead zone for rotation
 
 			bool Position_X_Reached = false;
@@ -842,14 +849,14 @@ void JacoArm::PrintAngles(AngularInfo angles)
 Dumps the current joint angles onto the screen.  
 */
 
-	ROS_INFO("Jaco Arm Angles (Degrees)");
-	ROS_INFO("Joint 1 = %f", angles.Actuator1);
-	ROS_INFO("Joint 2 = %f", angles.Actuator2);
-	ROS_INFO("Joint 3 = %f", angles.Actuator3);
+	ROS_DEBUG("Jaco Arm Angles (Degrees)");
+	ROS_DEBUG("Joint 1 = %f", angles.Actuator1);
+	ROS_DEBUG("Joint 2 = %f", angles.Actuator2);
+	ROS_DEBUG("Joint 3 = %f", angles.Actuator3);
 
-	ROS_INFO("Joint 4 = %f", angles.Actuator4);
-	ROS_INFO("Joint 5 = %f", angles.Actuator5);
-	ROS_INFO("Joint 6 = %f", angles.Actuator6);
+	ROS_DEBUG("Joint 4 = %f", angles.Actuator4);
+	ROS_DEBUG("Joint 5 = %f", angles.Actuator5);
+	ROS_DEBUG("Joint 6 = %f", angles.Actuator6);
 
 }
 
@@ -860,15 +867,15 @@ void JacoArm::PrintPosition(CartesianInfo position)
 Dumps the current cartesian positions onto the screen.  
 */
 
-	ROS_INFO("Jaco Arm Position (Meters)");
-	ROS_INFO("X = %f", position.X);
-	ROS_INFO("Y = %f", position.Y);
-	ROS_INFO("Z = %f", position.Z);
+	ROS_DEBUG("Jaco Arm Position (Meters)");
+	ROS_DEBUG("X = %f", position.X);
+	ROS_DEBUG("Y = %f", position.Y);
+	ROS_DEBUG("Z = %f", position.Z);
 
-	ROS_INFO("Jaco Arm Rotations (Radians)");
-	ROS_INFO("Theta X = %f", position.ThetaX);
-	ROS_INFO("Theta Y = %f", position.ThetaY);
-	ROS_INFO("Theta Z = %f", position.ThetaZ);
+	ROS_DEBUG("Jaco Arm Rotations (Radians)");
+	ROS_DEBUG("Theta X = %f", position.ThetaX);
+	ROS_DEBUG("Theta Y = %f", position.ThetaY);
+	ROS_DEBUG("Theta Z = %f", position.ThetaZ);
 
 }
 
@@ -879,10 +886,10 @@ void JacoArm::PrintFingers(FingersPosition fingers)
 Dumps the current finger positions onto the screen.  
 */
 
-	ROS_INFO("Jaco Arm Finger Positions");
-	ROS_INFO("Finger 1 = %f", fingers.Finger1);
-	ROS_INFO("Finger 2 = %f", fingers.Finger2);
-	ROS_INFO("Finger 3 = %f", fingers.Finger3);
+	ROS_DEBUG("Jaco Arm Finger Positions");
+	ROS_DEBUG("Finger 1 = %f", fingers.Finger1);
+	ROS_DEBUG("Finger 2 = %f", fingers.Finger2);
+	ROS_DEBUG("Finger 3 = %f", fingers.Finger3);
 
 }
 
@@ -892,21 +899,22 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 /*
 Displays the cartesian coordinates of the arm before and after a transform.
 */
+
 	CartesianInfo Jaco_Position;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
 	if (software_pause == false)
 	{
 		geometry_msgs::PoseStamped api_pose;
-		ROS_INFO("Raw MSG");
-		ROS_INFO("X = %f", arm_pose->pose.position.x);
-		ROS_INFO("Y = %f", arm_pose->pose.position.y);
-		ROS_INFO("Z = %f", arm_pose->pose.position.z);
+		ROS_DEBUG("Raw MSG");
+		ROS_DEBUG("X = %f", arm_pose->pose.position.x);
+		ROS_DEBUG("Y = %f", arm_pose->pose.position.y);
+		ROS_DEBUG("Z = %f", arm_pose->pose.position.z);
 
-		ROS_INFO("RX = %f", arm_pose->pose.orientation.x);
-		ROS_INFO("RY = %f", arm_pose->pose.orientation.y);
-		ROS_INFO("RZ = %f", arm_pose->pose.orientation.z);
-		ROS_INFO("RW = %f", arm_pose->pose.orientation.w);
+		ROS_DEBUG("RX = %f", arm_pose->pose.orientation.x);
+		ROS_DEBUG("RY = %f", arm_pose->pose.orientation.y);
+		ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
+		ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
 
 		while (ros::ok()
 				&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
@@ -917,15 +925,15 @@ Displays the cartesian coordinates of the arm before and after a transform.
 
 		listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
 
-		ROS_INFO("Transformed MSG");
-		ROS_INFO("X = %f", api_pose.pose.position.x);
-		ROS_INFO("Y = %f", api_pose.pose.position.y);
-		ROS_INFO("Z = %f", api_pose.pose.position.z);
+		ROS_DEBUG("Transformed MSG");
+		ROS_DEBUG("X = %f", api_pose.pose.position.x);
+		ROS_DEBUG("Y = %f", api_pose.pose.position.y);
+		ROS_DEBUG("Z = %f", api_pose.pose.position.z);
 
-		ROS_INFO("RX = %f", api_pose.pose.orientation.x);
-		ROS_INFO("RY = %f", api_pose.pose.orientation.y);
-		ROS_INFO("RZ = %f", api_pose.pose.orientation.z);
-		ROS_INFO("RW = %f", api_pose.pose.orientation.w);
+		ROS_DEBUG("RX = %f", api_pose.pose.orientation.x);
+		ROS_DEBUG("RY = %f", api_pose.pose.orientation.y);
+		ROS_DEBUG("RZ = %f", api_pose.pose.orientation.z);
+		ROS_DEBUG("RW = %f", api_pose.pose.orientation.w);
 
 		double x, y, z;
 		tf::Quaternion q;
@@ -951,7 +959,6 @@ Displays the cartesian coordinates of the arm before and after a transform.
 			this->SetPosition(Jaco_Position);
 		}
 	}
-
 }
 
 
@@ -1123,18 +1130,7 @@ reaching the default home position. GoHome() function must be enabled in the ini
 routine for this to work.
 */
 
-//	FingersPosition fingers_home = { 40, 40, 40 };
 	AngularInfo joint_home;
-
-	joint_home.Actuator1 = 176.0;
-	joint_home.Actuator2 = 180.0;
-	joint_home.Actuator3 = 107.0;
-	joint_home.Actuator4 = 459.0;
-	joint_home.Actuator5 = 102.0;
-	joint_home.Actuator6 = 106.0;
-
-//	this->SetFingers(fingers_home, 5); //send fingers to home position
-	this->SetAngles(joint_home, 10); //send joints to home position
 
 	joint_home.Actuator1 = 176.0;
 	joint_home.Actuator2 = 111.0;
@@ -1143,7 +1139,6 @@ routine for this to work.
 	joint_home.Actuator5 = 102.0;
 	joint_home.Actuator6 = 106.0;
 
-//	this->SetFingers(fingers_home, 5); //send fingers to home position
 	this->SetAngles(joint_home, 10); //send joints to home position
 
 	API->SetCartesianControl();
@@ -1158,13 +1153,13 @@ Publishes the current joint angles.
 Joint angles are published in both their raw state as obtained from the arm (JointAngles),
 and transformed & converted to radians (joint_state) as per the Jaco Kinematics PDF.
 
-joint_state will eventually also publish the velocity and effort for each joint, when
+JointState will eventually also publish the velocity and effort for each joint, when
 this data is made available by the C++ API.  Currenty velocity and effort are reported
 as being zero (0.0) for all joints.
 */
 
 	// Populate an array of joint names.  arm_0_joint is the base, arm_5_joint is the wrist.
-	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint", "Finger1", "Finger2", "Finger3"};
+	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint", "Finger_1", "Finger_2", "Finger_3"};
 	std::vector<std::string> JointName(nameArgs, nameArgs+9);
 
 	AngularPosition arm_angles;
