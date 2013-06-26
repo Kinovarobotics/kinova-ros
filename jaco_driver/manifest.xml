@@ -1,5 +1,5 @@
 <package>
-  <description brief="jaco_driver">
+  <description brief="Kinova Jaco arm driver">
 
      jaco_driver
 
@@ -11,7 +11,7 @@
   <depend package="roscpp"/>
   <depend package="rospy"/>  
   <depend package="tf"/>  
-    <depend package="nav_msgs"/>
+  <depend package="nav_msgs"/>
   <depend package="geometry_msgs"/>
   <depend package="std_msgs"/>
   <depend package="sensor_msgs"/>

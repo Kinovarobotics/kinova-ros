@@ -1,5 +1,5 @@
 <package>
-  <description brief="AERO_description">
+  <description brief="Kinova Jaco arm model">
 
      AERO_description
 
@@ -7,10 +7,9 @@
   <author>bpwiselybabu</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/AERO_description</url>
+  <url>http://ros.org/wiki/jaco_model</url>
   <depend package="urdf" /> <!-- Testing -->
   <depend package="xacro" /> <!-- Testing -->
-  <depend package="husky_description" />
 
 </package>
 
