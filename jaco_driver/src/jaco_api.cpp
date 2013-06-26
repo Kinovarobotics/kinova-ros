@@ -2,8 +2,10 @@
  * jacolib.cpp
  *
  *  Created on: Mar 10, 2013
- *      Author: mdedonato
+ *  Modified on: June 25, 2013
+ *      Author: mdedonato, Clearpath Robotics
  */
+
 #include <jaco_driver/jaco_api.h>
 
 namespace jaco {

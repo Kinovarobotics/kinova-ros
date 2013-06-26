@@ -2,7 +2,8 @@
  * jacolib.h
  *
  *  Created on: Feb 16, 2013
- *      Author: mdedonato
+ *  Modified on: June 25, 2013
+ *      Author: mdedonato, Clearpath Robotics
  */
 
 #ifndef JACOLIB_H_

@@ -2,15 +2,14 @@
  * jaco_arm_driver.h
  *
  *  Created on: Feb 26, 2013
- *      Author: mdedonato
+ *  Modified on: June 25, 2013
+ *      Author: mdedonato, Clearpath Robotics
+ *
  */
 
 #ifndef JACO_ARM_DRIVER_H_
 #define JACO_ARM_DRIVER_H_
 
-/* Define to debug without arm */
-//#define DEBUG_WITHOUT_ARM
-//#define PRINT_DEBUG_INFO
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <jaco_driver/jaco_api.h>
@@ -20,14 +19,19 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
-#include "jaco_driver/joint_velocity.h"
-#include "jaco_driver/finger_position.h"
-#include "jaco_driver/joint_angles.h"
-#include "jaco_driver/zero_arm.h"
+#include "jaco_driver/JointVelocity.h"
+#include "jaco_driver/FingerPosition.h"
+#include "jaco_driver/JointAngles.h"
+#include "jaco_driver/ZeroArm.h"
+#include "sensor_msgs/JointState.h"
 
 #include <jaco_driver/SoftwareStop.h>
 
 #include <time.h>
+#include <math.h>
+#include <vector>
+
+#define PI 3.14159265358
 
 namespace jaco
 {
@@ -59,16 +63,16 @@ namespace jaco
 			void CartesianVelTimer(const ros::TimerEvent&);
 			void JointVelTimer(const ros::TimerEvent&);
 			void StatusTimer(const ros::TimerEvent&);
-			void VelocityMSG(const jaco_driver::joint_velocityConstPtr& joint_vel);
-			void ZeroArmMSG(const jaco_driver::zero_armConstPtr& zero);
+			void VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel);
+			void ZeroArmMSG(const jaco_driver::ZeroArmConstPtr& zero);
 
 			void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
-			void SetFingerPositionMSG(const jaco_driver::finger_positionConstPtr& finger_pos);
+			void SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos);
 			void BroadCastAngles(void);
 			void BroadCastPosition(void);
 			void BroadCastFingerPosition(void);
 			void SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause);
-			void SetJointAnglesCb(const jaco_driver::joint_anglesConstPtr& angles);
+			void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles);
 		private:
 			jaco::JacoAPI* API;
 			/* Subscribers */
@@ -86,6 +90,7 @@ namespace jaco
 			ros::Publisher ToolPosition_pub;
 			ros::Publisher FingerPosition_pub;
 			ros::Publisher ZeroArm_pub;
+			ros::Publisher JointState_pub;
 
 
 			ros::Timer status_timer;
@@ -107,7 +112,7 @@ namespace jaco
 			uint8_t previous_state;
 
 			/* Remove this */
-			tf::TransformListener tf_listener;
+			//tf::TransformListener tf_listener;
 
 			bool software_pause;
 	};

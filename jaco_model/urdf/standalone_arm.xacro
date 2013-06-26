@@ -23,7 +23,7 @@
 	<geometry>
 	  <box size = "0 0 0"/> <!--making it slightly bigger in x and z direction-->
 	</geometry>
-	<material name="Black" />
+	<!--<material name="Black" /> -->
       </visual>
       <collision>
 	<origin xyz="0 0 0" rpy="0 0 0" />
@@ -32,7 +32,7 @@
 	</geometry>
       </collision>     
     </link>
--->
+
 <xacro:jaco_arm  parent="root"/>
 
 </robot>
