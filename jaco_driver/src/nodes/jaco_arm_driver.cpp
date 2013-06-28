@@ -7,8 +7,8 @@
 //============================================================================
 
 
-//License File
 #include <jaco_driver/jaco_arm_driver.h>
+
 
 using namespace std;
 using namespace jaco;
@@ -131,14 +131,14 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	GetConfig(configuration);
 	PrintConfig(configuration);
 
-	ROS_INFO("Attempting to Zero the Arm");
+	ROS_INFO("Initializing the Arm");
+
 	ZeroArm();
 
 	/* Storing arm in home position */
 
 //	this->GoHome();  // Useful if you want to move the arm to an alternate "home" position after the default home.
 
-ROS_INFO("Setting up Publishers");
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
 	this->JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state, 2);
@@ -146,7 +146,6 @@ ROS_INFO("Setting up Publishers");
 	this->FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
 	this->ZeroArm_pub = nh.advertise<jaco_driver::ZeroArm>(zero_arm_stat, 1, true);
 
-ROS_INFO("Setting up Subscribers");
 	/* Set up Subscribers*/
 	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
 	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
@@ -166,7 +165,7 @@ ROS_INFO("Setting up Subscribers");
 	this->ZeroArm_sub = nh.subscribe(zero_arm_req, 1, &JacoArm::ZeroArmMSG, this);
 
 	BroadCastAngles();
-	ROS_INFO("Arm ready to use.");
+	ROS_INFO("The Arm is ready to use.");
 
 	TrajectoryPoint Jaco_Velocity;
 
@@ -188,6 +187,8 @@ Determines whether the arm has returned to its "Home" state by checking the curr
 joint angles every second, then comparing them to the previously measured joint angles.
 If they have not changed significantly since the last measurement, the arm is assumed
 to be in its home position (ie. it stopped moving).
+
+Currently this code doesn't work well and is never called.
 */
 
 	AngularPosition Old_Jaco_Angles;
@@ -271,6 +272,46 @@ Note that if the arm is already in the "home" position, this routine will cause 
 	fingers_home.Finger2 = 0;
 	fingers_home.Finger3 = 0;
 	this->SetFingers(fingers_home, 5);
+	ros::Duration(1.0).sleep();
+
+	// Set the fingers to "half-open"
+	fingers_home.Finger1 = 40;
+	fingers_home.Finger2 = 40;
+	fingers_home.Finger3 = 40;
+	this->SetFingers(fingers_home, 5);
+	//ros::Duration(2.0).sleep();
+}
+
+
+bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res)
+{
+
+/*
+A service that homes the arm.  Functionality is the same as ZeroArm, except the fingers are 
+normally not initialized.
+*/	
+	
+	ROS_INFO("HOMING JACO ARM");
+
+	API->StartControlAPI();
+
+	JoystickCommand home_command;
+	memset(&home_command, 0, sizeof(home_command)); //zero structure
+
+	home_command.ButtonValue[2] = 1;
+	API->SendJoystickCommand(home_command);
+	ros::Duration(25.0).sleep();			// The maximum amount of time it should take to return home.
+	home_command.ButtonValue[2] = 0;
+	API->SendJoystickCommand(home_command);
+
+/*
+	FingersPosition fingers_home;
+
+	// Set the fingers fully "open." This is required to initialize the fingers.
+	fingers_home.Finger1 = 0;
+	fingers_home.Finger2 = 0;
+	fingers_home.Finger3 = 0;
+	this->SetFingers(fingers_home, 5);
 	ros::Duration(2.0).sleep();
 
 	// Set the fingers to "half-open"
@@ -279,30 +320,42 @@ Note that if the arm is already in the "home" position, this routine will cause 
 	fingers_home.Finger3 = 40;
 	this->SetFingers(fingers_home, 5);
 	ros::Duration(2.0).sleep();
+*/
+
+	res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
+	ROS_INFO("JACO ARM HOMING COMPLETE");
+
+	return true;
 }
+
 
 void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 {
 
 /*
-Sends a joint angle command to the Jaco arm.
+Sends a joint angle command to the Jaco arm, and waits until the arm has stopped
+moving before releasing control of the API.
 */
+
+	timeout = 30;
+
+
 
 	if (software_pause == false)
 	{
 		TrajectoryPoint Jaco_Position;
 
 		memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
 		if (push == true)
 		{
 			API->EraseAllTrajectories();
 			API->StopControlAPI();
 		}
-
-		//API->StopControlAPI();
+		
 		API->StartControlAPI();
 		API->SetAngularControl();
-
+		
 		Jaco_Position.LimitationsActive = false;
 		Jaco_Position.Position.Delay = 0.0;
 		Jaco_Position.Position.Type = ANGULAR_POSITION;
@@ -316,7 +369,6 @@ Sends a joint angle command to the Jaco arm.
 
 		API->SendAdvanceTrajectory(Jaco_Position);
 
-		//if we want to timeout
 		if (timeout != 0)
 		{
 			double start_secs;
@@ -335,8 +387,11 @@ Sends a joint angle command to the Jaco arm.
 			}
 
 			AngularPosition cur_angles; //holds the current angles of the arm
+			AngularPosition past_angles;
 
-			const float Angle_Range = 2; //dead zone for angles (degrees)
+			API->GetAngularPosition(past_angles); // Load the starting position into past_angles
+
+			const float Angle_Range = 0.01; //dead zone for angles (degrees)
 
 			bool Joint_1_Reached = false;
 			bool Joint_2_Reached = false;
@@ -345,10 +400,14 @@ Sends a joint angle command to the Jaco arm.
 			bool Joint_5_Reached = false;
 			bool Joint_6_Reached = false;
 
+			//ros::Duration(1.0).sleep();
+
 			//while we have not timed out
 			while ((current_sec - start_secs) < timeout)
 			{
 
+				ros::Duration(0.5).sleep();
+				
 				//If ros is still running use rostime, else use system time
 				if (ros::ok())
 				{
@@ -361,66 +420,110 @@ Sends a joint angle command to the Jaco arm.
 
 				API->GetAngularPosition(cur_angles); //update current arm angles
 
-				/* Check each joint angle to determine whether it has reached its destination */
+
+				/* Check each joint angle to determine whether it has stopped moving */
 
 				//Check if Joint 1 is in range
-				if (((cur_angles.Actuators.Actuator1)
-						<= Jaco_Position.Position.Actuators.Actuator1 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator1)
-								>= (Jaco_Position.Position.Actuators.Actuator1 - Angle_Range))
+
+				if (((cur_angles.Actuators.Actuator1) <= past_angles.Actuators.Actuator1 + Angle_Range)
+						&& (cur_angles.Actuators.Actuator1) >= (past_angles.Actuators.Actuator1 - Angle_Range))
 				{
 					Joint_1_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_1 difference: %f", (cur_angles.Actuators.Actuator1 - 											past_angles.Actuators.Actuator1));
+					past_angles.Actuators.Actuator1 = cur_angles.Actuators.Actuator1;
+				}
+
+
 
 				//Check if Joint 2 is in range
+
 				if (((cur_angles.Actuators.Actuator2)
-						<= Jaco_Position.Position.Actuators.Actuator2 + Angle_Range)
+						<= past_angles.Actuators.Actuator2 + Angle_Range)
 						&& (cur_angles.Actuators.Actuator2)
-								>= (Jaco_Position.Position.Actuators.Actuator2 - Angle_Range))
+								>= (past_angles.Actuators.Actuator2 - Angle_Range))
 				{
 					Joint_2_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_2 difference: %f", (cur_angles.Actuators.Actuator2 - 											past_angles.Actuators.Actuator2));
+					past_angles.Actuators.Actuator2 = cur_angles.Actuators.Actuator2;
+				}
+
+
 
 				//Check if Joint 3 is in range
+
 				if (((cur_angles.Actuators.Actuator3)
-						<= Jaco_Position.Position.Actuators.Actuator3 + Angle_Range)
+						<= past_angles.Actuators.Actuator3 + Angle_Range)
 						&& (cur_angles.Actuators.Actuator3)
-								>= (Jaco_Position.Position.Actuators.Actuator3 - Angle_Range))
+								>= (past_angles.Actuators.Actuator3 - Angle_Range))
 				{
 					Joint_3_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_3 difference: %f", (cur_angles.Actuators.Actuator3 - 											past_angles.Actuators.Actuator3));
+					past_angles.Actuators.Actuator3 = cur_angles.Actuators.Actuator3;
+				}
+
 
 				//Check if Joint 4 is in range
+
 				if (((cur_angles.Actuators.Actuator4)
-						<= Jaco_Position.Position.Actuators.Actuator4 + Angle_Range)
+						<= past_angles.Actuators.Actuator4 + Angle_Range)
 						&& (cur_angles.Actuators.Actuator4)
-								>= (Jaco_Position.Position.Actuators.Actuator4 - Angle_Range))
+								>= (past_angles.Actuators.Actuator4 - Angle_Range))
 				{
 					Joint_4_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_4 difference: %f", (cur_angles.Actuators.Actuator4 - 											past_angles.Actuators.Actuator4));
+					past_angles.Actuators.Actuator4 = cur_angles.Actuators.Actuator4;
+				}
 
 				//Check if Joint 5 is in range
+
 				if (((cur_angles.Actuators.Actuator5)
-						<= Jaco_Position.Position.Actuators.Actuator5 + Angle_Range)
+						<= past_angles.Actuators.Actuator5 + Angle_Range)
 						&& (cur_angles.Actuators.Actuator5)
-								>= (Jaco_Position.Position.Actuators.Actuator5 - Angle_Range))
+								>= (past_angles.Actuators.Actuator5 - Angle_Range))
 				{
 					Joint_5_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_5 difference: %f", (cur_angles.Actuators.Actuator5 - 											past_angles.Actuators.Actuator5));
+					past_angles.Actuators.Actuator5 = cur_angles.Actuators.Actuator5;
+				}
 
 				//Check if Joint 6 is in range
+
 				if (((cur_angles.Actuators.Actuator6)
-						<= Jaco_Position.Position.Actuators.Actuator6 + Angle_Range)
+						<= past_angles.Actuators.Actuator6 + Angle_Range)
 						&& (cur_angles.Actuators.Actuator6)
-								>= (Jaco_Position.Position.Actuators.Actuator6 - Angle_Range))
+								>= (past_angles.Actuators.Actuator6 - Angle_Range))
 				{
 					Joint_6_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Joint_6 difference: %f", (cur_angles.Actuators.Actuator6 - 											past_angles.Actuators.Actuator6));
+					past_angles.Actuators.Actuator6 = cur_angles.Actuators.Actuator6;
+				}
 
-				//If all the joints reached their destination then break out of timeout loop
+				//If all the joints reached their destination then break out of loop
 				if (Joint_1_Reached == true && Joint_2_Reached == true && Joint_3_Reached == true
 						&& Joint_4_Reached == true && Joint_5_Reached == true && Joint_6_Reached == true)
 				{
+					ROS_INFO("Angular Control Complete.");
+					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+					API->EraseAllTrajectories();  // Clear any remaining trajectories
+					//API->StopControlAPI();
 					break;
 				}
 			}
@@ -432,8 +535,11 @@ void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 {
 
 /*
-Sends a cartesian coordinate trajectory to the Jaco arm.
+Sends a cartesian coordinate trajectory to the Jaco arm, and waits until the arm has stopped
+moving before releasing control of the API.
 */
+
+	timeout = 30;
 
 	if (software_pause == false)
 	{
@@ -447,7 +553,6 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 			API->StopControlAPI();
 		}
 
-		//API->StopControlAPI();
 		API->StartControlAPI();
 		API->SetCartesianControl();
 
@@ -460,11 +565,10 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 		Jaco_Position.Position.CartesianPosition.Z = position.Z;
 		Jaco_Position.Position.CartesianPosition.ThetaX = position.ThetaX;
 		Jaco_Position.Position.CartesianPosition.ThetaY = position.ThetaY;
-		Jaco_Position.Position.CartesianPosition.ThetaZ = position.ThetaZ;
+		Jaco_Position.Position.CartesianPosition.ThetaZ = position.ThetaZ + 0.0001; // A workaround for a bug in the Kinova API
 
-		API->SendAdvanceTrajectory(Jaco_Position);
+		API->SendBasicTrajectory(Jaco_Position);
 
-		//if we want to timeout
 		if (timeout != 0)
 		{
 			double start_secs;
@@ -482,10 +586,13 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 				current_sec = (double) time(NULL);
 			}
 
-			CartesianPosition cur_position;	//holds the current position of the arm
+			CartesianPosition cur_position;		//holds the current position of the arm
+			CartesianPosition past_position;	//holds the past position of the arm
 
-			const float Postion_Range = 5; 	//dead zone for position
-			const float Rotation_Range = 5; //dead zone for rotation
+			API->GetCartesianPosition(past_position); //pre-load the past arm position
+
+			const float Postion_Range = 0.001; 	//dead zone for position
+			const float Rotation_Range = 0.001; 	//dead zone for rotation
 
 			bool Position_X_Reached = false;
 			bool Position_Y_Reached = false;
@@ -494,9 +601,13 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 			bool Position_TY_Reached = false;
 			bool Position_TZ_Reached = false;
 
+			//ros::Duration(1.0).sleep();
+
 			//while we have not timed out
 			while ((current_sec - start_secs) < timeout)
 			{
+
+				ros::Duration(0.5).sleep();
 
 				//If ros is still runniing use rostime, else use system time
 				if (ros::ok())
@@ -514,68 +625,107 @@ Sends a cartesian coordinate trajectory to the Jaco arm.
 				
 				//Check if X is in range
 				if (((cur_position.Coordinates.X)
-						<= Jaco_Position.Position.CartesianPosition.X + Postion_Range)
+						<= past_position.Coordinates.X + Postion_Range)
 						&& (cur_position.Coordinates.X)
-								>= (Jaco_Position.Position.CartesianPosition.X - Postion_Range))
+								>= (past_position.Coordinates.X - Postion_Range))
 				{
 					Position_X_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("X difference: %f", (cur_position.Coordinates.X - 											past_position.Coordinates.X));
+					past_position.Coordinates.X = cur_position.Coordinates.X;
+				}
 
 				//Check if Y is in range
+
 				if (((cur_position.Coordinates.Y)
-						<= Jaco_Position.Position.CartesianPosition.Y + Postion_Range)
+						<= past_position.Coordinates.Y + Postion_Range)
 						&& (cur_position.Coordinates.Y)
-								>= (Jaco_Position.Position.CartesianPosition.Y - Postion_Range))
+								>= (past_position.Coordinates.Y - Postion_Range))
 				{
 					Position_Y_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Y difference: %f", (cur_position.Coordinates.Y - 											past_position.Coordinates.Y));
+					past_position.Coordinates.Y = cur_position.Coordinates.Y;
+				}
 
 				//Check if Z is in range
+
 				if (((cur_position.Coordinates.Z)
-						<= Jaco_Position.Position.CartesianPosition.Z + Postion_Range)
+						<= past_position.Coordinates.Z + Postion_Range)
 						&& (cur_position.Coordinates.Z)
-								>= (Jaco_Position.Position.CartesianPosition.Z - Postion_Range))
+								>= (past_position.Coordinates.Z - Postion_Range))
 				{
 					Position_Z_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Z difference: %f", (cur_position.Coordinates.Z - 											past_position.Coordinates.Z));
+					past_position.Coordinates.Z = cur_position.Coordinates.Z;
+				}
 
 				//Check if ThetaX is in range
+
 				if (((cur_position.Coordinates.ThetaX)
-						<= Jaco_Position.Position.CartesianPosition.ThetaX + Rotation_Range)
+						<= past_position.Coordinates.ThetaX + Rotation_Range)
 						&& (cur_position.Coordinates.ThetaX)
-								>= (Jaco_Position.Position.CartesianPosition.ThetaX - Rotation_Range))
+								>= (past_position.Coordinates.ThetaX - Rotation_Range))
 				{
 					Position_TX_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Theta X difference: %f", (cur_position.Coordinates.ThetaX - 											past_position.Coordinates.ThetaX));
+					past_position.Coordinates.ThetaX = cur_position.Coordinates.ThetaX;
+				}
 
 				//Check if ThetaY is in range
+
 				if (((cur_position.Coordinates.ThetaY)
-						<= Jaco_Position.Position.CartesianPosition.ThetaY + Rotation_Range)
+						<= past_position.Coordinates.ThetaY + Rotation_Range)
 						&& (cur_position.Coordinates.ThetaY)
-								>= (Jaco_Position.Position.CartesianPosition.ThetaY - Rotation_Range))
+								>= (past_position.Coordinates.ThetaY - Rotation_Range))
 				{
 					Position_TY_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Theta Y difference: %f", (cur_position.Coordinates.ThetaY - 											past_position.Coordinates.ThetaY));
+					past_position.Coordinates.ThetaY = cur_position.Coordinates.ThetaY;
+				}
 
 				//Check if ThetaZ is in range
+
 				if (((cur_position.Coordinates.ThetaZ)
-						<= Jaco_Position.Position.CartesianPosition.ThetaZ + Rotation_Range)
+						<= past_position.Coordinates.ThetaZ + Rotation_Range)
 						&& (cur_position.Coordinates.ThetaZ)
-								>= (Jaco_Position.Position.CartesianPosition.ThetaZ - Rotation_Range))
+								>= (past_position.Coordinates.ThetaZ - Rotation_Range))
 				{
 					Position_TZ_Reached = true;
 				}
+				else
+				{
+					ROS_INFO("Theta Z difference: %f", (cur_position.Coordinates.ThetaZ - 											past_position.Coordinates.ThetaZ));
+					past_position.Coordinates.ThetaZ = cur_position.Coordinates.ThetaZ;
+				}
 
-				//If the arm reaches it's destination then break out of timeout loop
+				//If the arm reaches its destination then break out of loop
 				if (Position_X_Reached == true && Position_Y_Reached == true && Position_Z_Reached == true
 						&& Position_TX_Reached == true && Position_TY_Reached == true
 						&& Position_TZ_Reached == true)
 				{
+					ROS_INFO("Cartesian Control Complete.");
+					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+					API->EraseAllTrajectories();  // Clear any remaining trajectories				
+					//API->StopControlAPI();
 					break;
 				}
 			}
 		}
-	}
+	}	
 }
 
 void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
@@ -585,11 +735,14 @@ void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 Sets the finger positions
 */
 
+	timeout = 30;
+
 	if (software_pause == false)
 	{
 		TrajectoryPoint Jaco_Position;
 
 		memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
 
 		ros::Duration(4.0).sleep();
 
@@ -1073,10 +1226,57 @@ erases any trajectories that had been sent to the arm.
 	else
 	{		
 		ROS_INFO("ARM CONTROL ENABLED");
-
+		
 		API->StartControlAPI();
 	}
 }
+
+bool JacoArm::EstopSRV(jaco_driver::Estop::Request &req, jaco_driver::Estop::Response &res)
+{
+/*
+A service that will instantly stop the arm.
+*/
+
+	this->software_pause = true;
+
+	API->StartControlAPI();
+
+	JoystickCommand home_command;
+	memset(&home_command, 0, sizeof(home_command)); //zero structure
+
+	home_command.ButtonValue[2] = 1;
+	API->SendJoystickCommand(home_command);
+	ros::Duration(0.05).sleep();
+	home_command.ButtonValue[2] = 0;
+	API->SendJoystickCommand(home_command);
+
+	res.estop_result = "JACO ARM HAS BEEN E-STOPPED";
+	ROS_INFO("JACO ARM E-STOP REQUEST");
+
+	API->EraseAllTrajectories();
+
+	return true;
+}
+
+bool JacoArm::EstartSRV(jaco_driver::Estart::Request &req, jaco_driver::Estart::Response &res)
+{
+/*
+A service that re-enables control of the arm.
+*/
+
+	this->software_pause = false;
+
+	API->StartControlAPI();
+
+	res.estart_result = "JACO ARM CONTROL HAS BEEN ENABLED";
+	ROS_INFO("JACO ARM START REQUEST");
+
+	return true;
+}
+
+
+
+
 
 void JacoArm::CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
 {
@@ -1187,7 +1387,7 @@ as being zero (0.0) for all joints.
 	current_angles.Angle_J5 = arm_angles.Actuators.Actuator5;
 	current_angles.Angle_J6 = arm_angles.Actuators.Actuator6;
 
-	// Transform from DH algorithm to physical angles in radians, then place into vector array
+	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
 
 	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / PI);
 	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / PI);
@@ -1279,13 +1479,23 @@ int main(int argc, char **argv)
 
 	/* Set up ROS */
 	ros::init(argc, argv, "jaco_arm_driver");
+	ros::init(argc, argv, "estop_server");
+	ros::init(argc, argv, "estart_server");
+	ros::init(argc, argv, "homearm_server");
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
+
 
 	//create the arm object
 	JacoArm jaco(nh, param_nh);
 
+
+	ros::ServiceServer stop_service = nh.advertiseService("estop", &JacoArm::EstopSRV, &jaco);
+
+	ros::ServiceServer start_service = nh.advertiseService("estart", &JacoArm::EstartSRV, &jaco);
+
+	ros::ServiceServer homing_service = nh.advertiseService("homearm", &JacoArm::HomeArmSRV, &jaco);
+
 	ros::spin();
-//	jaco.GoHome();
 }
 

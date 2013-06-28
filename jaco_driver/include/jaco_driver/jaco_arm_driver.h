@@ -27,6 +27,10 @@
 
 #include <jaco_driver/SoftwareStop.h>
 
+#include <jaco_driver/Estop.h>
+#include <jaco_driver/Estart.h>
+#include <jaco_driver/HomeArm.h>
+
 #include <time.h>
 #include <math.h>
 #include <vector>
@@ -35,7 +39,6 @@
 
 namespace jaco
 {
-
 	class JacoArm
 	{
 		public:
@@ -73,6 +76,10 @@ namespace jaco
 			void BroadCastFingerPosition(void);
 			void SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause);
 			void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles);
+
+			bool EstopSRV(jaco_driver::Estop::Request &req, jaco_driver::Estop::Response &res);
+			bool EstartSRV(jaco_driver::Estart::Request &req, jaco_driver::Estart::Response &res);
+			bool HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res);
 		private:
 			jaco::JacoAPI* API;
 			/* Subscribers */
