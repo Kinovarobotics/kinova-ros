@@ -14,7 +14,7 @@ rosbuild_init()
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 
 #uncomment if you have defined messages
 rosbuild_genmsg()
@@ -54,3 +54,4 @@ rosbuild_add_executable(jaco_tf_updater src/nodes/jaco_tf_updater.cpp )
 
 target_link_libraries(jaco_arm_driver jacoapi)
 target_link_libraries(jaco_tf_updater jacokinematics)
+
