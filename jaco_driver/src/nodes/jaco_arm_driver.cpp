@@ -319,12 +319,7 @@ moving before releasing control of the API.
 		Jaco_Position.Position.Delay = 0.0;
 		Jaco_Position.Position.Type = ANGULAR_POSITION;
 
-		Jaco_Position.Position.Actuators.Actuator1 = angles.Actuator1;
-		Jaco_Position.Position.Actuators.Actuator2 = angles.Actuator2;
-		Jaco_Position.Position.Actuators.Actuator3 = angles.Actuator3;
-		Jaco_Position.Position.Actuators.Actuator4 = angles.Actuator4;
-		Jaco_Position.Position.Actuators.Actuator5 = angles.Actuator5;
-		Jaco_Position.Position.Actuators.Actuator6 = angles.Actuator6;
+		Jaco_Position.Position.Actuators = angles;
 
 		API->SendAdvanceTrajectory(Jaco_Position);
 
@@ -347,24 +342,17 @@ moving before releasing control of the API.
 
 			AngularPosition cur_angles; //holds the current angles of the arm
 			AngularPosition past_angles;
+			memset(&cur_angles, 0, sizeof(cur_angles));
 
 			API->GetAngularPosition(past_angles); // Load the starting position into past_angles
 
-			const float Angle_Range = 0.01; //dead zone for angles (degrees)
-
-			bool Joint_1_Reached = false;
-			bool Joint_2_Reached = false;
-			bool Joint_3_Reached = false;
-			bool Joint_4_Reached = false;
-			bool Joint_5_Reached = false;
-			bool Joint_6_Reached = false;
+			const float tolerance = 0.01; //dead zone for angles (degrees)
 
 			//ros::Duration(1.0).sleep();
 
 			//while we have not timed out
 			while ((current_sec - start_secs) < timeout)
 			{
-
 				ros::Duration(0.5).sleep();
 				
 				//If ros is still running use rostime, else use system time
@@ -379,111 +367,18 @@ moving before releasing control of the API.
 
 				API->GetAngularPosition(cur_angles); //update current arm angles
 
-
 				/* Check each joint angle to determine whether it has stopped moving */
-
-				//Check if Joint 1 is in range
-
-				if (((cur_angles.Actuators.Actuator1) <= past_angles.Actuators.Actuator1 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator1) >= (past_angles.Actuators.Actuator1 - Angle_Range))
+				if (CompareAngles(past_angles.Actuators, cur_angles.Actuators, tolerance))
 				{
-					Joint_1_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_1 difference: %f", (cur_angles.Actuators.Actuator1 - 											past_angles.Actuators.Actuator1));
-					past_angles.Actuators.Actuator1 = cur_angles.Actuators.Actuator1;
-				}
-
-
-
-				//Check if Joint 2 is in range
-
-				if (((cur_angles.Actuators.Actuator2)
-						<= past_angles.Actuators.Actuator2 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator2)
-								>= (past_angles.Actuators.Actuator2 - Angle_Range))
-				{
-					Joint_2_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_2 difference: %f", (cur_angles.Actuators.Actuator2 - 											past_angles.Actuators.Actuator2));
-					past_angles.Actuators.Actuator2 = cur_angles.Actuators.Actuator2;
-				}
-
-
-
-				//Check if Joint 3 is in range
-
-				if (((cur_angles.Actuators.Actuator3)
-						<= past_angles.Actuators.Actuator3 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator3)
-								>= (past_angles.Actuators.Actuator3 - Angle_Range))
-				{
-					Joint_3_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_3 difference: %f", (cur_angles.Actuators.Actuator3 - 											past_angles.Actuators.Actuator3));
-					past_angles.Actuators.Actuator3 = cur_angles.Actuators.Actuator3;
-				}
-
-
-				//Check if Joint 4 is in range
-
-				if (((cur_angles.Actuators.Actuator4)
-						<= past_angles.Actuators.Actuator4 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator4)
-								>= (past_angles.Actuators.Actuator4 - Angle_Range))
-				{
-					Joint_4_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_4 difference: %f", (cur_angles.Actuators.Actuator4 - 											past_angles.Actuators.Actuator4));
-					past_angles.Actuators.Actuator4 = cur_angles.Actuators.Actuator4;
-				}
-
-				//Check if Joint 5 is in range
-
-				if (((cur_angles.Actuators.Actuator5)
-						<= past_angles.Actuators.Actuator5 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator5)
-								>= (past_angles.Actuators.Actuator5 - Angle_Range))
-				{
-					Joint_5_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_5 difference: %f", (cur_angles.Actuators.Actuator5 - 											past_angles.Actuators.Actuator5));
-					past_angles.Actuators.Actuator5 = cur_angles.Actuators.Actuator5;
-				}
-
-				//Check if Joint 6 is in range
-
-				if (((cur_angles.Actuators.Actuator6)
-						<= past_angles.Actuators.Actuator6 + Angle_Range)
-						&& (cur_angles.Actuators.Actuator6)
-								>= (past_angles.Actuators.Actuator6 - Angle_Range))
-				{
-					Joint_6_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Joint_6 difference: %f", (cur_angles.Actuators.Actuator6 - 											past_angles.Actuators.Actuator6));
-					past_angles.Actuators.Actuator6 = cur_angles.Actuators.Actuator6;
-				}
-
-				//If all the joints reached their destination then break out of loop
-				if (Joint_1_Reached == true && Joint_2_Reached == true && Joint_3_Reached == true
-						&& Joint_4_Reached == true && Joint_5_Reached == true && Joint_6_Reached == true)
-				{
-					ROS_INFO("Angular Control Complete.");
+					ROS_DEBUG("Angular Control Complete.");
 					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
 					API->EraseAllTrajectories();  // Clear any remaining trajectories
 					//API->StopControlAPI();
 					break;
+				}
+				else
+				{
+					past_angles.Actuators = cur_angles.Actuators;
 				}
 			}
 		}
@@ -519,12 +414,8 @@ moving before releasing control of the API.
 		Jaco_Position.Position.Delay = 0.0;
 		Jaco_Position.Position.Type = CARTESIAN_POSITION;
 
-		Jaco_Position.Position.CartesianPosition.X = position.X;
-		Jaco_Position.Position.CartesianPosition.Y = position.Y;
-		Jaco_Position.Position.CartesianPosition.Z = position.Z;
-		Jaco_Position.Position.CartesianPosition.ThetaX = position.ThetaX;
-		Jaco_Position.Position.CartesianPosition.ThetaY = position.ThetaY;
-		Jaco_Position.Position.CartesianPosition.ThetaZ = position.ThetaZ + 0.0001; // A workaround for a bug in the Kinova API
+		Jaco_Position.Position.CartesianPosition = position;
+		Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
 		API->SendBasicTrajectory(Jaco_Position);
 
@@ -547,18 +438,11 @@ moving before releasing control of the API.
 
 			CartesianPosition cur_position;		//holds the current position of the arm
 			CartesianPosition past_position;	//holds the past position of the arm
+			memset(&cur_position, 0, sizeof(cur_position));
 
 			API->GetCartesianPosition(past_position); //pre-load the past arm position
 
-			const float Postion_Range = 0.001; 	//dead zone for position
-			const float Rotation_Range = 0.001; 	//dead zone for rotation
-
-			bool Position_X_Reached = false;
-			bool Position_Y_Reached = false;
-			bool Position_Z_Reached = false;
-			bool Position_TX_Reached = false;
-			bool Position_TY_Reached = false;
-			bool Position_TZ_Reached = false;
+			const float tolerance = 0.001; 	//dead zone for position
 
 			//ros::Duration(1.0).sleep();
 
@@ -580,107 +464,17 @@ moving before releasing control of the API.
 
 				API->GetCartesianPosition(cur_position); //update current arm position
 
-				/* Check each joint position to determine whether it has reached its destination */
-				
-				//Check if X is in range
-				if (((cur_position.Coordinates.X)
-						<= past_position.Coordinates.X + Postion_Range)
-						&& (cur_position.Coordinates.X)
-								>= (past_position.Coordinates.X - Postion_Range))
-				{
-					Position_X_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("X difference: %f", (cur_position.Coordinates.X - 											past_position.Coordinates.X));
-					past_position.Coordinates.X = cur_position.Coordinates.X;
-				}
-
-				//Check if Y is in range
-
-				if (((cur_position.Coordinates.Y)
-						<= past_position.Coordinates.Y + Postion_Range)
-						&& (cur_position.Coordinates.Y)
-								>= (past_position.Coordinates.Y - Postion_Range))
-				{
-					Position_Y_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Y difference: %f", (cur_position.Coordinates.Y - 											past_position.Coordinates.Y));
-					past_position.Coordinates.Y = cur_position.Coordinates.Y;
-				}
-
-				//Check if Z is in range
-
-				if (((cur_position.Coordinates.Z)
-						<= past_position.Coordinates.Z + Postion_Range)
-						&& (cur_position.Coordinates.Z)
-								>= (past_position.Coordinates.Z - Postion_Range))
-				{
-					Position_Z_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Z difference: %f", (cur_position.Coordinates.Z - 											past_position.Coordinates.Z));
-					past_position.Coordinates.Z = cur_position.Coordinates.Z;
-				}
-
-				//Check if ThetaX is in range
-
-				if (((cur_position.Coordinates.ThetaX)
-						<= past_position.Coordinates.ThetaX + Rotation_Range)
-						&& (cur_position.Coordinates.ThetaX)
-								>= (past_position.Coordinates.ThetaX - Rotation_Range))
-				{
-					Position_TX_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Theta X difference: %f", (cur_position.Coordinates.ThetaX - 											past_position.Coordinates.ThetaX));
-					past_position.Coordinates.ThetaX = cur_position.Coordinates.ThetaX;
-				}
-
-				//Check if ThetaY is in range
-
-				if (((cur_position.Coordinates.ThetaY)
-						<= past_position.Coordinates.ThetaY + Rotation_Range)
-						&& (cur_position.Coordinates.ThetaY)
-								>= (past_position.Coordinates.ThetaY - Rotation_Range))
-				{
-					Position_TY_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Theta Y difference: %f", (cur_position.Coordinates.ThetaY - 											past_position.Coordinates.ThetaY));
-					past_position.Coordinates.ThetaY = cur_position.Coordinates.ThetaY;
-				}
-
-				//Check if ThetaZ is in range
-
-				if (((cur_position.Coordinates.ThetaZ)
-						<= past_position.Coordinates.ThetaZ + Rotation_Range)
-						&& (cur_position.Coordinates.ThetaZ)
-								>= (past_position.Coordinates.ThetaZ - Rotation_Range))
-				{
-					Position_TZ_Reached = true;
-				}
-				else
-				{
-					ROS_INFO("Theta Z difference: %f", (cur_position.Coordinates.ThetaZ - 											past_position.Coordinates.ThetaZ));
-					past_position.Coordinates.ThetaZ = cur_position.Coordinates.ThetaZ;
-				}
-
-				//If the arm reaches its destination then break out of loop
-				if (Position_X_Reached == true && Position_Y_Reached == true && Position_Z_Reached == true
-						&& Position_TX_Reached == true && Position_TY_Reached == true
-						&& Position_TZ_Reached == true)
+				if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
 				{
 					ROS_INFO("Cartesian Control Complete.");
 					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
 					API->EraseAllTrajectories();  // Clear any remaining trajectories				
 					//API->StopControlAPI();
 					break;
+				}
+				else
+				{
+					past_position.Coordinates = cur_position.Coordinates;
 				}
 			}
 		}
@@ -715,9 +509,7 @@ Sets the finger positions
 
 		Jaco_Position.Position.HandMode = POSITION_MODE;
 
-		Jaco_Position.Position.Fingers.Finger1 = fingers.Finger1;
-		Jaco_Position.Position.Fingers.Finger2 = fingers.Finger2;
-		Jaco_Position.Position.Fingers.Finger3 = fingers.Finger3;
+		Jaco_Position.Position.Fingers = fingers;
 
 		API->SendAdvanceTrajectory(Jaco_Position);
 		ROS_INFO("Sending Fingers");
@@ -809,12 +601,8 @@ Set the velocity of the angles using cartesian input.
 		API->StartControlAPI();
 		Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
 
-		Jaco_Velocity.Position.CartesianPosition.X = velocities.X;
-		Jaco_Velocity.Position.CartesianPosition.Y = velocities.Y;
-		Jaco_Velocity.Position.CartesianPosition.Z = velocities.Z;
-		Jaco_Velocity.Position.CartesianPosition.ThetaX = velocities.ThetaX;
-		Jaco_Velocity.Position.CartesianPosition.ThetaY = velocities.ThetaY;
-		Jaco_Velocity.Position.CartesianPosition.ThetaZ = velocities.ThetaZ;
+		// confusingly, velocity is passed in the position struct
+		Jaco_Velocity.Position.CartesianPosition = velocities;
 
 		API->SendAdvanceTrajectory(Jaco_Velocity);
 	}
@@ -840,12 +628,8 @@ Set the velocity of the angles using angular input.
 		API->StartControlAPI();
 		Jaco_Velocity.Position.Type = ANGULAR_VELOCITY;
 
-		Jaco_Velocity.Position.Actuators.Actuator1 = joint_vel.Actuator1;
-		Jaco_Velocity.Position.Actuators.Actuator2 = joint_vel.Actuator2;
-		Jaco_Velocity.Position.Actuators.Actuator3 = joint_vel.Actuator3;
-		Jaco_Velocity.Position.Actuators.Actuator4 = joint_vel.Actuator4;
-		Jaco_Velocity.Position.Actuators.Actuator5 = joint_vel.Actuator5;
-		Jaco_Velocity.Position.Actuators.Actuator6 = joint_vel.Actuator6;
+		// confusingly, velocity is passed in the position struct
+		Jaco_Velocity.Position.Actuators = joint_vel;
 
 		API->SendAdvanceTrajectory(Jaco_Velocity);
 	}
@@ -863,13 +647,7 @@ API call to obtain the current angular position of all the joints.
 
 	API->GetAngularPosition(Jaco_Position);
 
-	angles.Actuator1 = Jaco_Position.Actuators.Actuator1;
-	angles.Actuator2 = Jaco_Position.Actuators.Actuator2;
-	angles.Actuator3 = Jaco_Position.Actuators.Actuator3;
-	angles.Actuator4 = Jaco_Position.Actuators.Actuator4;
-	angles.Actuator5 = Jaco_Position.Actuators.Actuator5;
-	angles.Actuator6 = Jaco_Position.Actuators.Actuator6;
-
+	angles = Jaco_Position.Actuators;
 }
 
 void JacoArm::GetConfig(ClientConfigurations &config)
@@ -896,13 +674,7 @@ API call to obtain the current cartesian position of the arm.
 
 	API->GetCartesianPosition(Jaco_Position);
 
-	position.X = Jaco_Position.Coordinates.X;
-	position.Y = Jaco_Position.Coordinates.Y;
-	position.Z = Jaco_Position.Coordinates.Z;
-	position.ThetaX = Jaco_Position.Coordinates.ThetaX;
-	position.ThetaY = Jaco_Position.Coordinates.ThetaY;
-	position.ThetaZ = Jaco_Position.Coordinates.ThetaZ;
-
+	position = Jaco_Position.Coordinates;
 }
 
 void JacoArm::GetFingers(FingersPosition &fingers)
@@ -918,10 +690,7 @@ API call to obtain the current finger positions.
 
 	API->GetCartesianPosition(Jaco_Position);
 
-	fingers.Finger1 = Jaco_Position.Fingers.Finger1;
-	fingers.Finger2 = Jaco_Position.Fingers.Finger2;
-	fingers.Finger3 = Jaco_Position.Fingers.Finger3;
-
+	fingers = Jaco_Position.Fingers;
 }
 
 void JacoArm::PrintConfig(ClientConfigurations config)
@@ -1384,6 +1153,39 @@ Publishes the current finger positions.
 	finger_position.Finger_3 = Jaco_Position.Fingers.Finger3;
 
 	FingerPosition_pub.publish(finger_position);
+}
+
+bool JacoArm::ComparePositions(const CartesianInfo &first, const CartesianInfo &second, float tolerance)
+{
+	bool status = true;
+
+	status = status && CompareValues(first.X, second.X, tolerance);
+	status = status && CompareValues(first.Y, second.Y, tolerance);
+	status = status && CompareValues(first.Z, second.Z, tolerance);
+	status = status && CompareValues(first.ThetaX, second.ThetaX, tolerance);
+	status = status && CompareValues(first.ThetaY, second.ThetaY, tolerance);
+	status = status && CompareValues(first.ThetaZ, second.ThetaZ, tolerance);
+
+	return status;
+}
+
+bool JacoArm::CompareAngles(const AngularInfo &first, const AngularInfo &second, float tolerance)
+{
+	bool status = true;
+
+	status = status && CompareValues(first.Actuator1, second.Actuator1, tolerance);
+	status = status && CompareValues(first.Actuator2, second.Actuator2, tolerance);
+	status = status && CompareValues(first.Actuator3, second.Actuator3, tolerance);
+	status = status && CompareValues(first.Actuator4, second.Actuator4, tolerance);
+	status = status && CompareValues(first.Actuator5, second.Actuator5, tolerance);
+	status = status && CompareValues(first.Actuator6, second.Actuator6, tolerance);
+
+	return status;
+}
+
+bool JacoArm::CompareValues(float first, float second, float tolerance)
+{
+	return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 
 void JacoArm::StatusTimer(const ros::TimerEvent&)
