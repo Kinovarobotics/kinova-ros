@@ -27,8 +27,8 @@
 
 #include <jaco_driver/SoftwareStop.h>
 
-#include <jaco_driver/Estop.h>
-#include <jaco_driver/Estart.h>
+#include <jaco_driver/Stop.h>
+#include <jaco_driver/Start.h>
 #include <jaco_driver/HomeArm.h>
 
 #include <time.h>
@@ -77,8 +77,8 @@ namespace jaco
 			void SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause);
 			void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles);
 
-			bool EstopSRV(jaco_driver::Estop::Request &req, jaco_driver::Estop::Response &res);
-			bool EstartSRV(jaco_driver::Estart::Request &req, jaco_driver::Estart::Response &res);
+			bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
+			bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
 			bool HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res);
 		private:
 			jaco::JacoAPI* API;
@@ -88,7 +88,7 @@ namespace jaco
 			ros::Subscriber CartesianVelocity_sub;
 			ros::Subscriber SetFingerPosition_sub;
 			ros::Subscriber SoftwarePause_sub;
-			ros::Subscriber	SetJoint_sub;
+			ros::Subscriber SetJoint_sub;
 			ros::Subscriber ZeroArm_sub;
 
 
@@ -99,6 +99,10 @@ namespace jaco
 			ros::Publisher ZeroArm_pub;
 			ros::Publisher JointState_pub;
 
+			/* Services */
+			ros::ServiceServer stop_service;
+			ros::ServiceServer start_service;
+			ros::ServiceServer homing_service;
 
 			ros::Timer status_timer;
 			ros::Timer cartesian_vel_timer;
@@ -117,9 +121,6 @@ namespace jaco
 			ros::Time last_update_time;
 			ros::Duration update_time;
 			uint8_t previous_state;
-
-			/* Remove this */
-			//tf::TransformListener tf_listener;
 
 			bool software_pause;
 	};

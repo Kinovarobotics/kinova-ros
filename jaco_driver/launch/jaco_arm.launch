@@ -1,30 +1,29 @@
 <launch>
   <arg name="arm_pose_topic" default="/arm_pose" />
-	  <arg name="joint_velocity_topic" default="/joint_velocity" />
-	  <arg name="joint_angles_topic" default="/joint_angles" />
-	  <arg name="joint_state_topic" default="/joint_state" />
-	  <arg name="cartesian_velocity_topic" default="/cartesian_velocity" />
-	  <arg name="tool_position_topic" default="/tool_position" />
-	  <arg name="set_finger_position_topic" default="/set_finger_position" />
-	  <arg name="finger_position_topic" default="/finger_position" />
-	  <arg name="software_pause_topic" default="/aero/software_stop" />
-	  <arg name="set_joints_topic" default="/set_joint_angles" />
-	
+  <arg name="joint_velocity_topic" default="/joint_velocity" />
+  <arg name="joint_angles_topic" default="/joint_angles" />
+  <arg name="joint_state_topic" default="/joint_state" />
+  <arg name="cartesian_velocity_topic" default="/cartesian_velocity" />
+  <arg name="tool_position_topic" default="/tool_position" />
+  <arg name="set_finger_position_topic" default="/set_finger_position" />
+  <arg name="finger_position_topic" default="/finger_position" />
+  <arg name="set_joints_topic" default="/set_joint_angles" />
 
-<node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" >
-	<param name="arm_pose_topic" value="$(arg arm_pose_topic)" />
-	<param name="joint_velocity_topic" value="$(arg joint_velocity_topic)" />
-	<param name="joint_angles_topic" value="$(arg joint_angles_topic)" />
-	<param name="joint_state_topic" value="$(arg joint_state_topic)" />
-	<param name="cartesian_velocity_topic" value="$(arg cartesian_velocity_topic)" />
-	<param name="tool_position_topic" value="$(arg tool_position_topic)" />
-	<param name="set_finger_position_topic" value="$(arg set_finger_position_topic)" />
-	<param name="finger_position_topic" value="$(arg finger_position_topic)" />
-	<param name="software_pause_topic" value="$(arg software_pause_topic)" />
-	<param name="set_joint_angle_topic" value="$(arg set_joints_topic)" />
-  </node>
-  
-  <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" >
-	<param name="joint_angles_topic" value="$(arg joint_angles_topic)" />
-  </node>
+  <group ns="jaco">
+    <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" >
+      <param name="arm_pose_topic" value="$(arg arm_pose_topic)" />
+      <param name="joint_velocity_topic" value="$(arg joint_velocity_topic)" />
+      <param name="joint_angles_topic" value="$(arg joint_angles_topic)" />
+      <param name="joint_state_topic" value="$(arg joint_state_topic)" />
+      <param name="cartesian_velocity_topic" value="$(arg cartesian_velocity_topic)" />
+      <param name="tool_position_topic" value="$(arg tool_position_topic)" />
+      <param name="set_finger_position_topic" value="$(arg set_finger_position_topic)" />
+      <param name="finger_position_topic" value="$(arg finger_position_topic)" />
+      <param name="set_joint_angle_topic" value="$(arg set_joints_topic)" />
+    </node>
+    
+    <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" >
+      <param name="joint_angles_topic" value="$(arg joint_angles_topic)" />
+    </node>
+  </group>
 </launch>

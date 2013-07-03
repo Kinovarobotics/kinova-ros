@@ -23,7 +23,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	std::string tool_position_topic("tool_position_topic"); ///String containing the topic name for ToolPosition
 	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
 	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
-	std::string software_pause_topic("software_pause_topic"); ///String containing the topic name for SoftwarePause
 	std::string aero_state("aero/supervisor/state"); ///String containing the topic name for aero_state
 	std::string zero_arm_req("zero_arm_req"); ///String containing the topic name for zero_arm_req
 	std::string zero_arm_stat("zero_arm_stat"); ///String containing the topic name for zero_arm_stat
@@ -52,9 +51,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	if (!param_nh.getParam(finger_position_topic, finger_position_topic))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Finger Position Topic <%s>!",
 				finger_position_topic.c_str(), finger_position_topic.c_str());
-	if (!param_nh.getParam(software_pause_topic, software_pause_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Software Pause Topic <%s>!",
-				software_pause_topic.c_str(), software_pause_topic.c_str());
 	if (!param_nh.getParam(aero_state, aero_state))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Aero State Topic <%s>!", aero_state.c_str(),
 				aero_state.c_str());
@@ -79,7 +75,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	ROS_DEBUG("Got Tool Position Topic Name: <%s>", tool_position_topic.c_str());
 	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
 	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
-	ROS_DEBUG("Got SoftwarePause Topic Name: <%s>", software_pause_topic.c_str());
 	ROS_DEBUG("Got Joint State Topic Name: <%s>", joint_state.c_str());
 	ROS_DEBUG("Got Set Joint Angle Topic Name: <%s>", set_joint_angle_topic.c_str());
 
@@ -87,8 +82,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	this->software_pause = false;
 	previous_state = 0;
-
-	this->SoftwarePause_sub = nh.subscribe(software_pause_topic, 1, &JacoArm::SoftwarePauseMSG, this);
 
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
@@ -123,6 +116,11 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	}
 	ros::Duration(2.0).sleep();
 
+	/* Set up Services */
+	stop_service = nh.advertiseService("stop", &JacoArm::StopSRV, this);
+	start_service = nh.advertiseService("start", &JacoArm::StartSRV, this);
+	homing_service = nh.advertiseService("home_arm", &JacoArm::HomeArmSRV, this);
+
 	/* Set Default Configuration */
 
 	// API->RestoreFactoryDefault(); // uncomment comment ONLY if you want to lose your settings on each launch.
@@ -137,7 +135,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	/* Storing arm in home position */
 
-//	this->GoHome();  // Useful if you want to move the arm to an alternate "home" position after the default home.
+	// this->GoHome();  // Useful if you want to move the arm to an alternate "home" position after the default home.
 
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
@@ -285,45 +283,8 @@ Note that if the arm is already in the "home" position, this routine will cause 
 
 bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res)
 {
-
-/*
-A service that homes the arm.  Functionality is the same as ZeroArm, except the fingers are 
-normally not initialized.
-*/	
-	
-	ROS_INFO("HOMING JACO ARM");
-
-	API->StartControlAPI();
-
-	JoystickCommand home_command;
-	memset(&home_command, 0, sizeof(home_command)); //zero structure
-
-	home_command.ButtonValue[2] = 1;
-	API->SendJoystickCommand(home_command);
-	ros::Duration(25.0).sleep();			// The maximum amount of time it should take to return home.
-	home_command.ButtonValue[2] = 0;
-	API->SendJoystickCommand(home_command);
-
-/*
-	FingersPosition fingers_home;
-
-	// Set the fingers fully "open." This is required to initialize the fingers.
-	fingers_home.Finger1 = 0;
-	fingers_home.Finger2 = 0;
-	fingers_home.Finger3 = 0;
-	this->SetFingers(fingers_home, 5);
-	ros::Duration(2.0).sleep();
-
-	// Set the fingers to "half-open"
-	fingers_home.Finger1 = 40;
-	fingers_home.Finger2 = 40;
-	fingers_home.Finger3 = 40;
-	this->SetFingers(fingers_home, 5);
-	ros::Duration(2.0).sleep();
-*/
-
+	ZeroArm();
 	res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
-	ROS_INFO("JACO ARM HOMING COMPLETE");
 
 	return true;
 }
@@ -338,8 +299,6 @@ moving before releasing control of the API.
 */
 
 	timeout = 30;
-
-
 
 	if (software_pause == false)
 	{
@@ -1193,51 +1152,14 @@ void JacoArm::ZeroArmMSG(const jaco_driver::ZeroArmConstPtr& zero_req)
 	ZeroArm_pub.publish(zero_stat);
 }
 
-void JacoArm::SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause)
-{
 
-/*
-A software "e-stop" function.  When "stop" is called, the function simulates the "home" button
-being pushed on the wired controller, which causes the arm to stop if it is moving.  It then
-erases any trajectories that had been sent to the arm.
-*/
-
-	this->software_pause = software_pause->stop;
-
-	//ROS_INFO("PAUSE");
-
-	if (software_pause->stop == true)
-	{
-		ROS_INFO("ARM STOPPED");
-
-		API->StartControlAPI();
-
-		JoystickCommand home_command;
-		memset(&home_command, 0, sizeof(home_command)); //zero structure
-
-		home_command.ButtonValue[2] = 1;
-		API->SendJoystickCommand(home_command);
-		ros::Duration(0.05).sleep();
-		home_command.ButtonValue[2] = 0;
-		API->SendJoystickCommand(home_command);
-
-		API->EraseAllTrajectories();
-	} 
-	else
-	{		
-		ROS_INFO("ARM CONTROL ENABLED");
-		
-		API->StartControlAPI();
-	}
-}
-
-bool JacoArm::EstopSRV(jaco_driver::Estop::Request &req, jaco_driver::Estop::Response &res)
+bool JacoArm::StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res)
 {
 /*
 A service that will instantly stop the arm.
 */
 
-	this->software_pause = true;
+	software_pause = true;
 
 	API->StartControlAPI();
 
@@ -1250,32 +1172,29 @@ A service that will instantly stop the arm.
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 
-	res.estop_result = "JACO ARM HAS BEEN E-STOPPED";
-	ROS_INFO("JACO ARM E-STOP REQUEST");
-
 	API->EraseAllTrajectories();
+
+	res.stop_result = "JACO ARM HAS BEEN E-STOPPED";
+	ROS_DEBUG("JACO ARM STOP REQUEST");
 
 	return true;
 }
 
-bool JacoArm::EstartSRV(jaco_driver::Estart::Request &req, jaco_driver::Estart::Response &res)
+bool JacoArm::StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res)
 {
 /*
 A service that re-enables control of the arm.
 */
 
-	this->software_pause = false;
+	software_pause = false;
 
 	API->StartControlAPI();
 
-	res.estart_result = "JACO ARM CONTROL HAS BEEN ENABLED";
-	ROS_INFO("JACO ARM START REQUEST");
+	res.start_result = "JACO ARM CONTROL HAS BEEN ENABLED";
+	ROS_DEBUG("JACO ARM START REQUEST");
 
 	return true;
 }
-
-
-
 
 
 void JacoArm::CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
@@ -1479,22 +1398,11 @@ int main(int argc, char **argv)
 
 	/* Set up ROS */
 	ros::init(argc, argv, "jaco_arm_driver");
-	ros::init(argc, argv, "estop_server");
-	ros::init(argc, argv, "estart_server");
-	ros::init(argc, argv, "homearm_server");
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
-
 	//create the arm object
 	JacoArm jaco(nh, param_nh);
-
-
-	ros::ServiceServer stop_service = nh.advertiseService("estop", &JacoArm::EstopSRV, &jaco);
-
-	ros::ServiceServer start_service = nh.advertiseService("estart", &JacoArm::EstartSRV, &jaco);
-
-	ros::ServiceServer homing_service = nh.advertiseService("homearm", &JacoArm::HomeArmSRV, &jaco);
 
 	ros::spin();
 }
