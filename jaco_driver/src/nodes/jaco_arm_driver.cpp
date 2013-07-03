@@ -175,54 +175,69 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
-
-
-bool JacoArm::HomeState(void)
+void JacoArm::WaitForHome(int timeout)
 {
+	double start_secs;
+	double current_sec;
 
-/*
-Determines whether the arm has returned to its "Home" state by checking the current
-joint angles every second, then comparing them to the previously measured joint angles.
-If they have not changed significantly since the last measurement, the arm is assumed
-to be in its home position (ie. it stopped moving).
-
-Currently this code doesn't work well and is never called.
-*/
-
-	AngularPosition Old_Jaco_Angles;
-	AngularPosition Jaco_Angles;
-	ROS_INFO("Checking Homing State...");
-	memset(&Old_Jaco_Angles, 0, sizeof(Old_Jaco_Angles)); //zero structure
-	memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
-	API->GetAngularPosition(Jaco_Angles);
-
-	Old_Jaco_Angles.Actuators.Actuator1 = Jaco_Angles.Actuators.Actuator1;
-	Old_Jaco_Angles.Actuators.Actuator2 = Jaco_Angles.Actuators.Actuator2;
-	Old_Jaco_Angles.Actuators.Actuator3 = Jaco_Angles.Actuators.Actuator3;
-	Old_Jaco_Angles.Actuators.Actuator4 = Jaco_Angles.Actuators.Actuator4;
-	Old_Jaco_Angles.Actuators.Actuator5 = Jaco_Angles.Actuators.Actuator5;
-	Old_Jaco_Angles.Actuators.Actuator6 = Jaco_Angles.Actuators.Actuator6;
-
-	Jaco_Angles.Actuators.Actuator3 += 5;
-
-	SetAngles(Jaco_Angles.Actuators, 5);
-	ros::Duration(1.0).sleep();
-
-	memset(&Jaco_Angles, 0, sizeof(Jaco_Angles)); //zero structure
-	API->GetAngularPosition(Jaco_Angles);
-	ros::Duration(1.0).sleep();
-
-	SetAngles(Old_Jaco_Angles.Actuators, 5);
-	ros::Duration(1.0).sleep();
-	if ((Jaco_Angles.Actuators.Actuator3 > (Old_Jaco_Angles.Actuators.Actuator3 + 1))
-			|| (Jaco_Angles.Actuators.Actuator3 < (Old_Jaco_Angles.Actuators.Actuator3 - 1)))
+	//If ros is still running use rostime, else use system time
+	if (ros::ok())
 	{
-		return true;
+		start_secs = ros::Time::now().toSec();
+		current_sec = ros::Time::now().toSec();
 	} 
 	else
 	{
-		return false;
+		start_secs = (double) time(NULL);
+		current_sec = (double) time(NULL);
 	}
+
+	//while we have not timed out
+	while ((current_sec - start_secs) < timeout)
+	{
+		ros::Duration(0.5).sleep();
+		
+		//If ros is still running use rostime, else use system time
+		if (ros::ok())
+		{
+			current_sec = ros::Time::now().toSec();
+		} 
+		else
+		{
+			current_sec = (double) time(NULL);
+		}
+
+		/* Check each joint angle to determine whether it has stopped moving */
+		if (HomeState())
+		{
+			ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+			return;
+		}
+	}
+
+	ROS_WARN("Timed out waiting for arm to return \"home\"");
+}
+
+bool JacoArm::HomeState(void)
+{
+/*
+Determines whether the arm has returned to its "Home" state by checking the current
+joint angles, then comparing them to the known "Home" joint angles.
+*/
+	const AngularInfo home_position = {
+		282.8,
+		154.4,
+		43.6,
+		230.7,
+		83.0,
+		78.1 };
+	const float tolerance = 1.0; //dead zone for angles (degrees)
+
+	AngularPosition cur_angles; //holds the current angles of the arm
+	memset(&cur_angles, 0, sizeof(cur_angles));
+	API->GetAngularPosition(cur_angles); //update current arm angles
+
+	return CompareAngles(home_position, cur_angles.Actuators, tolerance);
 }
 
 void JacoArm::SetConfig(ClientConfigurations config)
@@ -252,6 +267,12 @@ Note that if the arm is already in the "home" position, this routine will cause 
 "retract" position.
 */
 
+	if (HomeState())
+	{
+		ROS_INFO("Arm is already in \"home\" position");
+		return;
+	}
+
 	API->StartControlAPI();
 
 	JoystickCommand home_command;
@@ -259,7 +280,7 @@ Note that if the arm is already in the "home" position, this routine will cause 
 
 	home_command.ButtonValue[2] = 1;
 	API->SendJoystickCommand(home_command);
-	ros::Duration(25.0).sleep();			// The maximum amount of time it should take to return home.
+	WaitForHome(25);
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 
@@ -512,7 +533,7 @@ Sets the finger positions
 		Jaco_Position.Position.Fingers = fingers;
 
 		API->SendAdvanceTrajectory(Jaco_Position);
-		ROS_INFO("Sending Fingers");
+		ROS_DEBUG("Sending Fingers");
 
 		//if we want to timeout
 		if (timeout != 0)
@@ -730,14 +751,14 @@ void JacoArm::PrintAngles(AngularInfo angles)
 Dumps the current joint angles onto the screen.  
 */
 
-	ROS_DEBUG("Jaco Arm Angles (Degrees)");
-	ROS_DEBUG("Joint 1 = %f", angles.Actuator1);
-	ROS_DEBUG("Joint 2 = %f", angles.Actuator2);
-	ROS_DEBUG("Joint 3 = %f", angles.Actuator3);
+	ROS_INFO("Jaco Arm Angles (Degrees)");
+	ROS_INFO("Joint 1 = %f", angles.Actuator1);
+	ROS_INFO("Joint 2 = %f", angles.Actuator2);
+	ROS_INFO("Joint 3 = %f", angles.Actuator3);
 
-	ROS_DEBUG("Joint 4 = %f", angles.Actuator4);
-	ROS_DEBUG("Joint 5 = %f", angles.Actuator5);
-	ROS_DEBUG("Joint 6 = %f", angles.Actuator6);
+	ROS_INFO("Joint 4 = %f", angles.Actuator4);
+	ROS_INFO("Joint 5 = %f", angles.Actuator5);
+	ROS_INFO("Joint 6 = %f", angles.Actuator6);
 
 }
 
@@ -1173,18 +1194,33 @@ bool JacoArm::CompareAngles(const AngularInfo &first, const AngularInfo &second,
 {
 	bool status = true;
 
-	status = status && CompareValues(first.Actuator1, second.Actuator1, tolerance);
-	status = status && CompareValues(first.Actuator2, second.Actuator2, tolerance);
-	status = status && CompareValues(first.Actuator3, second.Actuator3, tolerance);
-	status = status && CompareValues(first.Actuator4, second.Actuator4, tolerance);
-	status = status && CompareValues(first.Actuator5, second.Actuator5, tolerance);
-	status = status && CompareValues(first.Actuator6, second.Actuator6, tolerance);
+	status = status && CompareAngularValues(first.Actuator1, second.Actuator1, tolerance);
+	status = status && CompareAngularValues(first.Actuator2, second.Actuator2, tolerance);
+	status = status && CompareAngularValues(first.Actuator3, second.Actuator3, tolerance);
+	status = status && CompareAngularValues(first.Actuator4, second.Actuator4, tolerance);
+	status = status && CompareAngularValues(first.Actuator5, second.Actuator5, tolerance);
+	status = status && CompareAngularValues(first.Actuator6, second.Actuator6, tolerance);
 
 	return status;
 }
 
 bool JacoArm::CompareValues(float first, float second, float tolerance)
 {
+	return ((first <= second + tolerance) && (first >= second - tolerance));
+}
+
+bool JacoArm::CompareAngularValues(float first, float second, float tolerance)
+{
+	// joint angles may be off in increments of 360 degrees, normalize them
+	while (first > 360.0)
+		first -= 360.0;
+	while (first < 0.0)
+		first += 360.0;
+	while (second > 360.0)
+		second -= 360.0;
+	while (second < 0.0)
+		second += 360.0;
+
 	return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 

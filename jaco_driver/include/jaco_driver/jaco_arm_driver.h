@@ -81,9 +81,11 @@ namespace jaco
 			bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
 			bool HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res);
 		private:
+			void WaitForHome(int);
 			bool ComparePositions(const CartesianInfo &, const CartesianInfo &, float);
 			bool CompareAngles(const AngularInfo &, const AngularInfo &, float);
 			bool CompareValues(float, float, float);
+			bool CompareAngularValues(float, float, float);
 			jaco::JacoAPI* API;
 			/* Subscribers */
 			ros::Subscriber ArmPose_sub;
