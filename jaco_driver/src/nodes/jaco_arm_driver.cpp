@@ -23,9 +23,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	std::string tool_position_topic("tool_position_topic"); ///String containing the topic name for ToolPosition
 	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
 	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
-	std::string aero_state("aero/supervisor/state"); ///String containing the topic name for aero_state
-	std::string zero_arm_req("zero_arm_req"); ///String containing the topic name for zero_arm_req
-	std::string zero_arm_stat("zero_arm_stat"); ///String containing the topic name for zero_arm_stat
 	std::string joint_state("joint_state"); ///String containing the topic name for JointState
 	std::string set_joint_angle_topic("set_joint_angle_topic"); ///String containing topic name for SetJoint
 
@@ -51,15 +48,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	if (!param_nh.getParam(finger_position_topic, finger_position_topic))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Finger Position Topic <%s>!",
 				finger_position_topic.c_str(), finger_position_topic.c_str());
-	if (!param_nh.getParam(aero_state, aero_state))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Aero State Topic <%s>!", aero_state.c_str(),
-				aero_state.c_str());
-	if (!param_nh.getParam(zero_arm_req, zero_arm_req))
-		ROS_WARN("Parameter <%s> Not Set. Using Default zero_arm_req Topic <%s>!", zero_arm_req.c_str(),
-				zero_arm_req.c_str());
-	if (!param_nh.getParam(zero_arm_stat, zero_arm_stat))
-		ROS_WARN("Parameter <%s> Not Set. Using Default zero_arm_stat Topic <%s>!", zero_arm_stat.c_str(),
-				zero_arm_stat.c_str());
 	if (!param_nh.getParam(joint_state, joint_state))
 		ROS_WARN("Parameter <%s> Not Set. Using Default Joint State Topic <%s>!", joint_state.c_str(),
 				joint_state.c_str());
@@ -142,7 +130,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	this->JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state, 2);
 	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
 	this->FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
-	this->ZeroArm_pub = nh.advertise<jaco_driver::ZeroArm>(zero_arm_stat, 1, true);
 
 	/* Set up Subscribers*/
 	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
@@ -159,8 +146,6 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
 	cartesian_vel_timer.stop();
 	cartesian_vel_timer_flag = false;
-
-	this->ZeroArm_sub = nh.subscribe(zero_arm_req, 1, &JacoArm::ZeroArmMSG, this);
 
 	BroadCastAngles();
 	ROS_INFO("The Arm is ready to use.");
@@ -929,20 +914,6 @@ void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
 	}
 }
 
-void JacoArm::ZeroArmMSG(const jaco_driver::ZeroArmConstPtr& zero_req)
-{
-	jaco_driver::ZeroArm zero_stat;
-
-	if (zero_req->zero == true)
-	{
-		this->ZeroArm();
-		zero_stat.zero = true;
-	}
-
-	ZeroArm_pub.publish(zero_stat);
-}
-
-
 bool JacoArm::StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res)
 {
 /*
@@ -964,7 +935,7 @@ A service that will instantly stop the arm.
 
 	API->EraseAllTrajectories();
 
-	res.stop_result = "JACO ARM HAS BEEN E-STOPPED";
+	res.stop_result = "JACO ARM HAS BEEN STOPPED";
 	ROS_DEBUG("JACO ARM STOP REQUEST");
 
 	return true;

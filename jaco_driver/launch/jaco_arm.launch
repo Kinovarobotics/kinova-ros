@@ -1,13 +1,13 @@
 <launch>
-  <arg name="arm_pose_topic" default="/arm_pose" />
-  <arg name="joint_velocity_topic" default="/joint_velocity" />
-  <arg name="joint_angles_topic" default="/joint_angles" />
-  <arg name="joint_state_topic" default="/joint_state" />
-  <arg name="cartesian_velocity_topic" default="/cartesian_velocity" />
-  <arg name="tool_position_topic" default="/tool_position" />
-  <arg name="set_finger_position_topic" default="/set_finger_position" />
-  <arg name="finger_position_topic" default="/finger_position" />
-  <arg name="set_joints_topic" default="/set_joint_angles" />
+  <arg name="arm_pose_topic" default="arm_pose" />
+  <arg name="joint_velocity_topic" default="joint_velocity" />
+  <arg name="joint_angles_topic" default="joint_angles" />
+  <arg name="joint_state_topic" default="joint_state" />
+  <arg name="cartesian_velocity_topic" default="cartesian_velocity" />
+  <arg name="tool_position_topic" default="tool_position" />
+  <arg name="set_finger_position_topic" default="set_finger_position" />
+  <arg name="finger_position_topic" default="finger_position" />
+  <arg name="set_joints_topic" default="set_joint_angles" />
 
   <group ns="jaco">
     <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" >

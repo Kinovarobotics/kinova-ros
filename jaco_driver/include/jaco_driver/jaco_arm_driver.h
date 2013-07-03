@@ -22,10 +22,7 @@
 #include "jaco_driver/JointVelocity.h"
 #include "jaco_driver/FingerPosition.h"
 #include "jaco_driver/JointAngles.h"
-#include "jaco_driver/ZeroArm.h"
 #include "sensor_msgs/JointState.h"
-
-#include <jaco_driver/SoftwareStop.h>
 
 #include <jaco_driver/Stop.h>
 #include <jaco_driver/Start.h>
@@ -67,14 +64,12 @@ namespace jaco
 			void JointVelTimer(const ros::TimerEvent&);
 			void StatusTimer(const ros::TimerEvent&);
 			void VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel);
-			void ZeroArmMSG(const jaco_driver::ZeroArmConstPtr& zero);
 
 			void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
 			void SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos);
 			void BroadCastAngles(void);
 			void BroadCastPosition(void);
 			void BroadCastFingerPosition(void);
-			void SoftwarePauseMSG(const jaco_driver::SoftwareStopConstPtr& software_pause);
 			void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles);
 
 			bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
@@ -94,14 +89,12 @@ namespace jaco
 			ros::Subscriber SetFingerPosition_sub;
 			ros::Subscriber SoftwarePause_sub;
 			ros::Subscriber SetJoint_sub;
-			ros::Subscriber ZeroArm_sub;
 
 
 			/* Publishers */
 			ros::Publisher JointAngles_pub;
 			ros::Publisher ToolPosition_pub;
 			ros::Publisher FingerPosition_pub;
-			ros::Publisher ZeroArm_pub;
 			ros::Publisher JointState_pub;
 
 			/* Services */
