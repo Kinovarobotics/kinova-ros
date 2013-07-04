@@ -134,6 +134,11 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
+/*!
+ * \brief Wait for the arm to reach the "home" position.
+ *
+ * \param timeout Timeout after which to give up waiting for arm to finish "homing".
+ */
 void JacoArm::WaitForHome(int timeout)
 {
 	double start_secs;
@@ -166,7 +171,6 @@ void JacoArm::WaitForHome(int timeout)
 			current_sec = (double) time(NULL);
 		}
 
-		/* Check each joint angle to determine whether it has stopped moving */
 		if (HomeState())
 		{
 			ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
@@ -177,12 +181,14 @@ void JacoArm::WaitForHome(int timeout)
 	ROS_WARN("Timed out waiting for arm to return \"home\"");
 }
 
+/*!
+ * \brief Determines whether the arm has returned to its "Home" state. 
+ * 
+ * Checks the current joint angles, then compares them to the known "Home"
+ * joint angles.
+ */
 bool JacoArm::HomeState(void)
 {
-/*
-Determines whether the arm has returned to its "Home" state by checking the current
-joint angles, then comparing them to the known "Home" joint angles.
-*/
 	const AngularInfo home_position = {
 		282.8,
 		154.4,
@@ -199,33 +205,29 @@ joint angles, then comparing them to the known "Home" joint angles.
 	return CompareAngles(home_position, cur_angles.Actuators, tolerance);
 }
 
+/*!
+ * \brief Obtains the current arm configuration.
+ *
+ * This is the configuration which are stored on the arm itself. Many of these
+ * configurations may be set using the Windows interface.
+ */
 void JacoArm::SetConfig(ClientConfigurations config)
 {
-
-/*
-Obtains the current arm configuration, which are stored on the arm itself. Many
-of these configurations may be set using the Windows interface.
-*/
-
 	API->SetClientConfigurations(config);
 }
 
+/*!
+ * \brief Send the arm to the "home" position.
+ * 
+ * The code replicates the function of the "home" button on the user controller
+ * by "pressing" the home button long enough for the arm to return to the home
+ * position.
+ *
+ * Fingers are homed by manually opening them fully, then returning them to a
+ * half-open position.
+ */
 void JacoArm::ZeroArm(void)
 {
-
-/*
-Sends the arm to the "home" position.  The code replicates the function of the "home" button on the
-user controller by "pressing" the home button long enough for the arm to return to the home position.
-
-Future API changes may expose a flag that indicates when the arm has arrived in the home position,
-thus allowing the homing procedure to take less time than the "hard-wired" 20 seconds.
-
-Fingers are homed by manually opening them fully, then returning them to a half-open position.
-
-Note that if the arm is already in the "home" position, this routine will cause it to move into the
-"retract" position.
-*/
-
 	if (HomeState())
 	{
 		ROS_INFO("Arm is already in \"home\" position");
@@ -239,7 +241,9 @@ Note that if the arm is already in the "home" position, this routine will cause 
 
 	home_command.ButtonValue[2] = 1;
 	API->SendJoystickCommand(home_command);
+
 	WaitForHome(25);
+
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 
@@ -269,15 +273,13 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
 	return true;
 }
 
-
+/*!
+ * \brief Sends a joint angle command to the Jaco arm.
+ * 
+ * Waits until the arm has stopped moving before releasing control of the API.
+ */
 void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 {
-
-/*
-Sends a joint angle command to the Jaco arm, and waits until the arm has stopped
-moving before releasing control of the API.
-*/
-
 	timeout = 30;
 
 	if (software_pause == false)
@@ -365,14 +367,13 @@ moving before releasing control of the API.
 	}
 }
 
+/*!
+ * \brief Sends a cartesian coordinate trajectory to the Jaco arm.
+ *
+ * Waits until the arm has stopped moving before releasing control of the API.
+ */
 void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 {
-
-/*
-Sends a cartesian coordinate trajectory to the Jaco arm, and waits until the arm has stopped
-moving before releasing control of the API.
-*/
-
 	timeout = 30;
 
 	if (software_pause == false)
@@ -461,13 +462,11 @@ moving before releasing control of the API.
 	}	
 }
 
+/*!
+ * \brief Sets the finger positions
+ */
 void JacoArm::SetFingers(FingersPosition fingers, int timeout, bool push)
 {
-
-/*
-Sets the finger positions
-*/
-
 	timeout = 30;
 
 	if (software_pause == false)
@@ -565,13 +564,11 @@ Sets the finger positions
 	}
 }
 
+/*!
+ * \brief Set the velocity of the angles using cartesian input.
+ */
 void JacoArm::SetCartesianVelocities(CartesianInfo velocities)
 {
-
-/*
-Set the velocity of the angles using cartesian input.
-*/
-
 	if (software_pause == false)
 	{
 		TrajectoryPoint Jaco_Velocity;
@@ -592,13 +589,11 @@ Set the velocity of the angles using cartesian input.
 	}
 }
 
+/*!
+ * \brief Set the velocity of the angles using angular input.
+ */
 void JacoArm::SetVelocities(AngularInfo joint_vel)
 {
-
-/*
-Set the velocity of the angles using angular input.
-*/
-
 	if (software_pause == false)
 	{
 		TrajectoryPoint Jaco_Velocity;
@@ -615,13 +610,11 @@ Set the velocity of the angles using angular input.
 	}
 }
 
+/*!
+ * \brief API call to obtain the current angular position of all the joints.
+ */
 void JacoArm::GetAngles(AngularInfo &angles)
 {
-
-/*
-API call to obtain the current angular position of all the joints.
-*/
-
 	AngularPosition Jaco_Position;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
@@ -630,24 +623,20 @@ API call to obtain the current angular position of all the joints.
 	angles = Jaco_Position.Actuators;
 }
 
+/*!
+ * \brief API call to obtain the current client configuration.
+ */
 void JacoArm::GetConfig(ClientConfigurations &config)
 {
-
-/*
-API call to obtain the current client configuration.
-*/
-
 	memset(&config, 0, sizeof(config)); //zero structure
 	API->GetClientConfigurations(config);
 }
 
+/*!
+ * \brief API call to obtain the current cartesian position of the arm.
+ */
 void JacoArm::GetPosition(CartesianInfo &position)
 {
-
-/*
-API call to obtain the current cartesian position of the arm.
-*/
-
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -657,13 +646,11 @@ API call to obtain the current cartesian position of the arm.
 	position = Jaco_Position.Coordinates;
 }
 
+/*!
+ * \brief API call to obtain the current finger positions.
+ */
 void JacoArm::GetFingers(FingersPosition &fingers)
 {
-
-/*
-API call to obtain the current finger positions.
-*/
-
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -673,13 +660,11 @@ API call to obtain the current finger positions.
 	fingers = Jaco_Position.Fingers;
 }
 
+/*!
+ * \brief Dumps the client configuration onto the screen.  
+ */
 void JacoArm::PrintConfig(ClientConfigurations config)
 {
-
-/*
-Dumps the client configuration onto the screen.  
-*/
-
 	ROS_INFO("Jaco Config");
 	ROS_INFO("ClientID = %s", config.ClientID);
 	ROS_INFO("ClientName = %s", config.ClientName);
@@ -703,13 +688,12 @@ Dumps the client configuration onto the screen.
 	ROS_INFO("EnableFlashPositionLog = %d", config.EnableFlashPositionLog);
 
 }
+
+/*!
+ * \brief Dumps the current joint angles onto the screen.  
+ */
 void JacoArm::PrintAngles(AngularInfo angles)
 {
-
-/*
-Dumps the current joint angles onto the screen.  
-*/
-
 	ROS_INFO("Jaco Arm Angles (Degrees)");
 	ROS_INFO("Joint 1 = %f", angles.Actuator1);
 	ROS_INFO("Joint 2 = %f", angles.Actuator2);
@@ -721,13 +705,11 @@ Dumps the current joint angles onto the screen.
 
 }
 
+/*!
+ * \brief Dumps the current cartesian positions onto the screen.  
+ */
 void JacoArm::PrintPosition(CartesianInfo position)
 {
-
-/*
-Dumps the current cartesian positions onto the screen.  
-*/
-
 	ROS_DEBUG("Jaco Arm Position (Meters)");
 	ROS_DEBUG("X = %f", position.X);
 	ROS_DEBUG("Y = %f", position.Y);
@@ -740,13 +722,11 @@ Dumps the current cartesian positions onto the screen.
 
 }
 
+/*! 
+ * \brief Dumps the current finger positions onto the screen.  
+ */
 void JacoArm::PrintFingers(FingersPosition fingers)
 {
-
-/*
-Dumps the current finger positions onto the screen.  
-*/
-
 	ROS_DEBUG("Jaco Arm Finger Positions");
 	ROS_DEBUG("Finger 1 = %f", fingers.Finger1);
 	ROS_DEBUG("Finger 2 = %f", fingers.Finger2);
@@ -754,13 +734,11 @@ Dumps the current finger positions onto the screen.
 
 }
 
+/*!
+ * \brief Displays the cartesian coordinates of the arm before and after a transform.
+ */
 void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 {
-
-/*
-Displays the cartesian coordinates of the arm before and after a transform.
-*/
-
 	CartesianInfo Jaco_Position;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
@@ -822,14 +800,11 @@ Displays the cartesian coordinates of the arm before and after a transform.
 	}
 }
 
-
+/*!
+ * \brief Receives ROS command messages and relays them to SetFingers.
+ */
 void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos)
 {
-
-/*
-Receives ROS command messages and relays them to SetFingers.
-*/
-
 	if (software_pause == false)
 	{
 		FingersPosition Finger_Position;
@@ -843,14 +818,11 @@ Receives ROS command messages and relays them to SetFingers.
 	}
 }
 
-
+/*!
+ * \brief Receives ROS command messages and relays them to SetAngles.
+ */
 void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles)
 {
-
-/*
-Receives ROS command messages and relays them to SetAngles.
-*/
-
 	if (software_pause == false)
 	{
 		AngularInfo Joint_Position;
@@ -888,11 +860,14 @@ void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
 	}
 }
 
+/*!
+ * \brief Handler for "stop" service.
+ *
+ * Instantly stops the arm and prevents further movement until start service is
+ * invoked.
+ */
 bool JacoArm::StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res)
 {
-/*
-A service that will instantly stop the arm.
-*/
 
 	software_pause = true;
 
@@ -915,12 +890,13 @@ A service that will instantly stop the arm.
 	return true;
 }
 
+/*!
+ * \brief Handler for "start" service.
+ *
+ * Re-enables control of the arm after a stop.
+ */
 bool JacoArm::StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res)
 {
-/*
-A service that re-enables control of the arm.
-*/
-
 	software_pause = false;
 
 	API->StartControlAPI();
@@ -975,15 +951,14 @@ void JacoArm::JointVelTimer(const ros::TimerEvent&)
 	}
 }
 
+/*!
+ * \brief Contains coordinates for an alternate "Home" position
+ *
+ * GoHome() function must be enabled in the initialization routine for this to
+ * work.
+ */
 void JacoArm::GoHome(void)
 {
-
-/*
-Contains coordinates for an alternate "Home" position, to which the arm may move after
-reaching the default home position. GoHome() function must be enabled in the initialization
-routine for this to work.
-*/
-
 	AngularInfo joint_home;
 
 	joint_home.Actuator1 = 176.0;
@@ -998,20 +973,19 @@ routine for this to work.
 	API->SetCartesianControl();
 }
 
+/*!
+ * \brief Publishes the current joint angles.
+ *
+ * Joint angles are published in both their raw state as obtained from the arm
+ * (JointAngles), and transformed & converted to radians (joint_state) as per
+ * the Jaco Kinematics PDF.
+ *
+ * JointState will eventually also publish the velocity and effort for each
+ * joint, when this data is made available by the C++ API.  Currenty velocity
+ * and effort are reported as being zero (0.0) for all joints.
+ */
 void JacoArm::BroadCastAngles(void)
 {
-
-/*
-Publishes the current joint angles.
-
-Joint angles are published in both their raw state as obtained from the arm (JointAngles),
-and transformed & converted to radians (joint_state) as per the Jaco Kinematics PDF.
-
-JointState will eventually also publish the velocity and effort for each joint, when
-this data is made available by the C++ API.  Currenty velocity and effort are reported
-as being zero (0.0) for all joints.
-*/
-
 	// Populate an array of joint names.  arm_0_joint is the base, arm_5_joint is the wrist.
 	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint", "Finger_1", "Finger_2", "Finger_3"};
 	std::vector<std::string> JointName(nameArgs, nameArgs+9);
@@ -1061,31 +1035,22 @@ as being zero (0.0) for all joints.
 
 }
 
+/*!
+ * \brief Publishes the current cartesian coordinates
+ */
 void JacoArm::BroadCastPosition(void)
 {
-
-/*
-Publishes the current cartesian coordinates
-*/
-
 	CartesianPosition position;
 	geometry_msgs::PoseStamped current_position;
-//	ROS_INFO("prior x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
-//			position.Coordinates.Z);
 
 	memset(&position, 0, sizeof(position)); //zero structure
 
 	API->GetCartesianPosition(position); //Query arm for position
-//
-//	ROS_INFO("x = %f, y = %f, z = %f", position.Coordinates.X, position.Coordinates.Y,
-//			position.Coordinates.Z);
-//	ROS_INFO("finger 1 = %f, finger 2 = %f, finger 3 = %f,", position.Fingers.Finger1,
-//			position.Fingers.Finger2, position.Fingers.Finger3);
 
 	current_position.header.frame_id = "/jaco_api_origin";
 	current_position.header.stamp = ros::Time().now();
 
-//Broadcast position
+	//Broadcast position
 
 	current_position.pose.position.x = position.Coordinates.X;
 	current_position.pose.position.y = position.Coordinates.Y;
