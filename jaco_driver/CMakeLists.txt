@@ -30,14 +30,15 @@ rosbuild_gensrv()
 #target_link_libraries(example ${PROJECT_NAME})
 
 #add dynamic reconfigure api
-rosbuild_find_ros_package(dynamic_reconfigure)
-include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
+#rosbuild_find_ros_package(dynamic_reconfigure)
+#include(${dynamic_reconfigure_PACKAGE_PATH}/cmake/cfgbuild.cmake)
 #gencfg()
 
 
 
 
 rosbuild_add_library(jacoapi src/jaco_api.cpp)
+rosbuild_add_library(jaco_arm_driver src/jaco_comm.cpp)
 rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 

@@ -28,6 +28,8 @@
 #include <jaco_driver/Start.h>
 #include <jaco_driver/HomeArm.h>
 
+#include "jaco_driver/jaco_comm.h"
+
 #include <time.h>
 #include <math.h>
 #include <vector>
@@ -42,22 +44,6 @@ class JacoArm
 	public:
 	JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
 	~JacoArm();
-	bool HomeState(void);
-	void ZeroArm(void);
-	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
-	void SetPosition(CartesianInfo position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(AngularInfo &angles);
-	void GetPosition(CartesianInfo &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(AngularInfo angles);
-	void PrintPosition(CartesianInfo position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
 	void GoHome(void);
 	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& position);
 	void CalculatePostion(void);
@@ -80,13 +66,7 @@ class JacoArm
 
 
 	private:
-	void WaitForHome(int);
-	bool ComparePositions(const CartesianInfo &, const CartesianInfo &, float);
-	bool CompareAngles(const AngularInfo &, const AngularInfo &, float);
-	bool CompareValues(float, float, float);
-	bool CompareAngularValues(float, float, float);
-
-	jaco::JacoAPI* API;
+	JacoComm arm;
 
 	/* Subscribers */
 	ros::Subscriber ArmPose_sub;
@@ -125,8 +105,6 @@ class JacoArm
 	ros::Time last_update_time;
 	ros::Duration update_time;
 	uint8_t previous_state;
-
-	bool software_pause;
 };
 
 }
