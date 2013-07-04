@@ -12,23 +12,15 @@ using namespace jaco;
 JacoTFTree::JacoTFTree(ros::NodeHandle nh, ros::NodeHandle param_nh)
 {
 
-	std::string joint_angles("joint_angles"); ///String containing the topic name for JointAngles
-
-
-
-		//Grab the topic parameters, print warnings if using default values
-
-		if (!param_nh.getParam(joint_angles, joint_angles))
-			ROS_WARN("Parameter <%s> Not Set. Using Default Joint Angles Topic <%s>!", joint_angles.c_str(),
-					joint_angles.c_str());
-
+	std::string joint_angles_topic;
+	nh.param<std::string>("joint_angles_topic", joint_angles_topic, "joint_angles");
 
 	//Print out received topics
-	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles.c_str());
+	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco TF Updater...");
 
-	this->joint_angles_sub = nh.subscribe(joint_angles, 1, &JacoTFTree::JointAnglesMSG, this);
+	this->joint_angles_sub = nh.subscribe(joint_angles_topic, 1, &JacoTFTree::JointAnglesMSG, this);
 	current_angles.Angle_J1 = 0;
 	current_angles.Angle_J2 = 0;
 	current_angles.Angle_J3 = 0;

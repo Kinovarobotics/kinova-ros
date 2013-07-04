@@ -15,45 +15,19 @@ using namespace jaco;
 
 JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 {
+	std::string arm_pose_topic, joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
+		tool_position_topic, set_finger_position_topic, finger_position_topic, joint_state_topic,
+		set_joint_angle_topic;
 
-	std::string arm_pose_topic("arm_pose_topic"); ///String containing the topic name for Cartesian commands
-	std::string joint_velocity_topic("joint_velocity_topic"); ///String containing the topic name for JointVelocity
-	std::string joint_angles_topic("joint_angles_topic"); ///String containing the topic name for JointAngles
-	std::string cartesian_velocity_topic("cartesian_velocity_topic"); ///String containing the topic name for CartesianVelocity
-	std::string tool_position_topic("tool_position_topic"); ///String containing the topic name for ToolPosition
-	std::string set_finger_position_topic("set_finger_position_topic"); ///String containing the topic name for SetFingerPosition
-	std::string finger_position_topic("finger_position_topic"); ///String containing the topic name for FingerPosition
-	std::string joint_state("joint_state"); ///String containing the topic name for JointState
-	std::string set_joint_angle_topic("set_joint_angle_topic"); ///String containing topic name for SetJoint
-
-	//Grab the topic parameters, print warnings if using default values
-	if (!param_nh.getParam(arm_pose_topic, arm_pose_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Arm Position Topic <%s>!", arm_pose_topic.c_str(),
-				arm_pose_topic.c_str());
-	if (!param_nh.getParam(joint_velocity_topic, joint_velocity_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Velocity Topic <%s>!",
-				joint_velocity_topic.c_str(), joint_velocity_topic.c_str());
-	if (!param_nh.getParam(joint_angles_topic, joint_angles_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Joint Angles Topic <%s>!", joint_angles_topic.c_str(),
-				joint_angles_topic.c_str());
-	if (!param_nh.getParam(cartesian_velocity_topic, cartesian_velocity_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Cartesian Velocity Topic <%s>!",
-				cartesian_velocity_topic.c_str(), cartesian_velocity_topic.c_str());
-	if (!param_nh.getParam(tool_position_topic, tool_position_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Tool Position Topic <%s>!",
-				tool_position_topic.c_str(), tool_position_topic.c_str());
-	if (!param_nh.getParam(set_finger_position_topic, set_finger_position_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Set Finger Position Topic <%s>!",
-				set_finger_position_topic.c_str(), set_finger_position_topic.c_str());
-	if (!param_nh.getParam(finger_position_topic, finger_position_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Finger Position Topic <%s>!",
-				finger_position_topic.c_str(), finger_position_topic.c_str());
-	if (!param_nh.getParam(joint_state, joint_state))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Joint State Topic <%s>!", joint_state.c_str(),
-				joint_state.c_str());
-	if (!param_nh.getParam(set_joint_angle_topic, set_joint_angle_topic))
-		ROS_WARN("Parameter <%s> Not Set. Using Default Set Joint Angle Topic <%s>!", set_joint_angle_topic.c_str(),
-				set_joint_angle_topic.c_str());
+	nh.param<std::string>("arm_pose_topic", arm_pose_topic, "arm_pose");
+	nh.param<std::string>("joint_velocity_topic", joint_velocity_topic, "joint_velocity");
+	nh.param<std::string>("joint_angles_topic", joint_angles_topic, "joint_angles");
+	nh.param<std::string>("cartesian_velocity_topic", cartesian_velocity_topic, "cartesian_velocity");
+	nh.param<std::string>("tool_position_topic", tool_position_topic, "tool_position");
+	nh.param<std::string>("set_finger_position_topic", set_finger_position_topic, "set_finger_position");
+	nh.param<std::string>("finger_position_topic", finger_position_topic, "finger_position");
+	nh.param<std::string>("joint_state_topic", joint_state_topic, "joint_state");
+	nh.param<std::string>("set_joint_angle_topic", set_joint_angle_topic, "set_joint_angle");
 
 	//Print out received topics
 	ROS_DEBUG("Got Arm Position Topic Name: <%s>", arm_pose_topic.c_str());
@@ -63,7 +37,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	ROS_DEBUG("Got Tool Position Topic Name: <%s>", tool_position_topic.c_str());
 	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
 	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
-	ROS_DEBUG("Got Joint State Topic Name: <%s>", joint_state.c_str());
+	ROS_DEBUG("Got Joint State Topic Name: <%s>", joint_state_topic.c_str());
 	ROS_DEBUG("Got Set Joint Angle Topic Name: <%s>", set_joint_angle_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
@@ -127,7 +101,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	/* Set up Publishers */
 	this->JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
-	this->JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state, 2);
+	this->JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state_topic, 2);
 	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
 	this->FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
 
@@ -1050,7 +1024,7 @@ as being zero (0.0) for all joints.
 	joint_state.name = JointName;
 
 	// Define array sizes for the joint_state topic
-        joint_state.position.resize(9);
+	joint_state.position.resize(9);
 	joint_state.velocity.resize(9);
 	joint_state.effort.resize(9);
 
