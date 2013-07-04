@@ -42,7 +42,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
-	this->software_pause = false;
+	software_pause = false;
 	previous_state = 0;
 
 	/* Connecting to Jaco Arm */
@@ -53,7 +53,7 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	update_time = ros::Duration(5.0);
 
 	int api_result = 0; //stores result from the API
-	ros::Duration(5.0).sleep();
+	ros::Duration(1.0).sleep();
 
 	api_result = (API->InitAPI());
 
@@ -97,31 +97,28 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 	/* Storing arm in home position */
 
-	// this->GoHome();  // Useful if you want to move the arm to an alternate "home" position after the default home.
-
 	/* Set up Publishers */
-	this->JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
-	this->JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state_topic, 2);
-	this->ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
-	this->FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
+	JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
+	JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state_topic, 2);
+	ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
+	FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
 
 	/* Set up Subscribers*/
-	this->ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
-	this->JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
-	this->CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
-	this->SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
-	this->SetJoint_sub = nh.subscribe(set_joint_angle_topic, 1, &JacoArm::SetJointAnglesMSG, this);
+	ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
+	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
+	CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
+	SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
+	SetJoint_sub = nh.subscribe(set_joint_angle_topic, 1, &JacoArm::SetJointAnglesMSG, this);
 
-	this->status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
+	status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
 
-	this->joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
+	joint_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::JointVelTimer, this);
 	joint_vel_timer.stop();
 	joint_vel_timer_flag = false;
-	this->cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
+	cartesian_vel_timer = nh.createTimer(ros::Duration(0.01), &JacoArm::CartesianVelTimer, this);
 	cartesian_vel_timer.stop();
 	cartesian_vel_timer_flag = false;
 
-	BroadCastAngles();
 	ROS_INFO("The Arm is ready to use.");
 
 	TrajectoryPoint Jaco_Velocity;
@@ -132,6 +129,11 @@ JacoArm::JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh)
 	Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
+}
+
+JacoArm::~JacoArm()
+{
+	API->CloseAPI();
 }
 
 /*!
@@ -247,21 +249,17 @@ void JacoArm::ZeroArm(void)
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 
-	FingersPosition fingers_home;
+	FingersPosition fingers_home = {0, 0, 0};
 
 	// Set the fingers fully "open." This is required to initialize the fingers.
-	fingers_home.Finger1 = 0;
-	fingers_home.Finger2 = 0;
-	fingers_home.Finger3 = 0;
-	this->SetFingers(fingers_home, 5);
+	SetFingers(fingers_home, 5);
 	ros::Duration(1.0).sleep();
 
 	// Set the fingers to "half-open"
 	fingers_home.Finger1 = 40;
 	fingers_home.Finger2 = 40;
 	fingers_home.Finger3 = 40;
-	this->SetFingers(fingers_home, 5);
-	//ros::Duration(2.0).sleep();
+	SetFingers(fingers_home, 5);
 }
 
 
@@ -330,8 +328,6 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 
 			const float tolerance = 0.5; //dead zone for angles (degrees)
 
-			//ros::Duration(1.0).sleep();
-
 			//while we have not timed out
 			while ((current_sec - start_secs) < timeout)
 			{
@@ -355,7 +351,6 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 					ROS_DEBUG("Angular Control Complete.");
 					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
 					API->EraseAllTrajectories();  // Clear any remaining trajectories
-					//API->StopControlAPI();
 					break;
 				}
 				else
@@ -425,8 +420,6 @@ void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 
 			const float tolerance = 0.001; 	//dead zone for position
 
-			//ros::Duration(1.0).sleep();
-
 			//while we have not timed out
 			while ((current_sec - start_secs) < timeout)
 			{
@@ -450,7 +443,6 @@ void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 					ROS_INFO("Cartesian Control Complete.");
 					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
 					API->EraseAllTrajectories();  // Clear any remaining trajectories				
-					//API->StopControlAPI();
 					break;
 				}
 				else
@@ -790,7 +782,7 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 		if (ros::Time::now() - last_update_time > update_time)
 		{
 			last_update_time = ros::Time::now();
-			this->SetPosition(Jaco_Position);
+			SetPosition(Jaco_Position);
 		}
 	}
 }
@@ -809,7 +801,7 @@ void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& fi
 		Finger_Position.Finger2 = finger_pos->Finger_2;
 		Finger_Position.Finger3 = finger_pos->Finger_3;
 
-		this->SetFingers(Finger_Position);
+		SetFingers(Finger_Position);
 	}
 }
 
@@ -830,7 +822,7 @@ void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles)
 		Joint_Position.Actuator5 = angles->Angle_J5;
 		Joint_Position.Actuator6 = angles->Angle_J6;
 
-		this->SetAngles(Joint_Position);
+		SetAngles(Joint_Position);
 	}
 }
 
@@ -926,7 +918,7 @@ void JacoArm::CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& ca
 
 void JacoArm::CartesianVelTimer(const ros::TimerEvent&)
 {
-	this->SetCartesianVelocities(cartesian_velocities);
+	SetCartesianVelocities(cartesian_velocities);
 
 	if ((ros::Time().now().toSec() - last_cartesian_update.toSec()) > 1)
 	{
@@ -937,7 +929,7 @@ void JacoArm::CartesianVelTimer(const ros::TimerEvent&)
 
 void JacoArm::JointVelTimer(const ros::TimerEvent&)
 {
-	this->SetVelocities(joint_velocities);
+	SetVelocities(joint_velocities);
 
 	if ((ros::Time().now().toSec() - last_joint_update.toSec()) > 1)
 	{
@@ -963,7 +955,7 @@ void JacoArm::GoHome(void)
 	joint_home.Actuator5 = 102.0;
 	joint_home.Actuator6 = 106.0;
 
-	this->SetAngles(joint_home, 10); //send joints to home position
+	SetAngles(joint_home, 10); //send joints to home position
 
 	API->SetCartesianControl();
 }
@@ -1131,9 +1123,9 @@ bool JacoArm::CompareAngularValues(float first, float second, float tolerance)
 
 void JacoArm::StatusTimer(const ros::TimerEvent&)
 {
-	this->BroadCastAngles();
-	this->BroadCastPosition();
-	this->BroadCastFingerPosition();
+	BroadCastAngles();
+	BroadCastPosition();
+	BroadCastFingerPosition();
 }
 
 int main(int argc, char **argv)

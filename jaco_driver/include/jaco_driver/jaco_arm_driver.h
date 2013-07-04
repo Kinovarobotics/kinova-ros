@@ -41,6 +41,7 @@ class JacoArm
 {
 	public:
 	JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
+	~JacoArm();
 	bool HomeState(void);
 	void ZeroArm(void);
 	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);

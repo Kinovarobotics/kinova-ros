@@ -9,6 +9,7 @@
 #include <jaco_driver/jaco_api.h>
 
 namespace jaco {
+
 JacoAPI::JacoAPI(void) {
 
 	void *USBLib = dlopen(JACO_USB_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
@@ -16,70 +17,73 @@ JacoAPI::JacoAPI(void) {
 		ROS_WARN("%s", dlerror());
 	}
 
-	this->InitAPI = (int (*)())dlsym(USBLib, "InitAPI");
+	InitAPI = (int (*)())dlsym(USBLib, "InitAPI");
 
-this	->CloseAPI = (int (*)())dlsym(USBLib, "CloseAPI");
+	CloseAPI = (int (*)())dlsym(USBLib, "CloseAPI");
 
-this	->GetCodeVersion = (int (*)(
+	GetCodeVersion = (int (*)(
 			std::vector<int> &))dlsym(USBLib, "GetCodeVersion");
 
-this	->GetCartesianPosition = (int (*)(
+	GetCartesianPosition = (int (*)(
 			CartesianPosition &))dlsym(USBLib, "GetCartesianPosition");
 
-this	->GetAngularPosition = (int (*)(
+	GetAngularPosition = (int (*)(
 			AngularPosition &))dlsym(USBLib, "GetAngularPosition");
 
-this	->GetCartesianForce = (int (*)(
+	GetCartesianForce = (int (*)(
 			CartesianPosition &))dlsym(USBLib, "GetCartesianForce");
 
-this	->GetAngularForce = (int (*)(
+	GetAngularForce = (int (*)(
 			AngularPosition &))dlsym(USBLib, "GetAngularForce");
 
-this	->GetAngularCurrent = (int (*)(
+	GetAngularCurrent = (int (*)(
 			AngularPosition &))dlsym(USBLib, "GetAngularCurrent");
 
-this	->GetControlOperator = (int (*)(int &))dlsym(USBLib, "GetControlOperator");
+	GetControlOperator = (int (*)(int &))dlsym(USBLib, "GetControlOperator");
 
-this	->GetActualTrajectoryInfo = (int (*)(
+	GetActualTrajectoryInfo = (int (*)(
 			TrajectoryPoint &))dlsym(USBLib, "GetActualTrajectoryInfo");
 
-this	->GetGlobalTrajectoryInfo = (int (*)(
+	GetGlobalTrajectoryInfo = (int (*)(
 			TrajectoryFIFO &))dlsym(USBLib, "GetGlobalTrajectoryInfo");
 
-this	->GetSensorsInfo = (int (*)(SensorsInfo &))dlsym(USBLib, "GetSensorsInfo");
+	GetSensorsInfo = (int (*)(SensorsInfo &))dlsym(USBLib, "GetSensorsInfo");
 
-this	->GetSingularityVector = (int (*)(
+	GetSingularityVector = (int (*)(
 			SingularityVector &))dlsym(USBLib, "GetSingularityVector");
 
-this	->SetAngularControl = (int (*)())dlsym(USBLib, "SetAngularControl");
+	SetAngularControl = (int (*)())dlsym(USBLib, "SetAngularControl");
 
-this	->SetCartesianControl = (int (*)())dlsym(USBLib, "SetCartesianControl");
+	SetCartesianControl = (int (*)())dlsym(USBLib, "SetCartesianControl");
 
-this	->StartControlAPI = (int (*)())dlsym(USBLib, "StartControlAPI");
+	StartControlAPI = (int (*)())dlsym(USBLib, "StartControlAPI");
 
-this	->StopControlAPI = (int (*)())dlsym(USBLib, "StopControlAPI");
+	StopControlAPI = (int (*)())dlsym(USBLib, "StopControlAPI");
 
-this	->RestoreFactoryDefault = (int (*)())dlsym(USBLib, "RestoreFactoryDefault");
+	RestoreFactoryDefault = (int (*)())dlsym(USBLib, "RestoreFactoryDefault");
 
-this	->SendJoystickCommand = (int (*)(
+	SendJoystickCommand = (int (*)(
 			JoystickCommand))dlsym(USBLib, "SendJoystickCommand");
 
-this	->SendAdvanceTrajectory = (int (*)(
+	SendAdvanceTrajectory = (int (*)(
 			TrajectoryPoint))dlsym(USBLib, "SendAdvanceTrajectory");
 
-this	->SendBasicTrajectory = (int (*)(
+	SendBasicTrajectory = (int (*)(
 			TrajectoryPoint))dlsym(USBLib, "SendBasicTrajectory");
 
-this	->GetClientConfigurations = (int (*)(
+	GetClientConfigurations = (int (*)(
 			ClientConfigurations &))dlsym(USBLib, "GetClientConfigurations");
 
-this	->SetClientConfigurations = (int (*)(
+	SetClientConfigurations = (int (*)(
 			ClientConfigurations))dlsym(USBLib, "SetClientConfigurations");
 
-this	->EraseAllTrajectories = (int (*)())dlsym(USBLib, "EraseAllTrajectories");
+	EraseAllTrajectories = (int (*)())dlsym(USBLib, "EraseAllTrajectories");
 
-this	->GetPositionCurrentActuators = (int (*)(
+	GetPositionCurrentActuators = (int (*)(
 			std::vector<float> &))dlsym(USBLib, "GetPositionCurrentActuators");
 
-this	->SetActuatorPID = (int (*)(unsigned int, float, float,
-			float))dlsym(USBLib, "SetActuatorPID");}}
+	SetActuatorPID = (int (*)(unsigned int, float, float,
+			float))dlsym(USBLib, "SetActuatorPID");
+}
+
+}
