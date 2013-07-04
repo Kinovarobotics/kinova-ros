@@ -328,7 +328,7 @@ void JacoArm::SetAngles(AngularInfo angles, int timeout, bool push)
 
 			API->GetAngularPosition(past_angles); // Load the starting position into past_angles
 
-			const float tolerance = 0.01; //dead zone for angles (degrees)
+			const float tolerance = 0.5; //dead zone for angles (degrees)
 
 			//ros::Duration(1.0).sleep();
 
@@ -396,7 +396,7 @@ void JacoArm::SetPosition(CartesianInfo position, int timeout, bool push)
 		Jaco_Position.Position.Type = CARTESIAN_POSITION;
 
 		Jaco_Position.Position.CartesianPosition = position;
-		Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
+		//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
 		API->SendBasicTrajectory(Jaco_Position);
 
@@ -686,7 +686,6 @@ void JacoArm::PrintConfig(ClientConfigurations config)
 	ROS_INFO("DeletePreProgrammedPositionsAtRetract = %d", config.DeletePreProgrammedPositionsAtRetract);
 	ROS_INFO("EnableFlashErrorLog = %d", config.EnableFlashErrorLog);
 	ROS_INFO("EnableFlashPositionLog = %d", config.EnableFlashPositionLog);
-
 }
 
 /*!
@@ -702,7 +701,6 @@ void JacoArm::PrintAngles(AngularInfo angles)
 	ROS_INFO("Joint 4 = %f", angles.Actuator4);
 	ROS_INFO("Joint 5 = %f", angles.Actuator5);
 	ROS_INFO("Joint 6 = %f", angles.Actuator6);
-
 }
 
 /*!
@@ -710,16 +708,15 @@ void JacoArm::PrintAngles(AngularInfo angles)
  */
 void JacoArm::PrintPosition(CartesianInfo position)
 {
-	ROS_DEBUG("Jaco Arm Position (Meters)");
-	ROS_DEBUG("X = %f", position.X);
-	ROS_DEBUG("Y = %f", position.Y);
-	ROS_DEBUG("Z = %f", position.Z);
+	ROS_INFO("Jaco Arm Position (Meters)");
+	ROS_INFO("X = %f", position.X);
+	ROS_INFO("Y = %f", position.Y);
+	ROS_INFO("Z = %f", position.Z);
 
-	ROS_DEBUG("Jaco Arm Rotations (Radians)");
-	ROS_DEBUG("Theta X = %f", position.ThetaX);
-	ROS_DEBUG("Theta Y = %f", position.ThetaY);
-	ROS_DEBUG("Theta Z = %f", position.ThetaZ);
-
+	ROS_INFO("Jaco Arm Rotations (Radians)");
+	ROS_INFO("Theta X = %f", position.ThetaX);
+	ROS_INFO("Theta Y = %f", position.ThetaY);
+	ROS_INFO("Theta Z = %f", position.ThetaZ);
 }
 
 /*! 
@@ -727,11 +724,10 @@ void JacoArm::PrintPosition(CartesianInfo position)
  */
 void JacoArm::PrintFingers(FingersPosition fingers)
 {
-	ROS_DEBUG("Jaco Arm Finger Positions");
-	ROS_DEBUG("Finger 1 = %f", fingers.Finger1);
-	ROS_DEBUG("Finger 2 = %f", fingers.Finger2);
-	ROS_DEBUG("Finger 3 = %f", fingers.Finger3);
-
+	ROS_INFO("Jaco Arm Finger Positions");
+	ROS_INFO("Finger 1 = %f", fingers.Finger1);
+	ROS_INFO("Finger 2 = %f", fingers.Finger2);
+	ROS_INFO("Finger 3 = %f", fingers.Finger3);
 }
 
 /*!
@@ -755,11 +751,12 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 		ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
 		ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
 
-		while (ros::ok()
+		if (ros::ok()
 				&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
 						arm_pose->header.stamp))
 		{
-			ros::spinOnce();
+			ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", arm_pose->header.frame_id.c_str());
+			return;
 		}
 
 		listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
@@ -792,8 +789,6 @@ void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 
 		if (ros::Time::now() - last_update_time > update_time)
 		{
-			this->PrintPosition(Jaco_Position);
-			
 			last_update_time = ros::Time::now();
 			this->SetPosition(Jaco_Position);
 		}
