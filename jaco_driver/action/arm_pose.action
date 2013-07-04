@@ -1,0 +1,26 @@
+# Goal
+float64 x_goal  # Distance in meters
+float64 y_goal  # Distance in meters
+float64 z_goal  # Distance in meters
+float64 Tx_goal  # Angle in radians
+float64 Ty_goal  # Angle in radians
+float64 Tz_goal  # Angle in radians
+float64 Tw_goal  # Angle in radians
+---
+# Result
+float64 x
+float64 y
+float64 z
+float64 Tx
+float64 Ty
+float64 Tz
+float64 Tw
+---
+# Feedback message
+float64 x
+float64 y
+float64 z
+float64 Tx
+float64 Ty
+float64 Tz
+float64 Tw

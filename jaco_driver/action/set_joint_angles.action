@@ -1,0 +1,23 @@
+# Goal
+float32 Angle_J1_goal
+float32 Angle_J2_goal
+float32 Angle_J3_goal
+float32 Angle_J4_goal
+float32 Angle_J5_goal
+float32 Angle_J6_goal
+---
+# Result
+float32 Angle_J1
+float32 Angle_J2
+float32 Angle_J3
+float32 Angle_J4
+float32 Angle_J5
+float32 Angle_J6
+---
+# Feedback
+float32 Angle_J1
+float32 Angle_J2
+float32 Angle_J3
+float32 Angle_J4
+float32 Angle_J5
+float32 Angle_J6
