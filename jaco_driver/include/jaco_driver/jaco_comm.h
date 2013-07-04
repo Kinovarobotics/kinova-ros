@@ -80,7 +80,7 @@ class JacoComm
 
 	private:
 	jaco::JacoAPI* API;
-	bool software_pause;
+	bool software_stop;
 
 	void WaitForHome(int);
 

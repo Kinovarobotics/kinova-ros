@@ -51,7 +51,7 @@ namespace jaco
 
 JacoComm::JacoComm()
 {
-	software_pause = false;
+	software_stop = false;
 
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
@@ -125,6 +125,11 @@ bool JacoComm::HomeState(void)
  */
 void JacoComm::HomeArm(void)
 {
+	if (Stopped())
+	{
+		return;
+	}
+
 	if (HomeState())
 	{
 		ROS_INFO("Arm is already in \"home\" position");
@@ -172,85 +177,84 @@ void JacoComm::InitializeFingers(void)
  */
 void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
 {
-	timeout = 30;
+	if (Stopped())
+		return;
 
-	if (software_pause == false)
+	TrajectoryPoint Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	if (push == true)
 	{
-		TrajectoryPoint Jaco_Position;
+		API->EraseAllTrajectories();
+		API->StopControlAPI();
+	}
+	
+	API->StartControlAPI();
+	API->SetAngularControl();
+	
+	Jaco_Position.LimitationsActive = false;
+	Jaco_Position.Position.Delay = 0.0;
+	Jaco_Position.Position.Type = ANGULAR_POSITION;
 
-		memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+	Jaco_Position.Position.Actuators = angles;
 
-		if (push == true)
+	API->SendAdvanceTrajectory(Jaco_Position);
+
+	if (timeout != 0)
+	{
+		double start_secs;
+		double current_sec;
+
+		//If ros is still running use rostime, else use system time
+		if (ros::ok())
 		{
-			API->EraseAllTrajectories();
-			API->StopControlAPI();
+			start_secs = ros::Time::now().toSec();
+			current_sec = ros::Time::now().toSec();
+		} 
+		else
+		{
+			start_secs = (double) time(NULL);
+			current_sec = (double) time(NULL);
 		}
-		
-		API->StartControlAPI();
-		API->SetAngularControl();
-		
-		Jaco_Position.LimitationsActive = false;
-		Jaco_Position.Position.Delay = 0.0;
-		Jaco_Position.Position.Type = ANGULAR_POSITION;
 
-		Jaco_Position.Position.Actuators = angles;
+		AngularPosition cur_angles; //holds the current angles of the arm
+		AngularPosition past_angles;
+		memset(&cur_angles, 0, sizeof(cur_angles));
 
-		API->SendAdvanceTrajectory(Jaco_Position);
+		API->GetAngularPosition(past_angles); // Load the starting position into past_angles
 
-		if (timeout != 0)
+		const float tolerance = 0.5; //dead zone for angles (degrees)
+
+		//while we have not timed out
+		while ((current_sec - start_secs) < timeout)
 		{
-			double start_secs;
-			double current_sec;
-
+			ros::Duration(0.5).sleep();
+			
 			//If ros is still running use rostime, else use system time
 			if (ros::ok())
 			{
-				start_secs = ros::Time::now().toSec();
 				current_sec = ros::Time::now().toSec();
+				ros::spinOnce();
 			} 
 			else
 			{
-				start_secs = (double) time(NULL);
 				current_sec = (double) time(NULL);
 			}
 
-			AngularPosition cur_angles; //holds the current angles of the arm
-			AngularPosition past_angles;
-			memset(&cur_angles, 0, sizeof(cur_angles));
+			API->GetAngularPosition(cur_angles); //update current arm angles
 
-			API->GetAngularPosition(past_angles); // Load the starting position into past_angles
-
-			const float tolerance = 0.5; //dead zone for angles (degrees)
-
-			//while we have not timed out
-			while ((current_sec - start_secs) < timeout)
+			/* Check each joint angle to determine whether it has stopped moving */
+			if (CompareAngles(past_angles.Actuators, cur_angles.Actuators, tolerance))
 			{
-				ros::Duration(0.5).sleep();
-				
-				//If ros is still running use rostime, else use system time
-				if (ros::ok())
-				{
-					current_sec = ros::Time::now().toSec();
-				} 
-				else
-				{
-					current_sec = (double) time(NULL);
-				}
-
-				API->GetAngularPosition(cur_angles); //update current arm angles
-
-				/* Check each joint angle to determine whether it has stopped moving */
-				if (CompareAngles(past_angles.Actuators, cur_angles.Actuators, tolerance))
-				{
-					ROS_DEBUG("Angular Control Complete.");
-					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-					API->EraseAllTrajectories();  // Clear any remaining trajectories
-					break;
-				}
-				else
-				{
-					past_angles.Actuators = cur_angles.Actuators;
-				}
+				ROS_DEBUG("Angular Control Complete.");
+				ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+				API->EraseAllTrajectories();  // Clear any remaining trajectories
+				break;
+			}
+			else
+			{
+				past_angles.Actuators = cur_angles.Actuators;
 			}
 		}
 	}
@@ -263,89 +267,88 @@ void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
  */
 void JacoComm::SetPosition(CartesianInfo position, int timeout, bool push)
 {
-	timeout = 30;
+	if (Stopped())
+		return;
 
-	if (software_pause == false)
+	TrajectoryPoint Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+	if (push == true)
 	{
-		TrajectoryPoint Jaco_Position;
+		API->EraseAllTrajectories();
+		API->StopControlAPI();
+	}
 
-		memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+	API->StartControlAPI();
+	API->SetCartesianControl();
 
-		if (push == true)
+	Jaco_Position.LimitationsActive = false;
+	Jaco_Position.Position.Delay = 0.0;
+	Jaco_Position.Position.Type = CARTESIAN_POSITION;
+
+	Jaco_Position.Position.CartesianPosition = position;
+	//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
+
+	API->SendBasicTrajectory(Jaco_Position);
+
+	if (timeout != 0)
+	{
+		double start_secs;
+		double current_sec;
+
+		//If ros is still running use rostime, else use system time
+		if (ros::ok())
 		{
-			API->EraseAllTrajectories();
-			API->StopControlAPI();
+			start_secs = ros::Time::now().toSec();
+			current_sec = ros::Time::now().toSec();
+		} 
+		else
+		{
+			start_secs = (double) time(NULL);
+			current_sec = (double) time(NULL);
 		}
 
-		API->StartControlAPI();
-		API->SetCartesianControl();
+		CartesianPosition cur_position;		//holds the current position of the arm
+		CartesianPosition past_position;	//holds the past position of the arm
+		memset(&cur_position, 0, sizeof(cur_position));
 
-		Jaco_Position.LimitationsActive = false;
-		Jaco_Position.Position.Delay = 0.0;
-		Jaco_Position.Position.Type = CARTESIAN_POSITION;
+		API->GetCartesianPosition(past_position); //pre-load the past arm position
 
-		Jaco_Position.Position.CartesianPosition = position;
-		//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
+		const float tolerance = 0.001; 	//dead zone for position
 
-		API->SendBasicTrajectory(Jaco_Position);
-
-		if (timeout != 0)
+		//while we have not timed out
+		while ((current_sec - start_secs) < timeout)
 		{
-			double start_secs;
-			double current_sec;
 
-			//If ros is still running use rostime, else use system time
+			ros::Duration(0.5).sleep();
+
+			//If ros is still runniing use rostime, else use system time
 			if (ros::ok())
 			{
-				start_secs = ros::Time::now().toSec();
 				current_sec = ros::Time::now().toSec();
+				ros::spinOnce();
 			} 
 			else
 			{
-				start_secs = (double) time(NULL);
 				current_sec = (double) time(NULL);
 			}
 
-			CartesianPosition cur_position;		//holds the current position of the arm
-			CartesianPosition past_position;	//holds the past position of the arm
-			memset(&cur_position, 0, sizeof(cur_position));
+			API->GetCartesianPosition(cur_position); //update current arm position
 
-			API->GetCartesianPosition(past_position); //pre-load the past arm position
-
-			const float tolerance = 0.001; 	//dead zone for position
-
-			//while we have not timed out
-			while ((current_sec - start_secs) < timeout)
+			if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
 			{
-
-				ros::Duration(0.5).sleep();
-
-				//If ros is still runniing use rostime, else use system time
-				if (ros::ok())
-				{
-					current_sec = ros::Time::now().toSec();
-				} 
-				else
-				{
-					current_sec = (double) time(NULL);
-				}
-
-				API->GetCartesianPosition(cur_position); //update current arm position
-
-				if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
-				{
-					ROS_INFO("Cartesian Control Complete.");
-					ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-					API->EraseAllTrajectories();  // Clear any remaining trajectories				
-					break;
-				}
-				else
-				{
-					past_position.Coordinates = cur_position.Coordinates;
-				}
+				ROS_INFO("Cartesian Control Complete.");
+				ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+				API->EraseAllTrajectories();  // Clear any remaining trajectories				
+				break;
+			}
+			else
+			{
+				past_position.Coordinates = cur_position.Coordinates;
 			}
 		}
-	}	
+	}
 }
 
 /*!
@@ -353,98 +356,96 @@ void JacoComm::SetPosition(CartesianInfo position, int timeout, bool push)
  */
 void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
 {
-	timeout = 30;
+	if (Stopped())
+		return;
 
-	if (software_pause == false)
+	TrajectoryPoint Jaco_Position;
+
+	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+
+
+	ros::Duration(4.0).sleep();
+
+	if (push == true)
 	{
-		TrajectoryPoint Jaco_Position;
+		API->EraseAllTrajectories();
+		API->StopControlAPI();
+	}
 
-		memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
+	API->StartControlAPI();
 
+	Jaco_Position.Position.HandMode = POSITION_MODE;
 
-		ros::Duration(4.0).sleep();
+	Jaco_Position.Position.Fingers = fingers;
 
-		if (push == true)
+	API->SendAdvanceTrajectory(Jaco_Position);
+	ROS_DEBUG("Sending Fingers");
+
+	//if we want to timeout
+	if (timeout != 0)
+	{
+		double start_secs;
+		double current_sec;
+
+		//If ros is still runniing use rostime, else use system time
+		if (ros::ok())
 		{
-			API->EraseAllTrajectories();
-			API->StopControlAPI();
+			start_secs = ros::Time::now().toSec();
+			current_sec = ros::Time::now().toSec();
+		} 
+		else
+		{
+			start_secs = (double) time(NULL);
+			current_sec = (double) time(NULL);
 		}
 
-		API->StartControlAPI();
+		FingersPosition cur_fingers; //holds the current position of the fingers
+		const float finger_range = 5; //dead zone for fingers
+		bool Finger_1_Reached = false;
+		bool Finger_2_Reached = false;
+		bool Finger_3_Reached = false;
 
-		Jaco_Position.Position.HandMode = POSITION_MODE;
-
-		Jaco_Position.Position.Fingers = fingers;
-
-		API->SendAdvanceTrajectory(Jaco_Position);
-		ROS_DEBUG("Sending Fingers");
-
-		//if we want to timeout
-		if (timeout != 0)
+		//while we have not timed out
+		while ((current_sec - start_secs) < timeout)
 		{
-			double start_secs;
-			double current_sec;
 
 			//If ros is still runniing use rostime, else use system time
 			if (ros::ok())
 			{
-				start_secs = ros::Time::now().toSec();
 				current_sec = ros::Time::now().toSec();
 			} 
 			else
 			{
-				start_secs = (double) time(NULL);
 				current_sec = (double) time(NULL);
 			}
 
-			FingersPosition cur_fingers; //holds the current position of the fingers
-			const float finger_range = 5; //dead zone for fingers
-			bool Finger_1_Reached = false;
-			bool Finger_2_Reached = false;
-			bool Finger_3_Reached = false;
+			GetFingers(cur_fingers); //update current finger position
 
-			//while we have not timed out
-			while ((current_sec - start_secs) < timeout)
+			//Check if finger is in range
+			if (((cur_fingers.Finger1) <= Jaco_Position.Position.Fingers.Finger1 + finger_range)
+					&& (cur_fingers.Finger1) >= (Jaco_Position.Position.Fingers.Finger1 - finger_range))
 			{
+				Finger_1_Reached = true;
+			}
 
-				//If ros is still runniing use rostime, else use system time
-				if (ros::ok())
-				{
-					current_sec = ros::Time::now().toSec();
-				} 
-				else
-				{
-					current_sec = (double) time(NULL);
-				}
+			//Check if finger is in range
+			if (((cur_fingers.Finger2) <= Jaco_Position.Position.Fingers.Finger2 + finger_range)
+					&& (cur_fingers.Finger2) >= (Jaco_Position.Position.Fingers.Finger2 - finger_range))
+			{
+				Finger_2_Reached = true;
+			}
 
-				GetFingers(cur_fingers); //update current finger position
+			//Check if finger is in range
+			if (((cur_fingers.Finger3) <= Jaco_Position.Position.Fingers.Finger3 + finger_range)
+					&& (cur_fingers.Finger3) >= (Jaco_Position.Position.Fingers.Finger3 - finger_range))
+			{
+				Finger_3_Reached = true;
+			}
 
-				//Check if finger is in range
-				if (((cur_fingers.Finger1) <= Jaco_Position.Position.Fingers.Finger1 + finger_range)
-						&& (cur_fingers.Finger1) >= (Jaco_Position.Position.Fingers.Finger1 - finger_range))
-				{
-					Finger_1_Reached = true;
-				}
-
-				//Check if finger is in range
-				if (((cur_fingers.Finger2) <= Jaco_Position.Position.Fingers.Finger2 + finger_range)
-						&& (cur_fingers.Finger2) >= (Jaco_Position.Position.Fingers.Finger2 - finger_range))
-				{
-					Finger_2_Reached = true;
-				}
-
-				//Check if finger is in range
-				if (((cur_fingers.Finger3) <= Jaco_Position.Position.Fingers.Finger3 + finger_range)
-						&& (cur_fingers.Finger3) >= (Jaco_Position.Position.Fingers.Finger3 - finger_range))
-				{
-					Finger_3_Reached = true;
-				}
-
-				//If all the fingers reached their destination then break out of timeout loop
-				if (Finger_1_Reached == true && Finger_2_Reached == true && Finger_3_Reached == true)
-				{
-					break;
-				}
+			//If all the fingers reached their destination then break out of timeout loop
+			if (Finger_1_Reached == true && Finger_2_Reached == true && Finger_3_Reached == true)
+			{
+				break;
 			}
 		}
 	}
@@ -455,20 +456,20 @@ void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
  */
 void JacoComm::SetVelocities(AngularInfo joint_vel)
 {
-	if (software_pause == false)
-	{
-		TrajectoryPoint Jaco_Velocity;
+	if (Stopped())
+		return;
 
-		memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
+	TrajectoryPoint Jaco_Velocity;
 
-		API->StartControlAPI();
-		Jaco_Velocity.Position.Type = ANGULAR_VELOCITY;
+	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
 
-		// confusingly, velocity is passed in the position struct
-		Jaco_Velocity.Position.Actuators = joint_vel;
+	API->StartControlAPI();
+	Jaco_Velocity.Position.Type = ANGULAR_VELOCITY;
 
-		API->SendAdvanceTrajectory(Jaco_Velocity);
-	}
+	// confusingly, velocity is passed in the position struct
+	Jaco_Velocity.Position.Actuators = joint_vel;
+
+	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
 /*!
@@ -476,24 +477,23 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
  */
 void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 {
-	if (software_pause == false)
-	{
-		TrajectoryPoint Jaco_Velocity;
-
-		memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
-
-		API->StartControlAPI();
-		Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
-
-		// confusingly, velocity is passed in the position struct
-		Jaco_Velocity.Position.CartesianPosition = velocities;
-
-		API->SendAdvanceTrajectory(Jaco_Velocity);
-	}
-	else
+	if (Stopped())
 	{
 		API->EraseAllTrajectories();
+		return;
 	}
+
+	TrajectoryPoint Jaco_Velocity;
+
+	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
+
+	API->StartControlAPI();
+	Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
+
+	// confusingly, velocity is passed in the position struct
+	Jaco_Velocity.Position.CartesianPosition = velocities;
+
+	API->SendAdvanceTrajectory(Jaco_Velocity);
 }
 
 /*!
@@ -629,7 +629,7 @@ void JacoComm::PrintConfig(ClientConfigurations config)
 
 void JacoComm::Stop()
 {
-	software_pause = true;
+	software_stop = true;
 
 	API->StartControlAPI();
 
@@ -647,7 +647,7 @@ void JacoComm::Stop()
 
 void JacoComm::Start()
 {
-	software_pause = false;
+	software_stop = false;
 
 	API->StartControlAPI();
 
@@ -655,7 +655,7 @@ void JacoComm::Start()
 
 bool JacoComm::Stopped()
 {
-	return software_pause;
+	return software_stop;
 }
 
 /*!
@@ -689,6 +689,7 @@ void JacoComm::WaitForHome(int timeout)
 		if (ros::ok())
 		{
 			current_sec = ros::Time::now().toSec();
+            ros::spinOnce();
 		} 
 		else
 		{
