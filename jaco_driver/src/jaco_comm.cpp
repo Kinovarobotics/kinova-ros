@@ -49,10 +49,8 @@
 namespace jaco
 {
 
-JacoComm::JacoComm()
+JacoComm::JacoComm() : software_stop(false)
 {
-	software_stop = false;
-
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
 	API = new JacoAPI();

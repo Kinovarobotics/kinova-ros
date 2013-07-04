@@ -42,23 +42,23 @@ namespace jaco
 class JacoArm
 {
 	public:
-	JacoArm(ros::NodeHandle nh, ros::NodeHandle param_nh);
+	JacoArm(JacoComm &, ros::NodeHandle, ros::NodeHandle);
 	~JacoArm();
 	void GoHome(void);
-	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& position);
+	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr&);
 	void CalculatePostion(void);
 	void PositionTimer(const ros::TimerEvent&);
 	void CartesianVelTimer(const ros::TimerEvent&);
 	void JointVelTimer(const ros::TimerEvent&);
 	void StatusTimer(const ros::TimerEvent&);
-	void VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel);
+	void VelocityMSG(const jaco_driver::JointVelocityConstPtr&);
 
-	void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
-	void SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos);
+	void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr&);
+	void SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr&);
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
 	void BroadCastFingerPosition(void);
-	void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles);
+	void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr&);
 
 	bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
 	bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
@@ -66,7 +66,7 @@ class JacoArm
 
 
 	private:
-	JacoComm arm;
+	JacoComm &arm;
 
 	/* Subscribers */
 	ros::Subscriber ArmPose_sub;

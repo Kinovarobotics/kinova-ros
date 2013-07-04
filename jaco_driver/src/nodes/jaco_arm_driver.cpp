@@ -16,8 +16,10 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 
+	jaco::JacoComm comm;
+
 	//create the arm object
-	jaco::JacoArm jaco(nh, param_nh);
+	jaco::JacoArm jaco(comm, nh, param_nh);
 
 	ros::spin();
 }
