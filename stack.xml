@@ -18,6 +18,7 @@
   <depend stack="geometry" /> <!-- tf -->
   <depend stack="common_msgs" /> <!-- geometry_msgs -->
   <depend stack="dynamic_reconfigure" /> <!-- dynamic_reconfigure -->
+  <depend stack="actionlib" />
 
   <!-- jaco_model -->
   <depend stack="xacro" /> <!-- xacro -->
