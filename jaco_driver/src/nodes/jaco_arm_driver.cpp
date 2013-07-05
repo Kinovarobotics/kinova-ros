@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	/* Set up ROS */
 	ros::init(argc, argv, "jaco_arm_driver");
 	ros::NodeHandle nh;
-	ros::NodeHandle param_nh("~");
+	//ros::NodeHandle param_nh("~");
 
 	jaco::JacoComm comm;
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	comm.InitializeFingers();
 
 	//create the arm object
-	jaco::JacoArm jaco(comm, nh, param_nh);
+	jaco::JacoArm jaco(comm, nh);
 	jaco::JacoPoseActionServer pose_server(comm, nh);
 
 	ros::spin();

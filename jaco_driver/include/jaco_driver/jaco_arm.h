@@ -38,7 +38,7 @@ namespace jaco
 class JacoArm
 {
 	public:
-	JacoArm(JacoComm &, ros::NodeHandle, ros::NodeHandle);
+	JacoArm(JacoComm &, ros::NodeHandle &);
 	~JacoArm();
 	void GoHome(void);
 	void CalculatePostion(void);

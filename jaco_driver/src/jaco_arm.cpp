@@ -11,7 +11,7 @@
 namespace jaco
 {
 
-JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_nh) : arm(arm_comm)
+JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 {
 	std::string joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
 		tool_position_topic, set_finger_position_topic, finger_position_topic, joint_state_topic,
