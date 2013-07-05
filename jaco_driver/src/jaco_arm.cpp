@@ -344,8 +344,8 @@ void JacoArm::GoHome(void)
 void JacoArm::BroadCastAngles(void)
 {
 	// Populate an array of joint names.  arm_0_joint is the base, arm_5_joint is the wrist.
-	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint", "Finger_1", "Finger_2", "Finger_3"};
-	std::vector<std::string> JointName(nameArgs, nameArgs+9);
+	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint"};
+	std::vector<std::string> JointName(nameArgs, nameArgs+6);
 
 	AngularPosition arm_angles;
 
@@ -355,9 +355,9 @@ void JacoArm::BroadCastAngles(void)
 	joint_state.name = JointName;
 
 	// Define array sizes for the joint_state topic
-	joint_state.position.resize(9);
-	joint_state.velocity.resize(9);
-	joint_state.effort.resize(9);
+	joint_state.position.resize(6);
+	joint_state.velocity.resize(6);
+	joint_state.effort.resize(6);
 
 	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
 
@@ -380,9 +380,6 @@ void JacoArm::BroadCastAngles(void)
 	joint_state.position[3] = (180.0 - arm_angles.Actuators.Actuator4) / (180.0 / PI);
 	joint_state.position[4] = (180.0 - arm_angles.Actuators.Actuator5) / (180.0 / PI);
 	joint_state.position[5] = (260.0 - arm_angles.Actuators.Actuator6) / (180.0 / PI);
-	joint_state.position[6] = (180.0 - arm_angles.Fingers.Finger1) / (180.0 / PI);
-	joint_state.position[7] = (180.0 - arm_angles.Fingers.Finger2) / (180.0 / PI);
-	joint_state.position[8] = (180.0 - arm_angles.Fingers.Finger3) / (180.0 / PI);
 
 	//Publish the joint state messages
 
