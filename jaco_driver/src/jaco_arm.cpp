@@ -300,12 +300,12 @@ void JacoArm::BroadCastAngles(void)
 	current_angles.Angle_J6 = arm_angles.Actuators.Actuator6;
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / PI);
-	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / PI);
-	joint_state.position[2] = (90.0 - arm_angles.Actuators.Actuator3) / (180.0 / PI);
-	joint_state.position[3] = (180.0 - arm_angles.Actuators.Actuator4) / (180.0 / PI);
-	joint_state.position[4] = (180.0 - arm_angles.Actuators.Actuator5) / (180.0 / PI);
-	joint_state.position[5] = (260.0 - arm_angles.Actuators.Actuator6) / (180.0 / PI);
+	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / M_PI);
+	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / M_PI);
+	joint_state.position[2] = (90.0 - arm_angles.Actuators.Actuator3) / (180.0 / M_PI);
+	joint_state.position[3] = (180.0 - arm_angles.Actuators.Actuator4) / (180.0 / M_PI);
+	joint_state.position[4] = (180.0 - arm_angles.Actuators.Actuator5) / (180.0 / M_PI);
+	joint_state.position[5] = (260.0 - arm_angles.Actuators.Actuator6) / (180.0 / M_PI);
 
 	//Publish the joint state messages
 
