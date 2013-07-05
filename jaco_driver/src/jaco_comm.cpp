@@ -46,6 +46,8 @@
 #include <ros/ros.h>
 #include "jaco_driver/jaco_comm.h"
 
+#define PI 3.14159265358
+
 namespace jaco
 {
 
@@ -191,11 +193,20 @@ void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
 	API->StartControlAPI();
 	API->SetAngularControl();
 	
-	Jaco_Position.LimitationsActive = false;
+	//Jaco_Position.LimitationsActive = false;
 	Jaco_Position.Position.Delay = 0.0;
 	Jaco_Position.Position.Type = ANGULAR_POSITION;
 
-	Jaco_Position.Position.Actuators = angles;
+	// No transform performed, raw angles expected:
+	//Jaco_Position.Position.Actuators = angles; 
+
+	// This block converts the angles in DH-transformed radians back into degrees for the arm:
+	Jaco_Position.Position.Actuators.Actuator1 = 180.0 - (angles.Actuator1 * (180.0 / PI));
+	Jaco_Position.Position.Actuators.Actuator2 = (angles.Actuator2 * (180.0 / PI)) + 270.0;
+	Jaco_Position.Position.Actuators.Actuator3 = 90.0 - (angles.Actuator3 * (180.0 / PI));
+	Jaco_Position.Position.Actuators.Actuator4 = 180.0 - (angles.Actuator4 * (180.0 / PI));
+	Jaco_Position.Position.Actuators.Actuator5 = 180.0 - (angles.Actuator5 * (180.0 / PI));
+	Jaco_Position.Position.Actuators.Actuator6 = 260.0 - (angles.Actuator6 * (180.0 / PI));
 
 	API->SendAdvanceTrajectory(Jaco_Position);
 
@@ -281,7 +292,7 @@ void JacoComm::SetPosition(CartesianInfo position, int timeout, bool push)
 	API->StartControlAPI();
 	API->SetCartesianControl();
 
-	Jaco_Position.LimitationsActive = false;
+	//Jaco_Position.LimitationsActive = false;
 	Jaco_Position.Position.Delay = 0.0;
 	Jaco_Position.Position.Type = CARTESIAN_POSITION;
 
