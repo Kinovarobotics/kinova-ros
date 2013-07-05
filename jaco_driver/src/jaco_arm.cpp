@@ -55,13 +55,8 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	arm.GetConfig(configuration);
 	arm.PrintConfig(configuration);
 
-	ROS_INFO("Initializing the Arm");
-
 	last_update_time = ros::Time::now();
 	update_time = ros::Duration(5.0);
-
-	arm.HomeArm();
-	arm.InitializeFingers();
 
 	/* Storing arm in home position */
 
@@ -113,64 +108,105 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
  */
 void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
 {
-	CartesianInfo Jaco_Position;
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-
-	if (!arm.Stopped())
+	if (arm.Stopped())
 	{
-		geometry_msgs::PoseStamped api_pose;
-		ROS_DEBUG("Raw MSG");
-		ROS_DEBUG("X = %f", arm_pose->pose.position.x);
-		ROS_DEBUG("Y = %f", arm_pose->pose.position.y);
-		ROS_DEBUG("Z = %f", arm_pose->pose.position.z);
-
-		ROS_DEBUG("RX = %f", arm_pose->pose.orientation.x);
-		ROS_DEBUG("RY = %f", arm_pose->pose.orientation.y);
-		ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
-		ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
-
-		if (ros::ok()
-				&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
-						arm_pose->header.stamp))
-		{
-			ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", arm_pose->header.frame_id.c_str());
-			return;
-		}
-
-		listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
-
-		ROS_DEBUG("Transformed MSG");
-		ROS_DEBUG("X = %f", api_pose.pose.position.x);
-		ROS_DEBUG("Y = %f", api_pose.pose.position.y);
-		ROS_DEBUG("Z = %f", api_pose.pose.position.z);
-
-		ROS_DEBUG("RX = %f", api_pose.pose.orientation.x);
-		ROS_DEBUG("RY = %f", api_pose.pose.orientation.y);
-		ROS_DEBUG("RZ = %f", api_pose.pose.orientation.z);
-		ROS_DEBUG("RW = %f", api_pose.pose.orientation.w);
-
-		double x, y, z;
-		tf::Quaternion q;
-		tf::quaternionMsgToTF(api_pose.pose.orientation, q);
-
-		tf::Matrix3x3 bt_q(q);
-
-		bt_q.getEulerYPR(z, y, x);
-
-		Jaco_Position.X = (float) api_pose.pose.position.x;
-		Jaco_Position.Y = (float) api_pose.pose.position.y;
-		Jaco_Position.Z = (float) api_pose.pose.position.z;
-
-		Jaco_Position.ThetaX = (float) x;
-		Jaco_Position.ThetaY = (float) y;
-		Jaco_Position.ThetaZ = (float) z;
-
-		if (ros::Time::now() - last_update_time > update_time)
-		{
-			last_update_time = ros::Time::now();
-			arm.SetPosition(Jaco_Position);
-		}
+		return;
 	}
+
+	geometry_msgs::PoseStamped api_pose;
+	ROS_DEBUG("Raw MSG");
+	ROS_DEBUG("X = %f", arm_pose->pose.position.x);
+	ROS_DEBUG("Y = %f", arm_pose->pose.position.y);
+	ROS_DEBUG("Z = %f", arm_pose->pose.position.z);
+
+	ROS_DEBUG("RX = %f", arm_pose->pose.orientation.x);
+	ROS_DEBUG("RY = %f", arm_pose->pose.orientation.y);
+	ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
+	ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
+
+	if (ros::ok()
+			&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
+					arm_pose->header.stamp))
+	{
+		ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", arm_pose->header.frame_id.c_str());
+		return;
+	}
+
+	listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
+
+	ROS_DEBUG("Transformed MSG");
+	ROS_DEBUG("X = %f", api_pose.pose.position.x);
+	ROS_DEBUG("Y = %f", api_pose.pose.position.y);
+	ROS_DEBUG("Z = %f", api_pose.pose.position.z);
+
+	ROS_DEBUG("RX = %f", api_pose.pose.orientation.x);
+	ROS_DEBUG("RY = %f", api_pose.pose.orientation.y);
+	ROS_DEBUG("RZ = %f", api_pose.pose.orientation.z);
+	ROS_DEBUG("RW = %f", api_pose.pose.orientation.w);
+
+	if (ros::Time::now() - last_update_time > update_time)
+	{
+		last_update_time = ros::Time::now();
+		arm.SetPosition(JacoPose(api_pose.pose));
+	}
+
+	//if (timeout != 0)
+	//{
+	//	double start_secs;
+	//	double current_sec;
+
+	//	//If ros is still running use rostime, else use system time
+	//	if (ros::ok())
+	//	{
+	//		start_secs = ros::Time::now().toSec();
+	//		current_sec = ros::Time::now().toSec();
+	//	} 
+	//	else
+	//	{
+	//		start_secs = (double) time(NULL);
+	//		current_sec = (double) time(NULL);
+	//	}
+
+	//	CartesianPosition cur_position;		//holds the current position of the arm
+	//	CartesianPosition past_position;	//holds the past position of the arm
+	//	memset(&cur_position, 0, sizeof(cur_position));
+
+	//	API->GetCartesianPosition(past_position); //pre-load the past arm position
+
+	//	const float tolerance = 0.001; 	//dead zone for position
+
+	//	//while we have not timed out
+	//	while ((current_sec - start_secs) < timeout)
+	//	{
+
+	//		ros::Duration(0.5).sleep();
+
+	//		//If ros is still runniing use rostime, else use system time
+	//		if (ros::ok())
+	//		{
+	//			current_sec = ros::Time::now().toSec();
+	//			ros::spinOnce();
+	//		} 
+	//		else
+	//		{
+	//			current_sec = (double) time(NULL);
+	//		}
+
+	//		API->GetCartesianPosition(cur_position); //update current arm position
+
+	//		if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
+	//		{
+	//			ROS_INFO("Cartesian Control Complete.");
+	//			ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+	//			API->EraseAllTrajectories();  // Clear any remaining trajectories				
+	//			break;
+	//		}
+	//		else
+	//		{
+	//			past_position.Coordinates = cur_position.Coordinates;
+	//		}
+	//	}
+	//}
 }
 
 /*!
@@ -394,28 +430,11 @@ void JacoArm::BroadCastAngles(void)
  */
 void JacoArm::BroadCastPosition(void)
 {
-	CartesianPosition position;
+	JacoPose pose;
 	geometry_msgs::PoseStamped current_position;
 
-	memset(&position, 0, sizeof(position)); //zero structure
-
-	arm.GetPosition(position.Coordinates);
-
-	current_position.header.frame_id = "/jaco_api_origin";
-	current_position.header.stamp = ros::Time().now();
-
-	//Broadcast position
-
-	current_position.pose.position.x = position.Coordinates.X;
-	current_position.pose.position.y = position.Coordinates.Y;
-	current_position.pose.position.z = position.Coordinates.Z;
-
-	tf::Quaternion position_quaternion;
-
-	position_quaternion.setRPY(position.Coordinates.ThetaX, position.Coordinates.ThetaY,
-			position.Coordinates.ThetaZ);
-
-	tf::quaternionTFToMsg(position_quaternion, current_position.pose.orientation);
+	//arm.GetPosition(pose);
+	current_position.pose = pose.Pose();
 
 	ToolPosition_pub.publish(current_position);
 }
@@ -431,7 +450,7 @@ Publishes the current finger positions.
 	jaco_driver::FingerPosition finger_position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-	arm.GetPosition(Jaco_Position.Coordinates);
+	arm.GetFingers(Jaco_Position.Fingers);
 
 	finger_position.Finger_1 = Jaco_Position.Fingers.Finger1;
 	finger_position.Finger_2 = Jaco_Position.Fingers.Finger2;

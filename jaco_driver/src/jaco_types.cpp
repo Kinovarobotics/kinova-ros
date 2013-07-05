@@ -10,9 +10,10 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.h
- *  Desc: Class for moving/querying jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: jaco_types.cpp
+ *  Desc: Wrappers around Kinova structs to facilitate easier conversion to ROS
+ *		  types.
+ *  Auth: Alex Bencz
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
  *  All Rights Reserved
@@ -43,54 +44,85 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
-
-#include <jaco_driver/KinovaTypes.h>
 #include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
+#include <tf/tf.h>
+#include <math.h>
 
-namespace jaco 
+namespace jaco
 {
 
-class JacoComm
+JacoPose::JacoPose(geometry_msgs::Pose &pose)
 {
-	public:
-	JacoComm();
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(AngularInfo &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(AngularInfo angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
+	double tx, ty, tz;
+	tf::Quaternion q;
+	tf::quaternionMsgToTF(pose.orientation, q);
 
-	private:
-	jaco::JacoAPI* API;
-	bool software_stop;
+	tf::Matrix3x3 bt_q(q);
 
-	void WaitForHome(int);
+	bt_q.getEulerYPR(tz, ty, tx);
 
-	bool ComparePositions(const CartesianInfo &, const CartesianInfo &, float);
-	bool CompareAngles(const AngularInfo &, const AngularInfo &, float);
-	bool CompareValues(float, float, float);
-	bool CompareAngularValues(float, float, float);
-};
+	X = (float) pose.position.x;
+	Y = (float) pose.position.y;
+	Z = (float) pose.position.z;
 
+	ThetaX = Normalize(tx);
+	ThetaY = Normalize(ty);
+	ThetaZ = Normalize(tz);
 }
 
-#endif // _JACO_COMM_H_
+JacoPose::JacoPose(CartesianInfo &pose)
+{
+	X = pose.X;
+	Y = pose.Y;
+	Z = pose.Z;
+
+	ThetaX = Normalize(pose.ThetaX);
+	ThetaY = Normalize(pose.ThetaY);
+	ThetaZ = Normalize(pose.ThetaZ);
+}
+
+geometry_msgs::Pose JacoPose::Pose()
+{
+	geometry_msgs::Pose pose;
+	tf::Quaternion position_quaternion;
+
+	position_quaternion.setRPY(ThetaX, ThetaY, ThetaZ);
+	tf::quaternionTFToMsg(position_quaternion, pose.orientation);
+
+	pose.position.x = X;
+	pose.position.y = Y;
+	pose.position.z = Z;
+
+	return pose;
+}
+
+bool JacoPose::Compare(const JacoPose &other, float tolerance)
+{
+	bool status = true;
+
+	status = status && CompareValues(X, other.X, tolerance);
+	status = status && CompareValues(Y, other.Y, tolerance);
+	status = status && CompareValues(Z, other.Z, tolerance);
+	status = status && CompareValues(ThetaX, other.ThetaX, tolerance);
+	status = status && CompareValues(ThetaY, other.ThetaY, tolerance);
+	status = status && CompareValues(ThetaZ, other.ThetaZ, tolerance);
+
+	return status;
+}
+
+bool JacoPose::CompareValues(float first, float second, float tolerance)
+{
+	return ((first <= second + tolerance) && (first >= second - tolerance));
+}
+
+float JacoPose::Normalize(float value)
+{
+	while (value > 2 * M_PI)
+		value -= 2 * M_PI;
+	while (value < 0)
+		value += 2 * M_PI;
+
+	return value;
+}
+
+}

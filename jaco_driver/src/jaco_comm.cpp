@@ -274,7 +274,7 @@ void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::SetPosition(CartesianInfo position, int timeout, bool push)
+void JacoComm::SetPosition(JacoPose position, int timeout, bool push)
 {
 	if (Stopped())
 		return;
@@ -300,64 +300,6 @@ void JacoComm::SetPosition(CartesianInfo position, int timeout, bool push)
 	//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
 	API->SendBasicTrajectory(Jaco_Position);
-
-	if (timeout != 0)
-	{
-		double start_secs;
-		double current_sec;
-
-		//If ros is still running use rostime, else use system time
-		if (ros::ok())
-		{
-			start_secs = ros::Time::now().toSec();
-			current_sec = ros::Time::now().toSec();
-		} 
-		else
-		{
-			start_secs = (double) time(NULL);
-			current_sec = (double) time(NULL);
-		}
-
-		CartesianPosition cur_position;		//holds the current position of the arm
-		CartesianPosition past_position;	//holds the past position of the arm
-		memset(&cur_position, 0, sizeof(cur_position));
-
-		API->GetCartesianPosition(past_position); //pre-load the past arm position
-
-		const float tolerance = 0.001; 	//dead zone for position
-
-		//while we have not timed out
-		while ((current_sec - start_secs) < timeout)
-		{
-
-			ros::Duration(0.5).sleep();
-
-			//If ros is still runniing use rostime, else use system time
-			if (ros::ok())
-			{
-				current_sec = ros::Time::now().toSec();
-				ros::spinOnce();
-			} 
-			else
-			{
-				current_sec = (double) time(NULL);
-			}
-
-			API->GetCartesianPosition(cur_position); //update current arm position
-
-			if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
-			{
-				ROS_INFO("Cartesian Control Complete.");
-				ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-				API->EraseAllTrajectories();  // Clear any remaining trajectories				
-				break;
-			}
-			else
-			{
-				past_position.Coordinates = cur_position.Coordinates;
-			}
-		}
-	}
 }
 
 /*!
@@ -532,7 +474,7 @@ void JacoComm::GetAngles(AngularInfo &angles)
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
  */
-void JacoComm::GetPosition(CartesianInfo &position)
+void JacoComm::GetPosition(JacoPose &position)
 {
 	CartesianPosition Jaco_Position;
 
@@ -540,7 +482,7 @@ void JacoComm::GetPosition(CartesianInfo &position)
 
 	API->GetCartesianPosition(Jaco_Position);
 
-	position = Jaco_Position.Coordinates;
+	position = JacoPose(Jaco_Position.Coordinates);
 }
 
 /*!
@@ -584,7 +526,7 @@ void JacoComm::PrintAngles(AngularInfo angles)
 /*!
  * \brief Dumps the current cartesian positions onto the screen.  
  */
-void JacoComm::PrintPosition(CartesianInfo position)
+void JacoComm::PrintPosition(JacoPose &position)
 {
 	ROS_INFO("Jaco Arm Position (Meters)");
 	ROS_INFO("X = %f", position.X);
@@ -715,21 +657,6 @@ void JacoComm::WaitForHome(int timeout)
 	ROS_WARN("Timed out waiting for arm to return \"home\"");
 }
 
-
-bool JacoComm::ComparePositions(const CartesianInfo &first, const CartesianInfo &second, float tolerance)
-{
-	bool status = true;
-
-	status = status && CompareValues(first.X, second.X, tolerance);
-	status = status && CompareValues(first.Y, second.Y, tolerance);
-	status = status && CompareValues(first.Z, second.Z, tolerance);
-	status = status && CompareValues(first.ThetaX, second.ThetaX, tolerance);
-	status = status && CompareValues(first.ThetaY, second.ThetaY, tolerance);
-	status = status && CompareValues(first.ThetaZ, second.ThetaZ, tolerance);
-
-	return status;
-}
-
 bool JacoComm::CompareAngles(const AngularInfo &first, const AngularInfo &second, float tolerance)
 {
 	bool status = true;
@@ -742,11 +669,6 @@ bool JacoComm::CompareAngles(const AngularInfo &first, const AngularInfo &second
 	status = status && CompareAngularValues(first.Actuator6, second.Actuator6, tolerance);
 
 	return status;
-}
-
-bool JacoComm::CompareValues(float first, float second, float tolerance)
-{
-	return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 
 bool JacoComm::CompareAngularValues(float first, float second, float tolerance)

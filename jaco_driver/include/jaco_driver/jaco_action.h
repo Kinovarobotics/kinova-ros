@@ -51,6 +51,8 @@
 
 #include <actionlib/server/simple_action_server.h>
 #include <jaco_driver/ArmPoseAction.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
 
 namespace jaco
 {
@@ -65,7 +67,7 @@ class JacoAction
 	private:
 	JacoComm &arm;
     actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
-
+	tf::TransformListener listener;
 };
 
 }

@@ -44,6 +44,8 @@
  */
 
 #include "jaco_driver/jaco_action.h"
+#include <jaco_driver/KinovaTypes.h>
+#include "jaco_driver/jaco_types.h"
 
 namespace jaco
 {
@@ -57,10 +59,93 @@ JacoAction::JacoAction(JacoComm &arm_comm, ros::NodeHandle &n) :
 
 JacoAction::~JacoAction()
 {
+
 }
 
 void JacoAction::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &goal)
 {
+	jaco_driver::ArmPoseFeedback feedback;
+	jaco_driver::ArmPoseResult result;
+	feedback.pose.header.frame_id = goal->pose.header.frame_id;
+
+	ROS_INFO("Got a goal for the arm");
+
+	if (arm.Stopped())
+	{
+		result.result = false;
+		as_.setAborted(result);
+		return;
+	}
+
+	ROS_DEBUG("Raw goal");
+	ROS_DEBUG("X = %f", goal->pose.pose.position.x);
+	ROS_DEBUG("Y = %f", goal->pose.pose.position.y);
+	ROS_DEBUG("Z = %f", goal->pose.pose.position.z);
+
+	ROS_DEBUG("RX = %f", goal->pose.pose.orientation.x);
+	ROS_DEBUG("RY = %f", goal->pose.pose.orientation.y);
+	ROS_DEBUG("RZ = %f", goal->pose.pose.orientation.z);
+	ROS_DEBUG("RW = %f", goal->pose.pose.orientation.w);
+
+	if (ros::ok()
+			&& !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
+					goal->pose.header.stamp))
+	{
+		ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", goal->pose.header.frame_id.c_str());
+		return;
+	}
+
+	geometry_msgs::PoseStamped local_pose;
+	local_pose.header.frame_id = "/jaco_api_origin";
+	listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
+
+	ROS_DEBUG("Transformed MSG");
+	ROS_DEBUG("X = %f", local_pose.pose.position.x);
+	ROS_DEBUG("Y = %f", local_pose.pose.position.y);
+	ROS_DEBUG("Z = %f", local_pose.pose.position.z);
+
+	ROS_DEBUG("RX = %f", local_pose.pose.orientation.x);
+	ROS_DEBUG("RY = %f", local_pose.pose.orientation.y);
+	ROS_DEBUG("RZ = %f", local_pose.pose.orientation.z);
+	ROS_DEBUG("RW = %f", local_pose.pose.orientation.w);
+
+	JacoPose target(local_pose.pose);
+	arm.SetPosition(target);
+
+	JacoPose cur_position;		//holds the current position of the arm
+	ros::Rate r(10);
+ 
+	const float tolerance = 0.05; 	//dead zone for position
+
+	//while we have not timed out
+	while (true)
+	{
+		ros::spinOnce();
+		if (as_.isPreemptRequested() || !ros::ok())
+		{
+			arm.Stop();
+			arm.Start();
+			as_.setPreempted();
+			return;
+		}
+
+		arm.GetPosition(cur_position);
+		local_pose.pose = cur_position.Pose();
+
+		listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
+		as_.publishFeedback(feedback);
+
+		if (target.Compare(cur_position, tolerance))
+		{
+			ROS_INFO("Cartesian Control Complete.");
+
+			result.result = true;
+			as_.setSucceeded(result);
+			return;
+		}
+
+		r.sleep();
+	}
 }
 
 }

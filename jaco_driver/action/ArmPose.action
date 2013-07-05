@@ -1,14 +1,8 @@
 # Goal
-geometry_msgs/Pose pose
+geometry_msgs/PoseStamped pose
 ---
 # Result
-float64 x
-float64 y
-float64 z
-float64 Tx
-float64 Ty
-float64 Tz
-float64 Tw
+bool result
 ---
 # Feedback message
-geometry_msgs/Pose pose
+geometry_msgs/PoseStamped pose

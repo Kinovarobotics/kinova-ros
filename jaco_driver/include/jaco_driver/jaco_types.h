@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.h
- *  Desc: Class for moving/querying jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: jaco_types.h
+ *  Desc: Wrappers around Kinova types.
+ *  Auth: Alex Bencz
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
  *  All Rights Reserved
@@ -43,54 +43,30 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
+#ifndef _JACO_TYPES_H_
+#define _JACO_TYPES_H_
 
 #include <jaco_driver/KinovaTypes.h>
-#include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
+#include <geometry_msgs/Pose.h>
 
-namespace jaco 
+namespace jaco
 {
 
-class JacoComm
+class JacoPose : public CartesianInfo
 {
 	public:
-	JacoComm();
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(AngularInfo &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(AngularInfo angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
+	JacoPose() {}
+	JacoPose(geometry_msgs::Pose &);
+	JacoPose(CartesianInfo &);
+
+	geometry_msgs::Pose Pose();
+	bool Compare(const JacoPose &, float);
 
 	private:
-	jaco::JacoAPI* API;
-	bool software_stop;
-
-	void WaitForHome(int);
-
-	bool ComparePositions(const CartesianInfo &, const CartesianInfo &, float);
-	bool CompareAngles(const AngularInfo &, const AngularInfo &, float);
 	bool CompareValues(float, float, float);
-	bool CompareAngularValues(float, float, float);
+	float Normalize(float);
 };
 
 }
 
-#endif // _JACO_COMM_H_
+#endif // _JACO_TYPES_H_

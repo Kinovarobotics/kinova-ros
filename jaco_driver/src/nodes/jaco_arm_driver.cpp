@@ -19,8 +19,13 @@ int main(int argc, char **argv)
 
 	jaco::JacoComm comm;
 
+	ROS_INFO("Initializing the Arm");
+
+	comm.HomeArm();
+	comm.InitializeFingers();
+
 	//create the arm object
-	jaco::JacoArm jaco(comm, nh, param_nh);
+	//jaco::JacoArm jaco(comm, nh, param_nh);
 	jaco::JacoAction action(comm, nh);
 
 	ros::spin();
