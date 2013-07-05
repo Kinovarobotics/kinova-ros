@@ -44,17 +44,22 @@
  */
 
 #include "jaco_driver/jaco_action.h"
-#include <actionlib/server/simple_action_server.h>
 
 namespace jaco
 {
 
-JacoAction::JacoAction(JacoComm &arm_comm, ros::NodeHandle &n) : arm(arm_comm)
+JacoAction::JacoAction(JacoComm &arm_comm, ros::NodeHandle &n) : 
+    arm(arm_comm), 
+    as_(n, "arm_pose", boost::bind(&JacoAction::ActionCallback, this, _1), false)
 {
-
+    as_.start();
 }
 
 JacoAction::~JacoAction()
+{
+}
+
+void JacoAction::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &goal)
 {
 }
 

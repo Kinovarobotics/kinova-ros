@@ -49,6 +49,9 @@
 #include <ros/ros.h>
 #include "jaco_driver/jaco_comm.h"
 
+#include <actionlib/server/simple_action_server.h>
+#include <jaco_driver/ArmPoseAction.h>
+
 namespace jaco
 {
 
@@ -57,9 +60,11 @@ class JacoAction
 	public:
 	JacoAction(JacoComm &, ros::NodeHandle &n);
 	~JacoAction();
+    void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
 	
 	private:
 	JacoComm &arm;
+    actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
 
 };
 
