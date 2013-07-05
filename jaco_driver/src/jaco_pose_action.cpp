@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.cpp
+ *  File: jaco_pose_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,26 +43,26 @@
  *
  */
 
-#include "jaco_driver/jaco_action.h"
+#include "jaco_driver/jaco_pose_action.h"
 #include <jaco_driver/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
 namespace jaco
 {
 
-JacoAction::JacoAction(JacoComm &arm_comm, ros::NodeHandle &n) : 
+JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &n) : 
     arm(arm_comm), 
-    as_(n, "arm_pose", boost::bind(&JacoAction::ActionCallback, this, _1), false)
+    as_(n, "arm_pose", boost::bind(&JacoPoseActionServer::ActionCallback, this, _1), false)
 {
     as_.start();
 }
 
-JacoAction::~JacoAction()
+JacoPoseActionServer::~JacoPoseActionServer()
 {
 
 }
 
-void JacoAction::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &goal)
+void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &goal)
 {
 	jaco_driver::ArmPoseFeedback feedback;
 	jaco_driver::ArmPoseResult result;

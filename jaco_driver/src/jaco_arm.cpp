@@ -13,11 +13,10 @@ namespace jaco
 
 JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_nh) : arm(arm_comm)
 {
-	std::string arm_pose_topic, joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
+	std::string joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
 		tool_position_topic, set_finger_position_topic, finger_position_topic, joint_state_topic,
 		set_joint_angle_topic;
 
-	nh.param<std::string>("arm_pose_topic", arm_pose_topic, "arm_pose");
 	nh.param<std::string>("joint_velocity_topic", joint_velocity_topic, "joint_velocity");
 	nh.param<std::string>("joint_angles_topic", joint_angles_topic, "joint_angles");
 	nh.param<std::string>("cartesian_velocity_topic", cartesian_velocity_topic, "cartesian_velocity");
@@ -28,7 +27,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	nh.param<std::string>("set_joint_angle_topic", set_joint_angle_topic, "set_joint_angle");
 
 	//Print out received topics
-	ROS_DEBUG("Got Arm Position Topic Name: <%s>", arm_pose_topic.c_str());
 	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", joint_velocity_topic.c_str());
 	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles_topic.c_str());
 	ROS_DEBUG("Got Cartesian Velocity Topic Name: <%s>", cartesian_velocity_topic.c_str());
@@ -67,7 +65,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
 
 	/* Set up Subscribers*/
-	ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
 	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
 	CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
 	SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
@@ -101,112 +98,6 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
 	res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
 
 	return true;
-}
-
-/*!
- * \brief Displays the cartesian coordinates of the arm before and after a transform.
- */
-void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
-{
-	if (arm.Stopped())
-	{
-		return;
-	}
-
-	geometry_msgs::PoseStamped api_pose;
-	ROS_DEBUG("Raw MSG");
-	ROS_DEBUG("X = %f", arm_pose->pose.position.x);
-	ROS_DEBUG("Y = %f", arm_pose->pose.position.y);
-	ROS_DEBUG("Z = %f", arm_pose->pose.position.z);
-
-	ROS_DEBUG("RX = %f", arm_pose->pose.orientation.x);
-	ROS_DEBUG("RY = %f", arm_pose->pose.orientation.y);
-	ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
-	ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
-
-	if (ros::ok()
-			&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
-					arm_pose->header.stamp))
-	{
-		ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", arm_pose->header.frame_id.c_str());
-		return;
-	}
-
-	listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
-
-	ROS_DEBUG("Transformed MSG");
-	ROS_DEBUG("X = %f", api_pose.pose.position.x);
-	ROS_DEBUG("Y = %f", api_pose.pose.position.y);
-	ROS_DEBUG("Z = %f", api_pose.pose.position.z);
-
-	ROS_DEBUG("RX = %f", api_pose.pose.orientation.x);
-	ROS_DEBUG("RY = %f", api_pose.pose.orientation.y);
-	ROS_DEBUG("RZ = %f", api_pose.pose.orientation.z);
-	ROS_DEBUG("RW = %f", api_pose.pose.orientation.w);
-
-	if (ros::Time::now() - last_update_time > update_time)
-	{
-		last_update_time = ros::Time::now();
-		arm.SetPosition(JacoPose(api_pose.pose));
-	}
-
-	//if (timeout != 0)
-	//{
-	//	double start_secs;
-	//	double current_sec;
-
-	//	//If ros is still running use rostime, else use system time
-	//	if (ros::ok())
-	//	{
-	//		start_secs = ros::Time::now().toSec();
-	//		current_sec = ros::Time::now().toSec();
-	//	} 
-	//	else
-	//	{
-	//		start_secs = (double) time(NULL);
-	//		current_sec = (double) time(NULL);
-	//	}
-
-	//	CartesianPosition cur_position;		//holds the current position of the arm
-	//	CartesianPosition past_position;	//holds the past position of the arm
-	//	memset(&cur_position, 0, sizeof(cur_position));
-
-	//	API->GetCartesianPosition(past_position); //pre-load the past arm position
-
-	//	const float tolerance = 0.001; 	//dead zone for position
-
-	//	//while we have not timed out
-	//	while ((current_sec - start_secs) < timeout)
-	//	{
-
-	//		ros::Duration(0.5).sleep();
-
-	//		//If ros is still runniing use rostime, else use system time
-	//		if (ros::ok())
-	//		{
-	//			current_sec = ros::Time::now().toSec();
-	//			ros::spinOnce();
-	//		} 
-	//		else
-	//		{
-	//			current_sec = (double) time(NULL);
-	//		}
-
-	//		API->GetCartesianPosition(cur_position); //update current arm position
-
-	//		if (ComparePositions(past_position.Coordinates, cur_position.Coordinates, tolerance))
-	//		{
-	//			ROS_INFO("Cartesian Control Complete.");
-	//			ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-	//			API->EraseAllTrajectories();  // Clear any remaining trajectories				
-	//			break;
-	//		}
-	//		else
-	//		{
-	//			past_position.Coordinates = cur_position.Coordinates;
-	//		}
-	//	}
-	//}
 }
 
 /*!
@@ -409,7 +300,6 @@ void JacoArm::BroadCastAngles(void)
 	current_angles.Angle_J6 = arm_angles.Actuators.Actuator6;
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-
 	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / PI);
 	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / PI);
 	joint_state.position[2] = (90.0 - arm_angles.Actuators.Actuator3) / (180.0 / PI);

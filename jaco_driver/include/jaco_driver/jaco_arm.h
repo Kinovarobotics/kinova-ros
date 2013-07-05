@@ -32,8 +32,6 @@
 #include <math.h>
 #include <vector>
 
-#define PI 3.14159265358
-
 namespace jaco
 {
 
@@ -43,7 +41,6 @@ class JacoArm
 	JacoArm(JacoComm &, ros::NodeHandle, ros::NodeHandle);
 	~JacoArm();
 	void GoHome(void);
-	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr&);
 	void CalculatePostion(void);
 	void PositionTimer(const ros::TimerEvent&);
 	void CartesianVelTimer(const ros::TimerEvent&);
@@ -67,7 +64,6 @@ class JacoArm
 	JacoComm &arm;
 
 	/* Subscribers */
-	ros::Subscriber ArmPose_sub;
 	ros::Subscriber JointVelocity_sub;
 	ros::Subscriber CartesianVelocity_sub;
 	ros::Subscriber SetFingerPosition_sub;

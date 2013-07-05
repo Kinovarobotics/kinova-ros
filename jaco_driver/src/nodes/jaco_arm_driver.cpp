@@ -8,7 +8,7 @@
 
 
 #include "jaco_driver/jaco_arm.h"
-#include "jaco_driver/jaco_action.h"
+#include "jaco_driver/jaco_pose_action.h"
 
 int main(int argc, char **argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 
 	//create the arm object
 	jaco::JacoArm jaco(comm, nh, param_nh);
-	jaco::JacoAction action(comm, nh);
+	jaco::JacoPoseActionServer pose_server(comm, nh);
 
 	ros::spin();
 }

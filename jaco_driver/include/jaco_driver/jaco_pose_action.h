@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_action.h
+ *  File: jaco_pose_action.h
  *  Desc: Action server for jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -57,11 +57,11 @@
 namespace jaco
 {
 
-class JacoAction
+class JacoPoseActionServer
 {
 	public:
-	JacoAction(JacoComm &, ros::NodeHandle &n);
-	~JacoAction();
+	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
+	~JacoPoseActionServer();
     void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
 	
 	private:
