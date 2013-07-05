@@ -49,6 +49,7 @@
 #include <jaco_driver/KinovaTypes.h>
 #include <jaco_driver/jaco_types.h>
 #include "jaco_driver/jaco_api.h"
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace jaco 
 {
@@ -80,6 +81,7 @@ class JacoComm
 	bool Stopped();
 
 	private:
+    boost::recursive_mutex api_mutex;
 	jaco::JacoAPI* API;
 	bool software_stop;
 

@@ -433,7 +433,7 @@ void JacoArm::BroadCastPosition(void)
 	JacoPose pose;
 	geometry_msgs::PoseStamped current_position;
 
-	//arm.GetPosition(pose);
+	arm.GetPosition(pose);
 	current_position.pose = pose.Pose();
 
 	ToolPosition_pub.publish(current_position);

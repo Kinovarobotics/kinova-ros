@@ -53,6 +53,7 @@ namespace jaco
 
 JacoComm::JacoComm() : software_stop(false)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
 	API = new JacoAPI();
@@ -97,6 +98,7 @@ JacoComm::~JacoComm()
  */
 bool JacoComm::HomeState(void)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	const AngularInfo home_position = {
 		282.8,
 		154.4,
@@ -125,6 +127,7 @@ bool JacoComm::HomeState(void)
  */
 void JacoComm::HomeArm(void)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 	{
 		return;
@@ -177,6 +180,7 @@ void JacoComm::InitializeFingers(void)
  */
 void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 		return;
 
@@ -276,6 +280,7 @@ void JacoComm::SetAngles(AngularInfo angles, int timeout, bool push)
  */
 void JacoComm::SetPosition(JacoPose position, int timeout, bool push)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 		return;
 
@@ -307,6 +312,7 @@ void JacoComm::SetPosition(JacoPose position, int timeout, bool push)
  */
 void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 		return;
 
@@ -407,6 +413,7 @@ void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
  */
 void JacoComm::SetVelocities(AngularInfo joint_vel)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 		return;
 
@@ -428,6 +435,7 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
  */
 void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 	{
 		API->EraseAllTrajectories();
@@ -455,6 +463,7 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
  */
 void JacoComm::SetConfig(ClientConfigurations config)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	API->SetClientConfigurations(config);
 }
 
@@ -463,6 +472,7 @@ void JacoComm::SetConfig(ClientConfigurations config)
  */
 void JacoComm::GetAngles(AngularInfo &angles)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	AngularPosition Jaco_Position;
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
@@ -476,6 +486,7 @@ void JacoComm::GetAngles(AngularInfo &angles)
  */
 void JacoComm::GetPosition(JacoPose &position)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -490,6 +501,7 @@ void JacoComm::GetPosition(JacoPose &position)
  */
 void JacoComm::GetFingers(FingersPosition &fingers)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -504,6 +516,7 @@ void JacoComm::GetFingers(FingersPosition &fingers)
  */
 void JacoComm::GetConfig(ClientConfigurations &config)
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	memset(&config, 0, sizeof(config)); //zero structure
 	API->GetClientConfigurations(config);
 }
@@ -580,6 +593,7 @@ void JacoComm::PrintConfig(ClientConfigurations config)
 
 void JacoComm::Stop()
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	software_stop = true;
 
 	API->StartControlAPI();
@@ -598,6 +612,7 @@ void JacoComm::Stop()
 
 void JacoComm::Start()
 {
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	software_stop = false;
 
 	API->StartControlAPI();

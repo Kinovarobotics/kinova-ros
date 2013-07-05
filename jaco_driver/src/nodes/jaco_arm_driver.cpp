@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	comm.InitializeFingers();
 
 	//create the arm object
-	//jaco::JacoArm jaco(comm, nh, param_nh);
+	jaco::JacoArm jaco(comm, nh, param_nh);
 	jaco::JacoAction action(comm, nh);
 
 	ros::spin();
