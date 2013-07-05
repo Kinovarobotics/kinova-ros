@@ -11,9 +11,7 @@
 #define JACO_ARM_DRIVER_H_
 
 #include <ros/ros.h>
-#include <std_msgs/String.h>
 #include <jaco_driver/jaco_api.h>
-#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
 #include "jaco_driver/KinovaTypes.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
