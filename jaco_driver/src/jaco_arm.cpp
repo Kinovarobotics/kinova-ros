@@ -121,21 +121,13 @@ void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& fi
 /*!
  * \brief Receives ROS command messages and relays them to SetAngles.
  */
-void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles)
+void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& msg)
 {
 	if (!arm.Stopped())
 	{
-		AngularInfo Joint_Position;
-		memset(&Joint_Position, 0, sizeof(Joint_Position)); //zero structure
-
-		Joint_Position.Actuator1 = angles->Angle_J1;
-		Joint_Position.Actuator2 = angles->Angle_J2;
-		Joint_Position.Actuator3 = angles->Angle_J3;
-		Joint_Position.Actuator4 = angles->Angle_J4;
-		Joint_Position.Actuator5 = angles->Angle_J5;
-		Joint_Position.Actuator6 = angles->Angle_J6;
-
-		arm.SetAngles(Joint_Position);
+		jaco_driver::JointAngles angles(*msg);
+		JacoAngles position(angles);
+		arm.SetAngles(position);
 	}
 }
 

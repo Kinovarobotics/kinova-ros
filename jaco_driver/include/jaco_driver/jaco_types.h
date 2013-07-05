@@ -48,6 +48,7 @@
 
 #include <jaco_driver/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
+#include <jaco_driver/JointAngles.h>
 
 namespace jaco
 {
@@ -56,14 +57,27 @@ class JacoPose : public CartesianInfo
 {
 	public:
 	JacoPose() {}
-	JacoPose(geometry_msgs::Pose &);
-	JacoPose(CartesianInfo &);
+	JacoPose(const geometry_msgs::Pose &);
+	JacoPose(const CartesianInfo &);
 
 	geometry_msgs::Pose Pose();
-	bool Compare(const JacoPose &, float);
+	bool Compare(const JacoPose &, float) const;
 
 	private:
-	bool CompareValues(float, float, float);
+	float Normalize(float);
+};
+
+class JacoAngles : public AngularInfo
+{
+	public:
+	JacoAngles() {}
+	JacoAngles(const jaco_driver::JointAngles &);
+	JacoAngles(const AngularInfo &);
+
+	jaco_driver::JointAngles Angles();
+	bool Compare(const JacoAngles &, float) const;
+
+	private:
 	float Normalize(float);
 };
 

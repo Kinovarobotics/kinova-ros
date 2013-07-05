@@ -51,7 +51,13 @@
 namespace jaco
 {
 
-JacoPose::JacoPose(geometry_msgs::Pose &pose)
+bool CompareValues(float first, float second, float tolerance)
+{
+	return ((first <= second + tolerance) && (first >= second - tolerance));
+}
+
+
+JacoPose::JacoPose(const geometry_msgs::Pose &pose)
 {
 	double tx, ty, tz;
 	tf::Quaternion q;
@@ -70,7 +76,7 @@ JacoPose::JacoPose(geometry_msgs::Pose &pose)
 	ThetaZ = Normalize(tz);
 }
 
-JacoPose::JacoPose(CartesianInfo &pose)
+JacoPose::JacoPose(const CartesianInfo &pose)
 {
 	X = pose.X;
 	Y = pose.Y;
@@ -96,7 +102,7 @@ geometry_msgs::Pose JacoPose::Pose()
 	return pose;
 }
 
-bool JacoPose::Compare(const JacoPose &other, float tolerance)
+bool JacoPose::Compare(const JacoPose &other, float tolerance) const
 {
 	bool status = true;
 
@@ -110,17 +116,69 @@ bool JacoPose::Compare(const JacoPose &other, float tolerance)
 	return status;
 }
 
-bool JacoPose::CompareValues(float first, float second, float tolerance)
-{
-	return ((first <= second + tolerance) && (first >= second - tolerance));
-}
-
 float JacoPose::Normalize(float value)
 {
 	while (value > 2 * M_PI)
 		value -= 2 * M_PI;
 	while (value < 0)
 		value += 2 * M_PI;
+
+	return value;
+}
+
+JacoAngles::JacoAngles(const jaco_driver::JointAngles &angles)
+{
+	Actuator1 = Normalize(180.0 - (angles.Angle_J1 * (180.0 / M_PI)));
+	Actuator2 = Normalize((angles.Angle_J2 * (180.0 / M_PI)) + 270.0);
+	Actuator3 = Normalize(90.0 - (angles.Angle_J3 * (180.0 / M_PI)));
+	Actuator4 = Normalize(180.0 - (angles.Angle_J4 * (180.0 / M_PI)));
+	Actuator5 = Normalize(180.0 - (angles.Angle_J5 * (180.0 / M_PI)));
+	Actuator6 = Normalize(260.0 - (angles.Angle_J6 * (180.0 / M_PI)));
+}
+
+JacoAngles::JacoAngles(const AngularInfo &angles)
+{
+	Actuator1 = Normalize(angles.Actuator1);
+	Actuator2 = Normalize(angles.Actuator2);
+	Actuator3 = Normalize(angles.Actuator3);
+	Actuator4 = Normalize(angles.Actuator4);
+	Actuator5 = Normalize(angles.Actuator5);
+	Actuator6 = Normalize(angles.Actuator6);
+}
+
+jaco_driver::JointAngles JacoAngles::Angles()
+{
+	jaco_driver::JointAngles angles;
+	angles.Angle_J1 = (180.0 - Actuator1) / (180.0 / M_PI);
+	angles.Angle_J2 = (Actuator2 - 270.0) / (180.0 / M_PI);
+	angles.Angle_J3 = (90.0 - Actuator3) / (180.0 / M_PI);
+	angles.Angle_J4 = (180.0 - Actuator4) / (180.0 / M_PI);
+	angles.Angle_J5 = (180.0 - Actuator5) / (180.0 / M_PI);
+	angles.Angle_J6 = (260.0 - Actuator6) / (180.0 / M_PI);
+
+	return angles;
+}
+
+bool JacoAngles::Compare(const JacoAngles &other, float tolerance) const 
+{
+	bool status = true;
+
+	status = status && CompareValues(Actuator1, other.Actuator1, tolerance);
+	status = status && CompareValues(Actuator2, other.Actuator2, tolerance);
+	status = status && CompareValues(Actuator3, other.Actuator3, tolerance);
+	status = status && CompareValues(Actuator4, other.Actuator4, tolerance);
+	status = status && CompareValues(Actuator5, other.Actuator5, tolerance);
+	status = status && CompareValues(Actuator6, other.Actuator6, tolerance);
+
+	return status;
+}
+
+float JacoAngles::Normalize(float value)
+{
+	while (value > 360.0)
+		value -= 360.0;
+	while (value < 0.0)
+		value += 360.0;
 
 	return value;
 }

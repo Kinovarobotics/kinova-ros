@@ -62,8 +62,8 @@ class JacoComm
 	bool HomeState(void);
 	void HomeArm(void);
 	void InitializeFingers(void);
-	void SetAngles(AngularInfo angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose position, int timeout = 0, bool push = true);
+	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
+	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
 	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
 	void SetVelocities(AngularInfo joint_vel);
 	void SetCartesianVelocities(CartesianInfo velocities);
@@ -86,11 +86,6 @@ class JacoComm
 	bool software_stop;
 
 	void WaitForHome(int);
-
-	bool ComparePositions(const CartesianInfo &, const CartesianInfo &, float);
-	bool CompareAngles(const AngularInfo &, const AngularInfo &, float);
-	bool CompareValues(float, float, float);
-	bool CompareAngularValues(float, float, float);
 };
 
 }
