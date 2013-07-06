@@ -85,7 +85,7 @@ void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoa
 
 	ros::Rate r(10);
  
-	const float tolerance = 1.5; 	//dead zone for position
+	const float tolerance = 2.0; 	//dead zone for position (degrees)
 
 	//while we have not timed out
 	while (true)
