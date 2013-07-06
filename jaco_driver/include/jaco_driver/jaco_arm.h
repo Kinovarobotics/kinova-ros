@@ -53,7 +53,6 @@ class JacoArm
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
 	void BroadCastFingerPosition(void);
-	void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr&);
 
 	bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
 	bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
@@ -68,8 +67,6 @@ class JacoArm
 	ros::Subscriber CartesianVelocity_sub;
 	ros::Subscriber SetFingerPosition_sub;
 	ros::Subscriber SoftwarePause_sub;
-	ros::Subscriber SetJoint_sub;
-
 
 	/* Publishers */
 	ros::Publisher JointAngles_pub;

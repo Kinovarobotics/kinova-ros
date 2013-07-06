@@ -24,7 +24,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 	nh.param<std::string>("set_finger_position_topic", set_finger_position_topic, "set_finger_position");
 	nh.param<std::string>("finger_position_topic", finger_position_topic, "finger_position");
 	nh.param<std::string>("joint_state_topic", joint_state_topic, "joint_state");
-	nh.param<std::string>("set_joint_angle_topic", set_joint_angle_topic, "set_joint_angle");
 
 	//Print out received topics
 	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", joint_velocity_topic.c_str());
@@ -34,7 +33,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
 	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
 	ROS_DEBUG("Got Joint State Topic Name: <%s>", joint_state_topic.c_str());
-	ROS_DEBUG("Got Set Joint Angle Topic Name: <%s>", set_joint_angle_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
@@ -68,7 +66,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
 	CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
 	SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
-	SetJoint_sub = nh.subscribe(set_joint_angle_topic, 1, &JacoArm::SetJointAnglesMSG, this);
 
 	status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
 
@@ -117,20 +114,6 @@ void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& fi
 		arm.SetFingers(Finger_Position);
 	}
 }
-
-/*!
- * \brief Receives ROS command messages and relays them to SetAngles.
- */
-void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& msg)
-{
-	if (!arm.Stopped())
-	{
-		jaco_driver::JointAngles angles(*msg);
-		JacoAngles position(angles);
-		arm.SetAngles(position);
-	}
-}
-
 
 void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
 {
