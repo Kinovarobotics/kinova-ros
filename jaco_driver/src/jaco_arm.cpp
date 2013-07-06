@@ -279,19 +279,24 @@ void JacoArm::BroadCastAngles(void)
 	//Query arm for current joint angles
 	JacoAngles arm_angles;
 	arm.GetAngles(arm_angles);
-	jaco_driver::JointAngles angles = arm_angles.Angles();
+	jaco_driver::JointAngles ros_angles = arm_angles.Angles();
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-	joint_state.position[0] = angles.Angle_J1;
-	joint_state.position[1] = angles.Angle_J2;
-	joint_state.position[2] = angles.Angle_J3;
-	joint_state.position[3] = angles.Angle_J4;
-	joint_state.position[4] = angles.Angle_J5;
-	joint_state.position[5] = angles.Angle_J6;
+	joint_state.position[0] = ros_angles.Angle_J1;
+	joint_state.position[1] = ros_angles.Angle_J2;
+	joint_state.position[2] = ros_angles.Angle_J3;
+	joint_state.position[3] = ros_angles.Angle_J4;
+	joint_state.position[4] = ros_angles.Angle_J5;
+	joint_state.position[5] = ros_angles.Angle_J6;
 
 	//Publish the joint state messages
-
-	JointAngles_pub.publish(angles); // Publishes the raw joint angles in a custom message.
+	ros_angles.Angle_J1 = arm_angles.Actuator1;
+	ros_angles.Angle_J2 = arm_angles.Actuator2;
+	ros_angles.Angle_J3 = arm_angles.Actuator3;
+	ros_angles.Angle_J4 = arm_angles.Actuator4;
+	ros_angles.Angle_J5 = arm_angles.Actuator5;
+	ros_angles.Angle_J6 = arm_angles.Actuator6;
+	JointAngles_pub.publish(ros_angles); // Publishes the raw joint angles in a custom message.
 
 	JointState_pub.publish(joint_state);     // Publishes the transformed angles in a standard sensor_msgs format.
 }
