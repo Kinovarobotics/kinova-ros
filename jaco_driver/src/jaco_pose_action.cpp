@@ -67,15 +67,9 @@ void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr
 	jaco_driver::ArmPoseFeedback feedback;
 	jaco_driver::ArmPoseResult result;
 	feedback.pose.header.frame_id = goal->pose.header.frame_id;
+	result.pose.header.frame_id = goal->pose.header.frame_id;
 
 	ROS_INFO("Got a cartesian goal for the arm");
-
-	if (arm.Stopped())
-	{
-		result.result = false;
-		as_.setAborted(result);
-		return;
-	}
 
 	ROS_DEBUG("Raw goal");
 	ROS_DEBUG("X = %f", goal->pose.pose.position.x);
@@ -109,10 +103,21 @@ void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr
 	ROS_DEBUG("RZ = %f", local_pose.pose.orientation.z);
 	ROS_DEBUG("RW = %f", local_pose.pose.orientation.w);
 
+	JacoPose cur_position;		//holds the current position of the arm
+
+	if (arm.Stopped())
+	{
+		arm.GetPosition(cur_position);
+		local_pose.pose = cur_position.Pose();
+
+		listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
+		as_.setAborted(result);
+		return;
+	}
+
 	JacoPose target(local_pose.pose);
 	arm.SetPosition(target);
 
-	JacoPose cur_position;		//holds the current position of the arm
 	ros::Rate r(10);
  
 	const float tolerance = 0.05; 	//dead zone for position
@@ -139,7 +144,7 @@ void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr
 		{
 			ROS_INFO("Cartesian Control Complete.");
 
-			result.result = true;
+			result.pose = feedback.pose;
 			as_.setSucceeded(result);
 			return;
 		}

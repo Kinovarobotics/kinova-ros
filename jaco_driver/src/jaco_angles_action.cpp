@@ -69,9 +69,13 @@ void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoa
 
 	ROS_INFO("Got an angular goal for the arm");
 
+	JacoAngles cur_position;		//holds the current position of the arm
+
 	if (arm.Stopped())
 	{
-		//result.result = false;
+		arm.GetAngles(cur_position);
+		result.angles = cur_position.Angles();
+
 		as_.setAborted(result);
 		return;
 	}
@@ -79,7 +83,6 @@ void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoa
 	JacoAngles target(goal->angles);
 	arm.SetAngles(target);
 
-	JacoAngles cur_position;		//holds the current position of the arm
 	ros::Rate r(10);
  
 	const float tolerance = 1.5; 	//dead zone for position

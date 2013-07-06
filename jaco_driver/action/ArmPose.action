@@ -2,7 +2,7 @@
 geometry_msgs/PoseStamped pose
 ---
 # Result
-bool result
+geometry_msgs/PoseStamped pose
 ---
 # Feedback message
 geometry_msgs/PoseStamped pose
