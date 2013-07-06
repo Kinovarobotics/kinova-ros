@@ -266,8 +266,6 @@ void JacoArm::BroadCastAngles(void)
 	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint"};
 	std::vector<std::string> JointName(nameArgs, nameArgs+6);
 
-	AngularPosition arm_angles;
-
 	jaco_driver::JointAngles current_angles;
 
 	sensor_msgs::JointState joint_state;
@@ -278,33 +276,24 @@ void JacoArm::BroadCastAngles(void)
 	joint_state.velocity.resize(6);
 	joint_state.effort.resize(6);
 
-	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
-
 	//Query arm for current joint angles
-	arm.GetAngles(arm_angles.Actuators);
-
-	// Raw joint angles
-	current_angles.Angle_J1 = arm_angles.Actuators.Actuator1;
-	current_angles.Angle_J2 = arm_angles.Actuators.Actuator2;
-	current_angles.Angle_J3 = arm_angles.Actuators.Actuator3;
-	current_angles.Angle_J4 = arm_angles.Actuators.Actuator4;
-	current_angles.Angle_J5 = arm_angles.Actuators.Actuator5;
-	current_angles.Angle_J6 = arm_angles.Actuators.Actuator6;
+	JacoAngles arm_angles;
+	arm.GetAngles(arm_angles);
+	jaco_driver::JointAngles angles = arm_angles.Angles();
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / M_PI);
-	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / M_PI);
-	joint_state.position[2] = (90.0 - arm_angles.Actuators.Actuator3) / (180.0 / M_PI);
-	joint_state.position[3] = (180.0 - arm_angles.Actuators.Actuator4) / (180.0 / M_PI);
-	joint_state.position[4] = (180.0 - arm_angles.Actuators.Actuator5) / (180.0 / M_PI);
-	joint_state.position[5] = (260.0 - arm_angles.Actuators.Actuator6) / (180.0 / M_PI);
+	joint_state.position[0] = angles.Angle_J1;
+	joint_state.position[1] = angles.Angle_J2;
+	joint_state.position[2] = angles.Angle_J3;
+	joint_state.position[3] = angles.Angle_J4;
+	joint_state.position[4] = angles.Angle_J5;
+	joint_state.position[5] = angles.Angle_J6;
 
 	//Publish the joint state messages
 
-	JointAngles_pub.publish(current_angles); // Publishes the raw joint angles in a custom message.
+	JointAngles_pub.publish(angles); // Publishes the raw joint angles in a custom message.
 
 	JointState_pub.publish(joint_state);     // Publishes the transformed angles in a standard sensor_msgs format.
-
 }
 
 /*!

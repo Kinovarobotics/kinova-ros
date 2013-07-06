@@ -403,12 +403,11 @@ void JacoComm::SetConfig(ClientConfigurations config)
 /*!
  * \brief API call to obtain the current angular position of all the joints.
  */
-void JacoComm::GetAngles(AngularInfo &angles)
+void JacoComm::GetAngles(JacoAngles &angles)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
-	AngularPosition Jaco_Position;
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
+	AngularPosition Jaco_Position;
 	API->GetAngularPosition(Jaco_Position);
 
 	angles = Jaco_Position.Actuators;
@@ -457,7 +456,7 @@ void JacoComm::GetConfig(ClientConfigurations &config)
 /*!
  * \brief Dumps the current joint angles onto the screen.  
  */
-void JacoComm::PrintAngles(AngularInfo angles)
+void JacoComm::PrintAngles(JacoAngles &angles)
 {
 	ROS_INFO("Jaco Arm Angles (Degrees)");
 	ROS_INFO("Joint 1 = %f", angles.Actuator1);

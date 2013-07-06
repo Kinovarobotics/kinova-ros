@@ -10,8 +10,8 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_pose_action.h
- *  Desc: Action server for jaco arm.
+ *  File: jaco_angles_action.cpp
+ *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
@@ -43,34 +43,75 @@
  *
  */
 
-#ifndef _JACO_POSE_ACTION_H_
-#define _JACO_POSE_ACTION_H_
-
-#include <ros/ros.h>
-#include "jaco_driver/jaco_comm.h"
-
-#include <actionlib/server/simple_action_server.h>
-#include <jaco_driver/ArmPoseAction.h>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
+#include "jaco_driver/jaco_angles_action.h"
+#include <jaco_driver/KinovaTypes.h>
+#include "jaco_driver/jaco_types.h"
 
 namespace jaco
 {
 
-class JacoPoseActionServer
+JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &n) : 
+    arm(arm_comm), 
+    as_(n, "arm_joint_angles", boost::bind(&JacoAnglesActionServer::ActionCallback, this, _1), false)
 {
-	public:
-	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
-	~JacoPoseActionServer();
-    void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
-	
-	private:
-	JacoComm &arm;
-    actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
-	tf::TransformListener listener;
-};
+    as_.start();
+}
+
+JacoAnglesActionServer::~JacoAnglesActionServer()
+{
 
 }
 
-#endif // _JACO_POSE_ACTION_H_
+void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoalConstPtr &goal)
+{
+	jaco_driver::ArmJointAnglesFeedback feedback;
+	jaco_driver::ArmJointAnglesResult result;
 
+	ROS_INFO("Got an angular goal for the arm");
+
+	if (arm.Stopped())
+	{
+		//result.result = false;
+		as_.setAborted(result);
+		return;
+	}
+
+	JacoAngles target(goal->angles);
+	arm.SetAngles(target);
+
+	JacoAngles cur_position;		//holds the current position of the arm
+	ros::Rate r(10);
+ 
+	const float tolerance = 1.5; 	//dead zone for position
+
+	//while we have not timed out
+	while (true)
+	{
+		ros::spinOnce();
+		if (as_.isPreemptRequested() || !ros::ok())
+		{
+			arm.Stop();
+			arm.Start();
+			as_.setPreempted();
+			return;
+		}
+
+		arm.GetAngles(cur_position);
+
+		feedback.angles = cur_position.Angles();
+		as_.publishFeedback(feedback);
+
+		if (target.Compare(cur_position, tolerance))
+		{
+			ROS_INFO("Angular Control Complete.");
+
+			result.angles = cur_position.Angles();
+			as_.setSucceeded(result);
+			return;
+		}
+
+		r.sleep();
+	}
+}
+
+}

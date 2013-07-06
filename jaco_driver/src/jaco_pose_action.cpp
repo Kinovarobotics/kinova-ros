@@ -68,7 +68,7 @@ void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr
 	jaco_driver::ArmPoseResult result;
 	feedback.pose.header.frame_id = goal->pose.header.frame_id;
 
-	ROS_INFO("Got a goal for the arm");
+	ROS_INFO("Got a cartesian goal for the arm");
 
 	if (arm.Stopped())
 	{

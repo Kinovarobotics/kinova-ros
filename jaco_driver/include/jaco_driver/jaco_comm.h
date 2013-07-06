@@ -68,11 +68,11 @@ class JacoComm
 	void SetVelocities(AngularInfo joint_vel);
 	void SetCartesianVelocities(CartesianInfo velocities);
 	void SetConfig(ClientConfigurations config);
-	void GetAngles(AngularInfo &angles);
+	void GetAngles(JacoAngles &angles);
 	void GetPosition(JacoPose &position);
 	void GetFingers(FingersPosition &fingers);
 	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(AngularInfo angles);
+	void PrintAngles(JacoAngles &angles);
 	void PrintPosition(JacoPose &position);
 	void PrintFingers(FingersPosition fingers);
 	void PrintConfig(ClientConfigurations config);

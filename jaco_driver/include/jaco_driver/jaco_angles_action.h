@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_pose_action.h
+ *  File: jaco_angles_action.h
  *  Desc: Action server for jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,34 +43,31 @@
  *
  */
 
-#ifndef _JACO_POSE_ACTION_H_
-#define _JACO_POSE_ACTION_H_
+#ifndef _JACO_ANGLES_ACTION_H_
+#define _JACO_ANGLES_ACTION_H_
 
 #include <ros/ros.h>
 #include "jaco_driver/jaco_comm.h"
 
 #include <actionlib/server/simple_action_server.h>
-#include <jaco_driver/ArmPoseAction.h>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
+#include <jaco_driver/ArmJointAnglesAction.h>
 
 namespace jaco
 {
 
-class JacoPoseActionServer
+class JacoAnglesActionServer
 {
 	public:
-	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
-	~JacoPoseActionServer();
-    void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
+	JacoAnglesActionServer(JacoComm &, ros::NodeHandle &n);
+	~JacoAnglesActionServer();
+    void ActionCallback(const jaco_driver::ArmJointAnglesGoalConstPtr &);
 	
 	private:
 	JacoComm &arm;
-    actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
-	tf::TransformListener listener;
+    actionlib::SimpleActionServer<jaco_driver::ArmJointAnglesAction> as_;
 };
 
 }
 
-#endif // _JACO_POSE_ACTION_H_
+#endif // _JACO_ANGLES_ACTION_H_
 
