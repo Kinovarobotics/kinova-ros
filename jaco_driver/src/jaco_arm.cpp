@@ -11,13 +11,12 @@
 namespace jaco
 {
 
-JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_nh) : arm(arm_comm)
+JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 {
-	std::string arm_pose_topic, joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
+	std::string joint_velocity_topic, joint_angles_topic, cartesian_velocity_topic,
 		tool_position_topic, set_finger_position_topic, finger_position_topic, joint_state_topic,
 		set_joint_angle_topic;
 
-	nh.param<std::string>("arm_pose_topic", arm_pose_topic, "arm_pose");
 	nh.param<std::string>("joint_velocity_topic", joint_velocity_topic, "joint_velocity");
 	nh.param<std::string>("joint_angles_topic", joint_angles_topic, "joint_angles");
 	nh.param<std::string>("cartesian_velocity_topic", cartesian_velocity_topic, "cartesian_velocity");
@@ -25,10 +24,8 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	nh.param<std::string>("set_finger_position_topic", set_finger_position_topic, "set_finger_position");
 	nh.param<std::string>("finger_position_topic", finger_position_topic, "finger_position");
 	nh.param<std::string>("joint_state_topic", joint_state_topic, "joint_state");
-	nh.param<std::string>("set_joint_angle_topic", set_joint_angle_topic, "set_joint_angle");
 
 	//Print out received topics
-	ROS_DEBUG("Got Arm Position Topic Name: <%s>", arm_pose_topic.c_str());
 	ROS_DEBUG("Got Joint Velocity Topic Name: <%s>", joint_velocity_topic.c_str());
 	ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles_topic.c_str());
 	ROS_DEBUG("Got Cartesian Velocity Topic Name: <%s>", cartesian_velocity_topic.c_str());
@@ -36,7 +33,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	ROS_DEBUG("Got Set Finger Position Topic Name: <%s>", set_finger_position_topic.c_str());
 	ROS_DEBUG("Got Finger Position Topic Name: <%s>", finger_position_topic.c_str());
 	ROS_DEBUG("Got Joint State Topic Name: <%s>", joint_state_topic.c_str());
-	ROS_DEBUG("Got Set Joint Angle Topic Name: <%s>", set_joint_angle_topic.c_str());
 
 	ROS_INFO("Starting Up Jaco Arm Controller...");
 
@@ -55,13 +51,8 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	arm.GetConfig(configuration);
 	arm.PrintConfig(configuration);
 
-	ROS_INFO("Initializing the Arm");
-
 	last_update_time = ros::Time::now();
 	update_time = ros::Duration(5.0);
-
-	arm.HomeArm();
-	arm.InitializeFingers();
 
 	/* Storing arm in home position */
 
@@ -72,11 +63,9 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle nh, ros::NodeHandle param_n
 	FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
 
 	/* Set up Subscribers*/
-	ArmPose_sub = nh.subscribe(arm_pose_topic, 1, &JacoArm::PoseMSG_Sub, this);
 	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
 	CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
 	SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
-	SetJoint_sub = nh.subscribe(set_joint_angle_topic, 1, &JacoArm::SetJointAnglesMSG, this);
 
 	status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
 
@@ -109,71 +98,6 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
 }
 
 /*!
- * \brief Displays the cartesian coordinates of the arm before and after a transform.
- */
-void JacoArm::PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr& arm_pose)
-{
-	CartesianInfo Jaco_Position;
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-
-	if (!arm.Stopped())
-	{
-		geometry_msgs::PoseStamped api_pose;
-		ROS_DEBUG("Raw MSG");
-		ROS_DEBUG("X = %f", arm_pose->pose.position.x);
-		ROS_DEBUG("Y = %f", arm_pose->pose.position.y);
-		ROS_DEBUG("Z = %f", arm_pose->pose.position.z);
-
-		ROS_DEBUG("RX = %f", arm_pose->pose.orientation.x);
-		ROS_DEBUG("RY = %f", arm_pose->pose.orientation.y);
-		ROS_DEBUG("RZ = %f", arm_pose->pose.orientation.z);
-		ROS_DEBUG("RW = %f", arm_pose->pose.orientation.w);
-
-		if (ros::ok()
-				&& !listener.canTransform("/jaco_api_origin", arm_pose->header.frame_id,
-						arm_pose->header.stamp))
-		{
-			ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", arm_pose->header.frame_id.c_str());
-			return;
-		}
-
-		listener.transformPose("/jaco_api_origin", *arm_pose, api_pose);
-
-		ROS_DEBUG("Transformed MSG");
-		ROS_DEBUG("X = %f", api_pose.pose.position.x);
-		ROS_DEBUG("Y = %f", api_pose.pose.position.y);
-		ROS_DEBUG("Z = %f", api_pose.pose.position.z);
-
-		ROS_DEBUG("RX = %f", api_pose.pose.orientation.x);
-		ROS_DEBUG("RY = %f", api_pose.pose.orientation.y);
-		ROS_DEBUG("RZ = %f", api_pose.pose.orientation.z);
-		ROS_DEBUG("RW = %f", api_pose.pose.orientation.w);
-
-		double x, y, z;
-		tf::Quaternion q;
-		tf::quaternionMsgToTF(api_pose.pose.orientation, q);
-
-		tf::Matrix3x3 bt_q(q);
-
-		bt_q.getEulerYPR(z, y, x);
-
-		Jaco_Position.X = (float) api_pose.pose.position.x;
-		Jaco_Position.Y = (float) api_pose.pose.position.y;
-		Jaco_Position.Z = (float) api_pose.pose.position.z;
-
-		Jaco_Position.ThetaX = (float) x;
-		Jaco_Position.ThetaY = (float) y;
-		Jaco_Position.ThetaZ = (float) z;
-
-		if (ros::Time::now() - last_update_time > update_time)
-		{
-			last_update_time = ros::Time::now();
-			arm.SetPosition(Jaco_Position);
-		}
-	}
-}
-
-/*!
  * \brief Receives ROS command messages and relays them to SetFingers.
  */
 void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos)
@@ -190,28 +114,6 @@ void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& fi
 		arm.SetFingers(Finger_Position);
 	}
 }
-
-/*!
- * \brief Receives ROS command messages and relays them to SetAngles.
- */
-void JacoArm::SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr& angles)
-{
-	if (!arm.Stopped())
-	{
-		AngularInfo Joint_Position;
-		memset(&Joint_Position, 0, sizeof(Joint_Position)); //zero structure
-
-		Joint_Position.Actuator1 = angles->Angle_J1;
-		Joint_Position.Actuator2 = angles->Angle_J2;
-		Joint_Position.Actuator3 = angles->Angle_J3;
-		Joint_Position.Actuator4 = angles->Angle_J4;
-		Joint_Position.Actuator5 = angles->Angle_J5;
-		Joint_Position.Actuator6 = angles->Angle_J6;
-
-		arm.SetAngles(Joint_Position);
-	}
-}
-
 
 void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
 {
@@ -347,8 +249,6 @@ void JacoArm::BroadCastAngles(void)
 	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint"};
 	std::vector<std::string> JointName(nameArgs, nameArgs+6);
 
-	AngularPosition arm_angles;
-
 	jaco_driver::JointAngles current_angles;
 
 	sensor_msgs::JointState joint_state;
@@ -359,34 +259,29 @@ void JacoArm::BroadCastAngles(void)
 	joint_state.velocity.resize(6);
 	joint_state.effort.resize(6);
 
-	memset(&arm_angles, 0, sizeof(arm_angles)); //zero structure
-
 	//Query arm for current joint angles
-	arm.GetAngles(arm_angles.Actuators);
-
-	// Raw joint angles
-	current_angles.Angle_J1 = arm_angles.Actuators.Actuator1;
-	current_angles.Angle_J2 = arm_angles.Actuators.Actuator2;
-	current_angles.Angle_J3 = arm_angles.Actuators.Actuator3;
-	current_angles.Angle_J4 = arm_angles.Actuators.Actuator4;
-	current_angles.Angle_J5 = arm_angles.Actuators.Actuator5;
-	current_angles.Angle_J6 = arm_angles.Actuators.Actuator6;
+	JacoAngles arm_angles;
+	arm.GetAngles(arm_angles);
+	jaco_driver::JointAngles ros_angles = arm_angles.Angles();
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-
-	joint_state.position[0] = (180.0 - arm_angles.Actuators.Actuator1) / (180.0 / PI);
-	joint_state.position[1] = (arm_angles.Actuators.Actuator2 - 270.0) / (180.0 / PI);
-	joint_state.position[2] = (90.0 - arm_angles.Actuators.Actuator3) / (180.0 / PI);
-	joint_state.position[3] = (180.0 - arm_angles.Actuators.Actuator4) / (180.0 / PI);
-	joint_state.position[4] = (180.0 - arm_angles.Actuators.Actuator5) / (180.0 / PI);
-	joint_state.position[5] = (260.0 - arm_angles.Actuators.Actuator6) / (180.0 / PI);
+	joint_state.position[0] = ros_angles.Angle_J1;
+	joint_state.position[1] = ros_angles.Angle_J2;
+	joint_state.position[2] = ros_angles.Angle_J3;
+	joint_state.position[3] = ros_angles.Angle_J4;
+	joint_state.position[4] = ros_angles.Angle_J5;
+	joint_state.position[5] = ros_angles.Angle_J6;
 
 	//Publish the joint state messages
-
-	JointAngles_pub.publish(current_angles); // Publishes the raw joint angles in a custom message.
+	ros_angles.Angle_J1 = arm_angles.Actuator1;
+	ros_angles.Angle_J2 = arm_angles.Actuator2;
+	ros_angles.Angle_J3 = arm_angles.Actuator3;
+	ros_angles.Angle_J4 = arm_angles.Actuator4;
+	ros_angles.Angle_J5 = arm_angles.Actuator5;
+	ros_angles.Angle_J6 = arm_angles.Actuator6;
+	JointAngles_pub.publish(ros_angles); // Publishes the raw joint angles in a custom message.
 
 	JointState_pub.publish(joint_state);     // Publishes the transformed angles in a standard sensor_msgs format.
-
 }
 
 /*!
@@ -394,28 +289,11 @@ void JacoArm::BroadCastAngles(void)
  */
 void JacoArm::BroadCastPosition(void)
 {
-	CartesianPosition position;
+	JacoPose pose;
 	geometry_msgs::PoseStamped current_position;
 
-	memset(&position, 0, sizeof(position)); //zero structure
-
-	arm.GetPosition(position.Coordinates);
-
-	current_position.header.frame_id = "/jaco_api_origin";
-	current_position.header.stamp = ros::Time().now();
-
-	//Broadcast position
-
-	current_position.pose.position.x = position.Coordinates.X;
-	current_position.pose.position.y = position.Coordinates.Y;
-	current_position.pose.position.z = position.Coordinates.Z;
-
-	tf::Quaternion position_quaternion;
-
-	position_quaternion.setRPY(position.Coordinates.ThetaX, position.Coordinates.ThetaY,
-			position.Coordinates.ThetaZ);
-
-	tf::quaternionTFToMsg(position_quaternion, current_position.pose.orientation);
+	arm.GetPosition(pose);
+	current_position.pose = pose.Pose();
 
 	ToolPosition_pub.publish(current_position);
 }
@@ -431,7 +309,7 @@ Publishes the current finger positions.
 	jaco_driver::FingerPosition finger_position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-	arm.GetPosition(Jaco_Position.Coordinates);
+	arm.GetFingers(Jaco_Position.Fingers);
 
 	finger_position.Finger_1 = Jaco_Position.Fingers.Finger1;
 	finger_position.Finger_2 = Jaco_Position.Fingers.Finger2;

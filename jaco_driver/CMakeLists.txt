@@ -44,6 +44,9 @@ rosbuild_add_library(jacokinematics src/jaco_arm_kinematics.cpp)
 
 rosbuild_add_library(jaco_arm_driver src/jaco_arm.cpp)
 rosbuild_add_library(jaco_arm_driver src/jaco_comm.cpp)
+rosbuild_add_library(jaco_arm_driver src/jaco_pose_action.cpp)
+rosbuild_add_library(jaco_arm_driver src/jaco_angles_action.cpp)
+rosbuild_add_library(jaco_arm_driver src/jaco_types.cpp)
 
 #Testers
 #rosbuild_add_executable(test_jaco_arm_control src/testers/test_jaco_arm_controller.cpp )

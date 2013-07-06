@@ -11,9 +11,7 @@
 #define JACO_ARM_DRIVER_H_
 
 #include <ros/ros.h>
-#include <std_msgs/String.h>
 #include <jaco_driver/jaco_api.h>
-#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
 #include "jaco_driver/KinovaTypes.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
@@ -34,18 +32,15 @@
 #include <math.h>
 #include <vector>
 
-#define PI 3.14159265358
-
 namespace jaco
 {
 
 class JacoArm
 {
 	public:
-	JacoArm(JacoComm &, ros::NodeHandle, ros::NodeHandle);
+	JacoArm(JacoComm &, ros::NodeHandle &);
 	~JacoArm();
 	void GoHome(void);
-	void PoseMSG_Sub(const geometry_msgs::PoseStampedConstPtr&);
 	void CalculatePostion(void);
 	void PositionTimer(const ros::TimerEvent&);
 	void CartesianVelTimer(const ros::TimerEvent&);
@@ -58,7 +53,6 @@ class JacoArm
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
 	void BroadCastFingerPosition(void);
-	void SetJointAnglesMSG(const jaco_driver::JointAnglesConstPtr&);
 
 	bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
 	bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
@@ -69,13 +63,10 @@ class JacoArm
 	JacoComm &arm;
 
 	/* Subscribers */
-	ros::Subscriber ArmPose_sub;
 	ros::Subscriber JointVelocity_sub;
 	ros::Subscriber CartesianVelocity_sub;
 	ros::Subscriber SetFingerPosition_sub;
 	ros::Subscriber SoftwarePause_sub;
-	ros::Subscriber SetJoint_sub;
-
 
 	/* Publishers */
 	ros::Publisher JointAngles_pub;

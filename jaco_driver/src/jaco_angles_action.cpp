@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.h
+ *  File: jaco_angles_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,51 +43,78 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
-
+#include "jaco_driver/jaco_angles_action.h"
 #include <jaco_driver/KinovaTypes.h>
-#include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
-#include <boost/thread/recursive_mutex.hpp>
+#include "jaco_driver/jaco_types.h"
 
-namespace jaco 
+namespace jaco
 {
 
-class JacoComm
+JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &n) : 
+    arm(arm_comm), 
+    as_(n, "arm_joint_angles", boost::bind(&JacoAnglesActionServer::ActionCallback, this, _1), false)
 {
-	public:
-	JacoComm();
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(JacoAngles &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(JacoAngles &angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
+    as_.start();
+}
 
-	private:
-    boost::recursive_mutex api_mutex;
-	jaco::JacoAPI* API;
-	bool software_stop;
-
-	void WaitForHome(int);
-};
+JacoAnglesActionServer::~JacoAnglesActionServer()
+{
 
 }
 
-#endif // _JACO_COMM_H_
+void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoalConstPtr &goal)
+{
+	jaco_driver::ArmJointAnglesFeedback feedback;
+	jaco_driver::ArmJointAnglesResult result;
+
+	ROS_INFO("Got an angular goal for the arm");
+
+	JacoAngles cur_position;		//holds the current position of the arm
+
+	if (arm.Stopped())
+	{
+		arm.GetAngles(cur_position);
+		result.angles = cur_position.Angles();
+
+		as_.setAborted(result);
+		return;
+	}
+
+	JacoAngles target(goal->angles);
+	arm.SetAngles(target);
+
+	ros::Rate r(10);
+ 
+	const float tolerance = 1.5; 	//dead zone for position
+
+	//while we have not timed out
+	while (true)
+	{
+		ros::spinOnce();
+		if (as_.isPreemptRequested() || !ros::ok())
+		{
+			arm.Stop();
+			arm.Start();
+			as_.setPreempted();
+			return;
+		}
+
+		arm.GetAngles(cur_position);
+
+		feedback.angles = cur_position.Angles();
+		as_.publishFeedback(feedback);
+
+		if (target.Compare(cur_position, tolerance))
+		{
+			ROS_INFO("Angular Control Complete.");
+
+			result.angles = cur_position.Angles();
+			as_.setSucceeded(result);
+			return;
+		}
+
+		r.sleep();
+	}
+}
+
+}

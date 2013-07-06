@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.h
- *  Desc: Class for moving/querying jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: jaco_types.h
+ *  Desc: Wrappers around Kinova types.
+ *  Auth: Alex Bencz
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
  *  All Rights Reserved
@@ -43,51 +43,44 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
+#ifndef _JACO_TYPES_H_
+#define _JACO_TYPES_H_
 
 #include <jaco_driver/KinovaTypes.h>
-#include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
-#include <boost/thread/recursive_mutex.hpp>
+#include <geometry_msgs/Pose.h>
+#include <jaco_driver/JointAngles.h>
 
-namespace jaco 
+namespace jaco
 {
 
-class JacoComm
+class JacoPose : public CartesianInfo
 {
 	public:
-	JacoComm();
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(JacoAngles &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(JacoAngles &angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
+	JacoPose() {}
+	JacoPose(const geometry_msgs::Pose &);
+	JacoPose(const CartesianInfo &);
+
+	geometry_msgs::Pose Pose();
+	bool Compare(const JacoPose &, float) const;
 
 	private:
-    boost::recursive_mutex api_mutex;
-	jaco::JacoAPI* API;
-	bool software_stop;
+	float Normalize(float);
+};
 
-	void WaitForHome(int);
+class JacoAngles : public AngularInfo
+{
+	public:
+	JacoAngles() {}
+	JacoAngles(const jaco_driver::JointAngles &);
+	JacoAngles(const AngularInfo &);
+
+	jaco_driver::JointAngles Angles();
+	bool Compare(const JacoAngles &, float) const;
+
+	private:
+	float Normalize(float);
 };
 
 }
 
-#endif // _JACO_COMM_H_
+#endif // _JACO_TYPES_H_

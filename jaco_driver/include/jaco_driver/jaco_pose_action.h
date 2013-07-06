@@ -10,8 +10,8 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_comm.h
- *  Desc: Class for moving/querying jaco arm.
+ *  File: jaco_pose_action.h
+ *  Desc: Action server for jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
@@ -43,51 +43,34 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
+#ifndef _JACO_POSE_ACTION_H_
+#define _JACO_POSE_ACTION_H_
 
-#include <jaco_driver/KinovaTypes.h>
-#include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
-#include <boost/thread/recursive_mutex.hpp>
+#include <ros/ros.h>
+#include "jaco_driver/jaco_comm.h"
 
-namespace jaco 
+#include <actionlib/server/simple_action_server.h>
+#include <jaco_driver/ArmPoseAction.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
+
+namespace jaco
 {
 
-class JacoComm
+class JacoPoseActionServer
 {
 	public:
-	JacoComm();
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(JacoAngles &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(JacoAngles &angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
-
+	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
+	~JacoPoseActionServer();
+    void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
+	
 	private:
-    boost::recursive_mutex api_mutex;
-	jaco::JacoAPI* API;
-	bool software_stop;
-
-	void WaitForHome(int);
+	JacoComm &arm;
+    actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
+	tf::TransformListener listener;
 };
 
 }
 
-#endif // _JACO_COMM_H_
+#endif // _JACO_POSE_ACTION_H_
+
