@@ -81,6 +81,22 @@ class JacoAngles : public AngularInfo
 	float Normalize(float);
 };
 
+/*
+class FingersPosition : public CartesianInfo
+{
+	public:
+	FingersPosition() {}
+	FingersPosition(const jaco_driver::FingersPositionJointAngles &);
+	FingersPosition(const AngularInfo &);
+
+	jaco_driver::FingersPosition Fingers();
+	bool Compare(const FingersPositions &, float) const;
+
+	private:
+	float Normalize(float);
+};
+*/
+
 }
 
 #endif // _JACO_TYPES_H_
