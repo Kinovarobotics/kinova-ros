@@ -64,13 +64,13 @@ class JacoComm
 	void InitializeFingers(void);
 	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
 	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
-	void SetFingers(FingersPosition fingers, int timeout = 0, bool push = true);
+	void SetFingers(FingerAngles &fingers, int timeout = 0, bool push = true);
 	void SetVelocities(AngularInfo joint_vel);
 	void SetCartesianVelocities(CartesianInfo velocities);
 	void SetConfig(ClientConfigurations config);
 	void GetAngles(JacoAngles &angles);
 	void GetPosition(JacoPose &position);
-	void GetFingers(FingersPosition &fingers);
+	void GetFingers(FingerAngles &fingers);
 	void GetConfig(ClientConfigurations &config);
 	void PrintAngles(JacoAngles &angles);
 	void PrintPosition(JacoPose &position);

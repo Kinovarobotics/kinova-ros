@@ -20,13 +20,11 @@ def pose_client():
         goal.fingers.Finger_2 = 40.0
         goal.fingers.Finger_3 = 40.0
 
-
         rospy.logwarn("Using test goal: \n%s", goal)
     else:
         goal.fingers.Finger_1 = float(sys.argv[1])
         goal.fingers.Finger_2 = float(sys.argv[2])
         goal.fingers.Finger_3 = float(sys.argv[3])
-
 
     client.wait_for_server()
     rospy.loginfo("Connected to Finger server")
@@ -45,7 +43,7 @@ if __name__ == '__main__':
     try:
         rospy.init_node('finger_pose_client')
         result = pose_client()
-        rospy.loginfo("Result: %s", result)
+        rospy.loginfo("Result: \n%s", result)
     except rospy.ROSInterruptException: 
         rospy.loginfo("Program interrupted before completion")
         

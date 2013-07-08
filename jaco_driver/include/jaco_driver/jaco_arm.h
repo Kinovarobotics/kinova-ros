@@ -49,7 +49,6 @@ class JacoArm
 	void VelocityMSG(const jaco_driver::JointVelocityConstPtr&);
 
 	void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr&);
-	void SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr&);
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
 	void BroadCastFingerPosition(void);
@@ -65,7 +64,6 @@ class JacoArm
 	/* Subscribers */
 	ros::Subscriber JointVelocity_sub;
 	ros::Subscriber CartesianVelocity_sub;
-	ros::Subscriber SetFingerPosition_sub;
 	ros::Subscriber SoftwarePause_sub;
 
 	/* Publishers */

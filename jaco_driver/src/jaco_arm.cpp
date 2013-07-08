@@ -65,7 +65,6 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 	/* Set up Subscribers*/
 	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
 	CartesianVelocity_sub = nh.subscribe(cartesian_velocity_topic, 1, &JacoArm::CartesianVelocityMSG, this);
-	SetFingerPosition_sub = nh.subscribe(set_finger_position_topic, 1, &JacoArm::SetFingerPositionMSG, this);
 
 	status_timer = nh.createTimer(ros::Duration(0.05), &JacoArm::StatusTimer, this);
 
@@ -95,24 +94,6 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
 	res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
 
 	return true;
-}
-
-/*!
- * \brief Receives ROS command messages and relays them to SetFingers.
- */
-void JacoArm::SetFingerPositionMSG(const jaco_driver::FingerPositionConstPtr& finger_pos)
-{
-	if (!arm.Stopped())
-	{
-		FingersPosition Finger_Position;
-		memset(&Finger_Position, 0, sizeof(Finger_Position)); //zero structure
-
-		Finger_Position.Finger1 = finger_pos->Finger_1;
-		Finger_Position.Finger2 = finger_pos->Finger_2;
-		Finger_Position.Finger3 = finger_pos->Finger_3;
-
-		arm.SetFingers(Finger_Position);
-	}
 }
 
 void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
@@ -298,24 +279,19 @@ void JacoArm::BroadCastPosition(void)
 	ToolPosition_pub.publish(current_position);
 }
 
+/*!
+ * \brief Publishes the current finger positions.
+ */
 void JacoArm::BroadCastFingerPosition(void)
 {
 
-/*
-Publishes the current finger positions.
-*/
 
-	CartesianPosition Jaco_Position;
+	FingerAngles fingers;
 	jaco_driver::FingerPosition finger_position;
 
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-	arm.GetFingers(Jaco_Position.Fingers);
+	arm.GetFingers(fingers);
 
-	finger_position.Finger_1 = Jaco_Position.Fingers.Finger1;
-	finger_position.Finger_2 = Jaco_Position.Fingers.Finger2;
-	finger_position.Finger_3 = Jaco_Position.Fingers.Finger3;
-
-	FingerPosition_pub.publish(finger_position);
+	FingerPosition_pub.publish(fingers.Fingers());
 }
 
 

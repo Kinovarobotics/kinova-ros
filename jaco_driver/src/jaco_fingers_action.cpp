@@ -69,27 +69,22 @@ void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositi
 
 	ROS_INFO("Got a finger goal for the arm");
 
-	FingersPosition finger_position;		//holds the current position of the fingers
+	FingerAngles fingers;		//holds the current position of the fingers
 
 	if (arm.Stopped())
 	{
-		arm.GetFingers(finger_position);
-		result.fingers.Finger_1 = finger_position.Finger1;
-		result.fingers.Finger_2 = finger_position.Finger2;
-		result.fingers.Finger_3 = finger_position.Finger3;
+		arm.GetFingers(fingers);
+		result.fingers = fingers.Fingers();
 		as_.setAborted(result);
 		return;
 	}
 
-	FingersPosition target;
-	target.Finger1 = goal->fingers.Finger_1;
-	target.Finger2 = goal->fingers.Finger_2;
-	target.Finger3 = goal->fingers.Finger_3;
+	FingerAngles target(goal->fingers);
 	arm.SetFingers(target);
 
 	ros::Rate r(10);
  
-	const float tolerance = 1.5; 	//dead zone for position
+	const float tolerance = 2.0; 	//dead zone for position
 
 
 	//while we have not timed out
@@ -104,20 +99,16 @@ void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositi
 			return;
 		}
 
-		arm.GetFingers(finger_position);
+		arm.GetFingers(fingers);
 
-		feedback.fingers.Finger_1 = finger_position.Finger1;
-		feedback.fingers.Finger_2 = finger_position.Finger2;
-		feedback.fingers.Finger_3 = finger_position.Finger3;
+		feedback.fingers = fingers.Fingers();
 		as_.publishFeedback(feedback);
 
-		if (target.Compare(finger_position, tolerance))
+		if (target.Compare(fingers, tolerance))
 		{
 			ROS_INFO("Finger Control Complete.");
 
-			result.fingers.Finger_1 = finger_position.Finger1;
-			result.fingers.Finger_2 = finger_position.Finger2;
-			result.fingers.Finger_3 = finger_position.Finger3;
+			result.fingers = fingers.Fingers();
 			as_.setSucceeded(result);
 			return;
 		}

@@ -160,11 +160,11 @@ void JacoComm::HomeArm(void)
  */
 void JacoComm::InitializeFingers(void)
 {
-	FingersPosition fingers_home = {0, 0, 0};
+	FingerAngles fingers_home;
 
 	// Set the fingers fully "open." This is required to initialize the fingers.
 	SetFingers(fingers_home, 5);
-	ros::Duration(1.0).sleep();
+	ros::Duration(3.0).sleep();
 
 	// Set the fingers to "half-open"
 	fingers_home.Finger1 = 40;
@@ -243,18 +243,14 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 /*!
  * \brief Sets the finger positions
  */
-void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
+void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	if (Stopped())
 		return;
 
 	TrajectoryPoint Jaco_Position;
-
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
-
-
-	ros::Duration(4.0).sleep();
 
 	if (push == true)
 	{
@@ -265,7 +261,6 @@ void JacoComm::SetFingers(FingersPosition fingers, int timeout, bool push)
 	API->StartControlAPI();
 
 	Jaco_Position.Position.HandMode = POSITION_MODE;
-
 	Jaco_Position.Position.Fingers = fingers;
 
 	API->SendAdvanceTrajectory(Jaco_Position);
@@ -362,12 +357,10 @@ void JacoComm::GetPosition(JacoPose &position)
 /*!
  * \brief API call to obtain the current finger positions.
  */
-void JacoComm::GetFingers(FingersPosition &fingers)
+void JacoComm::GetFingers(FingerAngles &fingers)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	CartesianPosition Jaco_Position;
-
-	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
 	API->GetCartesianPosition(Jaco_Position);
 
