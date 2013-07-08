@@ -100,8 +100,15 @@ void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoa
 		}
 
 		arm.GetAngles(cur_position);
-
 		feedback.angles = cur_position.Angles();
+
+		if (arm.Stopped())
+		{
+			result.angles = cur_position.Angles();
+			as_.setAborted(result);
+			return;
+		}
+
 		as_.publishFeedback(feedback);
 
 		if (target.Compare(cur_position, tolerance))

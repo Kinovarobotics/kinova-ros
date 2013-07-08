@@ -138,6 +138,14 @@ void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr
 		local_pose.pose = cur_position.Pose();
 
 		listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
+
+		if (arm.Stopped())
+		{
+			result.pose = feedback.pose;
+			as_.setAborted(result);
+			return;
+		}
+
 		as_.publishFeedback(feedback);
 
 		if (target.Compare(cur_position, tolerance))
