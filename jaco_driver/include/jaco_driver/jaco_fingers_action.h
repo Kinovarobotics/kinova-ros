@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_angles_action.h
- *  Desc: Action server for jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: jaco_fingers_action.h
+ *  Desc: Action server for jaco arm fingers.
+ *  Auth: Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
  *  All Rights Reserved

@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™ 
  *
- *  File: jaco_angles_action.cpp
- *  Desc: Class for moving/querying jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: jaco_fingers_action.cpp
+ *  Desc: Class for moving/querying jaco arm fingers.
+ *  Auth: Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc. 
  *  All Rights Reserved
@@ -100,8 +100,15 @@ void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositi
 		}
 
 		arm.GetFingers(fingers);
-
 		feedback.fingers = fingers.Fingers();
+
+		if (arm.Stopped())
+		{
+			result.fingers = fingers.Fingers();
+			as_.setAborted(result);
+			return;
+		}
+
 		as_.publishFeedback(feedback);
 
 		if (target.Compare(fingers, tolerance))
