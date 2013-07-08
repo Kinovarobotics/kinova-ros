@@ -10,6 +10,7 @@
 #include "jaco_driver/jaco_arm.h"
 #include "jaco_driver/jaco_pose_action.h"
 #include "jaco_driver/jaco_angles_action.h"
+#include "jaco_driver/jaco_fingers_action.h"
 
 int main(int argc, char **argv)
 {
@@ -29,6 +30,7 @@ int main(int argc, char **argv)
 	jaco::JacoArm jaco(comm, nh);
 	jaco::JacoPoseActionServer pose_server(comm, nh);
 	jaco::JacoAnglesActionServer angles_server(comm, nh);
+	jaco::JacoFingersActionServer fingers_server(comm, nh);
 
 	ros::spin();
 }

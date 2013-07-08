@@ -7,7 +7,7 @@
 <!-- 
 Provide an overview of your package.
 -->
-
+The ROS JACO Arm package provides a ROS interface for the Kinova Robotics JACO robotic manipulator arm.  This module exposes the C++ hardware API through ROS.
 -->
 
 

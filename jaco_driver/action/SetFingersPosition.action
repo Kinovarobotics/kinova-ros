@@ -1,14 +1,8 @@
 # Goal
-float32 Finger_1_goal  # Angle in degrees
-float32 Finger_2_goal  # Angle in degrees
-float32 Finger_3_goal  # Angle in degrees
+FingerPosition fingers
 ---
 # Result
-float32 Finger_1
-float32 Finger_2
-float32 Finger_3
+FingerPosition fingers
 ---
 # Feedback message
-float32 Finger_1
-float32 Finger_2
-float32 Finger_3
+FingerPosition fingers
