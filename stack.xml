@@ -4,8 +4,9 @@
 
   </description>
 
-  <author>mdedonato</author>
+  <author>Clearpath Robotics</author>
   <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt</author>
+  <author>mdedonato</author>
   <maintainer email="abencz@clearpathrobotics.com">Alex Bencz</maintainer>
   <license>BSD</license>
 
