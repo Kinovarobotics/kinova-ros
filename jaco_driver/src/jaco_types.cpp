@@ -183,4 +183,39 @@ float JacoAngles::Normalize(float value)
 	return value;
 }
 
+FingerAngles::FingerAngles(const jaco_driver::FingerPosition &position)
+{
+	Finger1 = position.Finger_1;
+	Finger2 = position.Finger_2;
+	Finger3 = position.Finger_3;
+}
+
+FingerAngles::FingerAngles(const FingersPosition &angle)
+{
+	Finger1 = angle.Finger1;
+	Finger2 = angle.Finger2;
+	Finger3 = angle.Finger3;
+}
+
+jaco_driver::FingerPosition FingerAngles::Fingers()
+{
+	jaco_driver::FingerPosition angles;
+	angles.Finger_1 = Finger1;
+	angles.Finger_2 = Finger2;
+	angles.Finger_3 = Finger3;
+
+	return angles;
+}
+
+bool FingerAngles::Compare(const FingerAngles &other, float tolerance) const
+{
+	bool status = true;
+
+	status = status && CompareValues(Finger1, other.Finger1, tolerance);
+	status = status && CompareValues(Finger2, other.Finger2, tolerance);
+	status = status && CompareValues(Finger3, other.Finger3, tolerance);
+
+	return status;
+}
+
 }

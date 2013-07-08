@@ -49,6 +49,7 @@
 #include <jaco_driver/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <jaco_driver/JointAngles.h>
+#include <jaco_driver/FingerPosition.h>
 
 namespace jaco
 {
@@ -81,21 +82,18 @@ class JacoAngles : public AngularInfo
 	float Normalize(float);
 };
 
-/*
-class FingersPosition : public CartesianInfo
+
+class FingerAngles : public FingersPosition
 {
 	public:
-	FingersPosition() {}
-	FingersPosition(const jaco_driver::FingersPositionJointAngles &);
-	FingersPosition(const AngularInfo &);
+	FingerAngles() {}
+	FingerAngles(const jaco_driver::FingerPosition &);
+	FingerAngles(const FingersPosition &);
 
-	jaco_driver::FingersPosition Fingers();
-	bool Compare(const FingersPositions &, float) const;
-
-	private:
-	float Normalize(float);
+	jaco_driver::FingerPosition Fingers();
+	bool Compare(const FingerAngles &, float) const;
 };
-*/
+
 
 }
 

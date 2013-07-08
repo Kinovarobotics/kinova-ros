@@ -89,7 +89,7 @@ void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositi
 
 	ros::Rate r(10);
  
-	//const float tolerance = 1.5; 	//dead zone for position
+	const float tolerance = 1.5; 	//dead zone for position
 
 
 	//while we have not timed out
@@ -111,7 +111,7 @@ void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositi
 		feedback.fingers.Finger_3 = finger_position.Finger3;
 		as_.publishFeedback(feedback);
 
-		if (true)
+		if (target.Compare(finger_position, tolerance))
 		{
 			ROS_INFO("Finger Control Complete.");
 
