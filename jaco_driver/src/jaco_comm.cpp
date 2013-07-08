@@ -107,7 +107,7 @@ bool JacoComm::HomeState(void)
 		83.0,
 		78.1 };
 	const JacoAngles home_position(home_angles);
-	const float tolerance = 1.0; //dead zone for angles (degrees)
+	const float tolerance = 2.0; //dead zone for angles (degrees)
 
 	AngularPosition cur_angles; //holds the current angles of the arm
 	API->GetAngularPosition(cur_angles); //update current arm angles
