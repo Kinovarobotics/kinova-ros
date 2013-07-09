@@ -57,7 +57,7 @@ namespace jaco
 class JacoComm
 {
 	public:
-	JacoComm();
+	JacoComm(JacoAngles);
 	~JacoComm();
 	bool HomeState(void);
 	void HomeArm(void);
@@ -81,9 +81,10 @@ class JacoComm
 	bool Stopped();
 
 	private:
-    boost::recursive_mutex api_mutex;
+	boost::recursive_mutex api_mutex;
 	jaco::JacoAPI* API;
 	bool software_stop;
+	JacoAngles home_position;
 
 	void WaitForHome(int);
 };

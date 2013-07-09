@@ -51,7 +51,7 @@
 namespace jaco
 {
 
-JacoComm::JacoComm() : software_stop(false)
+JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	/* Connecting to Jaco Arm */
@@ -99,14 +99,6 @@ JacoComm::~JacoComm()
 bool JacoComm::HomeState(void)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
-	const AngularInfo home_angles = {
-		282.8,
-		154.4,
-		43.1,
-		230.7,
-		83.0,
-		78.1 };
-	const JacoAngles home_position(home_angles);
 	const float tolerance = 2.0; //dead zone for angles (degrees)
 
 	AngularPosition cur_angles; //holds the current angles of the arm
