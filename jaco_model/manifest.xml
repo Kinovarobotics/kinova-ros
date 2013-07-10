@@ -1,8 +1,7 @@
 <package>
   <description brief="Kinova Jaco arm model">
-
-     AERO_description
-
+	  3D model of the Kinova JACO arm. Includes the model and URDF files for
+	  working with the arm in RViz or Gazebo.
   </description>
   <author>bpwiselybabu</author>
   <license>BSD</license>

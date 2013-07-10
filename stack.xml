@@ -1,12 +1,15 @@
 <stack>
   <name>jaco</name>
-  <description brief="ROS stack for Kinova Jaco arm">
-
+  <description brief="ROS stack for Kinova JACO arm">
+	  The ROS JACO Arm stack provides a ROS interface for the Kinova Robotics
+	  JACO robotic manipulator arm. This stack provides access to the Kinova
+	  JACO C++ hardware API through ROS.
   </description>
 
   <author>Clearpath Robotics</author>
   <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt</author>
   <author>mdedonato</author>
+  <author email="abencz@clearpathrobotics.com">Alex Bencz</author>
   <maintainer email="abencz@clearpathrobotics.com">Alex Bencz</maintainer>
   <license>BSD</license>
 

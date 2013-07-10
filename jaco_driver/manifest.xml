@@ -1,12 +1,17 @@
 <package>
   <description brief="Kinova Jaco arm driver">
-
-     jaco_driver
-
+	  Provides access to the Kinova JACO C++ API through ROS. Includes action
+	  servers for positionin the arm using either cartesian coordinates or
+	  joint angles and moving the fingers. The tf_updater node is responsible
+	  for converting joint angle information into TF transforms to be used in
+	  ROS.
   </description>
   <author>Clearpath Robotics</author>
+  <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt</author>
+  <author email="abencz@clearpathrobotics.com">Alex Bencz</author>
   <author>MDeDonato</author>
   <license>BSD</license>
+
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/jaco_driver</url>
   <depend package="roscpp"/>
