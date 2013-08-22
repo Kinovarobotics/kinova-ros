@@ -6,10 +6,9 @@
 	  for converting joint angle information into TF transforms to be used in
 	  ROS.
   </description>
-  <author>Clearpath Robotics</author>
-  <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt</author>
-  <author email="abencz@clearpathrobotics.com">Alex Bencz</author>
-  <author>MDeDonato</author>
+  <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt (Clearpath)</author>
+  <author email="abencz@clearpathrobotics.com">Alex Bencz (Clearpath)</author>
+  <author>Matt DeDonato (WPI)</author>
   <license>BSD</license>
 
   <review status="unreviewed" notes=""/>
