@@ -37,34 +37,34 @@
 
 
   <property name="joint_1" value="jaco_joint_1" />
-  <property name="joint_1_axis_xyz" value="0 0 1" />
+  <property name="joint_1_axis_xyz" value="0 0 -1" />
   <property name="joint_1_origin_xyz" value="0 0 0.1535" />
-  <property name="joint_1_origin_rpy" value="${J_PI} 0 0" />
+  <property name="joint_1_origin_rpy" value="${J_PI} 0 ${J_PI}" />
 
   <property name="joint_2" value="jaco_joint_2" />
   <property name="joint_2_axis_xyz" value="0 0 1" />
   <property name="joint_2_origin_xyz" value="0 0 -0.1185" />
-  <property name="joint_2_origin_rpy" value="-${J_PI/2} -${J_PI/2} 0" />
+  <property name="joint_2_origin_rpy" value="-${J_PI/2} ${J_PI} 0" />
 
   <property name="joint_3" value="jaco_joint_3" />
-  <property name="joint_3_axis_xyz" value="0 0 1" />
+  <property name="joint_3_axis_xyz" value="0 0 -1" />
   <property name="joint_3_origin_xyz" value="0.41 0 0" />
-  <property name="joint_3_origin_rpy" value="${J_PI} 0 ${J_PI}" />
+  <property name="joint_3_origin_rpy" value="${J_PI} 0 ${J_PI/2}" />
 
   <property name="joint_4" value="jaco_joint_4" />
-  <property name="joint_4_axis_xyz" value="0 0 1" />
+  <property name="joint_4_axis_xyz" value="0 0 -1" />
   <property name="joint_4_origin_xyz" value="0.207 0 -0.01125" />
-  <property name="joint_4_origin_rpy" value="0 -${J_PI/2} 0" />
+  <property name="joint_4_origin_rpy" value="${J_PI} ${J_PI/2} 0" />
 
   <property name="joint_5" value="jaco_joint_5" />
-  <property name="joint_5_axis_xyz" value="0 0 1" />
+  <property name="joint_5_axis_xyz" value="0 0 -1" />
   <property name="joint_5_origin_xyz" value="0.0343 0 -0.06588" />
-  <property name="joint_5_origin_rpy" value="0 ${J_PI/180*55} ${J_PI}" />
+  <property name="joint_5_origin_rpy" value="0 -${J_PI/180*55} 0" />
 
   <property name="joint_6" value="jaco_joint_6" />
-  <property name="joint_6_axis_xyz" value="0 0 1" />
+  <property name="joint_6_axis_xyz" value="0 0 -1" />
   <property name="joint_6_origin_xyz" value="0.0343 0 -0.06588" />
-  <property name="joint_6_origin_rpy" value="0 ${J_PI/180*55} ${J_PI}" />
+  <property name="joint_6_origin_rpy" value="-${J_PI/180*55} 0 ${J_PI/2}" />
 
   <property name="joint_finger_1" value="jaco_joint_finger_1" />
   <property name="joint_finger_1_axis_xyz" value="0 0 1" />
