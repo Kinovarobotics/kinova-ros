@@ -5,15 +5,15 @@ import rospy
 
 import actionlib
 
-import jaco_driver.msg
+import jaco_msgs.msg
 
 import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/arm_pose', jaco_driver.msg.ArmPoseAction)
+    client = actionlib.SimpleActionClient('/jaco/arm_pose', jaco_msgs.msg.ArmPoseAction)
 
-    goal = jaco_driver.msg.ArmPoseGoal()
+    goal = jaco_msgs.msg.ArmPoseGoal()
 
     goal.pose.header.frame_id = "/jaco_api_origin"
     pose = goal.pose.pose

@@ -1,4 +1,4 @@
-Jaco ROS driver
+Jaco ROS driver - Catkin edition
 
 Currently a work in progress, more to be added (Testers, model, Moveit!, etc)
 

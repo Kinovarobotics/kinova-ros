@@ -2,7 +2,7 @@
 <package>
   <name>jaco_driver</name>
   <version>0.0.1</version>
-  <description brief="ROS stack for Kinova JACO arm">
+  <description>
 	  The ROS JACO Arm stack provides a ROS interface for the Kinova Robotics
 	  JACO robotic manipulator arm. This stack provides access to the Kinova
 	  JACO C++ hardware API through ROS.
@@ -16,7 +16,6 @@
   <license>BSD</license>
 
   <url>http://ros.org/wiki/jaco</url>
-  <review status="unreviewed" notes=""/>
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
