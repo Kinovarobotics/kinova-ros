@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
 <package>
-  <name>jaco_msgs</name>
+  <name>jaco_driver</name>
   <version>0.0.1</version>
-  <description brief="ROS stack for Kinova JACO arm - messages">
+  <description brief="ROS stack for Kinova JACO arm">
 	  The ROS JACO Arm stack provides a ROS interface for the Kinova Robotics
 	  JACO robotic manipulator arm. This stack provides access to the Kinova
 	  JACO C++ hardware API through ROS.
-	  this contains the messages, actions and services for interfacing with the arm
   </description>
 
   <author email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</author>
@@ -18,6 +17,13 @@
 
   <url>http://ros.org/wiki/jaco</url>
   <review status="unreviewed" notes=""/>
+
+
+  <!-- Author tags are optional, mutiple are allowed, one per tag -->
+  <!-- Authors do not have to be maintianers, but could be -->
+  <!-- Example: -->
+  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+
 
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
@@ -34,6 +40,7 @@
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
+  <build_depend>jaco_msgs</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>sensor_msgs</build_depend>
@@ -42,6 +49,7 @@
   <run_depend>actionlib</run_depend>
   <run_depend>actionlib_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>jaco_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>sensor_msgs</run_depend>
