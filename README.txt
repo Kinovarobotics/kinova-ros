@@ -8,3 +8,6 @@ jaco-ros/jaco_driver/lib/i386-linux-gnu
 have a bug which requires user to manual copy them into devel or install to work.
 64 bit version seems unaffected.
 
+
+FOR some reason, Kinova.so files have to be copied to /usr/lib....
+
