@@ -1,6 +1,6 @@
 <launch>
   <group ns="jaco">
-    <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" />
-    <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" />
+    <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node" />
+    <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node" />
   </group>
 </launch>

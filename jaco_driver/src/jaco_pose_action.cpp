@@ -62,10 +62,10 @@ JacoPoseActionServer::~JacoPoseActionServer()
 
 }
 
-void JacoPoseActionServer::ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &goal)
+void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
 {
-	jaco_driver::ArmPoseFeedback feedback;
-	jaco_driver::ArmPoseResult result;
+	jaco_msgs::ArmPoseFeedback feedback;
+	jaco_msgs::ArmPoseResult result;
 	feedback.pose.header.frame_id = goal->pose.header.frame_id;
 	result.pose.header.frame_id = goal->pose.header.frame_id;
 

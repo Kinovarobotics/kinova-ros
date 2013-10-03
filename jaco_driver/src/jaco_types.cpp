@@ -126,7 +126,7 @@ float JacoPose::Normalize(float value)
 	return value;
 }
 
-JacoAngles::JacoAngles(const jaco_driver::JointAngles &angles)
+JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles)
 {
 	Actuator1 = Normalize(180.0 - (angles.Angle_J1 * (180.0 / M_PI)));
 	Actuator2 = Normalize((angles.Angle_J2 * (180.0 / M_PI)) + 270.0);
@@ -146,9 +146,9 @@ JacoAngles::JacoAngles(const AngularInfo &angles)
 	Actuator6 = Normalize(angles.Actuator6);
 }
 
-jaco_driver::JointAngles JacoAngles::Angles()
+jaco_msgs::JointAngles JacoAngles::Angles()
 {
-	jaco_driver::JointAngles angles;
+	jaco_msgs::JointAngles angles;
 	angles.Angle_J1 = (180.0 - Actuator1) / (180.0 / M_PI);
 	angles.Angle_J2 = (Actuator2 - 270.0) / (180.0 / M_PI);
 	angles.Angle_J3 = (90.0 - Actuator3) / (180.0 / M_PI);
@@ -183,7 +183,7 @@ float JacoAngles::Normalize(float value)
 	return value;
 }
 
-FingerAngles::FingerAngles(const jaco_driver::FingerPosition &position)
+FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position)
 {
 	Finger1 = position.Finger_1;
 	Finger2 = position.Finger_2;
@@ -197,9 +197,9 @@ FingerAngles::FingerAngles(const FingersPosition &angle)
 	Finger3 = angle.Finger3;
 }
 
-jaco_driver::FingerPosition FingerAngles::Fingers()
+jaco_msgs::FingerPosition FingerAngles::Fingers()
 {
-	jaco_driver::FingerPosition angles;
+	jaco_msgs::FingerPosition angles;
 	angles.Finger_1 = Finger1;
 	angles.Finger_2 = Finger2;
 	angles.Finger_3 = Finger3;

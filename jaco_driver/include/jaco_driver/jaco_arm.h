@@ -17,14 +17,14 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
-#include "jaco_driver/JointVelocity.h"
-#include "jaco_driver/FingerPosition.h"
-#include "jaco_driver/JointAngles.h"
+#include "jaco_msgs/JointVelocity.h"
+#include "jaco_msgs/FingerPosition.h"
+#include "jaco_msgs/JointAngles.h"
 #include "sensor_msgs/JointState.h"
 
-#include <jaco_driver/Stop.h>
-#include <jaco_driver/Start.h>
-#include <jaco_driver/HomeArm.h>
+#include <jaco_msgs/Stop.h>
+#include <jaco_msgs/Start.h>
+#include <jaco_msgs/HomeArm.h>
 
 #include "jaco_driver/jaco_comm.h"
 
@@ -46,16 +46,16 @@ class JacoArm
 	void CartesianVelTimer(const ros::TimerEvent&);
 	void JointVelTimer(const ros::TimerEvent&);
 	void StatusTimer(const ros::TimerEvent&);
-	void VelocityMSG(const jaco_driver::JointVelocityConstPtr&);
+	void VelocityMSG(const jaco_msgs::JointVelocityConstPtr&);
 
 	void CartesianVelocityMSG(const geometry_msgs::TwistStampedConstPtr&);
 	void BroadCastAngles(void);
 	void BroadCastPosition(void);
 	void BroadCastFingerPosition(void);
 
-	bool StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res);
-	bool StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res);
-	bool HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res);
+	bool StopSRV(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res);
+	bool StartSRV(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res);
+	bool HomeArmSRV(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res);
 
 
 	private:

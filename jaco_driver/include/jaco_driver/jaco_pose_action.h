@@ -50,7 +50,7 @@
 #include "jaco_driver/jaco_comm.h"
 
 #include <actionlib/server/simple_action_server.h>
-#include <jaco_driver/ArmPoseAction.h>
+#include <jaco_msgs/ArmPoseAction.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 
@@ -62,11 +62,11 @@ class JacoPoseActionServer
 	public:
 	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
 	~JacoPoseActionServer();
-    void ActionCallback(const jaco_driver::ArmPoseGoalConstPtr &);
+    void ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
 	
 	private:
 	JacoComm &arm;
-    actionlib::SimpleActionServer<jaco_driver::ArmPoseAction> as_;
+    actionlib::SimpleActionServer<jaco_msgs::ArmPoseAction> as_;
 	tf::TransformListener listener;
 };
 

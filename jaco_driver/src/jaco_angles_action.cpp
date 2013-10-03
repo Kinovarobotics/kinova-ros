@@ -62,10 +62,10 @@ JacoAnglesActionServer::~JacoAnglesActionServer()
 
 }
 
-void JacoAnglesActionServer::ActionCallback(const jaco_driver::ArmJointAnglesGoalConstPtr &goal)
+void JacoAnglesActionServer::ActionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
-	jaco_driver::ArmJointAnglesFeedback feedback;
-	jaco_driver::ArmJointAnglesResult result;
+	jaco_msgs::ArmJointAnglesFeedback feedback;
+	jaco_msgs::ArmJointAnglesResult result;
 
 	ROS_INFO("Got an angular goal for the arm");
 

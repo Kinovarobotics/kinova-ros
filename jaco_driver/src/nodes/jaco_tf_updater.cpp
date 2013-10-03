@@ -33,7 +33,7 @@ JacoTFTree::JacoTFTree(ros::NodeHandle nh, ros::NodeHandle param_nh)
 
 }
 
-void JacoTFTree::JointAnglesMSG(const jaco_driver::JointAnglesConstPtr& joint_angles)
+void JacoTFTree::JointAnglesMSG(const jaco_msgs::JointAnglesConstPtr& joint_angles)
 {
 	current_angles.Angle_J1 = joint_angles->Angle_J1;
 	current_angles.Angle_J2 = joint_angles->Angle_J2;

@@ -50,7 +50,7 @@
 #include "jaco_driver/jaco_comm.h"
 
 #include <actionlib/server/simple_action_server.h>
-#include <jaco_driver/SetFingersPositionAction.h>
+#include <jaco_msgs/SetFingersPositionAction.h>
 
 namespace jaco
 {
@@ -60,11 +60,11 @@ class JacoFingersActionServer
 	public:
 	JacoFingersActionServer(JacoComm &, ros::NodeHandle &n);
 	~JacoFingersActionServer();
-    void ActionCallback(const jaco_driver::SetFingersPositionGoalConstPtr &);
+    void ActionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
 	
 	private:
 	JacoComm &arm;
-    actionlib::SimpleActionServer<jaco_driver::SetFingersPositionAction> as_;
+    actionlib::SimpleActionServer<jaco_msgs::SetFingersPositionAction> as_;
 };
 
 }

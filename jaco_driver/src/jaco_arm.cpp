@@ -57,10 +57,10 @@ JacoArm::JacoArm(JacoComm &arm_comm, ros::NodeHandle &nh) : arm(arm_comm)
 	/* Storing arm in home position */
 
 	/* Set up Publishers */
-	JointAngles_pub = nh.advertise<jaco_driver::JointAngles>(joint_angles_topic, 2);
+	JointAngles_pub = nh.advertise<jaco_msgs::JointAngles>(joint_angles_topic, 2);
 	JointState_pub = nh.advertise<sensor_msgs::JointState>(joint_state_topic, 2);
 	ToolPosition_pub = nh.advertise<geometry_msgs::PoseStamped>(tool_position_topic, 2);
-	FingerPosition_pub = nh.advertise<jaco_driver::FingerPosition>(finger_position_topic, 2);
+	FingerPosition_pub = nh.advertise<jaco_msgs::FingerPosition>(finger_position_topic, 2);
 
 	/* Set up Subscribers*/
 	JointVelocity_sub = nh.subscribe(joint_velocity_topic, 1, &JacoArm::VelocityMSG, this);
@@ -88,7 +88,7 @@ JacoArm::~JacoArm()
 {
 }
 
-bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeArm::Response &res)
+bool JacoArm::HomeArmSRV(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res)
 {
 	arm.HomeArm();
 	res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
@@ -96,7 +96,7 @@ bool JacoArm::HomeArmSRV(jaco_driver::HomeArm::Request &req, jaco_driver::HomeAr
 	return true;
 }
 
-void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
+void JacoArm::VelocityMSG(const jaco_msgs::JointVelocityConstPtr& joint_vel)
 {
 	if (!arm.Stopped())
 	{
@@ -122,7 +122,7 @@ void JacoArm::VelocityMSG(const jaco_driver::JointVelocityConstPtr& joint_vel)
  * Instantly stops the arm and prevents further movement until start service is
  * invoked.
  */
-bool JacoArm::StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Response &res)
+bool JacoArm::StopSRV(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
 {
 	arm.Stop();
 	res.stop_result = "JACO ARM HAS BEEN STOPPED";
@@ -136,7 +136,7 @@ bool JacoArm::StopSRV(jaco_driver::Stop::Request &req, jaco_driver::Stop::Respon
  *
  * Re-enables control of the arm after a stop.
  */
-bool JacoArm::StartSRV(jaco_driver::Start::Request &req, jaco_driver::Start::Response &res)
+bool JacoArm::StartSRV(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
 {
 	arm.Start();
 	res.start_result = "JACO ARM CONTROL HAS BEEN ENABLED";
@@ -230,7 +230,7 @@ void JacoArm::BroadCastAngles(void)
 	const char* nameArgs[] = {"arm_0_joint", "arm_1_joint", "arm_2_joint", "arm_3_joint", "arm_4_joint", "arm_5_joint"};
 	std::vector<std::string> JointName(nameArgs, nameArgs+6);
 
-	jaco_driver::JointAngles current_angles;
+	jaco_msgs::JointAngles current_angles;
 
 	sensor_msgs::JointState joint_state;
 	joint_state.name = JointName;
@@ -243,7 +243,7 @@ void JacoArm::BroadCastAngles(void)
 	//Query arm for current joint angles
 	JacoAngles arm_angles;
 	arm.GetAngles(arm_angles);
-	jaco_driver::JointAngles ros_angles = arm_angles.Angles();
+	jaco_msgs::JointAngles ros_angles = arm_angles.Angles();
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
 	joint_state.position[0] = ros_angles.Angle_J1;
@@ -287,7 +287,7 @@ void JacoArm::BroadCastFingerPosition(void)
 
 
 	FingerAngles fingers;
-	jaco_driver::FingerPosition finger_position;
+	jaco_msgs::FingerPosition finger_position;
 
 	arm.GetFingers(fingers);
 
