@@ -79,8 +79,13 @@ int main(int argc, char **argv)
 
 	ROS_INFO("Initializing the Arm");
 
+	JoystickCommand virtualCommand;
+	virtualCommand.Rotate = 0;
+
 	comm.HomeArm();
 	comm.InitializeFingers();
+
+	virtualCommand.Rotate = 1;
 
 	//create the arm object
 	jaco::JacoArm jaco(comm, nh);

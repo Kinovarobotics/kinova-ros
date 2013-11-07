@@ -8,6 +8,8 @@
 #ifndef KINOVA_DLL_COMMLAYERUBUNTU_H_
 #define KINOVA_DLL_COMMLAYERUBUNTU_H_
 
+#include <vector>
+
 #endif /* KINOVA_DLL_COMMLAYERUBUNTU_H_ */
 
 #ifdef KINOVADLLCOMMLAYER_EXPORTS
@@ -15,7 +17,7 @@
 #else
 #define KINOVADLLCOMMLAYER_API __declspec(dllimport)
 #endif
-namespace jaco_arm {
+
 //ERROR CODE
 #define NO_ERROR 1
 #define ERROR_LOAD_USB_LIBRARY 1001
@@ -47,6 +49,11 @@ struct Packet
 	unsigned char Data[PACKET_DATA_SIZE];
 };
 
+struct PacketList
+{
+	std::vector<Packet> packets;
+};
+
 extern "C" __attribute__ ((visibility ("default"))) int InitCommunication(void);
 
 extern "C" __attribute__ ((visibility ("default"))) int CloseCommunication(void);
@@ -54,4 +61,3 @@ extern "C" __attribute__ ((visibility ("default"))) int CloseCommunication(void)
 extern "C" __attribute__ ((visibility ("default"))) int GetDeviceCount(int &result);
 
 extern "C" __attribute__ ((visibility ("default"))) Packet SendPacket(Packet &packetOut, Packet &packetIn, int &result);
-}
