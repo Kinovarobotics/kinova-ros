@@ -56,6 +56,7 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	/* Connecting to Jaco Arm */
 	ROS_INFO("Initiating Library");
+
 	API = new JacoAPI();
 	ROS_INFO("Initiating API");
 
@@ -69,6 +70,13 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 	could not be established with the arm.  This often means the arm is not turned on, 
 	or the InitAPI command was initiated before the arm had fully booted up.
 	*/
+
+
+	// On a cold boot the arm may not respond to commands from the API right away.  
+	// This kick-starts the Control API so that it's ready to go.
+	API->StartControlAPI();
+	ros::Duration(3.0).sleep();
+	API->StopControlAPI();
 
 	if (api_result != 1)
 	{
@@ -138,9 +146,7 @@ void JacoComm::HomeArm(void)
 
 	home_command.ButtonValue[2] = 1;
 	API->SendJoystickCommand(home_command);
-
 	WaitForHome(25);
-
 	home_command.ButtonValue[2] = 0;
 	API->SendJoystickCommand(home_command);
 }
@@ -152,17 +158,58 @@ void JacoComm::HomeArm(void)
  */
 void JacoComm::InitializeFingers(void)
 {
-	FingerAngles fingers_home;
+/*
+// The old finger initialization routine.  Confirmed compatible with Jaco running 4.x firmware.
+	FingerAngles old_fingers_home;
 
 	// Set the fingers fully "open." This is required to initialize the fingers.
-	SetFingers(fingers_home, 5);
+	old_fingers_home.Finger1 = 0.0;
+	old_fingers_home.Finger2 = 0.0;
+	old_fingers_home.Finger3 = 0.0;
+	SetFingers(old_fingers_home, 5);
 	ros::Duration(3.0).sleep();
 
 	// Set the fingers to "half-open"
-	fingers_home.Finger1 = 40;
-	fingers_home.Finger2 = 40;
-	fingers_home.Finger3 = 40;
-	SetFingers(fingers_home, 5);
+	old_fingers_home.Finger1 = 40.0;
+	old_fingers_home.Finger2 = 40.0;
+	old_fingers_home.Finger3 = 40.0;
+	SetFingers(old_fingers_home, 5);
+*/
+
+
+
+// The new finger initialization routine.  Compatible with 5.0.3.0012 firmware.  Requires "open fingers" and "close fingers"
+// to be mapped to the APIvirtualjoystick buttons 13 and 15.
+
+	API->StartControlAPI();
+
+	JoystickCommand fingers_home;
+	memset(&fingers_home, 0, sizeof(fingers_home)); //zero structure
+
+	fingers_home.ButtonValue[15] = 1;
+
+	for(int i = 0; i < 800; i++)
+	{
+	    API->SendJoystickCommand(fingers_home);
+	    usleep(1000);
+	}
+
+	fingers_home.ButtonValue[15] = 0;
+
+        API->SendJoystickCommand(fingers_home);
+
+	fingers_home.ButtonValue[13] = 1;
+
+	for(int i = 0; i < 800; i++)
+	{
+	    API->SendJoystickCommand(fingers_home);
+	    usleep(1000);
+	}
+
+	fingers_home.ButtonValue[13] = 0;
+
+	API->SendJoystickCommand(fingers_home);
+
 }
 
 /*!
@@ -252,9 +299,32 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 
 	API->StartControlAPI();
 
-	Jaco_Position.Position.HandMode = POSITION_MODE;
-	Jaco_Position.Position.Fingers = fingers;
 
+	// Initialize Cartesian control of the fingers
+	Jaco_Position.Position.HandMode = THREEFINGER;
+	Jaco_Position.Position.Type = CARTESIAN_POSITION;
+	Jaco_Position.Position.Fingers = fingers;
+	Jaco_Position.Position.Delay = 0.0;
+	Jaco_Position.LimitationsActive = 0;
+
+	// When loading a cartesian position for the fingers, values are required for the arm joints
+	// as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
+	JacoPose pose;
+	GetPosition(pose);
+
+	Jaco_Position.Position.CartesianPosition.X = pose.X;
+	Jaco_Position.Position.CartesianPosition.Y = pose.Y;
+	Jaco_Position.Position.CartesianPosition.Z = pose.Z;
+	Jaco_Position.Position.CartesianPosition.ThetaX = pose.ThetaX;
+	Jaco_Position.Position.CartesianPosition.ThetaY =pose.ThetaY;
+	Jaco_Position.Position.CartesianPosition.ThetaZ = pose.ThetaZ;
+
+	//ROS_INFO("Finger1: %f", Jaco_Position.Position.Fingers.Finger1);
+	//ROS_INFO("Finger2: %f", Jaco_Position.Position.Fingers.Finger2);
+	//ROS_INFO("Finger3: %f", Jaco_Position.Position.Fingers.Finger3);
+
+
+	// Send the position to the arm.
 	API->SendAdvanceTrajectory(Jaco_Position);
 	ROS_DEBUG("Sending Fingers");
 }
@@ -422,9 +492,9 @@ void JacoComm::PrintConfig(ClientConfigurations config)
 	ROS_INFO("Organization = %s", config.Organization);
 	ROS_INFO("Serial = %s", config.Serial);
 	ROS_INFO("Model = %s", config.Model);
-	ROS_INFO("MaxLinearSpeed = %f", config.MaxLinearSpeed);
-	ROS_INFO("MaxAngularSpeed = %f", config.MaxAngularSpeed);
-	ROS_INFO("MaxLinearAcceleration = %f", config.MaxLinearAcceleration);
+	//ROS_INFO("MaxLinearSpeed = %f", config.MaxLinearSpeed);
+	//ROS_INFO("MaxAngularSpeed = %f", config.MaxAngularSpeed);
+	//ROS_INFO("MaxLinearAcceleration = %f", config.MaxLinearAcceleration);
 	ROS_INFO("MaxForce = %f", config.MaxForce);
 	ROS_INFO("Sensibility = %f", config.Sensibility);
 	ROS_INFO("DrinkingHeight = %f", config.DrinkingHeight);

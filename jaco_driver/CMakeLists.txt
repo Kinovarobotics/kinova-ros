@@ -118,8 +118,8 @@ add_dependencies(jaco_arm ${catkin_EXPORTED_TARGETS})
 add_executable(jaco_arm_driver src/nodes/jaco_arm_driver.cpp )
 add_executable(jaco_tf_updater src/nodes/jaco_tf_updater.cpp )
 
-#add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
-#add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
+add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
+add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(jaco_arm_driver jacoapi)
 target_link_libraries(jaco_comm jacoapi)
@@ -165,6 +165,12 @@ install(FILES
 	lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.USBCommandLayerUbuntu.so
 	DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
+
+install(DIRECTORY include/${PROJECT_NAME}/
+   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+   FILES_MATCHING PATTERN "*.h"
+   PATTERN ".svn" EXCLUDE
+ )
 
 
 ## Mark executables and/or libraries for installation
