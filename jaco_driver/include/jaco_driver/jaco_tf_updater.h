@@ -13,7 +13,7 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
-#include "jaco_driver/JointAngles.h"
+#include "jaco_msgs/JointAngles.h"
 #include <jaco_driver/jaco_arm_kinematics.h>
 #include <time.h>
 
@@ -25,13 +25,13 @@ public:
 	JacoTFTree(ros::NodeHandle nh, ros::NodeHandle param_nh);
 
 private:
-	void JointAnglesMSG(const jaco_driver::JointAnglesConstPtr& joint_angles);
+	void JointAnglesMSG(const jaco_msgs::JointAnglesConstPtr& joint_angles);
 	void CalculatePostion(void);
 	void TFUpdateTimer(const ros::TimerEvent&);
 
 
 	jaco::JacoKinematics kinematics;
-	jaco_driver::JointAngles current_angles;
+	jaco_msgs::JointAngles current_angles;
 	ros::Time last_angle_update;
 	ros::Subscriber joint_angles_sub;
 	ros::Timer tf_update_timer;

@@ -16,9 +16,9 @@ def pose_client():
     goal = jaco_driver.msg.SetFingersPositionGoal()
 
     if len(sys.argv) < 4:
-        goal.fingers.Finger_1 = 40.0 
-        goal.fingers.Finger_2 = 40.0
-        goal.fingers.Finger_3 = 40.0
+        goal.fingers.Finger_1 = 4000
+        goal.fingers.Finger_2 = 4000
+        goal.fingers.Finger_3 = 4000
 
         rospy.logwarn("Using test goal: \n%s", goal)
     else:

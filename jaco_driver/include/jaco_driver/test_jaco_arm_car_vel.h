@@ -19,7 +19,7 @@
 #include <tf/tf.h>
 #include <ros/ros.h>
 #include <dynamic_reconfigure/server.h>
-#include <jaco_driver/JacoVelocityConfig.h>
+#include <jaco_msgs/JacoVelocityConfig.h>
 #include <std_msgs/String.h>
 
 
@@ -33,11 +33,11 @@ public:
 private:
 	void TimerCallback(const ros::TimerEvent&);
 
-	void callback(jaco_driver::JacoVelocityConfig &config, uint32_t level);
+	void callback(jaco_msgs::JacoVelocityConfig &config, uint32_t level);
 	ros::Publisher pub;
 	ros::Timer timer;
-	dynamic_reconfigure::Server<jaco_driver::JacoVelocityConfig> dr_server;
-	dynamic_reconfigure::Server<jaco_driver::JacoVelocityConfig>::CallbackType dr_call;
+	dynamic_reconfigure::Server<jaco_msgs::JacoVelocityConfig> dr_server;
+	dynamic_reconfigure::Server<jaco_msgs::JacoVelocityConfig>::CallbackType dr_call;
 
 	float x_vel ;
 	float y_vel ;

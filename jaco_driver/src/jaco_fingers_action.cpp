@@ -62,10 +62,10 @@ JacoFingersActionServer::~JacoFingersActionServer()
 
 }
 
-void JacoFingersActionServer::ActionCallback(const jaco_driver::SetFingersPositionGoalConstPtr &goal)
+void JacoFingersActionServer::ActionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal)
 {
-	jaco_driver::SetFingersPositionFeedback feedback;
-	jaco_driver::SetFingersPositionResult result;
+	jaco_msgs::SetFingersPositionFeedback feedback;
+	jaco_msgs::SetFingersPositionResult result;
 
 	ROS_INFO("Got a finger goal for the arm");
 
