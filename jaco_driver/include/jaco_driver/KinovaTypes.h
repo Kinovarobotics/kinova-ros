@@ -121,19 +121,25 @@ const int USB_DATA_SIZE = 56;
 enum POSITION_TYPE
 {
 
-	NOMOVEMENT_POSITION,    /*!< Used for initialisation. */
-	CARTESIAN_POSITION,     /*!< A cartesian position described by a translation X, Y, Z and an orientation ThetaX, thetaY and ThetaZ. */
-	ANGULAR_POSITION,       /*!< An angular position described by a value for each actuator. */
-	RETRACTED_POSITION,     /*!< A position used in a READY/RETRACT transition. */
-	PREDEFINED_POSITION_1,  /*!< A pre programmed position stored in flash. */
-	PREDEFINED_POSITION_2,  /*!< A pre programmed position stored in flash. */
-	PREDEFINED_POSITION_3,  /*!< A pre programmed position stored in flash. */
-	CARTESIAN_VELOCITY,     /*!< A velocity vector used for velocity control. */
-	ANGULAR_VELOCITY,       /*!< Used for initialisation. */
-	PREDEFINED_POSITION_4,  /*!< A pre programmed position stored in flash. */
-	PREDEFINED_POSITION_5,  /*!< A pre programmed position stored in flash. */
-	ANY_TRAJECTORY,         /*!< Not used. */
-	TIME_DELAY,             /*!< Position used as a time delay. */
+	NOMOVEMENT_POSITION = 0,    /*!< Used for initialisation. */
+	CARTESIAN_POSITION = 1,     /*!< A cartesian position described by a translation X, Y, Z and an orientation ThetaX, thetaY and ThetaZ. */
+	ANGULAR_POSITION = 2,       /*!< An angular position described by a value for each actuator. */
+	CARTESIAN_VELOCITY = 7,     /*!< A velocity vector used for velocity control. */
+	ANGULAR_VELOCITY = 8,       /*!< Used for initialisation. */
+	ANY_TRAJECTORY = 11,        /*!< Not used. */
+	TIME_DELAY = 12,            /*!< Position used as a time delay. */
+};
+
+
+enum PERIPHERAL_TYPE
+{
+	PERIPHERAL_TYPE_NONE = 0,               /*!< Unknown type. */
+	PERIPHERAL_TYPE_ANY = 1,                /*!< Abstract peripheral. internal use only.*/
+	PERIPHERAL_TYPE_ACTUATORK01 = 100,      /*!< A joint's actuator. */
+	PERIPHERAL_TYPE_FINGERK01 = 200,        /*!< A finger. */
+	PERIPHERAL_TYPE_JOYSTICK = 300,         /*!< A joystick. */
+	PERIPHERAL_TYPE_VIRTUAL_JOYSTICK = 301, /*!< A virtual joystick. This is mainly used by the API. */
+	PERIPHERAL_TYPE_CAN_INTERFACE = 400,    /*!< A CAN interface on the main board. */
 };
 
 /**
@@ -141,13 +147,9 @@ enum POSITION_TYPE
  */
 enum HAND_MODE
 {
-	HAND_NOMOVEMENT, /*!< End effector will not move. */
-	POSITION_MODE,   /*!< End effector will move using position control. */
-	VELOCITY_MODE,   /*!< End effector will move using velocity control. */
-    NO_FINGER,       /*!< End effector will move without any finger. */
-    ONE_FINGER,      /*!< End effector will move using one finger. */
-    TWO_FINGER,      /*!< End effector will move using two fingers. */
-    THREEFINGER      /*!< End effector will move using three fingers. */
+	HAND_NOMOVEMENT, /*!< Fingers will not move. */
+	POSITION_MODE,   /*!< Fingers will move using position control. */
+	VELOCITY_MODE,   /*!< Fingers will move using velocity control. */
 };
 
 /**
@@ -649,7 +651,7 @@ struct UserPosition
 	AngularInfo Actuators;
 
 	/**
-	 * @brief Mode of the end effector.
+	 * @brief Mode of the gripper.
 	 */
 	HAND_MODE HandMode;
 
@@ -938,12 +940,12 @@ enum  ControlFunctionalityTypeEnum
 	/**
 	 * @brief Default value, represents nothing.
 	 */
-	CF_NoFunctionality,
+	CF_NoFunctionality = 0,
 
 	/**
 	 * @brief Virtually turn on and off the joystick.
 	 */
-	CF_Disable_EnableJoystick,
+	CF_Disable_EnableJoystick = 1,
 
 	/**
 	 * @brief Home the robot if the is initialized and anywhere in the workspace except between the READY and RETRACTED position.
@@ -951,199 +953,246 @@ enum  ControlFunctionalityTypeEnum
 	 * RETRACTED position.
 	 * is in READY mode.
 	 */
-	CF_Retract_ReadyToUse,
+	CF_Retract_ReadyToUse = 2,
 
 	/**
 	 * @brief Not used for now.
 	 */
-	CF_Change_TwoAxis_ThreeAxis,
+	CF_Change_TwoAxis_ThreeAxis = 3,
 
 	/**
 	 * @brief Put the robotical arm in the drinking mode.
 	 */
-	CF_Change_DrinkingMode,
+	CF_Change_DrinkingMode = 4,
 
 	/**
 	 * @brief Iterate mode in the list A.
 	 */
-	CF_Cycle_ModeA_list,
+	CF_Cycle_ModeA_list = 5,
 
 	/**
 	 * @brief Iterate mode in the list B.
 	 */
-	CF_Cycle_ModeB_list,
+	CF_Cycle_ModeB_list = 6,
 
 	/**
 	 * @brief Divide the velocity by 2.
 	 */
-	CF_DecreaseSpeed,
+	CF_DecreaseSpeed = 7,
 
 	/**
 	 * @brief Double the speed.
 	 */
-	CF_IncreaseSpeed,
+	CF_IncreaseSpeed = 8,
 
 	/**
 	 * @brief Move the robotical arm's end position to the GOTO position 1.
 	 */
-	CF_Goto_Position1,
+	CF_Goto_Position1 = 9,
 
 	/**
 	 * @brief Move the robotical arm's end position to the GOTO position 2.
 	 */
-	CF_Goto_Position2,
+	CF_Goto_Position2 = 10,
 
 	/**
 	 * @brief Move the robotical arm's end position to the GOTO position 3.
 	 */
-	CF_Goto_Position3,
+	CF_Goto_Position3 = 11,
 
 	/**
 	 * @brief Move the robotical arm's end position to the GOTO position 4.
 	 */
-	CF_Goto_Position4,
+	CF_Goto_Position4 = 12,
 
 	/**
 	 * @brief Move the robotical arm's end position to the GOTO position 5.
 	 */
-	CF_Goto_Position5,
+	CF_Goto_Position5 = 13,
 
 	/**
 	 * @brief Store the current cartesian position into the GOTO position 1.
 	 */
-	CF_RecordPosition1,
+	CF_RecordPosition1 = 14,
 
 	/**
 	 * @brief Store the current cartesian position into the GOTO position 2.
 	 */
-	CF_RecordPosition2,
+	CF_RecordPosition2 = 15,
 
 	/**
 	 * @brief Store the current cartesian position into the GOTO position 3.
 	 */
-	CF_RecordPosition3,
+	CF_RecordPosition3 = 16,
 
 	/**
 	 * @brief Store the current cartesian position into the GOTO position 4.
 	 */
-	CF_RecordPosition4,
+	CF_RecordPosition4 = 17,
 
 	/**
 	 * @brief Store the current cartesian position into the GOTO position 5.
 	 */
-	CF_RecordPosition5,
+	CF_RecordPosition5 = 18,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the X axis toward the positive values.
 	 * If the robotical arm is in angular control, this will move the actuator 1 counterclockwise.
 	 */
-	CF_X_Positive,
+	CF_X_Positive = 19,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the X axis toward the negative values.
 	 * If the robotical arm is in angular control, this will move the actuator 1 clockwise.
 	 */
-	CF_X_Negative,
+	CF_X_Negative = 20,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the Y axis toward the positive values.
 	 * If the robotical arm is in angular control, this will move the actuator 2 counterclockwise.
 	 */
-	CF_Y_Positive,
+	CF_Y_Positive = 21,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the Y axis toward the negative values.
 	 * If the robotical arm is in angular control, this will move the actuator 2 clockwise.
 	 */
-	CF_Y_Negative,
+	CF_Y_Negative = 22,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the Z axis toward the positive values.
 	 * If the robotical arm is in angular control, this will move the actuator 3 counterclockwise.
 	 */
-	CF_Z_Positive,
+	CF_Z_Positive = 23,
 
 	/**
 	 * @brief Move the robotical arm's end effector along the Z axis toward the negative values.
 	 * If the robotical arm is in angular control, this will move the actuator 3 clockwise.
 	 */
-	CF_Z_Negative,
+	CF_Z_Negative = 24,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the X axis counterclockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 4 counterclockwise.
 	 */
-	CF_R_Positive,
+	CF_R_Positive = 25,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the X axis clockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 4 clockwise.
 	 */
-	CF_R_Negative,
+	CF_R_Negative = 26,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the Y axis counterclockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 5 counterclockwise.
 	 */
-	CF_U_Positive,
+	CF_U_Positive = 27,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the X axis clockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 5 clockwise.
 	 */
-	CF_U_Negative,
+	CF_U_Negative = 28,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the Z axis counterclockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 6 counterclockwise.
 	 */
-	CF_V_Positive,
+	CF_V_Positive = 29,
 
 	/**
 	 * @brief Rotate the robotical arm's end effector around the Z axis clockwise.
 	 * If the robotical arm is in angular control, this will move the actuator 6 clockwise.
 	 */
-	CF_V_Negative,
+	CF_V_Negative = 30,
 
 	/**
 	 * @brief Not used for now.
 	 */
-	CF_OpenHandOneFingers,
+	CF_OpenHandOneFingers = 31,
 
 	/**
 	 * @brief Not used for now.
 	 */
-	CF_CloseHandOneFingers,
+	CF_CloseHandOneFingers = 32,
 
 	/**
 	 * @brief Open fingers 1 and 2 of the hand.
 	 */
-	CF_OpenHandTwoFingers,
+	CF_OpenHandTwoFingers = 33,
 
 	/**
 	 * @brief Close fingers 1 and 2 of the hand.
 	 */
-	CF_CloseHandTwoFingers,
+	CF_CloseHandTwoFingers = 34,
 
 	/**
 	 * @brief Open fingers 1, 2 and 3 of the hand.
 	 */
-	CF_OpenHandThreeFingers,
+	CF_OpenHandThreeFingers = 35,
 
 	/**
 	 * @brief Close fingers 1, 2 and 3 of the hand.
 	 */
-	CF_CloseHandThreeFingers,
+	CF_CloseHandThreeFingers = 36,
 
 	/**
 	 * @brief Put the robotical arm in angular control mode.
 	 */
-	CF_ForceAngularVelocity,
+	CF_ForceAngularVelocity = 37,
 
 	/**
 	 * @brief Turn ON/OFF the force control if the feature is available.
 	 */
-	CF_ForceControlStatus
+	CF_ForceControlStatus = 38,
+
+	CF_Trajectory = 39,
+
+	/**
+	 * @brief Orient the end effector toward the positive X Axis.
+	 */
+	CF_AutomaticOrientationXPlus = 40,
+
+	/**
+	 * @brief Orient the end effector toward the negative X Axis.
+	 */
+	CF_AutomaticOrientationXMinus = 41,
+
+	/**
+	 * @brief Orient the end effector toward the positive Y Axis.
+	 */
+	CF_AutomaticOrientationYPlus = 42,
+
+	/**
+	 * @brief Orient the end effector toward the negative Y Axis.
+	 */
+	CF_AutomaticOrientationYMinus = 43,
+
+	/**
+	 * @brief Orient the end effector toward the positive Z Axis.
+	 */
+	CF_AutomaticOrientationZPlus = 44,
+
+	/**
+	 * @brief Orient the end effector toward the negative Z Axis.
+	 */
+	CF_AutomaticOrientationZMinus = 45,
+
+	/**
+	 * @brief Move the robot along the advance GOTO position 1.
+	 */
+	CF_AdvanceGOTO_1 = 46,
+
+	/**
+	 * @brief Clear the advance GOTO's trajectory 1.
+	 */
+	CF_AdvanceGOTO_Clear_1 = 47,
+
+	/**
+	 * @brief Add a point to the advance GOTO's trajectory 1.
+	 */
+	CF_AdvanceGOTO_Add_1 = 48,
 };
 
 /**
@@ -1642,17 +1691,17 @@ struct ForcesInfo
 struct QuickStatus
 {
 	/**
-	 * @brief This flag's value is 1 if the finger #1 is detected.
+	 * @brief This flag's value is 1 if the finger #1 is initialized.
 	 */
 	unsigned char Finger1Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #1 is detected.
+	 * @brief This flag's value is 1 if the finger #1 is initialized.
 	 */
 	unsigned char Finger2Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #1 is detected.
+	 * @brief This flag's value is 1 if the finger #1 is initialized.
 	 */
 	unsigned char Finger3Status;
 
@@ -2265,4 +2314,174 @@ struct GeneralInformations
 	 * Not used for now
 	 */
 	unsigned char ExpansionsBytes[192];
+};
+
+/** @brief This data structure holds acceleration values(X, Y, Z) in an angular(joint by joint) control context.
+ *  \struct AngularAcceleration KinovaTypes.h "Definition"
+ */
+struct AngularAcceleration
+{
+	/**
+	 * Acceleration on X axis of the joint #1. Unit is G.
+	 * @brief Acceleration on X axis of the joint #1. Unit is G.
+	 */
+	float Actuator1_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #1. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #1. Unit is G.
+	 */
+	float Actuator1_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #1. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #1. Unit is G.
+	 */
+	float Actuator1_Z;
+
+	/**
+	 * Acceleration on X axis of the joint #2. Unit is G.
+	 * @brief Acceleration on X axis of the joint #2. Unit is G.
+	 */
+	float Actuator2_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #2. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #2. Unit is G.
+	 */
+	float Actuator2_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #2. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #2. Unit is G.
+	 */
+	float Actuator2_Z;
+
+	/**
+	 * Acceleration on X axis of the joint #3. Unit is G.
+	 * @brief Acceleration on X axis of the joint #3. Unit is G.
+	 */
+	float Actuator3_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #3. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #3. Unit is G.
+	 */
+	float Actuator3_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #3. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #3. Unit is G.
+	 */
+	float Actuator3_Z;
+
+	/**
+	 * Acceleration on X axis of the joint #4. Unit is G.
+	 * @brief Acceleration on X axis of the joint #4. Unit is G.
+	 */
+	float Actuator4_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #4. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #4. Unit is G.
+	 */
+	float Actuator4_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #4. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #4. Unit is G.
+	 */
+	float Actuator4_Z;
+
+	/**
+	 * Acceleration on X axis of the joint #5. Unit is G.
+	 * @brief Acceleration on X axis of the joint #5. Unit is G.
+	 */
+	float Actuator5_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #5. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #5. Unit is G.
+	 */
+	float Actuator5_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #5. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #5. Unit is G.
+	 */
+	float Actuator5_Z;
+
+	/**
+	 * Acceleration on X axis of the joint #6. Unit is G.
+	 * @brief Acceleration on X axis of the joint #6. Unit is G.
+	 */
+	float Actuator6_X;
+
+	/**
+	 * Acceleration on Y axis of the joint #6. Unit is G.
+	 * @brief Acceleration on Y axis of the joint #6. Unit is G.
+	 */
+	float Actuator6_Y;
+
+	/**
+	 * Acceleration on Z axis of the joint #6. Unit is G.
+	 * @brief Acceleration on Z axis of the joint #6. Unit is G.
+	 */
+	float Actuator6_Z;
+
+	/**
+	 * This method will initialises all the values to 0
+	 */
+	void InitStruct()
+	{
+		Actuator1_X = 0.0f;
+		Actuator1_Y = 0.0f;
+		Actuator1_Z = 0.0f;
+		Actuator2_X = 0.0f;
+		Actuator2_Y = 0.0f;
+		Actuator2_Z = 0.0f;
+		Actuator3_X = 0.0f;
+		Actuator3_Y = 0.0f;
+		Actuator3_Z = 0.0f;
+		Actuator4_X = 0.0f;
+		Actuator4_Y = 0.0f;
+		Actuator4_Z = 0.0f;
+		Actuator5_X = 0.0f;
+		Actuator5_Y = 0.0f;
+		Actuator5_Z = 0.0f;
+		Actuator6_X = 0.0f;
+		Actuator6_Y = 0.0f;
+		Actuator6_Z = 0.0f;
+	}
+};
+
+/** @brief This data structure holds information that describes an abstract peripheral.
+ *  \struct PeripheralInfo KinovaTypes.h "Definition"
+ */
+struct PeripheralInfo
+{
+	/**
+	 * @brief Handle to the peripheral. Internal use only.
+	 */
+	unsigned int Handle;
+
+	/**
+	 * @brief Type of peripheral.
+	 */
+	unsigned int Type;
+
+	/**
+	 * @brief Port's type of the peripheral.
+	 */
+	unsigned int Port;
+
+	/**
+	 * @brief Address of the peripheral.
+	 */
+	unsigned int Address;
+
+	/**
+	 * @brief The code's version of the peripheral.
+	 */
+	unsigned int CodeVersion;
 };
