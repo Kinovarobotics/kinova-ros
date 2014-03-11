@@ -65,6 +65,10 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 
 	api_result = (API->InitAPI());
 
+	ROS_INFO("api_result: %d", api_result);
+
+	ROS_INFO("Step 1");
+
 	/* 
 	A common result that may be returned is "1014", which means communications
 	could not be established with the arm.  This often means the arm is not turned on, 
@@ -75,8 +79,12 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 	// On a cold boot the arm may not respond to commands from the API right away.  
 	// This kick-starts the Control API so that it's ready to go.
 	API->StartControlAPI();
+	ROS_INFO("Step 1.5");
+
 	ros::Duration(3.0).sleep();
 	API->StopControlAPI();
+
+	ROS_INFO("Step 2");
 
 	if (api_result != 1)
 	{
