@@ -301,7 +301,7 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 
 
 	// Initialize Cartesian control of the fingers
-	Jaco_Position.Position.HandMode = THREEFINGER;
+	Jaco_Position.Position.HandMode = POSITION_MODE;
 	Jaco_Position.Position.Type = CARTESIAN_POSITION;
 	Jaco_Position.Position.Fingers = fingers;
 	Jaco_Position.Position.Delay = 0.0;
