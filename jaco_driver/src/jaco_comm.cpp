@@ -65,10 +65,6 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 
 	api_result = (API->InitAPI());
 
-	ROS_INFO("api_result: %d", api_result);
-
-	ROS_INFO("Step 1");
-
 	/* 
 	A common result that may be returned is "1014", which means communications
 	could not be established with the arm.  This often means the arm is not turned on, 
@@ -79,12 +75,9 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 	// On a cold boot the arm may not respond to commands from the API right away.  
 	// This kick-starts the Control API so that it's ready to go.
 	API->StartControlAPI();
-	ROS_INFO("Step 1.5");
 
 	ros::Duration(3.0).sleep();
 	API->StopControlAPI();
-
-	ROS_INFO("Step 2");
 
 	if (api_result != 1)
 	{
@@ -99,6 +92,7 @@ JacoComm::JacoComm(JacoAngles home) : software_stop(false), home_position(home)
 	{
 		ROS_INFO("API Initialized Successfully!");
 	}
+
 }
 
 JacoComm::~JacoComm()
@@ -115,12 +109,20 @@ JacoComm::~JacoComm()
 bool JacoComm::HomeState(void)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
-	const float tolerance = 2.0; //dead zone for angles (degrees)
 
-	AngularPosition cur_angles; //holds the current angles of the arm
-	API->GetAngularPosition(cur_angles); //update current arm angles
+	QuickStatus currentstat;
+	API->GetQuickStatus(currentstat);
 
-	return home_position.Compare(JacoAngles(cur_angles.Actuators), tolerance);
+	//ROS_INFO("Retract State: %d", currentstat.RetractType);
+	
+	if (currentstat.RetractType == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 /*!
@@ -446,6 +448,20 @@ void JacoComm::GetConfig(ClientConfigurations &config)
 	memset(&config, 0, sizeof(config)); //zero structure
 	API->GetClientConfigurations(config);
 }
+
+/*!
+ * \brief API call to obtain the current "quick status".
+ */
+void JacoComm::GetQuickStatus(QuickStatus &quickstat)
+{
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	memset(&quickstat, 0, sizeof(quickstat)); //zero structure
+
+	API->GetQuickStatus(quickstat);
+
+	//ROS_INFO("Retract State: %d", quickstat.RetractType);
+}
+
 
 /*!
  * \brief Dumps the current joint angles onto the screen.  

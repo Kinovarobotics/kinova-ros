@@ -27,6 +27,7 @@ public:
 	JacoAPI(void);
 	int (*InitAPI)(void);
 	int (*CloseAPI)(void);
+	int (*GetQuickStatus)(QuickStatus &);
 	int (*GetCodeVersion)(std::vector<int> &);
 	int (*GetCartesianPosition)(CartesianPosition &);
 	int (*GetAngularPosition)(AngularPosition &);

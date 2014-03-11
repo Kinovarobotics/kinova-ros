@@ -1696,12 +1696,12 @@ struct QuickStatus
 	unsigned char Finger1Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #1 is initialized.
+	 * @brief This flag's value is 1 if the finger #2 is initialized.
 	 */
 	unsigned char Finger2Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #1 is initialized.
+	 * @brief This flag's value is 1 if the finger #3 is initialized.
 	 */
 	unsigned char Finger3Status;
 

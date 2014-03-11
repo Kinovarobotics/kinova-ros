@@ -71,6 +71,9 @@ JacoAPI::JacoAPI(void) {
 	SendBasicTrajectory = (int (*)(
 			TrajectoryPoint))dlsym(USBLib, "SendBasicTrajectory");
 
+	GetQuickStatus = (int (*)(
+			QuickStatus &))dlsym(USBLib, "GetQuickStatus");
+
 	GetClientConfigurations = (int (*)(
 			ClientConfigurations &))dlsym(USBLib, "GetClientConfigurations");
 
