@@ -60,6 +60,10 @@ JacoAPI::JacoAPI(void) {
 
 	StopControlAPI = (int (*)())dlsym(USBLib, "StopControlAPI");
 
+	MoveHome = (int (*)())dlsym(USBLib, "MoveHome");
+
+	InitFingers = (int (*)())dlsym(USBLib, "InitFingers");
+
 	RestoreFactoryDefault = (int (*)())dlsym(USBLib, "RestoreFactoryDefault");
 
 	SendJoystickCommand = (int (*)(

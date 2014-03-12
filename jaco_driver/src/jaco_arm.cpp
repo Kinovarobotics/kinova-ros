@@ -242,7 +242,9 @@ void JacoArm::BroadCastAngles(void)
 
 	//Query arm for current joint angles
 	JacoAngles arm_angles;
+	//JacoForces arm_forces;
 	arm.GetAngles(arm_angles);
+	//API->GetForcesInfo(arm_forces);
 	jaco_msgs::JointAngles ros_angles = arm_angles.Angles();
 
 	// Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
@@ -252,6 +254,14 @@ void JacoArm::BroadCastAngles(void)
 	joint_state.position[3] = ros_angles.Angle_J4;
 	joint_state.position[4] = ros_angles.Angle_J5;
 	joint_state.position[5] = ros_angles.Angle_J6;
+
+	// Place the arm actuator forces into the array
+	//joint_state.effort[0] = arm_forces.Actuator1;
+	//joint_state.effort[1] = arm_forces.Actuator2;
+	//joint_state.effort[2] = arm_forces.Actuator3;
+	//joint_state.effort[3] = arm_forces.Actuator4;
+	//joint_state.effort[4] = arm_forces.Actuator5;
+	//joint_state.effort[5] = arm_forces.Actuator6;
 
 	//Publish the joint state messages
 	ros_angles.Angle_J1 = arm_angles.Actuator1;

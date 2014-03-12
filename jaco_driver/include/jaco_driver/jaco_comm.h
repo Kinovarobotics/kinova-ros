@@ -72,6 +72,7 @@ class JacoComm
 	void GetPosition(JacoPose &position);
 	void GetFingers(FingerAngles &fingers);
 	void GetQuickStatus(QuickStatus &quickstat);
+	//void GetForcesInfo(ForcesInfo &forces);
 	void GetConfig(ClientConfigurations &config);
 	void PrintAngles(JacoAngles &angles);
 	void PrintPosition(JacoPose &position);

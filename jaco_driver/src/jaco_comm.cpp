@@ -149,16 +149,10 @@ void JacoComm::HomeArm(void)
 		return;
 	}
 
-	API->StartControlAPI();
+	//API->StartControlAPI();
 
-	JoystickCommand home_command;
-	memset(&home_command, 0, sizeof(home_command)); //zero structure
-
-	home_command.ButtonValue[2] = 1;
-	API->SendJoystickCommand(home_command);
-	WaitForHome(25);
-	home_command.ButtonValue[2] = 0;
-	API->SendJoystickCommand(home_command);
+	ROS_INFO("Homing the Arm");
+	API->MoveHome();
 }
 
 /*!
@@ -168,29 +162,11 @@ void JacoComm::HomeArm(void)
  */
 void JacoComm::InitializeFingers(void)
 {
-/*
-// The old finger initialization routine.  Confirmed compatible with Jaco running 4.x firmware.
-	FingerAngles old_fingers_home;
-
-	// Set the fingers fully "open." This is required to initialize the fingers.
-	old_fingers_home.Finger1 = 0.0;
-	old_fingers_home.Finger2 = 0.0;
-	old_fingers_home.Finger3 = 0.0;
-	SetFingers(old_fingers_home, 5);
-	ros::Duration(3.0).sleep();
-
-	// Set the fingers to "half-open"
-	old_fingers_home.Finger1 = 40.0;
-	old_fingers_home.Finger2 = 40.0;
-	old_fingers_home.Finger3 = 40.0;
-	SetFingers(old_fingers_home, 5);
-*/
-
-
 
 // The new finger initialization routine.  Compatible with 5.0.3.0012 firmware.  Requires "open fingers" and "close fingers"
 // to be mapped to the APIvirtualjoystick buttons 13 and 15.
 
+/*
 	API->StartControlAPI();
 
 	JoystickCommand fingers_home;
@@ -219,6 +195,14 @@ void JacoComm::InitializeFingers(void)
 	fingers_home.ButtonValue[13] = 0;
 
 	API->SendJoystickCommand(fingers_home);
+*/
+
+// Firmware version 5.05 adds a finger initialization routine.
+
+	//API->StartControlAPI();
+	ROS_INFO("Initializing Fingers");
+	API->InitFingers();
+	//ROS_INFO("Fingers Complete");
 
 }
 
@@ -438,6 +422,20 @@ void JacoComm::GetFingers(FingerAngles &fingers)
 
 	fingers = Jaco_Position.Fingers;
 }
+
+/*!
+ * \brief API call to obtain the current actuator forces.
+ */
+
+/*
+void JacoComm::GetForcesInfo(ForcesInfo &forces)
+{
+	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	memset(&forces, 0, sizeof(forces)); //zero structure
+
+	API->GetForcesInfo(forces);
+}
+*/
 
 /*!
  * \brief API call to obtain the current client configuration.

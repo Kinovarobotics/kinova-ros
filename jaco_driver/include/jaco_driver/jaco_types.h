@@ -82,6 +82,20 @@ class JacoAngles : public AngularInfo
 	float Normalize(float);
 };
 
+/*class JacoForces : public ForcesInfo
+{
+	public:
+	JacoForces() {}
+	JacoForces(const jaco_msgs::JacoForces &);
+	JacoForces(const ForcesInfo &);
+
+	jaco_msgs::JacoForces Forces();
+	bool Compare(const JacoForces &, float) const;
+
+	private:
+	float Normalize(float);
+};
+*/
 
 class FingerAngles : public FingersPosition
 {

@@ -28,6 +28,7 @@ public:
 	int (*InitAPI)(void);
 	int (*CloseAPI)(void);
 	int (*GetQuickStatus)(QuickStatus &);
+	//int (*GetForcesInfo)(ForcesInfo &);
 	int (*GetCodeVersion)(std::vector<int> &);
 	int (*GetCartesianPosition)(CartesianPosition &);
 	int (*GetAngularPosition)(AngularPosition &);
@@ -43,6 +44,8 @@ public:
 	int (*SetCartesianControl)();
 	int (*StartControlAPI)();
 	int (*StopControlAPI)();
+	int (*MoveHome)();
+	int (*InitFingers)();
 	int (*RestoreFactoryDefault)();
 	int (*SendJoystickCommand)(JoystickCommand);
 	int (*SendAdvanceTrajectory)(TrajectoryPoint);
