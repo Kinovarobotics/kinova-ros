@@ -149,8 +149,7 @@ void JacoComm::HomeArm(void)
 		return;
 	}
 
-	//API->StartControlAPI();
-
+	API->StartControlAPI();
 	ROS_INFO("Homing the Arm");
 	API->MoveHome();
 }
@@ -158,51 +157,16 @@ void JacoComm::HomeArm(void)
 /*!
  * \brief Initialize finger actuators.
  *
- * Move fingers to open position, then close part way to initialize limits.
+ * Move fingers to the full-open position to initialize them for use.
  */
 void JacoComm::InitializeFingers(void)
 {
 
-// The new finger initialization routine.  Compatible with 5.0.3.0012 firmware.  Requires "open fingers" and "close fingers"
-// to be mapped to the APIvirtualjoystick buttons 13 and 15.
+// The InitFingers routine requires firmware version 5.05.x.
 
-/*
 	API->StartControlAPI();
-
-	JoystickCommand fingers_home;
-	memset(&fingers_home, 0, sizeof(fingers_home)); //zero structure
-
-	fingers_home.ButtonValue[15] = 1;
-
-	for(int i = 0; i < 800; i++)
-	{
-	    API->SendJoystickCommand(fingers_home);
-	    usleep(1000);
-	}
-
-	fingers_home.ButtonValue[15] = 0;
-
-        API->SendJoystickCommand(fingers_home);
-
-	fingers_home.ButtonValue[13] = 1;
-
-	for(int i = 0; i < 800; i++)
-	{
-	    API->SendJoystickCommand(fingers_home);
-	    usleep(1000);
-	}
-
-	fingers_home.ButtonValue[13] = 0;
-
-	API->SendJoystickCommand(fingers_home);
-*/
-
-// Firmware version 5.05 adds a finger initialization routine.
-
-	//API->StartControlAPI();
 	ROS_INFO("Initializing Fingers");
 	API->InitFingers();
-	//ROS_INFO("Fingers Complete");
 
 }
 
