@@ -171,23 +171,35 @@ void JacoComm::InitializeFingers(void)
 	API->EraseAllTrajectories();
 	ROS_INFO("Initializing Fingers");	
 
-	GetFingers(fingers_home);
+	//GetFingers(fingers_home);
+	//ROS_INFO("Finger 1: %f", fingers_home.Finger1);
+	//ROS_INFO("Finger 2: %f", fingers_home.Finger2);
 
-	if (fingers_home.Finger1 >= 10)
-	{
-		ROS_INFO("Fingers need to initialize.");
-		API->InitFingers();
-	}
-	else
-	{
-		ROS_INFO("Fingers are already in position.");
-	}
+	API->InitFingers();
+
+	// Set the fingers to "full-open"
+	fingers_home.Finger1 = 0.0;
+	fingers_home.Finger2 = 0.0;
+	fingers_home.Finger3 = 0.0;
+	SetFingers(fingers_home, 5.0);
+
+	ros::Duration(2.0).sleep();
+
+	//GetFingers(fingers_home);
+	//ROS_INFO("Finger 1 Open: %f", fingers_home.Finger1);
+	//ROS_INFO("Finger 2 Open: %f", fingers_home.Finger2);
 
 	// Set the fingers to "half-open"
-	//fingers_home.Finger1 = 40.0;
-	//fingers_home.Finger2 = 40.0;
-	//fingers_home.Finger3 = 40.0;
-	//SetFingers(fingers_home, 5);
+	fingers_home.Finger1 = 3000.0;
+	fingers_home.Finger2 = 3000.0;
+	fingers_home.Finger3 = 0.0;
+	SetFingers(fingers_home, 5.0);
+
+	ros::Duration(2.0).sleep();
+
+	//GetFingers(fingers_home);
+	//ROS_INFO("Finger 1 Moved: %f", fingers_home.Finger1);
+	//ROS_INFO("Finger 2 Moved: %f", fingers_home.Finger2);
 
 }
 
@@ -291,7 +303,7 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 
 	API->StartControlAPI();
 
-	ROS_INFO("Got a finger command");
+	//ROS_INFO("Got a finger command");
 
 	// Initialize Cartesian control of the fingers
 	Jaco_Position.Position.HandMode = POSITION_MODE;
