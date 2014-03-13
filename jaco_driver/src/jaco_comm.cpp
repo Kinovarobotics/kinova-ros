@@ -149,9 +149,15 @@ void JacoComm::HomeArm(void)
 		return;
 	}
 
+	
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
+
 	ROS_INFO("Homing the Arm");
 	API->MoveHome();
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -166,9 +172,9 @@ void JacoComm::InitializeFingers(void)
 
 	FingerAngles fingers_home;
 
-	API->StopControlAPI();
-	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->StopControlAPI();
+	//API->StartControlAPI();
+	//API->EraseAllTrajectories();
 	ROS_INFO("Initializing Fingers");	
 
 	//GetFingers(fingers_home);
@@ -201,6 +207,7 @@ void JacoComm::InitializeFingers(void)
 	//ROS_INFO("Finger 1 Moved: %f", fingers_home.Finger1);
 	//ROS_INFO("Finger 2 Moved: %f", fingers_home.Finger2);
 
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -225,7 +232,9 @@ void JacoComm::SetAngles(JacoAngles &angles, int timeout, bool push)
 		API->StopControlAPI();
 	}
 	
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 	API->SetAngularControl();
 	
 	//Jaco_Position.LimitationsActive = false;
@@ -235,6 +244,8 @@ void JacoComm::SetAngles(JacoAngles &angles, int timeout, bool push)
 	Jaco_Position.Position.Actuators = angles; 
 
 	API->SendAdvanceTrajectory(Jaco_Position);
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -259,7 +270,9 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 		API->StopControlAPI();
 	}
 
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 	API->SetCartesianControl();
 
 	//Jaco_Position.LimitationsActive = false;
@@ -279,6 +292,8 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 	//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
 	API->SendBasicTrajectory(Jaco_Position);
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -301,7 +316,9 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 		API->StopControlAPI();
 	}
 
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 
 	//ROS_INFO("Got a finger command");
 
@@ -341,6 +358,8 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 	// Send the position to the arm.
 	API->SendAdvanceTrajectory(Jaco_Position);
 	ROS_DEBUG("Sending Fingers");
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -357,13 +376,17 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
 
 	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
 
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 	Jaco_Velocity.Position.Type = ANGULAR_VELOCITY;
 
 	// confusingly, velocity is passed in the position struct
 	Jaco_Velocity.Position.Actuators = joint_vel;
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -383,13 +406,17 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 
 	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
 
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 	Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
 
 	// confusingly, velocity is passed in the position struct
 	Jaco_Velocity.Position.CartesianPosition = velocities;
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -401,7 +428,10 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 void JacoComm::SetConfig(ClientConfigurations config)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
 	API->SetClientConfigurations(config);
+
+	API->StopControlAPI(); // test
 }
 
 /*!
@@ -410,6 +440,7 @@ void JacoComm::SetConfig(ClientConfigurations config)
 void JacoComm::GetAngles(JacoAngles &angles)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
 
 	AngularPosition Jaco_Position;
 	API->GetAngularPosition(Jaco_Position);
@@ -423,6 +454,8 @@ void JacoComm::GetAngles(JacoAngles &angles)
 void JacoComm::GetPosition(JacoPose &position)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
+
 	CartesianPosition Jaco_Position;
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
@@ -438,6 +471,8 @@ void JacoComm::GetPosition(JacoPose &position)
 void JacoComm::GetFingers(FingerAngles &fingers)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
+
 	CartesianPosition Jaco_Position;
 
 	API->GetCartesianPosition(Jaco_Position);
@@ -453,6 +488,8 @@ void JacoComm::GetFingers(FingerAngles &fingers)
 void JacoComm::GetForcesInfo(ForcesInfo &forces)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
+
 	memset(&forces, 0, sizeof(forces)); //zero structure
 
 	API->GetForcesInfo(forces);
@@ -465,6 +502,8 @@ void JacoComm::GetForcesInfo(ForcesInfo &forces)
 void JacoComm::GetConfig(ClientConfigurations &config)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
+
 	memset(&config, 0, sizeof(config)); //zero structure
 	API->GetClientConfigurations(config);
 }
@@ -475,6 +514,8 @@ void JacoComm::GetConfig(ClientConfigurations &config)
 void JacoComm::GetQuickStatus(QuickStatus &quickstat)
 {
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
+	
+
 	memset(&quickstat, 0, sizeof(quickstat)); //zero structure
 
 	API->GetQuickStatus(quickstat);
@@ -558,7 +599,9 @@ void JacoComm::Stop()
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	software_stop = true;
 
+	API->StopControlAPI();
 	API->StartControlAPI();
+	API->EraseAllTrajectories();
 
 	JoystickCommand home_command;
 	memset(&home_command, 0, sizeof(home_command)); //zero structure
@@ -577,6 +620,7 @@ void JacoComm::Start()
 	boost::recursive_mutex::scoped_lock lock(api_mutex);
 	software_stop = false;
 
+	API->StopControlAPI();
 	API->StartControlAPI();
 
 }
