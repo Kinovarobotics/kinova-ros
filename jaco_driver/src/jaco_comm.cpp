@@ -164,9 +164,30 @@ void JacoComm::InitializeFingers(void)
 
 // The InitFingers routine requires firmware version 5.05.x.
 
+	FingerAngles fingers_home;
+
+	API->StopControlAPI();
 	API->StartControlAPI();
-	ROS_INFO("Initializing Fingers");
-	API->InitFingers();
+	API->EraseAllTrajectories();
+	ROS_INFO("Initializing Fingers");	
+
+	GetFingers(fingers_home);
+
+	if (fingers_home.Finger1 >= 10)
+	{
+		ROS_INFO("Fingers need to initialize.");
+		API->InitFingers();
+	}
+	else
+	{
+		ROS_INFO("Fingers are already in position.");
+	}
+
+	// Set the fingers to "half-open"
+	//fingers_home.Finger1 = 40.0;
+	//fingers_home.Finger2 = 40.0;
+	//fingers_home.Finger3 = 40.0;
+	//SetFingers(fingers_home, 5);
 
 }
 
@@ -182,6 +203,7 @@ void JacoComm::SetAngles(JacoAngles &angles, int timeout, bool push)
 		return;
 
 	TrajectoryPoint Jaco_Position;
+	Jaco_Position.InitStruct();
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
@@ -215,6 +237,7 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 		return;
 
 	TrajectoryPoint Jaco_Position;
+	Jaco_Position.InitStruct();
 
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
@@ -230,6 +253,15 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 	//Jaco_Position.LimitationsActive = false;
 	Jaco_Position.Position.Delay = 0.0;
 	Jaco_Position.Position.Type = CARTESIAN_POSITION;
+	Jaco_Position.Position.HandMode = HAND_NOMOVEMENT;
+
+	// These values will not be used but are initialized anyway.
+        Jaco_Position.Position.Actuators.Actuator1 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator2 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator3 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator4 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator5 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator6 = 0.0f;
 
 	Jaco_Position.Position.CartesianPosition = position;
 	//Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
@@ -247,6 +279,8 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 		return;
 
 	TrajectoryPoint Jaco_Position;
+	Jaco_Position.InitStruct();
+
 	memset(&Jaco_Position, 0, sizeof(Jaco_Position)); //zero structure
 
 	if (push == true)
@@ -257,6 +291,7 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 
 	API->StartControlAPI();
 
+	ROS_INFO("Got a finger command");
 
 	// Initialize Cartesian control of the fingers
 	Jaco_Position.Position.HandMode = POSITION_MODE;
@@ -264,6 +299,15 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 	Jaco_Position.Position.Fingers = fingers;
 	Jaco_Position.Position.Delay = 0.0;
 	Jaco_Position.LimitationsActive = 0;
+
+	// These values will not be used but are initialized anyway.
+        Jaco_Position.Position.Actuators.Actuator1 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator2 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator3 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator4 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator5 = 0.0f;
+        Jaco_Position.Position.Actuators.Actuator6 = 0.0f;
+
 
 	// When loading a cartesian position for the fingers, values are required for the arm joints
 	// as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
@@ -297,6 +341,7 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
 		return;
 
 	TrajectoryPoint Jaco_Velocity;
+	Jaco_Velocity.InitStruct();
 
 	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
 
@@ -322,6 +367,7 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 	}
 
 	TrajectoryPoint Jaco_Velocity;
+	Jaco_Velocity.InitStruct();
 
 	memset(&Jaco_Velocity, 0, sizeof(Jaco_Velocity)); //zero structure
 
