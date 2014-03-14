@@ -152,7 +152,7 @@ void JacoComm::HomeArm(void)
 	
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 
 	ROS_INFO("Homing the Arm");
 	API->MoveHome();
@@ -167,33 +167,13 @@ void JacoComm::HomeArm(void)
  */
 void JacoComm::InitializeFingers(void)
 {
-
 // The InitFingers routine requires firmware version 5.05.x.
 
 	FingerAngles fingers_home;
 
-	//API->StopControlAPI();
-	//API->StartControlAPI();
-	//API->EraseAllTrajectories();
-	ROS_INFO("Initializing Fingers");	
-
-	//GetFingers(fingers_home);
-	//ROS_INFO("Finger 1: %f", fingers_home.Finger1);
-	//ROS_INFO("Finger 2: %f", fingers_home.Finger2);
+	ROS_INFO("Initializing Fingers");
 
 	API->InitFingers();
-
-	// Set the fingers to "full-open"
-	fingers_home.Finger1 = 0.0;
-	fingers_home.Finger2 = 0.0;
-	fingers_home.Finger3 = 0.0;
-	SetFingers(fingers_home, 5.0);
-
-	ros::Duration(2.0).sleep();
-
-	//GetFingers(fingers_home);
-	//ROS_INFO("Finger 1 Open: %f", fingers_home.Finger1);
-	//ROS_INFO("Finger 2 Open: %f", fingers_home.Finger2);
 
 	// Set the fingers to "half-open"
 	fingers_home.Finger1 = 3000.0;
@@ -201,13 +181,6 @@ void JacoComm::InitializeFingers(void)
 	fingers_home.Finger3 = 0.0;
 	SetFingers(fingers_home, 5.0);
 
-	ros::Duration(2.0).sleep();
-
-	//GetFingers(fingers_home);
-	//ROS_INFO("Finger 1 Moved: %f", fingers_home.Finger1);
-	//ROS_INFO("Finger 2 Moved: %f", fingers_home.Finger2);
-
-	API->StopControlAPI(); // test
 }
 
 /*!
@@ -234,7 +207,7 @@ void JacoComm::SetAngles(JacoAngles &angles, int timeout, bool push)
 	
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 	API->SetAngularControl();
 	
 	//Jaco_Position.LimitationsActive = false;
@@ -272,7 +245,7 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 	API->SetCartesianControl();
 
 	//Jaco_Position.LimitationsActive = false;
@@ -318,7 +291,7 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 
 	//ROS_INFO("Got a finger command");
 
@@ -378,7 +351,7 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
 
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 	Jaco_Velocity.Position.Type = ANGULAR_VELOCITY;
 
 	// confusingly, velocity is passed in the position struct
@@ -408,7 +381,7 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 
 	API->StopControlAPI();
 	API->StartControlAPI();
-	API->EraseAllTrajectories();
+	//API->EraseAllTrajectories();
 	Jaco_Velocity.Position.Type = CARTESIAN_VELOCITY;
 
 	// confusingly, velocity is passed in the position struct
