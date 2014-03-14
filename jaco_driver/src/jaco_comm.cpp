@@ -181,6 +181,8 @@ void JacoComm::InitializeFingers(void)
 	fingers_home.Finger3 = 0.0;
 	SetFingers(fingers_home, 5.0);
 
+	ros::Duration(3.0).sleep();
+
 }
 
 /*!
@@ -218,7 +220,7 @@ void JacoComm::SetAngles(JacoAngles &angles, int timeout, bool push)
 
 	API->SendAdvanceTrajectory(Jaco_Position);
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
@@ -266,7 +268,7 @@ void JacoComm::SetPosition(JacoPose &position, int timeout, bool push)
 
 	API->SendBasicTrajectory(Jaco_Position);
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
@@ -332,7 +334,7 @@ void JacoComm::SetFingers(FingerAngles &fingers, int timeout, bool push)
 	API->SendAdvanceTrajectory(Jaco_Position);
 	ROS_DEBUG("Sending Fingers");
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
@@ -359,7 +361,7 @@ void JacoComm::SetVelocities(AngularInfo joint_vel)
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
@@ -389,7 +391,7 @@ void JacoComm::SetCartesianVelocities(CartesianInfo velocities)
 
 	API->SendAdvanceTrajectory(Jaco_Velocity);
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
@@ -404,7 +406,7 @@ void JacoComm::SetConfig(ClientConfigurations config)
 	
 	API->SetClientConfigurations(config);
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
