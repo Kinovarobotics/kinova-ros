@@ -157,7 +157,7 @@ void JacoComm::HomeArm(void)
 	ROS_INFO("Homing the Arm");
 	API->MoveHome();
 
-	API->StopControlAPI(); // test
+	//API->StopControlAPI(); // test
 }
 
 /*!
