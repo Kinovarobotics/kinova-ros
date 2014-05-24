@@ -11,29 +11,62 @@
 
 #include <vector>
 #include "KinovaTypes.h"
+#include "Kinova.API.CommLayerUbuntu.h"
+#include <stdio.h>
 
 //This defines the the location of the communication layer.(Kinova.DLL.CommLayer.dll)
 #define COMM_LAYER_PATH "Kinova.API.CommLayerUbuntu.so"
 
 //This indicates the success of the current operation
 #define SUCCESS 1
+#define KINOVA_ 1
 
 // ***** E R R O R   C O D E S ******
 #define ERROR_INIT_API 2001      // Error while initializing the API
 #define ERROR_LOAD_COMM_DLL 2002 // Error while loading the communication layer
-
-#define ERROR_INVALID_PARAM 2100  // Input parameter of the function is invalid
-#define ERROR_UNKNOWN_DEVICE 2200 // The device is not recognized by the API
 
 //Those 3 codes are mostly for internal use
 #define JACO_NACK_FIRST 2003
 #define JACO_COMM_FAILED 2004
 #define JACO_NACK_NORMAL 2005
 
-//Version of the API 5.00.06
-#define COMMAND_LAYER_VERSION 50006
+//Unable to initialize the communication layer.
+#define ERROR_INIT_COMM_METHOD  2006
+
+//Unable to load the Close() function from the communication layer.
+#define ERROR_CLOSE_METHOD  2007
+
+//Unable to load the GetDeviceCount() function from the communication layer.
+#define ERROR_GET_DEVICE_COUNT_METHOD  2008
+
+//Unable to load the SendPacket() function from the communication layer.
+#define ERROR_SEND_PACKET_METHOD  2009
+
+//Unable to load the SetActiveDevice() function from the communication layer.
+#define ERROR_SET_ACTIVE_DEVICE_METHOD 2010
+
+//Unable to load the GetDeviceList() function from the communication layer.
+#define ERROR_GET_DEVICES_LIST_METHOD 2011
+
+//Unable to initialized the system semaphore.
+#define ERROR_SEMAPHORE_FAILED 2012
+
+//A function's parameter is not valid.
+#define ERROR_INVALID_PARAM 2100
+
+//The API is not initialized.
+#define ERROR_API_NOT_INITIALIZED 2101
+
+// ***** E N D  O F  E R R O R   C O D E S ******
+
+//Version of the API 5.01.01
+#define COMMAND_LAYER_VERSION 50101
 
 // ***** API'S FUNCTIONAL CORE *****
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetDevices(std::vector<KinovaDevice> &devices, int &result);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetActiveDevice(KinovaDevice device);
 
 extern "C" KINOVAAPIUSBCOMMANDLAYER_API int InitAPI(void);
 
@@ -113,7 +146,8 @@ extern "C" KINOVAAPIUSBCOMMANDLAYER_API int ClearErrorLog();
 
 extern "C" KINOVAAPIUSBCOMMANDLAYER_API int EraseAllProtectionZones();
 
-extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetSerialNumber(char Command[STRING_LENGTH]);
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetSerialNumber(char Command[STRING_LENGTH], char temp[STRING_LENGTH]);
 
 extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetControlMapping(ControlMappingCharts &Response);
 

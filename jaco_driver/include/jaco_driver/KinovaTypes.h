@@ -120,7 +120,6 @@ const int USB_DATA_SIZE = 56;
  */
 enum POSITION_TYPE
 {
-
 	NOMOVEMENT_POSITION = 0,    /*!< Used for initialisation. */
 	CARTESIAN_POSITION = 1,     /*!< A cartesian position described by a translation X, Y, Z and an orientation ThetaX, thetaY and ThetaZ. */
 	ANGULAR_POSITION = 2,       /*!< An angular position described by a value for each actuator. */
@@ -1696,12 +1695,12 @@ struct QuickStatus
 	unsigned char Finger1Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #2 is initialized.
+	 * @brief This flag's value is 1 if the finger #1 is initialized.
 	 */
 	unsigned char Finger2Status;
 
 	/**
-	 * @brief This flag's value is 1 if the finger #3 is initialized.
+	 * @brief This flag's value is 1 if the finger #1 is initialized.
 	 */
 	unsigned char Finger3Status;
 
