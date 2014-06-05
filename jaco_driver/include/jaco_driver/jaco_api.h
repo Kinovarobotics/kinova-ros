@@ -16,46 +16,43 @@
 #include <ros/ros.h>
 
 
-
-
 namespace jaco {
-#define JACO_USB_LIBRARY 			"Kinova.API.USBCommandLayerUbuntu.so"
+#define JACO_USB_LIBRARY "Kinova.API.USBCommandLayerUbuntu.so"
 
 class JacoAPI {
+ public:
+    JacoAPI(void);
+    int (*initAPI)(void);
+    int (*closeAPI)(void);
+    int (*getQuickStatus)(QuickStatus &);
+    // int (*GetForcesInfo)(ForcesInfo &);
+    int (*getCodeVersion)(std::vector<int> &);
+    int (*getCartesianPosition)(CartesianPosition &);
+    int (*getAngularPosition)(AngularPosition &);
+    int (*getCartesianForce)(CartesianPosition &);
+    int (*getAngularForce)(AngularPosition &);
+    int (*getAngularCurrent)(AngularPosition &);
+    int (*getControlOperator)(int &);
+    int (*getActualTrajectoryInfo)(TrajectoryPoint &);
+    int (*getGlobalTrajectoryInfo)(TrajectoryFIFO &);
+    int (*getSensorsInfo)(SensorsInfo &);
+    int (*getSingularityVector)(SingularityVector &);
+    int (*setAngularControl)();
+    int (*setCartesianControl)();
+    int (*startControlAPI)();
+    int (*stopControlAPI)();
+    int (*moveHome)();
+    int (*initFingers)();
+    int (*restoreFactoryDefault)();
+    int (*sendJoystickCommand)(JoystickCommand);
+    int (*sendAdvanceTrajectory)(TrajectoryPoint);
+    int (*sendBasicTrajectory)(TrajectoryPoint);
+    int (*getClientConfigurations)(ClientConfigurations &);
+    int (*setClientConfigurations)(ClientConfigurations);
+    int (*eraseAllTrajectories)();
+    int (*getPositionCurrentActuators)(std::vector<float> &);
+    int (*setActuatorPID)(unsigned int, float, float, float);
+};
+}
 
-public:
-	JacoAPI(void);
-	int (*InitAPI)(void);
-	int (*CloseAPI)(void);
-	int (*GetQuickStatus)(QuickStatus &);
-	//int (*GetForcesInfo)(ForcesInfo &);
-	int (*GetCodeVersion)(std::vector<int> &);
-	int (*GetCartesianPosition)(CartesianPosition &);
-	int (*GetAngularPosition)(AngularPosition &);
-	int (*GetCartesianForce)(CartesianPosition &);
-	int (*GetAngularForce)(AngularPosition &);
-	int (*GetAngularCurrent)(AngularPosition &);
-	int (*GetControlOperator)(int &);
-	int (*GetActualTrajectoryInfo)(TrajectoryPoint &);
-	int (*GetGlobalTrajectoryInfo)(TrajectoryFIFO &);
-	int (*GetSensorsInfo)(SensorsInfo &);
-	int (*GetSingularityVector)(SingularityVector &);
-	int (*SetAngularControl)();
-	int (*SetCartesianControl)();
-	int (*StartControlAPI)();
-	int (*StopControlAPI)();
-	int (*MoveHome)();
-	int (*InitFingers)();
-	int (*RestoreFactoryDefault)();
-	int (*SendJoystickCommand)(JoystickCommand);
-	int (*SendAdvanceTrajectory)(TrajectoryPoint);
-	int (*SendBasicTrajectory)(TrajectoryPoint);
-	int (*GetClientConfigurations)(ClientConfigurations &);
-	int (*SetClientConfigurations)(ClientConfigurations);
-	int (*EraseAllTrajectories)();
-	int (*GetPositionCurrentActuators)(std::vector<float> &);
-	int (*SetActuatorPID)(unsigned int, float, float, float);
-
-	};}
-
-#endif /* JACOLIB_H_ */
+#endif  // JACOLIB_H_

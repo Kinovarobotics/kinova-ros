@@ -71,17 +71,17 @@ void JacoAnglesActionServer::ActionCallback(const jaco_msgs::ArmJointAnglesGoalC
 
 	JacoAngles cur_position;		//holds the current position of the arm
 
-	if (arm.Stopped())
+	if (arm.isStopped())
 	{
-		arm.GetAngles(cur_position);
-		result.angles = cur_position.Angles();
+		arm.getAngles(cur_position);
+		result.angles = cur_position.constructAnglesMsg();
 
 		as_.setAborted(result);
 		return;
 	}
 
 	JacoAngles target(goal->angles);
-	arm.SetAngles(target);
+	arm.setAngles(target);
 
 	ros::Rate r(10);
  
@@ -93,29 +93,29 @@ void JacoAnglesActionServer::ActionCallback(const jaco_msgs::ArmJointAnglesGoalC
 		ros::spinOnce();
 		if (as_.isPreemptRequested() || !ros::ok())
 		{
-			arm.Stop();
-			arm.Start();
+			arm.stop();
+			arm.start();
 			as_.setPreempted();
 			return;
 		}
 
-		arm.GetAngles(cur_position);
-		feedback.angles = cur_position.Angles();
+		arm.getAngles(cur_position);
+		feedback.angles = cur_position.constructAnglesMsg();
 
-		if (arm.Stopped())
+		if (arm.isStopped())
 		{
-			result.angles = cur_position.Angles();
+			result.angles = cur_position.constructAnglesMsg();
 			as_.setAborted(result);
 			return;
 		}
 
 		as_.publishFeedback(feedback);
 
-		if (target.Compare(cur_position, tolerance))
+		if (target.compareToOther(cur_position, tolerance))
 		{
 			ROS_INFO("Angular Control Complete.");
 
-			result.angles = cur_position.Angles();
+			result.angles = cur_position.constructAnglesMsg();
 			as_.setSucceeded(result);
 			return;
 		}

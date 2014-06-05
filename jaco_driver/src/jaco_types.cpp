@@ -8,16 +8,16 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_types.cpp
  *  Desc: Wrappers around Kinova structs to facilitate easier conversion to ROS
  *		  types.
  *  Auth: Alex Bencz
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -28,7 +28,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,183 +39,156 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
-#include <jaco_driver/jaco_types.h>
-#include <tf/tf.h>
 #include <math.h>
+#include <angles/angles.h>
+#include <tf/tf.h>
+#include <jaco_driver/jaco_types.h>
 
-namespace jaco
-{
 
-bool CompareValues(float first, float second, float tolerance)
-{
-	return ((first <= second + tolerance) && (first >= second - tolerance));
+namespace jaco {
+
+// A few helper functions
+// ----------------------
+
+bool compareValues(float first, float second, float tolerance) {
+    return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 
-
-JacoPose::JacoPose(const geometry_msgs::Pose &pose)
-{
-	double tx, ty, tz;
-	tf::Quaternion q;
-	tf::quaternionMsgToTF(pose.orientation, q);
-
-	tf::Matrix3x3 bt_q(q);
-
-	bt_q.getEulerYPR(tz, ty, tx);
-
-	X = (float) pose.position.x;
-	Y = (float) pose.position.y;
-	Z = (float) pose.position.z;
-
-	ThetaX = Normalize(tx);
-	ThetaY = Normalize(ty);
-	ThetaZ = Normalize(tz);
+float normalizeInRads(float rads) {
+    return float(angles::normalize_angle_positive(rads));
 }
 
-JacoPose::JacoPose(const CartesianInfo &pose)
-{
-	X = pose.X;
-	Y = pose.Y;
-	Z = pose.Z;
-
-	ThetaX = Normalize(pose.ThetaX);
-	ThetaY = Normalize(pose.ThetaY);
-	ThetaZ = Normalize(pose.ThetaZ);
+float normalizeInDegrees(float degrees) {
+    return angles::to_degrees(angles::normalize_angle_positive(angles::from_degrees(degrees)));
 }
 
-geometry_msgs::Pose JacoPose::Pose()
-{
-	geometry_msgs::Pose pose;
-	tf::Quaternion position_quaternion;
+// Class definitions
+// -----------------
 
-	position_quaternion.setRPY(ThetaX, ThetaY, ThetaZ);
-	tf::quaternionTFToMsg(position_quaternion, pose.orientation);
+JacoPose::JacoPose(const geometry_msgs::Pose &pose) {
+    double tx, ty, tz;
+    tf::Quaternion q;
+    tf::quaternionMsgToTF(pose.orientation, q);
 
-	pose.position.x = X;
-	pose.position.y = Y;
-	pose.position.z = Z;
+    tf::Matrix3x3 bt_q(q);
 
-	return pose;
+    bt_q.getEulerYPR(tz, ty, tx);
+
+    X = (float) pose.position.x;
+    Y = (float) pose.position.y;
+    Z = (float) pose.position.z;
+
+    ThetaX = normalizeInRads(tx);
+    ThetaY = normalizeInRads(ty);
+    ThetaZ = normalizeInRads(tz);
 }
 
-bool JacoPose::Compare(const JacoPose &other, float tolerance) const
-{
-	bool status = true;
+JacoPose::JacoPose(const CartesianInfo &pose) {
+    X = pose.X;
+    Y = pose.Y;
+    Z = pose.Z;
 
-	status = status && CompareValues(X, other.X, tolerance);
-	status = status && CompareValues(Y, other.Y, tolerance);
-	status = status && CompareValues(Z, other.Z, tolerance);
-	status = status && CompareValues(ThetaX, other.ThetaX, tolerance);
-	status = status && CompareValues(ThetaY, other.ThetaY, tolerance);
-	status = status && CompareValues(ThetaZ, other.ThetaZ, tolerance);
-
-	return status;
+    ThetaX = normalizeInRads(pose.ThetaX);
+    ThetaY = normalizeInRads(pose.ThetaY);
+    ThetaZ = normalizeInRads(pose.ThetaZ);
 }
 
-float JacoPose::Normalize(float value)
-{
-	while (value > 2 * M_PI)
-		value -= 2 * M_PI;
-	while (value < 0)
-		value += 2 * M_PI;
+geometry_msgs::Pose JacoPose::constructPoseMsg() {
+    geometry_msgs::Pose pose;
+    tf::Quaternion position_quaternion;
 
-	return value;
+    position_quaternion.setRPY(ThetaX, ThetaY, ThetaZ);
+    tf::quaternionTFToMsg(position_quaternion, pose.orientation);
+
+    pose.position.x = X;
+    pose.position.y = Y;
+    pose.position.z = Z;
+
+    return pose;
 }
 
-JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles)
-{
-	Actuator1 = Normalize(180.0 - (angles.Angle_J1 * (180.0 / M_PI)));
-	Actuator2 = Normalize((angles.Angle_J2 * (180.0 / M_PI)) + 270.0);
-	Actuator3 = Normalize(90.0 - (angles.Angle_J3 * (180.0 / M_PI)));
-	Actuator4 = Normalize(180.0 - (angles.Angle_J4 * (180.0 / M_PI)));
-	Actuator5 = Normalize(180.0 - (angles.Angle_J5 * (180.0 / M_PI)));
-	Actuator6 = Normalize(260.0 - (angles.Angle_J6 * (180.0 / M_PI)));
+bool JacoPose::compareToOther(const JacoPose &other, float tolerance) const {
+    bool status = true;
+    status = status && compareValues(X, other.X, tolerance);
+    status = status && compareValues(Y, other.Y, tolerance);
+    status = status && compareValues(Z, other.Z, tolerance);
+    status = status && compareValues(ThetaX, other.ThetaX, tolerance);
+    status = status && compareValues(ThetaY, other.ThetaY, tolerance);
+    status = status && compareValues(ThetaZ, other.ThetaZ, tolerance);
+    return status;
 }
 
-JacoAngles::JacoAngles(const AngularInfo &angles)
-{
-	Actuator1 = Normalize(angles.Actuator1);
-	Actuator2 = Normalize(angles.Actuator2);
-	Actuator3 = Normalize(angles.Actuator3);
-	Actuator4 = Normalize(angles.Actuator4);
-	Actuator5 = Normalize(angles.Actuator5);
-	Actuator6 = Normalize(angles.Actuator6);
+JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
+    Actuator1 = normalizeInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
+    Actuator2 = normalizeInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
+    Actuator3 = normalizeInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
+    Actuator4 = normalizeInDegrees(180.0 - (angles.joint4 * (180.0 / M_PI)));
+    Actuator5 = normalizeInDegrees(180.0 - (angles.joint5 * (180.0 / M_PI)));
+    Actuator6 = normalizeInDegrees(260.0 - (angles.joint6 * (180.0 / M_PI)));
 }
 
-jaco_msgs::JointAngles JacoAngles::Angles()
-{
-	jaco_msgs::JointAngles angles;
-	angles.Angle_J1 = (180.0 - Actuator1) / (180.0 / M_PI);
-	angles.Angle_J2 = (Actuator2 - 270.0) / (180.0 / M_PI);
-	angles.Angle_J3 = (90.0 - Actuator3) / (180.0 / M_PI);
-	angles.Angle_J4 = (180.0 - Actuator4) / (180.0 / M_PI);
-	angles.Angle_J5 = (180.0 - Actuator5) / (180.0 / M_PI);
-	angles.Angle_J6 = (260.0 - Actuator6) / (180.0 / M_PI);
-
-	return angles;
+JacoAngles::JacoAngles(const AngularInfo &angles) {
+    Actuator1 = normalizeInDegrees(angles.Actuator1);
+    Actuator2 = normalizeInDegrees(angles.Actuator2);
+    Actuator3 = normalizeInDegrees(angles.Actuator3);
+    Actuator4 = normalizeInDegrees(angles.Actuator4);
+    Actuator5 = normalizeInDegrees(angles.Actuator5);
+    Actuator6 = normalizeInDegrees(angles.Actuator6);
 }
 
-bool JacoAngles::Compare(const JacoAngles &other, float tolerance) const 
-{
-	bool status = true;
-
-	status = status && CompareValues(Actuator1, other.Actuator1, tolerance);
-	status = status && CompareValues(Actuator2, other.Actuator2, tolerance);
-	status = status && CompareValues(Actuator3, other.Actuator3, tolerance);
-	status = status && CompareValues(Actuator4, other.Actuator4, tolerance);
-	status = status && CompareValues(Actuator5, other.Actuator5, tolerance);
-	status = status && CompareValues(Actuator6, other.Actuator6, tolerance);
-
-	return status;
+jaco_msgs::JointAngles JacoAngles::constructAnglesMsg() {
+    jaco_msgs::JointAngles angles;
+    angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
+    angles.joint2 = (Actuator2 - 270.0) / (180.0 / M_PI);
+    angles.joint3 = (90.0 - Actuator3) / (180.0 / M_PI);
+    angles.joint4 = (180.0 - Actuator4) / (180.0 / M_PI);
+    angles.joint5 = (180.0 - Actuator5) / (180.0 / M_PI);
+    angles.joint6 = (260.0 - Actuator6) / (180.0 / M_PI);
+    return angles;
 }
 
-float JacoAngles::Normalize(float value)
-{
-	while (value > 360.0)
-		value -= 360.0;
-	while (value < 0.0)
-		value += 360.0;
-
-	return value;
+bool JacoAngles::compareToOther(const JacoAngles &other, float tolerance) const {
+    bool status = true;
+    status = status && compareValues(Actuator1, other.Actuator1, tolerance);
+    status = status && compareValues(Actuator2, other.Actuator2, tolerance);
+    status = status && compareValues(Actuator3, other.Actuator3, tolerance);
+    status = status && compareValues(Actuator4, other.Actuator4, tolerance);
+    status = status && compareValues(Actuator5, other.Actuator5, tolerance);
+    status = status && compareValues(Actuator6, other.Actuator6, tolerance);
+    return status;
 }
 
-FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position)
-{
-	Finger1 = position.Finger_1;
-	Finger2 = position.Finger_2;
-	Finger3 = position.Finger_3;
+FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position) {
+    Finger1 = position.finger1;
+    Finger2 = position.finger2;
+    Finger3 = position.finger3;
 }
 
-FingerAngles::FingerAngles(const FingersPosition &angle)
-{
-	Finger1 = angle.Finger1;
-	Finger2 = angle.Finger2;
-	Finger3 = angle.Finger3;
+FingerAngles::FingerAngles(const FingersPosition &angle) {
+    Finger1 = angle.Finger1;
+    Finger2 = angle.Finger2;
+    Finger3 = angle.Finger3;
 }
 
-jaco_msgs::FingerPosition FingerAngles::Fingers()
-{
-	jaco_msgs::FingerPosition angles;
-	angles.Finger_1 = Finger1;
-	angles.Finger_2 = Finger2;
-	angles.Finger_3 = Finger3;
-
-	return angles;
+jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
+    jaco_msgs::FingerPosition angles;
+    angles.finger1 = Finger1;
+    angles.finger2 = Finger2;
+    angles.finger3 = Finger3;
+    return angles;
 }
 
-bool FingerAngles::Compare(const FingerAngles &other, float tolerance) const
-{
-	bool status = true;
-
-	status = status && CompareValues(Finger1, other.Finger1, tolerance);
-	status = status && CompareValues(Finger2, other.Finger2, tolerance);
-	status = status && CompareValues(Finger3, other.Finger3, tolerance);
-
-	return status;
+bool FingerAngles::compareToOther(const FingerAngles &other, float tolerance) const {
+    bool status = true;
+    status = status && compareValues(Finger1, other.Finger1, tolerance);
+    status = status && compareValues(Finger2, other.Finger2, tolerance);
+    status = status && compareValues(Finger3, other.Finger3, tolerance);
+    return status;
 }
 
 }

@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_types.h
  *  Desc: Wrappers around Kinova types.
  *  Auth: Alex Bencz
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,8 +38,8 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
@@ -51,64 +51,44 @@
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>
 
-namespace jaco
-{
 
-class JacoPose : public CartesianInfo
-{
-	public:
-	JacoPose() {}
-	JacoPose(const geometry_msgs::Pose &);
-	JacoPose(const CartesianInfo &);
+namespace jaco {
+// A note on style in the following classes: these classes inherit
+// from the Kinova API. That API follows a different style for naming
+// (e.g., for methods and members). In these classes we try to
+// transition to the ROS style; however, there will be cases where the
+// Kinova style is visible. When using these classes, one should only
+// see the ROS style.
 
-	geometry_msgs::Pose Pose();
-	bool Compare(const JacoPose &, float) const;
+class JacoPose : public CartesianInfo {
+ public:
+    JacoPose() {}
+    JacoPose(const geometry_msgs::Pose &pose);
+    JacoPose(const CartesianInfo &pose);
 
-	private:
-	float Normalize(float);
+    geometry_msgs::Pose constructPoseMsg();
+    bool compareToOther(const JacoPose &, float tolerance) const;
 };
 
-class JacoAngles : public AngularInfo
-{
-	public:
-	JacoAngles() {}
-	JacoAngles(const jaco_msgs::JointAngles &);
-	JacoAngles(const AngularInfo &);
+class JacoAngles : public AngularInfo {
+ public:
+    JacoAngles() {}
+    JacoAngles(const jaco_msgs::JointAngles &angles);
+    JacoAngles(const AngularInfo &angles);
 
-	jaco_msgs::JointAngles Angles();
-	bool Compare(const JacoAngles &, float) const;
-
-	private:
-	float Normalize(float);
+    jaco_msgs::JointAngles constructAnglesMsg();
+    bool compareToOther(const JacoAngles &, float tolerance) const;
 };
 
-/*class JacoForces : public ForcesInfo
-{
-	public:
-	JacoForces() {}
-	JacoForces(const jaco_msgs::JacoForces &);
-	JacoForces(const ForcesInfo &);
+class FingerAngles : public FingersPosition {
+ public:
+    FingerAngles() {}
+    FingerAngles(const jaco_msgs::FingerPosition &position);
+    FingerAngles(const FingersPosition &angle);
 
-	jaco_msgs::JacoForces Forces();
-	bool Compare(const JacoForces &, float) const;
-
-	private:
-	float Normalize(float);
+    jaco_msgs::FingerPosition constructFingersMsg();
+    bool compareToOther(const FingerAngles &, float tolerance) const;
 };
-*/
-
-class FingerAngles : public FingersPosition
-{
-	public:
-	FingerAngles() {}
-	FingerAngles(const jaco_msgs::FingerPosition &);
-	FingerAngles(const FingersPosition &);
-
-	jaco_msgs::FingerPosition Fingers();
-	bool Compare(const FingerAngles &, float) const;
-};
-
 
 }
-
-#endif // _JACO_TYPES_H_
+#endif  // _JACO_TYPES_H_

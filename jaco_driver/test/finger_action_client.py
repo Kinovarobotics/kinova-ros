@@ -16,15 +16,15 @@ def pose_client():
     goal = jaco_msgs.msg.SetFingersPositionGoal()
 
     if len(sys.argv) < 4:
-        goal.fingers.Finger_1 = 4000
-        goal.fingers.Finger_2 = 4000
-        goal.fingers.Finger_3 = 4000
+        goal.fingers.finger1 = 4000
+        goal.fingers.finger2 = 4000
+        goal.fingers.finger3 = 4000
 
         rospy.logwarn("Using test goal: \n%s", goal)
     else:
-        goal.fingers.Finger_1 = float(sys.argv[1])
-        goal.fingers.Finger_2 = float(sys.argv[2])
-        goal.fingers.Finger_3 = float(sys.argv[3])
+        goal.fingers.finger1 = float(sys.argv[1])
+        goal.fingers.finger2 = float(sys.argv[2])
+        goal.fingers.finger3 = float(sys.argv[3])
 
     client.wait_for_server()
     rospy.loginfo("Connected to Finger server")

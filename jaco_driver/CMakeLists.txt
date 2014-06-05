@@ -30,8 +30,8 @@ catkin_package(
 ###########
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
   include
+  ${catkin_INCLUDE_DIRS}
 )
 
 #Testers
@@ -41,7 +41,9 @@ include_directories(
 #add_executable(test_jaco_arm_vel src/testers/test_jaco_arm_vel.cpp )
 #add_executable(test_jaco_arm_car_vel src/testers/test_jaco_arm_car_vel.cpp ) 
 
-#Nodes
+# Nodes
+# Note, the headers are shown here so they show up in the project view when using
+# Qt Creator. There must be a better way...
 add_executable(jaco_arm_driver
   src/nodes/jaco_arm_driver.cpp
   src/jaco_api.cpp
@@ -51,11 +53,24 @@ add_executable(jaco_arm_driver
   src/jaco_angles_action.cpp
   src/jaco_fingers_action.cpp
   src/jaco_types.cpp
+  include/jaco_driver/jaco_angles_action.h
+  include/jaco_driver/jaco_api.h
+  include/jaco_driver/jaco_arm.h
+  include/jaco_driver/jaco_comm.h
+  include/jaco_driver/jaco_fingers_action.h
+  include/jaco_driver/jaco_pose_action.h
+  include/jaco_driver/jaco_types.h
+  include/jaco_driver/Kinova.API.CommLayerUbuntu.h
+  include/jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h
+  include/jaco_driver/KinovaTypes.h
+  include/jaco_driver/test_jaco_arm_car_vel.h
 )
 
 add_executable(jaco_tf_updater
   src/nodes/jaco_tf_updater.cpp
   src/jaco_arm_kinematics.cpp
+  include/jaco_driver/jaco_tf_updater.h
+  include/jaco_driver/jaco_arm_kinematics.h
 )
 
 add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})

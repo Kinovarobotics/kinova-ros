@@ -105,10 +105,10 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 
 	JacoPose cur_position;		//holds the current position of the arm
 
-	if (arm.Stopped())
+	if (arm.isStopped())
 	{
-		arm.GetPosition(cur_position);
-		local_pose.pose = cur_position.Pose();
+		arm.getPosition(cur_position);
+		local_pose.pose = cur_position.constructPoseMsg();
 
 		listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
 		as_.setAborted(result);
@@ -116,7 +116,7 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 	}
 
 	JacoPose target(local_pose.pose);
-	arm.SetPosition(target);
+	arm.setPosition(target);
 
 	ros::Rate r(10);
  
@@ -128,18 +128,18 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 		ros::spinOnce();
 		if (as_.isPreemptRequested() || !ros::ok())
 		{
-			arm.Stop();
-			arm.Start();
+			arm.stop();
+			arm.start();
 			as_.setPreempted();
 			return;
 		}
 
-		arm.GetPosition(cur_position);
-		local_pose.pose = cur_position.Pose();
+		arm.getPosition(cur_position);
+		local_pose.pose = cur_position.constructPoseMsg();
 
 		listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
 
-		if (arm.Stopped())
+		if (arm.isStopped())
 		{
 			result.pose = feedback.pose;
 			as_.setAborted(result);
@@ -148,7 +148,7 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 
 		as_.publishFeedback(feedback);
 
-		if (target.Compare(cur_position, tolerance))
+		if (target.compareToOther(cur_position, tolerance))
 		{
 			ROS_INFO("Cartesian Control Complete.");
 
