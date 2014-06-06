@@ -27,7 +27,7 @@ def joint_angle_client(angle_set):
     goal.angles.joint6 = angle_set[5]
 
     client.send_goal(goal)
-    if client.wait_for_result(rospy.Duration(10.0)):
+    if client.wait_for_result(rospy.Duration(20.0)):
         return client.get_result()
     else:
         client.cancel_all_goals()

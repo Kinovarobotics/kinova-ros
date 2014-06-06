@@ -3,7 +3,7 @@ import numpy as np
 
 def random_pose_generator(n_poses=1):
     """A generator that yields random poses, position: [x,y,z] orientation: [x,y,z,w]."""
-    for i in range(n_poses):
+    for i in xrange(n_poses):
         orient = np.random.random(4)
         mag = np.sqrt(sum(np.power(orient, 2)))
         yield np.random.random(3), orient / mag
@@ -14,31 +14,37 @@ def poses_from_file(filepath):
     with open(filepath) as f:
         for line in f.readlines():
             if len(line) > 10:
-                vals = [float(n) for n in line.strip('\n').split(' ')]
+                vals = [float(n) for n in line.strip('\n').split(' ')[:7]]
                 mag = np.sqrt(sum(np.power(vals[3:], 2)))
                 yield vals[:3], vals[3:] / mag
 
 
 def random_joint_angles_generator(n_poses=1):
     """A generator that yields random joint angles."""
-    for i in range(n_poses):
+    for i in xrange(n_poses):
         # TODO: Check that the angles are valid
-        yield np.random.random(6)
+        # 1: anything
+        # 2: -1.571 +/- 1
+        # 3: -1.571 +/- 1
+        # 4-6: anything
+        offset = np.array([0.0, -0.5 * np.pi, -0.5 * np.pi, 0.0, 0.0, 0.0])
+        scale = np.array([2 * np.pi, 2.1, 3.2, 2 * np.pi, 2 * np.pi, 2 * np.pi])
+        yield (np.random.random(6) - 0.5) * scale + offset
 
 
 def joint_angles_from_file(filepath):
-    """A generator that yields joint angles from file, position: [x,y,z] orientation: [x,y,z,w]."""
+    """A generator that yields joint angles from file."""
     with open(filepath) as f:
         for line in f.readlines():
             if len(line) > 10:
-                yield [float(n) for n in line.strip('\n').split(' ')]
+                yield [float(n) for n in line.strip('\n').split(' ')[:6]]
 
 
 def random_finger_positions(n_positions=1, n_fingers=1):
     """ """
-    for i in range(n_positions):
-        # TODO: What is the finger min/max range?
-        yield np.random.random(n_fingers)
+    for i in xrange(n_positions):
+        # TODO: What is the finger min/max range? [0.25 to 56]?
+        yield np.random.random(n_fingers) * 55.75 + 0.25
 
 
 if __name__ == '__main__':

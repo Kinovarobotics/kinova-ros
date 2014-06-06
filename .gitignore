@@ -48,3 +48,6 @@ kvh_driver/src/kvh_driver/
 
 # PyCharm
 .idea
+
+# Python
+*.pyc
