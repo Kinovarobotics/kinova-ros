@@ -56,14 +56,17 @@ namespace jaco {
 // ----------------------
 
 bool compareValues(float first, float second, float tolerance) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 
 float normalizeInRads(float rads) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     return float(angles::normalize_angle_positive(rads));
 }
 
 float normalizeInDegrees(float degrees) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     return angles::to_degrees(angles::normalize_angle_positive(angles::from_degrees(degrees)));
 }
 
@@ -71,6 +74,7 @@ float normalizeInDegrees(float degrees) {
 // -----------------
 
 JacoPose::JacoPose(const geometry_msgs::Pose &pose) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     double tx, ty, tz;
     tf::Quaternion q;
     tf::quaternionMsgToTF(pose.orientation, q);
@@ -89,6 +93,7 @@ JacoPose::JacoPose(const geometry_msgs::Pose &pose) {
 }
 
 JacoPose::JacoPose(const CartesianInfo &pose) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     X = pose.X;
     Y = pose.Y;
     Z = pose.Z;
@@ -99,6 +104,7 @@ JacoPose::JacoPose(const CartesianInfo &pose) {
 }
 
 geometry_msgs::Pose JacoPose::constructPoseMsg() {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     geometry_msgs::Pose pose;
     tf::Quaternion position_quaternion;
 
@@ -113,6 +119,7 @@ geometry_msgs::Pose JacoPose::constructPoseMsg() {
 }
 
 bool JacoPose::compareToOther(const JacoPose &other, float tolerance) const {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
     status = status && compareValues(X, other.X, tolerance);
     status = status && compareValues(Y, other.Y, tolerance);
@@ -124,6 +131,7 @@ bool JacoPose::compareToOther(const JacoPose &other, float tolerance) const {
 }
 
 JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Actuator1 = normalizeInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
     Actuator2 = normalizeInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
     Actuator3 = normalizeInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
@@ -133,6 +141,7 @@ JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
 }
 
 JacoAngles::JacoAngles(const AngularInfo &angles) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Actuator1 = normalizeInDegrees(angles.Actuator1);
     Actuator2 = normalizeInDegrees(angles.Actuator2);
     Actuator3 = normalizeInDegrees(angles.Actuator3);
@@ -142,6 +151,7 @@ JacoAngles::JacoAngles(const AngularInfo &angles) {
 }
 
 jaco_msgs::JointAngles JacoAngles::constructAnglesMsg() {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     jaco_msgs::JointAngles angles;
     angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
     angles.joint2 = (Actuator2 - 270.0) / (180.0 / M_PI);
@@ -153,6 +163,7 @@ jaco_msgs::JointAngles JacoAngles::constructAnglesMsg() {
 }
 
 bool JacoAngles::compareToOther(const JacoAngles &other, float tolerance) const {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
     status = status && compareValues(Actuator1, other.Actuator1, tolerance);
     status = status && compareValues(Actuator2, other.Actuator2, tolerance);
@@ -164,18 +175,21 @@ bool JacoAngles::compareToOther(const JacoAngles &other, float tolerance) const 
 }
 
 FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = position.finger1;
     Finger2 = position.finger2;
     Finger3 = position.finger3;
 }
 
 FingerAngles::FingerAngles(const FingersPosition &angle) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = angle.Finger1;
     Finger2 = angle.Finger2;
     Finger3 = angle.Finger3;
 }
 
 jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     jaco_msgs::FingerPosition angles;
     angles.finger1 = Finger1;
     angles.finger2 = Finger2;
@@ -184,6 +198,7 @@ jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
 }
 
 bool FingerAngles::compareToOther(const FingerAngles &other, float tolerance) const {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
     status = status && compareValues(Finger1, other.Finger1, tolerance);
     status = status && compareValues(Finger2, other.Finger2, tolerance);
@@ -191,4 +206,4 @@ bool FingerAngles::compareToOther(const FingerAngles &other, float tolerance) co
     return status;
 }
 
-}
+}  // namespace jaco

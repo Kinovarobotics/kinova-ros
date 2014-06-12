@@ -51,43 +51,50 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
+
 namespace jaco {
+
+template<class T>
+void printRaw(const T& something) {
+    void const *qs = static_cast<void const *>(&something);
+    unsigned char const *p = static_cast<unsigned char const *>(qs);
+    for (size_t i=0; i<sizeof(something); i++) {
+        printf("%02x ", p[i]);
+    }
+    putchar('\n');
+    fflush(stdout);
+}
 
 JacoComm::JacoComm(JacoAngles home)
     : is_software_stop_(false), home_position_(home)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    ROS_INFO("Initiating Library");
-    jaco_api_ = new JacoAPI();
-    ROS_INFO("Initiating API");
-
-    ros::Duration(1.0).sleep();
-    int api_result = jaco_api_->initAPI();
+    ROS_INFO("Initializing API");
+    assert(jaco_api_.initAPI() == 1);
 
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
-    jaco_api_->startControlAPI();
+    assert(jaco_api_.startControlAPI() == 1);
+    ros::Duration(3.0).sleep();
+    //assert(jaco_api_.stopControlAPI() == 1);
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    QuickStatus qs;
+    getQuickStatus(qs);
 
     ros::Duration(3.0).sleep();
-    jaco_api_->stopControlAPI();
+    getQuickStatus(qs);
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ros::Duration(3.0).sleep();
+    getQuickStatus(qs);
 
-    if (api_result != 1) {
-        ROS_FATAL("Could not initialize arm, initAPI returned: %d", api_result);
-        ros::shutdown();
-    } else {
-        ROS_INFO("API initialized successfully!");
-    }
+    initFingers();
+
+    ros::Duration(3.0).sleep();
+    getQuickStatus(qs);
 }
 
 JacoComm::~JacoComm() {
-    jaco_api_->closeAPI();
+    jaco_api_.closeAPI();
 }
 
 /*!
@@ -99,18 +106,15 @@ JacoComm::~JacoComm() {
 bool JacoComm::isHomed(void) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    QuickStatus quick_status;
+    ROS_INFO_STREAM("Getting quick status to check if arm is homed");
+    getQuickStatus(quick_status);
 
-    QuickStatus current_status;
-    jaco_api_->getQuickStatus(current_status);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    if (current_status.RetractType == 1) {
+    if (quick_status.RetractType == 1) {
+        ROS_INFO("Arm is homed");
         return 1;
     } else {
+        ROS_INFO("Arm is not homed");
         return 0;
     }
 }
@@ -127,9 +131,7 @@ bool JacoComm::isHomed(void) {
  */
 void JacoComm::homeArm(void) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("Arm is stopped, cannot home");
@@ -139,25 +141,11 @@ void JacoComm::homeArm(void) {
         return;
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->stopControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->startControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
 
     ROS_INFO("Homing the arm");
-    jaco_api_->moveHome();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+    jaco_api_.moveHome();
 }
 
 /*!
@@ -167,30 +155,34 @@ void JacoComm::homeArm(void) {
  * Note, The this routine requires firmware version 5.05.x (or higher?).
  */
 void JacoComm::initFingers(void) {
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO("Initializing fingers...this will take a few seconds");
+    jaco_api_.initFingers();
 
-    ROS_INFO("Initializing fingers");
-    FingerAngles fingers_home;
-    jaco_api_->initFingers();
+    QuickStatus qs;
+    getQuickStatus(qs);
+    FingerAngles finger_angles;
+    finger_angles.Finger1 = 50.0;
+    finger_angles.Finger2 = 50.0;
+    finger_angles.Finger3 = 50.0;
+    setFingerPositions(finger_angles, 5.0);
+    ros::Duration(2.0).sleep();
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    getQuickStatus(qs);
+    finger_angles.Finger1 = 0.25;
+    finger_angles.Finger2 = 0.25;
+    finger_angles.Finger3 = 0.25;
+    setFingerPositions(finger_angles, 5.0);
+    ros::Duration(2.0).sleep();
 
+    getQuickStatus(qs);
     // Set the fingers to "half-open"
-    fingers_home.Finger1 = 3000.0;
-    fingers_home.Finger2 = 3000.0;
-    fingers_home.Finger3 = 0.0;
-    setFingers(fingers_home, 5.0);
+    finger_angles.Finger1 = 25.0;
+    finger_angles.Finger2 = 25.0;
+    finger_angles.Finger3 = 25.0;
+    setFingerPositions(finger_angles, 5.0);
+    ros::Duration(2.0).sleep();
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    ros::Duration(3.0).sleep();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+    return;
 }
 
 /*!
@@ -198,66 +190,33 @@ void JacoComm::initFingers(void) {
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setAngles(JacoAngles &angles, int timeout, bool push) {
+void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("The angles could not be set because the arm is stopped");
         return;
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     if (push) {
-        jaco_api_->eraseAllTrajectories();
+        jaco_api_.eraseAllTrajectories();
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->stopControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->startControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->setAngularControl();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
+    jaco_api_.setAngularControl();
 
     //Jaco_Position.LimitationsActive = false;
     jaco_position.Position.Delay = 0.0;
     jaco_position.Position.Type = ANGULAR_POSITION;
     jaco_position.Position.Actuators = angles;
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->sendAdvanceTrajectory(jaco_position);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+    jaco_api_.sendAdvanceTrajectory(jaco_position);
 }
 
 /*!
@@ -265,45 +224,29 @@ void JacoComm::setAngles(JacoAngles &angles, int timeout, bool push) {
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setPosition(JacoPose &position, int timeout, bool push) {
+void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("The position could not be set because the arm is stopped");
         return;
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     if (push) {
-        jaco_api_->eraseAllTrajectories();
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+        jaco_api_.eraseAllTrajectories();
     }
 
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
-    jaco_api_->stopControlAPI();
-    jaco_api_->startControlAPI();
-    jaco_api_->setCartesianControl();
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
+    jaco_api_.setCartesianControl();
 
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
@@ -330,7 +273,7 @@ void JacoComm::setPosition(JacoPose &position, int timeout, bool push) {
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
-    jaco_api_->sendBasicTrajectory(jaco_position);
+    jaco_api_.sendBasicTrajectory(jaco_position);
 
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
@@ -340,47 +283,25 @@ void JacoComm::setPosition(JacoPose &position, int timeout, bool push) {
 /*!
  * \brief Sets the finger positions
  */
-void JacoComm::setFingers(FingerAngles &fingers, int timeout, bool push) {
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("The fingers could not be set because the arm is stopped");
         return;
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     if (push) {
-        jaco_api_->eraseAllTrajectories();
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+        jaco_api_.eraseAllTrajectories();
     }
 
-    jaco_api_->stopControlAPI();
-    jaco_api_->startControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
 
     // Initialize Cartesian control of the fingers
     jaco_position.Position.HandMode = POSITION_MODE;
@@ -388,9 +309,6 @@ void JacoComm::setFingers(FingerAngles &fingers, int timeout, bool push) {
     jaco_position.Position.Fingers = fingers;
     jaco_position.Position.Delay = 0.0;
     jaco_position.LimitationsActive = 0;
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
     // These values will not be used but are initialized anyway.
     jaco_position.Position.Actuators.Actuator1 = 0.0f;
@@ -400,20 +318,10 @@ void JacoComm::setFingers(FingerAngles &fingers, int timeout, bool push) {
     jaco_position.Position.Actuators.Actuator5 = 0.0f;
     jaco_position.Position.Actuators.Actuator6 = 0.0f;
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
     JacoPose pose;
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    getPosition(pose);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    getCartesianPosition(pose);
 
     jaco_position.Position.CartesianPosition.X = pose.X;
     jaco_position.Position.CartesianPosition.Y = pose.Y;
@@ -422,20 +330,16 @@ void JacoComm::setFingers(FingerAngles &fingers, int timeout, bool push) {
     jaco_position.Position.CartesianPosition.ThetaY = pose.ThetaY;
     jaco_position.Position.CartesianPosition.ThetaZ = pose.ThetaZ;
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->sendAdvanceTrajectory(jaco_position);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.sendAdvanceTrajectory(jaco_position);
 }
 
 /*!
- * \brief Set the velocity of the angles using angular input.
+ * \brief Set the angular velocity of the joints
  */
 void JacoComm::setVelocities(AngularInfo joint_vel) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
     if (isStopped()) {
         ROS_INFO("The velocities could not be set because the arm is stopped");
         return;
@@ -446,23 +350,25 @@ void JacoComm::setVelocities(AngularInfo joint_vel) {
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity)); // zero structure
 
-    jaco_api_->stopControlAPI();
-    jaco_api_->startControlAPI();
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
     jaco_velocity.Position.Type = ANGULAR_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
     jaco_velocity.Position.Actuators = joint_vel;
-    jaco_api_->sendAdvanceTrajectory(jaco_velocity);
+    jaco_api_.sendAdvanceTrajectory(jaco_velocity);
 }
 
 /*!
- * \brief Set the velocity of the angles using cartesian input.
+ * \brief Set the cartesian velocity of the tool tip
  */
 void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
     if (isStopped()) {
         ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
-        jaco_api_->eraseAllTrajectories();
+        jaco_api_.eraseAllTrajectories();
         return;
     }
 
@@ -471,13 +377,13 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    jaco_api_->stopControlAPI();
-    jaco_api_->startControlAPI();
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
     jaco_velocity.Position.Type = CARTESIAN_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
     jaco_velocity.Position.CartesianPosition = velocities;
-    jaco_api_->sendAdvanceTrajectory(jaco_velocity);
+    jaco_api_.sendAdvanceTrajectory(jaco_velocity);
 }
 
 /*!
@@ -488,43 +394,42 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
  */
 void JacoComm::setConfig(ClientConfigurations config) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    jaco_api_->setClientConfigurations(config);
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+    jaco_api_.setClientConfigurations(config);
 }
 
 /*!
  * \brief API call to obtain the current angular position of all the joints.
  */
-void JacoComm::getAngles(JacoAngles &angles) {
+void JacoComm::getJointAngles(JacoAngles &angles) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    AngularPosition jaco_position;
-    jaco_api_->getAngularPosition(jaco_position);
-
-    angles = jaco_position.Actuators;
+    AngularPosition jaco_angles;
+    memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
+    jaco_api_.getAngularPosition(jaco_angles);
+    angles = jaco_angles.Actuators;
 }
 
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
  */
-void JacoComm::getPosition(JacoPose &position) {
+void JacoComm::getCartesianPosition(JacoPose &position) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition jaco_position;
-
-    memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
-
-    jaco_api_->getCartesianPosition(jaco_position);
-    position = JacoPose(jaco_position.Coordinates);
+    CartesianPosition jaco_cartesian_position;
+    memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
+    jaco_api_.getCartesianPosition(jaco_cartesian_position);
+    position = JacoPose(jaco_cartesian_position.Coordinates);
 }
 
 /*!
  * \brief API call to obtain the current finger positions.
  */
-void JacoComm::getFingers(FingerAngles &fingers) {
+void JacoComm::getFingerPositions(FingerAngles &fingers) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    CartesianPosition jaco_position;
-    jaco_api_->getCartesianPosition(jaco_position);
-    fingers = jaco_position.Fingers;
+    CartesianPosition jaco_cartesian_position;
+    memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
+    jaco_api_.getCartesianPosition(jaco_cartesian_position);
+    fingers = jaco_cartesian_position.Fingers;
 }
 
 /*!
@@ -532,8 +437,9 @@ void JacoComm::getFingers(FingerAngles &fingers) {
  */
 void JacoComm::getConfig(ClientConfigurations &config) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     memset(&config, 0, sizeof(config));  // zero structure
-    jaco_api_->getClientConfigurations(config);
+    jaco_api_.getClientConfigurations(config);
 }
 
 /*!
@@ -541,15 +447,18 @@ void JacoComm::getConfig(ClientConfigurations &config) {
  */
 void JacoComm::getQuickStatus(QuickStatus &quick_status) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     memset(&quick_status, 0, sizeof(quick_status));  // zero structure
-    // TODO: What does this actually do? E.g., where is there a result saved or used?
-    jaco_api_->getQuickStatus(quick_status);
+    int result = jaco_api_.getQuickStatus(quick_status);
+    printf("Quick status: ");
+    printRaw(quick_status);
 }
 
 /*!
  * \brief Dumps the current joint angles onto the screen.
  */
 void JacoComm::printAngles(JacoAngles &angles) {
+//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
              angles.Actuator4, angles.Actuator5, angles.Actuator6);
@@ -559,6 +468,7 @@ void JacoComm::printAngles(JacoAngles &angles) {
  * \brief Dumps the current cartesian positions onto the screen.
  */
 void JacoComm::printPosition(JacoPose &position) {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO("Arm position\n"
              "\tposition (m) -- x: %f, y: %f z: %f\n"
              "\trotation (rad) -- theta_x: %f, theta_y: %f, theta_z: %f",
@@ -570,6 +480,7 @@ void JacoComm::printPosition(JacoPose &position) {
  * \brief Dumps the current finger positions onto the screen.
  */
 void JacoComm::printFingers(FingersPosition fingers) {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
     fingers.Finger1, fingers.Finger2, fingers.Finger3);
 }
@@ -578,6 +489,7 @@ void JacoComm::printFingers(FingersPosition fingers) {
  * \brief Dumps the client configuration onto the screen.
  */
 void JacoComm::printConfig(ClientConfigurations config) {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO_STREAM("Arm configuration:\n"
                     "\tClientID: " << config.ClientID <<
                     "\n\tClientName: " << config.ClientName <<
@@ -599,8 +511,9 @@ void JacoComm::printConfig(ClientConfigurations config) {
                     "\n\tEnableFlashPositionLog: " << config.EnableFlashPositionLog);
 }
 
-void JacoComm::stop() {
 
+void JacoComm::stop() {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
@@ -610,58 +523,33 @@ void JacoComm::stop() {
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
-    jaco_api_->stopControlAPI();
-    jaco_api_->startControlAPI();
-    jaco_api_->eraseAllTrajectories();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
+    jaco_api_.eraseAllTrajectories();
 
     JoystickCommand home_command;
     memset(&home_command, 0, sizeof(home_command));  // zero structure
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     home_command.ButtonValue[2] = 1;
-    jaco_api_->sendJoystickCommand(home_command);
-    jaco_api_->eraseAllTrajectories();
+    jaco_api_.sendJoystickCommand(home_command);
+    jaco_api_.eraseAllTrajectories();
     ros::Duration(0.05).sleep();
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     home_command.ButtonValue[2] = 0;
-    jaco_api_->sendJoystickCommand(home_command);
+    jaco_api_.sendJoystickCommand(home_command);
 
     ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
                     "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
 }
 
 void JacoComm::start() {
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     is_software_stop_ = false;
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->stopControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    jaco_api_->startControlAPI();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+    jaco_api_.stopControlAPI();
+    jaco_api_.startControlAPI();
 }
 
 bool JacoComm::isStopped() {
@@ -674,6 +562,7 @@ bool JacoComm::isStopped() {
  * \param timeout Timeout after which to give up waiting for arm to finish "homing".
  */
 void JacoComm::waitForHome(int timeout) {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     double start_secs;
     double current_secs;
 
@@ -699,12 +588,15 @@ void JacoComm::waitForHome(int timeout) {
         }
 
         if (isHomed()) {
+            ROS_INFO("Arm has homed");
             ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
             return;
+        } else {
+            ROS_INFO("Still homing the arm");
         }
     }
 
-    ROS_WARN("Timed out waiting for arm to return \"home\"");
+    ROS_WARN("Timed out waiting for arm to return home");
 }
 
 }  // namespace jaco

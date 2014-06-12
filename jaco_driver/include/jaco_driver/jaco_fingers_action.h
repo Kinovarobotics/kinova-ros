@@ -59,13 +59,15 @@ class JacoFingersActionServer {
  public:
     JacoFingersActionServer(JacoComm &, ros::NodeHandle &n);
     ~JacoFingersActionServer();
+
     void actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
-    JacoComm &arm_;
+    JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::SetFingersPositionAction> action_server_;
+    ros::Rate rate_hz_;
+    float tolerance_;
 };
 
-}
-
+}  // namespace jaco
 #endif  // _JACO_FINGERS_ACTION_H_

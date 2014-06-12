@@ -44,157 +44,84 @@
  */
 
 #include "jaco_driver/jaco_fingers_action.h"
-#include <jaco_driver/KinovaTypes.h>
+#include <KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
-
-
-// TODO: Remove me when done (used for syscall(SYS_gettid))
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
 
 
 namespace jaco {
 
-JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHandle &n)
-    : arm_(arm_comm),
-      action_server_(n, "finger_joint_angles",
-                     boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false)
+JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+    : arm_comm_(arm_comm),
+      action_server_(nh, "finger_joint_angles",
+                     boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false),
+      rate_hz_(10),    // TODO: Make this a parameter
+      tolerance_(2.0)  // TODO: make this a parameter dead zone for position
 {
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     action_server_.start();
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
 }
 
-JacoFingersActionServer::~JacoFingersActionServer()
-{
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+JacoFingersActionServer::~JacoFingersActionServer() {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 }
 
 void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal) {
+    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    ROS_INFO("Got a finger goal: (%f, %f, %f, tolerance: %f",
+             goal->fingers.finger1, goal->fingers.finger2, goal->fingers.finger3,
+             tolerance_);
+
     jaco_msgs::SetFingersPositionFeedback feedback;
     jaco_msgs::SetFingersPositionResult result;
+    FingerAngles current_finger_positions;
 
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    ROS_INFO("Got a finger goal: (%f, %f, %f)",
-             goal->fingers.finger1, goal->fingers.finger2, goal->fingers.finger3);
-
-    FingerAngles current_finger_positions;  // holds the current position of the fingers
-
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    if (arm_.isStopped()) {
-        ROS_INFO("Could not complete finger action because the arm is stopped");
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-        arm_.getFingers(current_finger_positions);
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+    if (arm_comm_.isStopped()) {
+        ROS_INFO("\tCould not complete finger action because the arm is stopped");
+        arm_comm_.getFingerPositions(current_finger_positions);
         result.fingers = current_finger_positions.constructFingersMsg();
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
         action_server_.setAborted(result);
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
         return;
     }
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     FingerAngles target(goal->fingers);
-    arm_.setFingers(target);
+    arm_comm_.setFingerPositions(target);
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-    ros::Rate rate_hz(10);
-    const float tolerance = 2.0;  // dead zone for position
-
-
-    // while we have not timed out
+    // Loop until the action completed, is preempted, or fails in some way.
+    // timeout is left to the caller since the timeout may greatly depend on
+    // the context of the movement.
     while (true) {
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
         ros::spinOnce();
         if (action_server_.isPreemptRequested() || !ros::ok()) {
-            ROS_INFO("Preempting finger action");
-
-            ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                            "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-            arm_.stop();
-            arm_.start();
+            ROS_INFO("\tPreempting finger action");
+            arm_comm_.stop();
+            arm_comm_.start();
             action_server_.setPreempted();
             return;
-        }
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-        arm_.getFingers(current_finger_positions);
-
-        ROS_INFO("Current finger positions: %f, %f, %f, tolerance: %f",
-                 current_finger_positions.Finger1,
-                 current_finger_positions.Finger2,
-                 current_finger_positions.Finger3,
-                 tolerance);
-
-        feedback.fingers = current_finger_positions.constructFingersMsg();
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-        if (arm_.isStopped()) {
-            ROS_INFO("Aborting finger action because the arm is stopped");
+        } else if (arm_comm_.isStopped()) {
+            ROS_INFO("\tAborting finger action because the arm is stopped");
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setAborted(result);
             return;
         }
 
         action_server_.publishFeedback(feedback);
+        arm_comm_.getFingerPositions(current_finger_positions);
+        feedback.fingers = current_finger_positions.constructFingersMsg();
 
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
+        ROS_INFO("\tCurrent finger positions: %f, %f, %f",
+                 current_finger_positions.Finger1,
+                 current_finger_positions.Finger2,
+                 current_finger_positions.Finger3);
 
-        if (target.compareToOther(current_finger_positions, tolerance)) {
-            ROS_INFO("Finger action complete.");
-
+        if (target.compareToOther(current_finger_positions, tolerance_)) {
+            ROS_INFO("\tFinger action complete.");
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setSucceeded(result);
             return;
         }
 
-
-        ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                        "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
-        rate_hz.sleep();
+        rate_hz_.sleep();
     }
 }
 
-}
+}  // namespace jaco

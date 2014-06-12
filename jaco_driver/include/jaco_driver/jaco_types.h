@@ -46,7 +46,7 @@
 #ifndef _JACO_TYPES_H_
 #define _JACO_TYPES_H_
 
-#include <jaco_driver/KinovaTypes.h>
+#include <KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>

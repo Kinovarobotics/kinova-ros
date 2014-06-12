@@ -9,8 +9,8 @@
 #ifndef JACOLIB_H_
 #define JACOLIB_H_
 
-#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
-#include "jaco_driver/KinovaTypes.h"
+#include "Kinova.API.UsbCommandLayerUbuntu.h"
+#include "KinovaTypes.h"
 #include <dlfcn.h>
 #include <iostream>
 #include <ros/ros.h>
@@ -22,6 +22,7 @@ namespace jaco {
 class JacoAPI {
  public:
     JacoAPI(void);
+
     int (*initAPI)(void);
     int (*closeAPI)(void);
     int (*getQuickStatus)(QuickStatus &);
@@ -32,7 +33,7 @@ class JacoAPI {
     int (*getCartesianForce)(CartesianPosition &);
     int (*getAngularForce)(AngularPosition &);
     int (*getAngularCurrent)(AngularPosition &);
-    int (*getControlOperator)(int &);
+    // int (*getControlOperator)(int &);
     int (*getActualTrajectoryInfo)(TrajectoryPoint &);
     int (*getGlobalTrajectoryInfo)(TrajectoryFIFO &);
     int (*getSensorsInfo)(SensorsInfo &);
@@ -53,6 +54,9 @@ class JacoAPI {
     int (*getPositionCurrentActuators)(std::vector<float> &);
     int (*setActuatorPID)(unsigned int, float, float, float);
 };
-}
+
+std::ostream& operator<< (std::ostream& stream, const QuickStatus& quickStatus);
+
+}  // namespace jaco
 
 #endif  // JACOLIB_H_

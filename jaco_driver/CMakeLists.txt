@@ -39,7 +39,7 @@ include_directories(
 #add_dependencies(test_jaco_arm_control ${PROJECT_NAME}_gencfg)
 #add_dependencies(test_jaco_arm_control ${${PROJECT_NAME}_EXPORTED_TARGETS})
 #add_executable(test_jaco_arm_vel src/testers/test_jaco_arm_vel.cpp )
-#add_executable(test_jaco_arm_car_vel src/testers/test_jaco_arm_car_vel.cpp ) 
+#add_executable(test_jaco_arm_car_vel src/testers/test_jaco_arm_car_vel.cpp )
 
 # Nodes
 # Note, the headers are shown here so they show up in the project view when using
@@ -63,7 +63,6 @@ add_executable(jaco_arm_driver
   include/jaco_driver/Kinova.API.CommLayerUbuntu.h
   include/jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h
   include/jaco_driver/KinovaTypes.h
-  include/jaco_driver/test_jaco_arm_car_vel.h
 )
 
 add_executable(jaco_tf_updater
@@ -91,7 +90,7 @@ install(PROGRAMS
 )
 
 # Copy over Kinova .so binary blobs to /usr/lib
-install(FILES 
+install(FILES
   lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.CommLayerUbuntu.so
   lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.USBCommandLayerUbuntu.so
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

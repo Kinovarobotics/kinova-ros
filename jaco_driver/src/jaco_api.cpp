@@ -10,87 +10,93 @@
 
 namespace jaco {
 
-JacoAPI::JacoAPI(void) {
+void* checkApiInit(void * usbLib, const char* name) {
+    void * function_pointer = dlsym(usbLib, name);
+    assert(function_pointer != NULL);
+    return function_pointer;
+}
 
+JacoAPI::JacoAPI(void) {
     void *USBLib = dlopen(JACO_USB_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
     if (USBLib == NULL) {
         ROS_WARN("%s", dlerror());
     }
 
-    initAPI = (int (*)())dlsym(USBLib, "InitAPI");
+    initAPI = (int (*)())checkApiInit(USBLib, "InitAPI");
 
-    closeAPI = (int (*)())dlsym(USBLib, "CloseAPI");
+
+    closeAPI = (int (*)())checkApiInit(USBLib, "CloseAPI");
 
     getCodeVersion = (int (*)(
-            std::vector<int> &))dlsym(USBLib, "GetCodeVersion");
+            std::vector<int> &))checkApiInit(USBLib, "GetCodeVersion");
 
     getCartesianPosition = (int (*)(
-            CartesianPosition &))dlsym(USBLib, "GetCartesianPosition");
+            CartesianPosition &))checkApiInit(USBLib, "GetCartesianPosition");
 
     getAngularPosition = (int (*)(
-            AngularPosition &))dlsym(USBLib, "GetAngularPosition");
+            AngularPosition &))checkApiInit(USBLib, "GetAngularPosition");
 
     getCartesianForce = (int (*)(
-            CartesianPosition &))dlsym(USBLib, "GetCartesianForce");
+            CartesianPosition &))checkApiInit(USBLib, "GetCartesianForce");
 
     getAngularForce = (int (*)(
-            AngularPosition &))dlsym(USBLib, "GetAngularForce");
+            AngularPosition &))checkApiInit(USBLib, "GetAngularForce");
 
     getAngularCurrent = (int (*)(
-            AngularPosition &))dlsym(USBLib, "GetAngularCurrent");
+            AngularPosition &))checkApiInit(USBLib, "GetAngularCurrent");
 
-    getControlOperator = (int (*)(int &))dlsym(USBLib, "GetControlOperator");
+    //getControlOperator = (int (*)(int &))checkApiInit(USBLib, "GetControlOperator");
 
     getActualTrajectoryInfo = (int (*)(
-            TrajectoryPoint &))dlsym(USBLib, "GetActualTrajectoryInfo");
+            TrajectoryPoint &))checkApiInit(USBLib, "GetActualTrajectoryInfo");
 
     getGlobalTrajectoryInfo = (int (*)(
-            TrajectoryFIFO &))dlsym(USBLib, "GetGlobalTrajectoryInfo");
+            TrajectoryFIFO &))checkApiInit(USBLib, "GetGlobalTrajectoryInfo");
 
-    getSensorsInfo = (int (*)(SensorsInfo &))dlsym(USBLib, "GetSensorsInfo");
+    getSensorsInfo = (int (*)(SensorsInfo &))checkApiInit(USBLib, "GetSensorsInfo");
 
     getSingularityVector = (int (*)(
-            SingularityVector &))dlsym(USBLib, "GetSingularityVector");
+            SingularityVector &))checkApiInit(USBLib, "GetSingularityVector");
 
-    setAngularControl = (int (*)())dlsym(USBLib, "SetAngularControl");
+    setAngularControl = (int (*)())checkApiInit(USBLib, "SetAngularControl");
 
-    setCartesianControl = (int (*)())dlsym(USBLib, "SetCartesianControl");
+    setCartesianControl = (int (*)())checkApiInit(USBLib, "SetCartesianControl");
 
-    startControlAPI = (int (*)())dlsym(USBLib, "StartControlAPI");
+    startControlAPI = (int (*)())checkApiInit(USBLib, "StartControlAPI");
 
-    stopControlAPI = (int (*)())dlsym(USBLib, "StopControlAPI");
+    stopControlAPI = (int (*)())checkApiInit(USBLib, "StopControlAPI");
 
-    moveHome = (int (*)())dlsym(USBLib, "MoveHome");
+    moveHome = (int (*)())checkApiInit(USBLib, "MoveHome");
 
-    initFingers = (int (*)())dlsym(USBLib, "InitFingers");
+    initFingers = (int (*)())checkApiInit(USBLib, "InitFingers");
 
-    restoreFactoryDefault = (int (*)())dlsym(USBLib, "RestoreFactoryDefault");
+    restoreFactoryDefault = (int (*)())checkApiInit(USBLib, "RestoreFactoryDefault");
 
     sendJoystickCommand = (int (*)(
-            JoystickCommand))dlsym(USBLib, "SendJoystickCommand");
+            JoystickCommand))checkApiInit(USBLib, "SendJoystickCommand");
 
     sendAdvanceTrajectory = (int (*)(
-            TrajectoryPoint))dlsym(USBLib, "SendAdvanceTrajectory");
+            TrajectoryPoint))checkApiInit(USBLib, "SendAdvanceTrajectory");
 
     sendBasicTrajectory = (int (*)(
-            TrajectoryPoint))dlsym(USBLib, "SendBasicTrajectory");
+            TrajectoryPoint))checkApiInit(USBLib, "SendBasicTrajectory");
 
     getQuickStatus = (int (*)(
-            QuickStatus &))dlsym(USBLib, "GetQuickStatus");
+            QuickStatus &))checkApiInit(USBLib, "GetQuickStatus");
 
     getClientConfigurations = (int (*)(
-            ClientConfigurations &))dlsym(USBLib, "GetClientConfigurations");
+            ClientConfigurations &))checkApiInit(USBLib, "GetClientConfigurations");
 
     setClientConfigurations = (int (*)(
-            ClientConfigurations))dlsym(USBLib, "SetClientConfigurations");
+            ClientConfigurations))checkApiInit(USBLib, "SetClientConfigurations");
 
-    eraseAllTrajectories = (int (*)())dlsym(USBLib, "EraseAllTrajectories");
+    eraseAllTrajectories = (int (*)())checkApiInit(USBLib, "EraseAllTrajectories");
 
     getPositionCurrentActuators = (int (*)(
-            std::vector<float> &))dlsym(USBLib, "GetPositionCurrentActuators");
+            std::vector<float> &))checkApiInit(USBLib, "GetPositionCurrentActuators");
 
     setActuatorPID = (int (*)(unsigned int, float, float,
-            float))dlsym(USBLib, "SetActuatorPID");
+            float))checkApiInit(USBLib, "SetActuatorPID");
 }
 
-}
+}  // namespace jaco

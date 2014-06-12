@@ -30,8 +30,8 @@ def joint_angle_client(angle_set):
     if client.wait_for_result(rospy.Duration(20.0)):
         return client.get_result()
     else:
-        client.cancel_all_goals()
         print('        the joint angle action timed-out')
+        client.cancel_all_goals()
         return None
 
 

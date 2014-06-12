@@ -46,7 +46,7 @@
 #ifndef _JACO_COMM_H_
 #define _JACO_COMM_H_
 
-#include <jaco_driver/KinovaTypes.h>
+#include <KinovaTypes.h>
 #include <jaco_driver/jaco_types.h>
 #include "jaco_driver/jaco_api.h"
 #include <boost/thread/recursive_mutex.hpp>
@@ -62,15 +62,15 @@ class JacoComm {
     bool isHomed(void);
     void homeArm(void);
     void initFingers(void);
-    void setAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-    void setPosition(JacoPose &position, int timeout = 0, bool push = true);
-    void setFingers(FingerAngles &fingers, int timeout = 0, bool push = true);
+    void setJointAngles(JacoAngles &angles, int timeout = 0, bool push = true);
+    void setCartesianPosition(JacoPose &position, int timeout = 0, bool push = true);
+    void setFingerPositions(FingerAngles &fingers, int timeout = 0, bool push = true);
     void setVelocities(AngularInfo joint_vel);
     void setCartesianVelocities(CartesianInfo velocities);
     void setConfig(ClientConfigurations config);
-    void getAngles(JacoAngles &angles);
-    void getPosition(JacoPose &position);
-    void getFingers(FingerAngles &fingers);
+    void getJointAngles(JacoAngles &angles);
+    void getCartesianPosition(JacoPose &position);
+    void getFingerPositions(FingerAngles &fingers);
     void getQuickStatus(QuickStatus &quick_status);
     // void getForcesInfo(ForcesInfo &forces);
     void getConfig(ClientConfigurations &config);
@@ -86,7 +86,7 @@ class JacoComm {
     void waitForHome(int);
 
     boost::recursive_mutex api_mutex_;
-    jaco::JacoAPI* jaco_api_;
+    jaco::JacoAPI jaco_api_;
     bool is_software_stop_;
     JacoAngles home_position_;
 };
