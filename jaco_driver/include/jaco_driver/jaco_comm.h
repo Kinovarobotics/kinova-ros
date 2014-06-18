@@ -52,11 +52,13 @@
 #include <boost/thread/recursive_mutex.hpp>
 
 
-namespace jaco {
+namespace jaco
+{
 
-class JacoComm {
+class JacoComm
+{
  public:
-    JacoComm(JacoAngles);
+    JacoComm(ros::NodeHandle nodeHandle);
     ~JacoComm();
 
     bool isHomed(void);
@@ -72,7 +74,6 @@ class JacoComm {
     void getCartesianPosition(JacoPose &position);
     void getFingerPositions(FingerAngles &fingers);
     void getQuickStatus(QuickStatus &quick_status);
-    // void getForcesInfo(ForcesInfo &forces);
     void getConfig(ClientConfigurations &config);
     void printAngles(JacoAngles &angles);
     void printPosition(JacoPose &position);

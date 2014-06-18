@@ -52,10 +52,12 @@
 #include <sys/types.h>
 
 
-namespace jaco {
+namespace jaco
+{
 
 template<class T>
-void printRaw(const T& something) {
+void printRaw(const T& something)
+{
     void const *qs = static_cast<void const *>(&something);
     unsigned char const *p = static_cast<unsigned char const *>(qs);
     for (size_t i=0; i<sizeof(something); i++) {
@@ -65,10 +67,71 @@ void printRaw(const T& something) {
     fflush(stdout);
 }
 
-JacoComm::JacoComm(JacoAngles home)
-    : is_software_stop_(false), home_position_(home)
+
+float getXmlrpcValue(XmlRpc::XmlRpcValue &value)
+{
+    ROS_ASSERT_MSG((value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
+                   || (value.getType() == XmlRpc::XmlRpcValue::TypeInt),
+                   "Parameter home_position_degrees must contain only numerical values");
+
+    if (value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
+    {
+        return static_cast<double>(value);
+    }
+    else
+    {
+        return (float)static_cast<int>(value);
+    }
+
+    return 0.0f;
+}
+
+
+jaco::JacoAngles getHomePosition(ros::NodeHandle &nh)
+{
+    // Typical home position for a "right-handed" arm
+    jaco::JacoAngles home;
+    home.Actuator1 = 282.8;
+    home.Actuator2 = 154.4;
+    home.Actuator3 = 43.1;
+    home.Actuator4 = 230.7;
+    home.Actuator5 = 83.0;
+    home.Actuator6 = 78.1;
+
+    XmlRpc::XmlRpcValue joints_list;
+    if (nh.getParam("home_position_degrees", joints_list))
+    {
+        ROS_ASSERT_MSG(joints_list.getType() == XmlRpc::XmlRpcValue::TypeArray,
+                       "Attempted to get the home position from the parameter server and did not get the "
+                       "correct type. Check launch file or other places that may set parameter values.");
+        ROS_ASSERT_MSG(joints_list.size() == 6, "Home position on parameter server does not have six (6) elements.");
+
+        home.Actuator1 = getXmlrpcValue(joints_list[0]);
+        home.Actuator2 = getXmlrpcValue(joints_list[1]);
+        home.Actuator3 = getXmlrpcValue(joints_list[2]);
+        home.Actuator4 = getXmlrpcValue(joints_list[3]);
+        home.Actuator5 = getXmlrpcValue(joints_list[4]);
+        home.Actuator6 = getXmlrpcValue(joints_list[5]);
+
+        ROS_INFO("Loaded home_position_degrees from file: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
+                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
+    } else {
+        ROS_INFO("Using default home_position_degrees: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
+                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
+    }
+
+    return home;
+}
+
+
+JacoComm::JacoComm(ros::NodeHandle nodeHandle)
+    : is_software_stop_(false), home_position_(getHomePosition(nodeHandle))
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    // Get the serial number parameter for the arm we wish to connec to
+    std::string serial_number = "";
+    nodeHandle.getParam("serial_number", serial_number);
 
     std::vector<int> api_version;
     int api_version_result = jaco_api_.getAPIVersion(api_version);
@@ -87,87 +150,49 @@ JacoComm::JacoComm(JacoAngles home)
     ROS_ASSERT_MSG(devices_result == NO_ERROR_KINOVA,
                    "Could not get devices list, return code: %d", devices_result);
 
-    for(int device_count = 0; device_count < devices_list.size(); device_count++)
+    bool found_arm = false;
+    for(int device_i = 0; device_i < devices_list.size(); device_i++)
     {
-        // TODO: Change to use an optional parameter to identify the needed device
-        if (true)
+        // If no device is specified, just use the first available device
+        if ((serial_number == "")
+            || (std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0))
         {
-            ROS_ASSERT_MSG(jaco_api_.setActiveDevice(devices_list[device_count]),
+            ROS_ASSERT_MSG(jaco_api_.setActiveDevice(devices_list[device_i]),
                            "Could not set the active device");
             GeneralInformations general_info;
             ROS_ASSERT_MSG(jaco_api_.getGeneralInformations(general_info) == 1,
                            "Could not get general information about the device");
 
-            ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device " << device_count
-                            << " (serial number: " << devices_list[device_count].SerialNumber
+            ClientConfigurations configuration;
+            ROS_ASSERT_MSG(jaco_api_.getClientConfigurations(configuration) == 1,
+                           "Could not get the client configuration");
+
+            ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device at index " << device_i
+                            << " (model: " << configuration.Model
+                            << ", serial number: " << devices_list[device_i].SerialNumber
                             << ", code version: " << general_info.CodeVersion
                             << ", code revision: " << general_info.CodeRevision << ")");
+            found_arm = true;
             break;
         }
     }
 
-    //    ClientConfigurations configuration;
-    //    getConfig(configuration);
-    //    printConfig(configuration);
+    ROS_ASSERT_MSG(found_arm, "Could not find the specified arm (serial: %s) among the %d attached devices",
+                   serial_number.c_str(), (int)devices_list.size());
 
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
-    ROS_ASSERT(jaco_api_.startControlAPI() == 1);
+    ROS_ASSERT_MSG(jaco_api_.startControlAPI() == 1,
+                   "Could not start the arm API");
     ros::Duration(3.0).sleep();
     //    assert(jaco_api_.stopControlAPI() == 1);
-
-
-
-//    GeneralInformations general_i;
-//    jaco_api_.getGeneralInformations(general_i);
-//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
-
-//    int control_type = 0;
-//    int result = jaco_api_.getControlType(control_type);
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-//    ros::Duration(3.0).sleep();
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-
-//    result = jaco_api_.setAngularControl();
-//    ROS_INFO_STREAM("Angular control has been set: " << result);
-//    ros::Duration(3.0).sleep();
-//    ROS_INFO_STREAM("Angular control has been set: " << result);
-
-
-
-//    jaco_api_.getGeneralInformations(general_i);
-//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
-
-//    result = jaco_api_.getControlType(control_type);
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-//    ros::Duration(3.0).sleep();
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-
-//    result = jaco_api_.setCartesianControl();
-//    ROS_INFO_STREAM("Cartesian control has been set: " << result);
-//    ros::Duration(3.0).sleep();
-//    ROS_INFO_STREAM("Cartesian control has been set: " << result);
-
-
-
-//    jaco_api_.getGeneralInformations(general_i);
-//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
-
-//    result = jaco_api_.getControlType(control_type);
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-//    ros::Duration(3.0).sleep();
-//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
-
 
     // Set the angular velocity of each of the joints to zero
     TrajectoryPoint jaco_velocity;
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));
     setCartesianVelocities(jaco_velocity.Position.CartesianPosition);
 
-
     initFingers();
-
-
 }
 
 JacoComm::~JacoComm() {
@@ -301,11 +326,12 @@ void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push) {
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push) {
+void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
-    if (isStopped()) {
+    if (isStopped())
+    {
         ROS_INFO("The position could not be set because the arm is stopped");
         return;
     }
@@ -314,19 +340,15 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push) 
     jaco_position.InitStruct();
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
-    if (push) {
+    if (push)
+    {
         jaco_api_.eraseAllTrajectories();
     }
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
     jaco_api_.stopControlAPI();
     jaco_api_.startControlAPI();
     jaco_api_.setCartesianControl();
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 
     jaco_position.Position.Delay = 0.0;
     jaco_position.Position.Type = CARTESIAN_POSITION;

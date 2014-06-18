@@ -13,85 +13,31 @@
 #include "jaco_driver/jaco_fingers_action.h"
 
 
-float getXmlrpcValue(XmlRpc::XmlRpcValue &value)
-{
-    ROS_ASSERT_MSG((value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
-                   || (value.getType() == XmlRpc::XmlRpcValue::TypeInt),
-                   "Parameter home_position_degrees must contain only numerical values");
-
-    if (value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
-    {
-        return static_cast<double>(value);
-    }
-    else
-    {
-        return (float)static_cast<int>(value);
-    }
-
-    return 0.0f;
-}
-
-jaco::JacoAngles getHomePosition(ros::NodeHandle &nh)
-{
-    // Typical home position for a "right-handed" arm
-    jaco::JacoAngles home;
-    home.Actuator1 = 282.8;
-    home.Actuator2 = 154.4;
-    home.Actuator3 = 43.1;
-    home.Actuator4 = 230.7;
-    home.Actuator5 = 83.0;
-    home.Actuator6 = 78.1;
-
-    XmlRpc::XmlRpcValue joints_list;
-    if (nh.getParam("home_position_degrees", joints_list))
-    {
-        ROS_ASSERT_MSG(joints_list.getType() == XmlRpc::XmlRpcValue::TypeArray,
-                       "Attempted to get the home position from the parameter server and did not get the "
-                       "correct type. Check launch file or other places that may set parameter values.");
-        ROS_ASSERT_MSG(joints_list.size() == 6, "Home position on parameter server does not have six (6) elements.");
-
-        home.Actuator1 = getXmlrpcValue(joints_list[0]);
-        home.Actuator2 = getXmlrpcValue(joints_list[1]);
-        home.Actuator3 = getXmlrpcValue(joints_list[2]);
-        home.Actuator4 = getXmlrpcValue(joints_list[3]);
-        home.Actuator5 = getXmlrpcValue(joints_list[4]);
-        home.Actuator6 = getXmlrpcValue(joints_list[5]);
-
-        ROS_INFO("Loaded home_position_degrees from file: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
-    } else {
-        ROS_INFO("Using default home_position_degrees: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
-    }
-
-    return home;
-}
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "jaco_arm_driver");
-    ros::NodeHandle nh("~");
+    try
+    {
+        ros::init(argc, argv, "jaco_arm_driver");
+        ros::NodeHandle nh("~");
 
-    jaco::JacoComm comm(getHomePosition(nh));
-    //    JoystickCommand virtualCommand;
-    //    virtualCommand.Rotate = 0;
+        while (ros::ok())
+        {
+            // TODO: Change this to use composition instead of little bits flying in formation
+            jaco::JacoComm comm(nh);
+            jaco::JacoArm jaco(comm, nh);
+            jaco::JacoPoseActionServer pose_server(comm, nh);
+            jaco::JacoAnglesActionServer angles_server(comm, nh);
+            jaco::JacoFingersActionServer fingers_server(comm, nh);
 
-    //    comm.homeArm();
-    //    comm.initFingers();
-
-    //    virtualCommand.Rotate = 1;
-
-    //create the arm object
-    // TODO: Change this to use composition instead of little bits flying in formation
-    jaco::JacoArm jaco(comm, nh);
-    jaco::JacoPoseActionServer pose_server(comm, nh);
-    jaco::JacoAnglesActionServer angles_server(comm, nh);
-    jaco::JacoFingersActionServer fingers_server(comm, nh);
-
-    ros::spin();
+            ros::spin();
+            ros::Duration(1.0).sleep();
+        }
+    } catch(const std::exception& e) {
+        ROS_ERROR_STREAM("Exception:\n" << e.what());
+    }
     return 0;
 }
-
 
 
 

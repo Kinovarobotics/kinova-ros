@@ -17,7 +17,10 @@ import goal_generators
 
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
-    client = actionlib.SimpleActionClient('jaco_arm_driver/arm_pose', jaco_msgs.msg.ArmPoseAction)
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_pose'
+    client = actionlib.SimpleActionClient(action_address, jaco_msgs.msg.ArmPoseAction)
+    print(action_address)
+
     client.wait_for_server()
 
     goal = jaco_msgs.msg.ArmPoseGoal()
@@ -37,26 +40,26 @@ def cartesian_pose_client(position, orientation):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) not in [2, 3, 8] or 'help' in str(sys.argv):
+    if len(sys.argv) not in [3, 4, 9] or 'help' in str(sys.argv):
         print('Usage:')
-        print('    cartesian_workout.py random num          - randomly generate num poses')
-        print('    cartesian_workout.py file_path           - use poses from file')
-        print('    cartesian_workout.py x y z qx qy qz qw   - use that specific pose')
+        print('    cartesian_workout.py node_name random num          - randomly generate num poses')
+        print('    cartesian_workout.py node_name file_path           - use poses from file')
+        print('    cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose')
         exit()
 
     try:
-        rospy.init_node('cartesian_workout')
+        rospy.init_node(str(sys.argv[1]) + '_cartesian_workout')
 
-        if str(sys.argv[1]) == 'random' and len(sys.argv) == 3:
-            print('Using {} randomly generated poses'.format(int(sys.argv[2])))
-            poses = goal_generators.random_pose_generator(int(sys.argv[2]))
-        elif len(sys.argv) == 2:
-            print('Using poses from file: {}'.format(sys.argv[1]))
-            poses = goal_generators.poses_from_file(str(sys.argv[1]))
+        if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
+            print('Using {} randomly generated poses'.format(int(sys.argv[3])))
+            poses = goal_generators.random_pose_generator(int(sys.argv[3]))
+        elif len(sys.argv) == 3:
+            print('Using poses from file: {}'.format(sys.argv[2]))
+            poses = goal_generators.poses_from_file(str(sys.argv[2]))
         else:
             print('Using the specified pose:')
-            raw_pose = [float(n) for n in sys.argv[1:]]
-            mag = np.sqrt(sum(np.power(raw_pose[3:], 2)))
+            raw_pose = [float(n) for n in sys.argv[2:]]
+            mag = np.sqrt(sum(np.power(raw_pose[4:], 2)))
             poses = [(raw_pose[:3], raw_pose[3:] / mag)]
 
         for pos, orient in poses:

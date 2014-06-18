@@ -9,15 +9,9 @@
 
 using namespace jaco;
 
+
 JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
 {
-
-//    std::string joint_angles_topic;
-//    nh.param<std::string>("joint_angles_topic", joint_angles_topic, "joint_angles");
-
-    //Print out received topics
-//    ROS_DEBUG("Got Joint Angles Topic Name: <%s>", joint_angles_topic.c_str());
-
     ROS_INFO("Starting Up Jaco TF Updater...");
 
     this->joint_angles_sub = node_handle.subscribe("in/joint_angles", 1, &JacoTFTree::JointAnglesMSG, this);
@@ -30,8 +24,8 @@ JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
     last_angle_update = ros::Time().now();
     this->tf_update_timer = node_handle.createTimer(ros::Duration(0.01), &JacoTFTree::TFUpdateTimer, this);
     tf_update_timer.stop();
-
 }
+
 
 void JacoTFTree::JointAnglesMSG(const jaco_msgs::JointAnglesConstPtr& joint_angles)
 {
@@ -45,6 +39,7 @@ void JacoTFTree::JointAnglesMSG(const jaco_msgs::JointAnglesConstPtr& joint_angl
     tf_update_timer.start();
 }
 
+
 void JacoTFTree::CalculatePostion(void)
 {
 
@@ -56,6 +51,7 @@ void JacoTFTree::CalculatePostion(void)
 
 }
 
+
 void JacoTFTree::TFUpdateTimer(const ros::TimerEvent&)
 {
     this->CalculatePostion();	//Update TF Tree
@@ -66,6 +62,7 @@ void JacoTFTree::TFUpdateTimer(const ros::TimerEvent&)
     }
 
 }
+
 
 int main(int argc, char **argv)
 {

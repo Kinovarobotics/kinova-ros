@@ -14,7 +14,8 @@ import goal_generators
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
-    client = actionlib.SimpleActionClient('jaco_arm_driver/finger_joint_angles',
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/finger_joint_angles'
+    client = actionlib.SimpleActionClient(action_address,
                                           jaco_msgs.msg.SetFingersPositionAction)
     client.wait_for_server()
 
@@ -49,7 +50,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        rospy.init_node('gripper_workout')
+        rospy.init_node(str(sys.argv[1]) + '_gripper_workout')
 
         if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
             print('Using {} randomly generated finger positions'.format(int(sys.argv[3])))
