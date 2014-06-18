@@ -44,10 +44,11 @@
  */
 
 #include "jaco_driver/jaco_angles_action.h"
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
-namespace jaco {
+namespace jaco
+{
 
 JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &n) :
     arm_comm_(arm_comm),
@@ -58,18 +59,24 @@ JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHand
     action_server_.start();
 }
 
-JacoAnglesActionServer::~JacoAnglesActionServer() {
+JacoAnglesActionServer::~JacoAnglesActionServer()
+{
 }
 
-void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal) {
+void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
+{
     jaco_msgs::ArmJointAnglesFeedback feedback;
     jaco_msgs::ArmJointAnglesResult result;
-
-    ROS_INFO("Got an angular goal for the arm");
-
     JacoAngles current_joint_angles;
 
-    if (arm_comm_.isStopped()) {
+    // TODO: Look into the mismatch between joint numbering
+    ROS_INFO("Got an angular goal for the arm: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f",
+             goal->angles.joint1, goal->angles.joint2, goal->angles.joint3,
+             goal->angles.joint4, goal->angles.joint5, goal->angles.joint6);
+
+    if (arm_comm_.isStopped())
+    {
+        ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
         arm_comm_.getJointAngles(current_joint_angles);
         result.angles = current_joint_angles.constructAnglesMsg();
         action_server_.setAborted(result);
@@ -82,16 +89,19 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
     // Loop until the action completed, is preempted, or fails in some way.
     // timeout is left to the caller since the timeout may greatly depend on
     // the context of the movement.
-    while (true) {
+    while (true)
+    {
         ros::spinOnce();
-        if (action_server_.isPreemptRequested() || !ros::ok()) {
+        if (action_server_.isPreemptRequested() || !ros::ok())
+        {
             arm_comm_.stop();
             arm_comm_.start();
             action_server_.setPreempted();
             return;
         }
 
-        if (arm_comm_.isStopped()) {
+        if (arm_comm_.isStopped())
+        {
             result.angles = current_joint_angles.constructAnglesMsg();
             action_server_.setAborted(result);
             return;
@@ -101,9 +111,9 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
         feedback.angles = current_joint_angles.constructAnglesMsg();
         action_server_.publishFeedback(feedback);
 
-        if (target.compareToOther(current_joint_angles, tolerance_)) {
+        if (target.isCloseToOther(current_joint_angles, tolerance_))
+        {
             ROS_INFO("Angular Control Complete.");
-
             result.angles = current_joint_angles.constructAnglesMsg();
             action_server_.setSucceeded(result);
             return;

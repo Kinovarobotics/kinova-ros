@@ -9,20 +9,13 @@
 #include "jaco_driver/jaco_arm.h"
 
 
-namespace jaco {
+namespace jaco
+{
 
 JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     : jaco_api_(arm), nodeHandle_(nodeHandle)
 {
-    ROS_INFO("Starting Up Jaco Arm Controller...");
-
-    QuickStatus qs;
-    ClientConfigurations configuration;
-    jaco_api_.getQuickStatus(qs);
-    jaco_api_.getConfig(configuration);
-    jaco_api_.getQuickStatus(qs);
-    jaco_api_.printConfig(configuration);
-    jaco_api_.getQuickStatus(qs);
+    ROS_INFO("Creating the ROS interface to the arm (services, action, publishers, and subscribers)");
 
     /* Set up Services */
     stop_service_ = nodeHandle_.advertiseService("in/stop", &JacoArm::stopServiceCallback, this);
@@ -41,7 +34,7 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     cartesian_velocity_subscriber_ = nodeHandle_.subscribe("in/cartesian_velocity", 1,
                                                           &JacoArm::cartesianVelocityCallback, this);
 
-    // TODO: Change these defaults to something safer
+    // TODO: Change these defaults to something else
     nodeHandle_.param<double>("status_interval_seconds", status_interval_seconds_, 1.0);
     nodeHandle_.param<double>("joint_angular_vel_timeout", joint_angular_vel_timeout_seconds_, 1.0);
     nodeHandle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 1.0);
@@ -58,15 +51,6 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
                                                   &JacoArm::cartesianVelocityTimer, this);
     cartesian_vel_timer_.stop();
     cartesian_vel_timer_flag_ = false;
-
-
-    jaco_api_.getQuickStatus(qs);
-    // Set the angular velocity of each of the joints to zero
-    TrajectoryPoint jaco_velocity;
-    memset(&jaco_velocity, 0, sizeof(jaco_velocity));
-    jaco_api_.setCartesianVelocities(jaco_velocity.Position.CartesianPosition);
-
-    jaco_api_.getQuickStatus(qs);
 
     ROS_INFO("The arm is ready to use.");
 }
@@ -107,12 +91,11 @@ void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& join
  * Instantly stops the arm and prevents further movement until start service is
  * invoked.
  */
-bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
+{
     jaco_api_.stop();
-    res.stop_result = "JACO ARM HAS BEEN STOPPED";
-    ROS_DEBUG("JACO ARM STOP REQUEST");
-
+    res.stop_result = "Arm stopped";
+    ROS_DEBUG("Arm stop requested");
     return true;
 }
 
@@ -121,11 +104,11 @@ bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop
  *
  * Re-enables control of the arm after a stop.
  */
-bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
+{
     jaco_api_.start();
-    res.start_result = "JACO ARM CONTROL HAS BEEN ENABLED";
-    ROS_INFO("JACO ARM START REQUEST");
+    res.start_result = "Arm started";
+    ROS_INFO("Arm start requested");
 
     return true;
 }
@@ -288,8 +271,8 @@ void JacoArm::statusTimer(const ros::TimerEvent&) {
     publishFingerPosition();
 
 //    ROS_INFO_STREAM("Getting quick status for the timer");
-    QuickStatus current_status;
-    jaco_api_.getQuickStatus(current_status);
+//    QuickStatus current_status;
+//    jaco_api_.getQuickStatus(current_status);
 }
 
 }  // namespace jaco

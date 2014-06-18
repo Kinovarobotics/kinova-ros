@@ -12,7 +12,7 @@
 
 #include <ros/ros.h>
 #include <jaco_driver/jaco_api.h>
-#include "KinovaTypes.h"
+#include "kinova/KinovaTypes.h"
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>

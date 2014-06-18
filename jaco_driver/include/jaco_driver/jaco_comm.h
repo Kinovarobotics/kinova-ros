@@ -46,7 +46,7 @@
 #ifndef _JACO_COMM_H_
 #define _JACO_COMM_H_
 
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include <jaco_driver/jaco_types.h>
 #include "jaco_driver/jaco_api.h"
 #include <boost/thread/recursive_mutex.hpp>

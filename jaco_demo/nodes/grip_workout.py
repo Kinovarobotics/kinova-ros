@@ -14,7 +14,7 @@ import goal_generators
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
-    client = actionlib.SimpleActionClient('jaco/finger_joint_angles',
+    client = actionlib.SimpleActionClient('jaco_arm_driver/finger_joint_angles',
                                           jaco_msgs.msg.SetFingersPositionAction)
     client.wait_for_server()
 

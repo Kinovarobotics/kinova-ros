@@ -50,25 +50,40 @@
 #include <jaco_driver/jaco_types.h>
 
 
-namespace jaco {
+namespace jaco
+{
 
 // A few helper functions
 // ----------------------
 
-bool compareValues(float first, float second, float tolerance) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    return ((first <= second + tolerance) && (first >= second - tolerance));
-}
 
-float normalizeInRads(float rads) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+float normalizeInRads(float rads)
+{
     return float(angles::normalize_angle_positive(rads));
 }
 
-float normalizeInDegrees(float degrees) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+float normalizePositiveInDegrees(float degrees)
+{
     return angles::to_degrees(angles::normalize_angle_positive(angles::from_degrees(degrees)));
 }
+
+
+float normalizeInDegrees(float degrees)
+{
+    return angles::to_degrees(angles::normalize_angle(angles::from_degrees(degrees)));
+}
+
+
+bool areValuesClose(float first, float second, float tolerance)
+{
+//    return (fabs(normalizeInDegrees(second - first)) < fabs(tolerance));
+
+
+    // I don't think this captures rollowever...?
+    return ((first <= second + tolerance) && (first >= second - tolerance));
+}
+
 
 // Class definitions
 // -----------------
@@ -118,39 +133,41 @@ geometry_msgs::Pose JacoPose::constructPoseMsg() {
     return pose;
 }
 
-bool JacoPose::compareToOther(const JacoPose &other, float tolerance) const {
+bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const {
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
-    status = status && compareValues(X, other.X, tolerance);
-    status = status && compareValues(Y, other.Y, tolerance);
-    status = status && compareValues(Z, other.Z, tolerance);
-    status = status && compareValues(ThetaX, other.ThetaX, tolerance);
-    status = status && compareValues(ThetaY, other.ThetaY, tolerance);
-    status = status && compareValues(ThetaZ, other.ThetaZ, tolerance);
+    status = status && areValuesClose(X, other.X, tolerance);
+    status = status && areValuesClose(Y, other.Y, tolerance);
+    status = status && areValuesClose(Z, other.Z, tolerance);
+    status = status && areValuesClose(ThetaX, other.ThetaX, tolerance);
+    status = status && areValuesClose(ThetaY, other.ThetaY, tolerance);
+    status = status && areValuesClose(ThetaZ, other.ThetaZ, tolerance);
     return status;
 }
 
 JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    Actuator1 = normalizeInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
-    Actuator2 = normalizeInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
-    Actuator3 = normalizeInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
-    Actuator4 = normalizeInDegrees(180.0 - (angles.joint4 * (180.0 / M_PI)));
-    Actuator5 = normalizeInDegrees(180.0 - (angles.joint5 * (180.0 / M_PI)));
-    Actuator6 = normalizeInDegrees(260.0 - (angles.joint6 * (180.0 / M_PI)));
+    Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
+    Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
+    Actuator3 = normalizePositiveInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
+    Actuator4 = normalizePositiveInDegrees(180.0 - (angles.joint4 * (180.0 / M_PI)));
+    Actuator5 = normalizePositiveInDegrees(180.0 - (angles.joint5 * (180.0 / M_PI)));
+    Actuator6 = normalizePositiveInDegrees(260.0 - (angles.joint6 * (180.0 / M_PI)));
 }
 
-JacoAngles::JacoAngles(const AngularInfo &angles) {
+JacoAngles::JacoAngles(const AngularInfo &angles)
+{
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    Actuator1 = normalizeInDegrees(angles.Actuator1);
-    Actuator2 = normalizeInDegrees(angles.Actuator2);
-    Actuator3 = normalizeInDegrees(angles.Actuator3);
-    Actuator4 = normalizeInDegrees(angles.Actuator4);
-    Actuator5 = normalizeInDegrees(angles.Actuator5);
-    Actuator6 = normalizeInDegrees(angles.Actuator6);
+    Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
+    Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
+    Actuator3 = normalizePositiveInDegrees(angles.Actuator3);
+    Actuator4 = normalizePositiveInDegrees(angles.Actuator4);
+    Actuator5 = normalizePositiveInDegrees(angles.Actuator5);
+    Actuator6 = normalizePositiveInDegrees(angles.Actuator6);
 }
 
-jaco_msgs::JointAngles JacoAngles::constructAnglesMsg() {
+jaco_msgs::JointAngles JacoAngles::constructAnglesMsg()
+{
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     jaco_msgs::JointAngles angles;
     angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
@@ -162,26 +179,36 @@ jaco_msgs::JointAngles JacoAngles::constructAnglesMsg() {
     return angles;
 }
 
-bool JacoAngles::compareToOther(const JacoAngles &other, float tolerance) const {
+bool JacoAngles::isCloseToOther(const JacoAngles &other, float tolerance) const
+{
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
-    status = status && compareValues(Actuator1, other.Actuator1, tolerance);
-    status = status && compareValues(Actuator2, other.Actuator2, tolerance);
-    status = status && compareValues(Actuator3, other.Actuator3, tolerance);
-    status = status && compareValues(Actuator4, other.Actuator4, tolerance);
-    status = status && compareValues(Actuator5, other.Actuator5, tolerance);
-    status = status && compareValues(Actuator6, other.Actuator6, tolerance);
+    status = status && areValuesClose(Actuator1, other.Actuator1, tolerance);
+    status = status && areValuesClose(Actuator2, other.Actuator2, tolerance);
+    status = status && areValuesClose(Actuator3, other.Actuator3, tolerance);
+    status = status && areValuesClose(Actuator4, other.Actuator4, tolerance);
+    status = status && areValuesClose(Actuator5, other.Actuator5, tolerance);
+    status = status && areValuesClose(Actuator6, other.Actuator6, tolerance);
+//    ROS_INFO("Differences: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
+//             fabs(normalizeInDegrees(other.Actuator1 - Actuator1)),
+//             fabs(normalizeInDegrees(other.Actuator2 - Actuator2)),
+//             fabs(normalizeInDegrees(other.Actuator3 - Actuator3)),
+//             fabs(normalizeInDegrees(other.Actuator4 - Actuator4)),
+//             fabs(normalizeInDegrees(other.Actuator5 - Actuator5)),
+//             fabs(normalizeInDegrees(other.Actuator6 - Actuator6)));
     return status;
 }
 
-FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position) {
+FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position)
+{
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = position.finger1;
     Finger2 = position.finger2;
     Finger3 = position.finger3;
 }
 
-FingerAngles::FingerAngles(const FingersPosition &angle) {
+FingerAngles::FingerAngles(const FingersPosition &angle)
+{
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = angle.Finger1;
     Finger2 = angle.Finger2;
@@ -197,12 +224,12 @@ jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
     return angles;
 }
 
-bool FingerAngles::compareToOther(const FingerAngles &other, float tolerance) const {
+bool FingerAngles::isCloseToOther(const FingerAngles &other, float tolerance) const {
 //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
-    status = status && compareValues(Finger1, other.Finger1, tolerance);
-    status = status && compareValues(Finger2, other.Finger2, tolerance);
-    status = status && compareValues(Finger3, other.Finger3, tolerance);
+    status = status && areValuesClose(Finger1, other.Finger1, tolerance);
+    status = status && areValuesClose(Finger2, other.Finger2, tolerance);
+    status = status && areValuesClose(Finger3, other.Finger3, tolerance);
     return status;
 }
 

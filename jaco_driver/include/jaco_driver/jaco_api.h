@@ -9,8 +9,8 @@
 #ifndef JACOLIB_H_
 #define JACOLIB_H_
 
-#include "Kinova.API.UsbCommandLayerUbuntu.h"
-#include "KinovaTypes.h"
+#include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "kinova/KinovaTypes.h"
 #include <dlfcn.h>
 #include <iostream>
 #include <ros/ros.h>
@@ -25,25 +25,34 @@ class JacoAPI {
 
     int (*initAPI)(void);
     int (*closeAPI)(void);
+    int (*getAPIVersion)(std::vector<int> &);
+    int (*getDevices)(std::vector<KinovaDevice> &, int &);
+    int (*setActiveDevice)(KinovaDevice);
+
+    int (*getGeneralInformations)(GeneralInformations &);
     int (*getQuickStatus)(QuickStatus &);
     // int (*GetForcesInfo)(ForcesInfo &);
+
     int (*getCodeVersion)(std::vector<int> &);
+    int (*startControlAPI)();
+    int (*stopControlAPI)();
+    int (*initFingers)();
+
+    int (*moveHome)();
+
     int (*getCartesianPosition)(CartesianPosition &);
     int (*getAngularPosition)(AngularPosition &);
     int (*getCartesianForce)(CartesianPosition &);
     int (*getAngularForce)(AngularPosition &);
     int (*getAngularCurrent)(AngularPosition &);
+    int (*getControlType)(int &);
     // int (*getControlOperator)(int &);
     int (*getActualTrajectoryInfo)(TrajectoryPoint &);
     int (*getGlobalTrajectoryInfo)(TrajectoryFIFO &);
     int (*getSensorsInfo)(SensorsInfo &);
-    int (*getSingularityVector)(SingularityVector &);
+//    int (*getSingularityVector)(SingularityVector &);
     int (*setAngularControl)();
     int (*setCartesianControl)();
-    int (*startControlAPI)();
-    int (*stopControlAPI)();
-    int (*moveHome)();
-    int (*initFingers)();
     int (*restoreFactoryDefault)();
     int (*sendJoystickCommand)(JoystickCommand);
     int (*sendAdvanceTrajectory)(TrajectoryPoint);

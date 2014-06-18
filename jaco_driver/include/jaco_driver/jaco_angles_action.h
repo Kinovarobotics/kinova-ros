@@ -52,9 +52,12 @@
 #include <actionlib/server/simple_action_server.h>
 #include <jaco_msgs/ArmJointAnglesAction.h>
 
-namespace jaco {
 
-class JacoAnglesActionServer {
+namespace jaco
+{
+
+class JacoAnglesActionServer
+{
  public:
     JacoAnglesActionServer(JacoComm &, ros::NodeHandle &n);
     ~JacoAnglesActionServer();
@@ -66,6 +69,6 @@ class JacoAnglesActionServer {
     ros::Rate  rate_hz_;
     float tolerance_;
 };
-}
 
+}
 #endif // _JACO_ANGLES_ACTION_H_

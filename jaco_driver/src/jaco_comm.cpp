@@ -69,28 +69,105 @@ JacoComm::JacoComm(JacoAngles home)
     : is_software_stop_(false), home_position_(home)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO("Initializing API");
-    assert(jaco_api_.initAPI() == 1);
+
+    std::vector<int> api_version;
+    int api_version_result = jaco_api_.getAPIVersion(api_version);
+    ROS_ASSERT_MSG(api_version_result == NO_ERROR_KINOVA,
+                   "Could not get the Kinova API version, return code: %d", api_version_result);
+    ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
+                    << api_version[0] << "." << api_version[1] << "." << api_version[2] << ")");
+
+    int init_api_result = jaco_api_.initAPI();
+    ROS_ASSERT_MSG(init_api_result == NO_ERROR_KINOVA,
+                   "Could not initialize Kinova API, return code: %d", init_api_result);
+
+    std::vector<KinovaDevice> devices_list;
+    int devices_result = NO_ERROR_KINOVA;
+    jaco_api_.getDevices(devices_list, devices_result);
+    ROS_ASSERT_MSG(devices_result == NO_ERROR_KINOVA,
+                   "Could not get devices list, return code: %d", devices_result);
+
+    for(int device_count = 0; device_count < devices_list.size(); device_count++)
+    {
+        // TODO: Change to use an optional parameter to identify the needed device
+        if (true)
+        {
+            ROS_ASSERT_MSG(jaco_api_.setActiveDevice(devices_list[device_count]),
+                           "Could not set the active device");
+            GeneralInformations general_info;
+            ROS_ASSERT_MSG(jaco_api_.getGeneralInformations(general_info) == 1,
+                           "Could not get general information about the device");
+
+            ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device " << device_count
+                            << " (serial number: " << devices_list[device_count].SerialNumber
+                            << ", code version: " << general_info.CodeVersion
+                            << ", code revision: " << general_info.CodeRevision << ")");
+            break;
+        }
+    }
+
+    //    ClientConfigurations configuration;
+    //    getConfig(configuration);
+    //    printConfig(configuration);
 
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
-    assert(jaco_api_.startControlAPI() == 1);
+    ROS_ASSERT(jaco_api_.startControlAPI() == 1);
     ros::Duration(3.0).sleep();
-    //assert(jaco_api_.stopControlAPI() == 1);
+    //    assert(jaco_api_.stopControlAPI() == 1);
 
-    QuickStatus qs;
-    getQuickStatus(qs);
 
-    ros::Duration(3.0).sleep();
-    getQuickStatus(qs);
 
-    ros::Duration(3.0).sleep();
-    getQuickStatus(qs);
+//    GeneralInformations general_i;
+//    jaco_api_.getGeneralInformations(general_i);
+//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
+
+//    int control_type = 0;
+//    int result = jaco_api_.getControlType(control_type);
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+//    ros::Duration(3.0).sleep();
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+
+//    result = jaco_api_.setAngularControl();
+//    ROS_INFO_STREAM("Angular control has been set: " << result);
+//    ros::Duration(3.0).sleep();
+//    ROS_INFO_STREAM("Angular control has been set: " << result);
+
+
+
+//    jaco_api_.getGeneralInformations(general_i);
+//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
+
+//    result = jaco_api_.getControlType(control_type);
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+//    ros::Duration(3.0).sleep();
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+
+//    result = jaco_api_.setCartesianControl();
+//    ROS_INFO_STREAM("Cartesian control has been set: " << result);
+//    ros::Duration(3.0).sleep();
+//    ROS_INFO_STREAM("Cartesian control has been set: " << result);
+
+
+
+//    jaco_api_.getGeneralInformations(general_i);
+//    ROS_INFO("Controller: %d, %d", general_i.Controller, general_i.ControlMode);
+
+//    result = jaco_api_.getControlType(control_type);
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+//    ros::Duration(3.0).sleep();
+//    ROS_INFO_STREAM("Control type: " << control_type << ", result: " << result);
+
+
+    // Set the angular velocity of each of the joints to zero
+    TrajectoryPoint jaco_velocity;
+    memset(&jaco_velocity, 0, sizeof(jaco_velocity));
+    setCartesianVelocities(jaco_velocity.Position.CartesianPosition);
+
 
     initFingers();
 
-    ros::Duration(3.0).sleep();
-    getQuickStatus(qs);
+
 }
 
 JacoComm::~JacoComm() {
@@ -131,7 +208,7 @@ bool JacoComm::isHomed(void) {
  */
 void JacoComm::homeArm(void) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("Arm is stopped, cannot home");
@@ -155,11 +232,11 @@ void JacoComm::homeArm(void) {
  * Note, The this routine requires firmware version 5.05.x (or higher?).
  */
 void JacoComm::initFingers(void) {
-    ROS_INFO("Initializing fingers...this will take a few seconds");
+    ROS_INFO("Initializing fingers...this will take a few seconds and the fingers should move");
     jaco_api_.initFingers();
 
-    QuickStatus qs;
-    getQuickStatus(qs);
+    //    QuickStatus qs;
+    //    getQuickStatus(qs);
     FingerAngles finger_angles;
     finger_angles.Finger1 = 50.0;
     finger_angles.Finger2 = 50.0;
@@ -167,14 +244,14 @@ void JacoComm::initFingers(void) {
     setFingerPositions(finger_angles, 5.0);
     ros::Duration(2.0).sleep();
 
-    getQuickStatus(qs);
+    //    getQuickStatus(qs);
     finger_angles.Finger1 = 0.25;
     finger_angles.Finger2 = 0.25;
     finger_angles.Finger3 = 0.25;
     setFingerPositions(finger_angles, 5.0);
     ros::Duration(2.0).sleep();
 
-    getQuickStatus(qs);
+    //    getQuickStatus(qs);
     // Set the fingers to "half-open"
     finger_angles.Finger1 = 25.0;
     finger_angles.Finger2 = 25.0;
@@ -285,7 +362,6 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push) 
  */
 void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("The fingers could not be set because the arm is stopped");
@@ -364,7 +440,6 @@ void JacoComm::setVelocities(AngularInfo joint_vel) {
  */
 void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
     if (isStopped()) {
         ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
@@ -394,8 +469,6 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
  */
 void JacoComm::setConfig(ClientConfigurations config) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-
     jaco_api_.setClientConfigurations(config);
 }
 
@@ -437,7 +510,7 @@ void JacoComm::getFingerPositions(FingerAngles &fingers) {
  */
 void JacoComm::getConfig(ClientConfigurations &config) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     memset(&config, 0, sizeof(config));  // zero structure
     jaco_api_.getClientConfigurations(config);
 }
@@ -447,7 +520,7 @@ void JacoComm::getConfig(ClientConfigurations &config) {
  */
 void JacoComm::getQuickStatus(QuickStatus &quick_status) {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     memset(&quick_status, 0, sizeof(quick_status));  // zero structure
     int result = jaco_api_.getQuickStatus(quick_status);
     printf("Quick status: ");
@@ -458,7 +531,7 @@ void JacoComm::getQuickStatus(QuickStatus &quick_status) {
  * \brief Dumps the current joint angles onto the screen.
  */
 void JacoComm::printAngles(JacoAngles &angles) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
              angles.Actuator4, angles.Actuator5, angles.Actuator6);
@@ -482,14 +555,14 @@ void JacoComm::printPosition(JacoPose &position) {
 void JacoComm::printFingers(FingersPosition fingers) {
     ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
-    fingers.Finger1, fingers.Finger2, fingers.Finger3);
+             fingers.Finger1, fingers.Finger2, fingers.Finger3);
 }
 
 /*!
  * \brief Dumps the client configuration onto the screen.
  */
 void JacoComm::printConfig(ClientConfigurations config) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     ROS_INFO_STREAM("Arm configuration:\n"
                     "\tClientID: " << config.ClientID <<
                     "\n\tClientName: " << config.ClientName <<
@@ -512,47 +585,31 @@ void JacoComm::printConfig(ClientConfigurations config) {
 }
 
 
-void JacoComm::stop() {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
+void JacoComm::stop()
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     is_software_stop_ = true;
 
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
-
     jaco_api_.stopControlAPI();
-    jaco_api_.startControlAPI();
     jaco_api_.eraseAllTrajectories();
-
-    JoystickCommand home_command;
-    memset(&home_command, 0, sizeof(home_command));  // zero structure
-
-    home_command.ButtonValue[2] = 1;
-    jaco_api_.sendJoystickCommand(home_command);
-    jaco_api_.eraseAllTrajectories();
-    ros::Duration(0.05).sleep();
-
-    home_command.ButtonValue[2] = 0;
-    jaco_api_.sendJoystickCommand(home_command);
-
-    ROS_INFO_STREAM("file: " << __FILE__ << ", line: " << __LINE__ << ", "
-                    "process: " << getpid() << ", thread: " << syscall(SYS_gettid));
 }
 
-void JacoComm::start() {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
+void JacoComm::start()
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    is_software_stop_ = false;
-
-    jaco_api_.stopControlAPI();
+    if (is_software_stop_)
+    {
+        is_software_stop_ = false;
+        jaco_api_.stopControlAPI();
+        ros::Duration(0.05).sleep();
+    }
     jaco_api_.startControlAPI();
 }
 
-bool JacoComm::isStopped() {
+
+bool JacoComm::isStopped()
+{
     return is_software_stop_;
 }
 

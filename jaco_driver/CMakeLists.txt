@@ -60,9 +60,9 @@ add_executable(jaco_arm_driver
   include/jaco_driver/jaco_fingers_action.h
   include/jaco_driver/jaco_pose_action.h
   include/jaco_driver/jaco_types.h
-  include/jaco_driver/Kinova.API.CommLayerUbuntu.h
-  include/jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h
-  include/jaco_driver/KinovaTypes.h
+  include/kinova/Kinova.API.CommLayerUbuntu.h
+  include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
+  include/kinova/KinovaTypes.h
 )
 
 add_executable(jaco_tf_updater

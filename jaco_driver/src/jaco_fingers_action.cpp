@@ -44,7 +44,7 @@
  */
 
 #include "jaco_driver/jaco_fingers_action.h"
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
 
@@ -113,7 +113,7 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
                  current_finger_positions.Finger2,
                  current_finger_positions.Finger3);
 
-        if (target.compareToOther(current_finger_positions, tolerance_)) {
+        if (target.isCloseToOther(current_finger_positions, tolerance_)) {
             ROS_INFO("\tFinger action complete.");
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setSucceeded(result);

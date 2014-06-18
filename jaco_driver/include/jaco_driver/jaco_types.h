@@ -46,48 +46,46 @@
 #ifndef _JACO_TYPES_H_
 #define _JACO_TYPES_H_
 
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>
 
 
-namespace jaco {
-// A note on style in the following classes: these classes inherit
-// from the Kinova API. That API follows a different style for naming
-// (e.g., for methods and members). In these classes we try to
-// transition to the ROS style; however, there will be cases where the
-// Kinova style is visible. When using these classes, one should only
-// see the ROS style.
+namespace jaco
+{
 
-class JacoPose : public CartesianInfo {
+class JacoPose : public CartesianInfo
+{
  public:
     JacoPose() {}
     JacoPose(const geometry_msgs::Pose &pose);
     JacoPose(const CartesianInfo &pose);
 
     geometry_msgs::Pose constructPoseMsg();
-    bool compareToOther(const JacoPose &, float tolerance) const;
+    bool isCloseToOther(const JacoPose &, float tolerance) const;
 };
 
-class JacoAngles : public AngularInfo {
+class JacoAngles : public AngularInfo
+{
  public:
     JacoAngles() {}
     JacoAngles(const jaco_msgs::JointAngles &angles);
     JacoAngles(const AngularInfo &angles);
 
     jaco_msgs::JointAngles constructAnglesMsg();
-    bool compareToOther(const JacoAngles &, float tolerance) const;
+    bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 
-class FingerAngles : public FingersPosition {
+class FingerAngles : public FingersPosition
+{
  public:
     FingerAngles() {}
     FingerAngles(const jaco_msgs::FingerPosition &position);
     FingerAngles(const FingersPosition &angle);
 
     jaco_msgs::FingerPosition constructFingersMsg();
-    bool compareToOther(const FingerAngles &, float tolerance) const;
+    bool isCloseToOther(const FingerAngles &, float tolerance) const;
 };
 
 }

@@ -44,7 +44,7 @@
  */
 
 #include "jaco_driver/jaco_pose_action.h"
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
 namespace jaco
@@ -85,7 +85,9 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
             && !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
                     goal->pose.header.stamp))
     {
-        ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", goal->pose.header.frame_id.c_str());
+        ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement",
+                  goal->pose.header.frame_id.c_str());
+        as_.setAborted(result);
         return;
     }
 
@@ -148,7 +150,7 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 
         as_.publishFeedback(feedback);
 
-        if (target.compareToOther(cur_position, tolerance))
+        if (target.isCloseToOther(cur_position, tolerance))
         {
             ROS_INFO("Cartesian Control Complete.");
 
