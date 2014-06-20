@@ -167,11 +167,20 @@ JacoComm::JacoComm(ros::NodeHandle nodeHandle)
             ROS_ASSERT_MSG(jaco_api_.getClientConfigurations(configuration) == 1,
                            "Could not get the client configuration");
 
+            QuickStatus quick_status;
+            ROS_ASSERT_MSG(jaco_api_.getQuickStatus(quick_status) == 1,
+                           "Could not get quick status from the arm");
+            ROS_ASSERT_MSG((quick_status.RobotType == 0) || (quick_status.RobotType == 1),
+                           "Could not get the type of the arm from the quick status, expected "
+                           "either type 0 (JACO), or type 1 (MICO)");
+            num_fingers_ = quick_status.RobotType == 0 ? 3 : 2;
+
             ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
                             << ", serial number: " << devices_list[device_i].SerialNumber
                             << ", code version: " << general_info.CodeVersion
                             << ", code revision: " << general_info.CodeRevision << ")");
+
             found_arm = true;
             break;
         }
@@ -398,7 +407,7 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
         jaco_api_.eraseAllTrajectories();
     }
 
-    jaco_api_.stopControlAPI();
+//    jaco_api_.stopControlAPI();
     jaco_api_.startControlAPI();
 
     // Initialize Cartesian control of the fingers
@@ -431,14 +440,16 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
     jaco_api_.sendAdvanceTrajectory(jaco_position);
 }
 
+
 /*!
  * \brief Set the angular velocity of the joints
  */
-void JacoComm::setVelocities(AngularInfo joint_vel) {
+void JacoComm::setJointVelocities(AngularInfo joint_vel)
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
-    if (isStopped()) {
+    if (isStopped())
+    {
         ROS_INFO("The velocities could not be set because the arm is stopped");
         return;
     }
@@ -446,9 +457,9 @@ void JacoComm::setVelocities(AngularInfo joint_vel) {
     TrajectoryPoint jaco_velocity;
     jaco_velocity.InitStruct();
 
-    memset(&jaco_velocity, 0, sizeof(jaco_velocity)); // zero structure
+    memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    jaco_api_.stopControlAPI();
+//    jaco_api_.stopControlAPI();
     jaco_api_.startControlAPI();
     jaco_velocity.Position.Type = ANGULAR_VELOCITY;
 
@@ -457,13 +468,16 @@ void JacoComm::setVelocities(AngularInfo joint_vel) {
     jaco_api_.sendAdvanceTrajectory(jaco_velocity);
 }
 
+
 /*!
  * \brief Set the cartesian velocity of the tool tip
  */
-void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
+void JacoComm::setCartesianVelocities(CartesianInfo velocities)
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
-    if (isStopped()) {
+    if (isStopped())
+    {
         ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
         jaco_api_.eraseAllTrajectories();
         return;
@@ -474,7 +488,7 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities) {
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    jaco_api_.stopControlAPI();
+//    jaco_api_.stopControlAPI();
     jaco_api_.startControlAPI();
     jaco_velocity.Position.Type = CARTESIAN_VELOCITY;
 
@@ -524,8 +538,21 @@ void JacoComm::getFingerPositions(FingerAngles &fingers) {
     CartesianPosition jaco_cartesian_position;
     memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
     jaco_api_.getCartesianPosition(jaco_cartesian_position);
+
+    if (num_fingers_ == 2)
+    {
+        jaco_cartesian_position.Fingers.Finger3 = 0.0;
+    }
+
     fingers = jaco_cartesian_position.Fingers;
 }
+
+
+int JacoComm::numFingers()
+{
+    return num_fingers_;
+}
+
 
 /*!
  * \brief API call to obtain the current client configuration.

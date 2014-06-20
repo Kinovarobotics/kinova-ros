@@ -33,9 +33,11 @@
 #include <vector>
 
 
-namespace jaco {
+namespace jaco
+{
 
-class JacoArm {
+class JacoArm
+{
  public:
     JacoArm(JacoComm& arm, ros::NodeHandle &nodeHandle);
     ~JacoArm();
@@ -48,9 +50,6 @@ class JacoArm {
     bool homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res);
 
  private:
-    //void goHome(void);  // TODO: See if this is needed
-    //void calculatePostion(void);
-
     void positionTimer(const ros::TimerEvent&);
     void cartesianVelocityTimer(const ros::TimerEvent&);
     void jointVelocityTimer(const ros::TimerEvent&);
@@ -60,11 +59,13 @@ class JacoArm {
     void publishToolPosition(void);
     void publishFingerPosition(void);
 
-    JacoComm &jaco_api_;
+    tf::TransformListener tf_listener_;
+    ros::NodeHandle nodeHandle_;
+    JacoComm &jaco_comm_;
 
+    // Publishers, subscribers, services
     ros::Subscriber joint_velocity_subscriber_;
     ros::Subscriber cartesian_velocity_subscriber_;
-    // ros::Subscriber software_pause_sub_;  // TODO: Does this get used?
 
     ros::Publisher joint_angles_publisher_;
     ros::Publisher tool_position_publisher_;
@@ -75,14 +76,24 @@ class JacoArm {
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
 
+    // Timers for control loops
     ros::Timer status_timer_;
     ros::Timer cartesian_vel_timer_;
     ros::Timer joint_vel_timer_;
 
+    // Parameters
     double status_interval_seconds_;
-    double joint_angular_vel_timeout_seconds_;
+    double joint_vel_timeout_seconds_;
     double cartesian_vel_timeout_seconds_;
+    double joint_vel_interval_seconds_;
+    double cartesian_vel_interval_seconds_;
 
+//    double stall_interval_seconds_;
+//    double stall_threshold_joints_;
+//    double stall_threshold_cartesian_;
+//    double stall_threshold_fingers_;
+
+    // State tracking or utility members
     bool cartesian_vel_timer_flag_;
     bool joint_vel_timer_flag_;
 
@@ -91,14 +102,6 @@ class JacoArm {
 
     ros::Time last_joint_vel_cmd_time_;
     ros::Time last_cartesian_vel_cmd_time_;
-
-    tf::TransformListener tf_listener_;
-
-    ros::NodeHandle nodeHandle_;
-
-//    ros::Time last_update_time_;
-//    ros::Duration update_time_;
-//    uint8_t previous_state_;
 };
 
 }  // namespace jaco

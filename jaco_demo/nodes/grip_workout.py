@@ -14,7 +14,7 @@ import goal_generators
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/finger_joint_angles'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/fingers/finger_positions'
     client = actionlib.SimpleActionClient(action_address,
                                           jaco_msgs.msg.SetFingersPositionAction)
     client.wait_for_server()
@@ -55,10 +55,9 @@ if __name__ == '__main__':
         if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
             print('Using {} randomly generated finger positions'.format(int(sys.argv[3])))
             if str(sys.argv[1]) == 'jaco':
-                n_fingers = 3
+                positions = goal_generators.random_jaco_finger_positions(int(sys.argv[3]))
             else:
-                n_fingers = 2
-            positions = goal_generators.random_finger_positions(int(sys.argv[3]), n_fingers)
+                positions = goal_generators.random_mico_finger_positions(int(sys.argv[3]))
         elif str(sys.argv[1]) == 'jaco' and len(sys.argv) == 5:
             print('Using the specified JACO finger positions:')
             raw_positions = [float(n) for n in sys.argv[2:]]
@@ -69,7 +68,7 @@ if __name__ == '__main__':
             positions = [raw_positions]
         else:
             print('Could not parse arguments, use gripper_workout.py help to see examples')
-            positions = []  # Just to get rid of the static analysis warning
+            positions = []  # Get rid of static analysis warning that doesn't see the exit()
             exit()
 
         for position in positions:

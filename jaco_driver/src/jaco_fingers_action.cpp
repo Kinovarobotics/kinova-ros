@@ -48,40 +48,55 @@
 #include "jaco_driver/jaco_types.h"
 
 
-namespace jaco {
+namespace jaco
+{
 
 JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      action_server_(nh, "finger_joint_angles",
-                     boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false),
-      rate_hz_(10),    // TODO: Make this a parameter
-      tolerance_(2.0)  // TODO: make this a parameter dead zone for position
+      nodeHandle_(nh, "fingers"),
+      action_server_(nodeHandle_, "finger_positions",
+                     boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false)
 {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+    double tolerance;
+    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 1.0);
+    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
+    nodeHandle_.param<double>("tolerance", tolerance, 2.0);
+    tolerance_ = (float)tolerance;
+
     action_server_.start();
 }
 
-JacoFingersActionServer::~JacoFingersActionServer() {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+JacoFingersActionServer::~JacoFingersActionServer()
+{
 }
 
-void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    ROS_INFO("Got a finger goal: (%f, %f, %f, tolerance: %f",
-             goal->fingers.finger1, goal->fingers.finger2, goal->fingers.finger3,
-             tolerance_);
+void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal)
+{
+    if ((arm_comm_.numFingers() < 3) && (goal->fingers.finger3 != 0.0))
+    {
+        ROS_WARN("Detected that the third finger command was non-zero even though there "
+                 "are only two fingers on the gripper. The goal for the third finger "
+                 "should be set to zero or you make experience delays in action results.");
+    }
 
     jaco_msgs::SetFingersPositionFeedback feedback;
     jaco_msgs::SetFingersPositionResult result;
     FingerAngles current_finger_positions;
+    ros::Time current_time = ros::Time::now();
 
-    if (arm_comm_.isStopped()) {
-        ROS_INFO("\tCould not complete finger action because the arm is stopped");
-        arm_comm_.getFingerPositions(current_finger_positions);
+    arm_comm_.getFingerPositions(current_finger_positions);
+
+    if (arm_comm_.isStopped())
+    {
+        ROS_INFO("Could not complete finger action because the arm is stopped");
         result.fingers = current_finger_positions.constructFingersMsg();
         action_server_.setAborted(result);
         return;
     }
+
+    last_nonstall_time_ = current_time;
+    last_nonstall_finger_positions_ = current_finger_positions;
 
     FingerAngles target(goal->fingers);
     arm_comm_.setFingerPositions(target);
@@ -89,16 +104,18 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
     // Loop until the action completed, is preempted, or fails in some way.
     // timeout is left to the caller since the timeout may greatly depend on
     // the context of the movement.
-    while (true) {
+    while (true)
+    {
         ros::spinOnce();
-        if (action_server_.isPreemptRequested() || !ros::ok()) {
-            ROS_INFO("\tPreempting finger action");
+        if (action_server_.isPreemptRequested() || !ros::ok())
+        {
             arm_comm_.stop();
             arm_comm_.start();
             action_server_.setPreempted();
             return;
-        } else if (arm_comm_.isStopped()) {
-            ROS_INFO("\tAborting finger action because the arm is stopped");
+        }
+        else if (arm_comm_.isStopped())
+        {
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setAborted(result);
             return;
@@ -106,21 +123,32 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
 
         action_server_.publishFeedback(feedback);
         arm_comm_.getFingerPositions(current_finger_positions);
+        current_time = ros::Time::now();
         feedback.fingers = current_finger_positions.constructFingersMsg();
 
-        ROS_INFO("\tCurrent finger positions: %f, %f, %f",
-                 current_finger_positions.Finger1,
-                 current_finger_positions.Finger2,
-                 current_finger_positions.Finger3);
-
-        if (target.isCloseToOther(current_finger_positions, tolerance_)) {
-            ROS_INFO("\tFinger action complete.");
+        if (target.isCloseToOther(current_finger_positions, tolerance_))
+        {
+            // Check if the action has succeeeded
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setSucceeded(result);
             return;
         }
+        else if (!last_nonstall_finger_positions_.isCloseToOther(current_finger_positions, stall_threshold_))
+        {
+            // Check if we are outside of a potential stall condition
+            last_nonstall_time_ = current_time;
+            last_nonstall_finger_positions_ = current_finger_positions;
+        }
+        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+        {
+            // Check if the full stall condition has been meet
+            arm_comm_.stop();
+            arm_comm_.start();
+            action_server_.setPreempted();
+            return;
+        }
 
-        rate_hz_.sleep();
+        ros::Rate(rate_hz_).sleep();
     }
 }
 

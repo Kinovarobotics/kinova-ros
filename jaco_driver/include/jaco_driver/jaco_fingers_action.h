@@ -53,9 +53,11 @@
 #include <jaco_msgs/SetFingersPositionAction.h>
 
 
-namespace jaco {
+namespace jaco
+{
 
-class JacoFingersActionServer {
+class JacoFingersActionServer
+{
  public:
     JacoFingersActionServer(JacoComm &, ros::NodeHandle &n);
     ~JacoFingersActionServer();
@@ -63,9 +65,17 @@ class JacoFingersActionServer {
     void actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
+    ros::NodeHandle nodeHandle_;
     JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::SetFingersPositionAction> action_server_;
-    ros::Rate rate_hz_;
+
+    ros::Time last_nonstall_time_;
+    jaco::FingerAngles last_nonstall_finger_positions_;
+
+    // Parameters
+    double stall_interval_seconds_;
+    double stall_threshold_;
+    double rate_hz_;
     float tolerance_;
 };
 

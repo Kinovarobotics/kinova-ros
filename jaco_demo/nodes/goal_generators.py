@@ -40,11 +40,18 @@ def joint_angles_from_file(filepath):
                 yield [float(n) for n in line.strip('\n').split(' ')[:6]]
 
 
-def random_finger_positions(n_positions=1, n_fingers=1):
+def random_jaco_finger_positions(n_positions=1):
     """ """
     for i in xrange(n_positions):
-        # TODO: What is the finger min/max range? [0.25 to 56]?
-        yield np.random.random(n_fingers) * 55.75 + 0.25
+        # finger min/max range: [0.25 to 56]?
+        yield np.random.random(3) * 55.75 + 0.25
+
+
+def random_mico_finger_positions(n_positions=1):
+    """ """
+    for i in xrange(n_positions):
+        # finger min/max range: [12 to 6450]?
+        yield np.random.random(2) * 6300.0 + 12.0
 
 
 if __name__ == '__main__':
@@ -74,6 +81,6 @@ if __name__ == '__main__':
     print('')
 
     print('Use random_finger_positions() to generate five random sets of finger positions:')
-    for positions in random_finger_positions(5, n_fingers=3):
+    for positions in random_jaco_finger_positions(5, n_fingers=3):
         print('    positions: {}'.format(positions))
     print('')

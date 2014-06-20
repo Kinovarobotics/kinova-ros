@@ -67,7 +67,7 @@ class JacoComm
     void setJointAngles(JacoAngles &angles, int timeout = 0, bool push = true);
     void setCartesianPosition(JacoPose &position, int timeout = 0, bool push = true);
     void setFingerPositions(FingerAngles &fingers, int timeout = 0, bool push = true);
-    void setVelocities(AngularInfo joint_vel);
+    void setJointVelocities(AngularInfo joint_vel);
     void setCartesianVelocities(CartesianInfo velocities);
     void setConfig(ClientConfigurations config);
     void getJointAngles(JacoAngles &angles);
@@ -82,6 +82,7 @@ class JacoComm
     void stop();
     void start();
     bool isStopped();
+    int numFingers();
 
  private:
     void waitForHome(int);
@@ -90,6 +91,7 @@ class JacoComm
     jaco::JacoAPI jaco_api_;
     bool is_software_stop_;
     JacoAngles home_position_;
+    int num_fingers_;
 };
 
 }

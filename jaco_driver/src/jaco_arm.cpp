@@ -13,7 +13,7 @@ namespace jaco
 {
 
 JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
-    : jaco_api_(arm), nodeHandle_(nodeHandle)
+    : jaco_comm_(arm), nodeHandle_(nodeHandle)
 {
     ROS_INFO("Creating the ROS interface to the arm (services, action, publishers, and subscribers)");
 
@@ -36,18 +36,25 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
 
     // TODO: Change these defaults to something else
     nodeHandle_.param<double>("status_interval_seconds", status_interval_seconds_, 1.0);
-    nodeHandle_.param<double>("joint_angular_vel_timeout", joint_angular_vel_timeout_seconds_, 1.0);
+    nodeHandle_.param<double>("joint_angular_vel_timeout", joint_vel_timeout_seconds_, 1.0);
     nodeHandle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 1.0);
+    nodeHandle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.005);
+    nodeHandle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.005);
+
+//    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
+//    nodeHandle_.param<double>("stall_threshold_joints_", stall_threshold_joints_, 0.5);
+//    nodeHandle_.param<double>("stall_threshold_cartesian_", stall_threshold_cartesian_, 0.005);
+//    nodeHandle_.param<double>("stall_threshold_fingers_", stall_threshold_fingers_, 1.0);
 
     status_timer_ = nodeHandle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
 
-    joint_vel_timer_ = nodeHandle_.createTimer(ros::Duration(joint_angular_vel_timeout_seconds_),
+    joint_vel_timer_ = nodeHandle_.createTimer(ros::Duration(joint_vel_interval_seconds_),
                                               &JacoArm::jointVelocityTimer, this);
     joint_vel_timer_.stop();
     joint_vel_timer_flag_ = false;
 
-    cartesian_vel_timer_ = nodeHandle_.createTimer(ros::Duration(cartesian_vel_timeout_seconds_),
+    cartesian_vel_timer_ = nodeHandle_.createTimer(ros::Duration(cartesian_vel_interval_seconds_),
                                                   &JacoArm::cartesianVelocityTimer, this);
     cartesian_vel_timer_.stop();
     cartesian_vel_timer_flag_ = false;
@@ -55,21 +62,20 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     ROS_INFO("The arm is ready to use.");
 }
 
-JacoArm::~JacoArm() {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+JacoArm::~JacoArm()
+{
 }
 
-bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    jaco_api_.homeArm();
+bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res)
+{
+    jaco_comm_.homeArm();
     res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
-
     return true;
 }
 
-void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    if (!jaco_api_.isStopped()) {
+void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel)
+{
+    if (!jaco_comm_.isStopped()) {
         joint_velocities_.Actuator1 = joint_vel->joint1;
         joint_velocities_.Actuator2 = joint_vel->joint2;
         joint_velocities_.Actuator3 = joint_vel->joint3;
@@ -93,7 +99,7 @@ void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& join
  */
 bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
 {
-    jaco_api_.stop();
+    jaco_comm_.stop();
     res.stop_result = "Arm stopped";
     ROS_DEBUG("Arm stop requested");
     return true;
@@ -106,7 +112,7 @@ bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop
  */
 bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
 {
-    jaco_api_.start();
+    jaco_comm_.start();
     res.start_result = "Arm started";
     ROS_INFO("Arm start requested");
 
@@ -114,9 +120,9 @@ bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::St
 }
 
 
-void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    if (!jaco_api_.isStopped()) {
+void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
+{
+    if (!jaco_comm_.isStopped()) {
         cartesian_velocities_.X = cartesian_vel->twist.linear.x;
         cartesian_velocities_.Y = cartesian_vel->twist.linear.y;
         cartesian_velocities_.Z = cartesian_vel->twist.linear.z;
@@ -133,23 +139,43 @@ void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPt
     }
 }
 
-void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&) {
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    jaco_api_.setCartesianVelocities(cartesian_velocities_);
 
-    if ((ros::Time().now().toSec() - last_cartesian_vel_cmd_time_.toSec()) > 1) {
+void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
+{
+    double elapsed_time_seconds = ros::Time().now().toSec() - last_cartesian_vel_cmd_time_.toSec();
+
+    if (elapsed_time_seconds > cartesian_vel_timeout_seconds_)
+    {
+        ROS_INFO("Cartesian vel timed out: %f", elapsed_time_seconds);
         cartesian_vel_timer_.stop();
         cartesian_vel_timer_flag_ = false;
     }
+    else
+    {
+        ROS_INFO("Cart vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
+                 cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
+                 cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
+        jaco_comm_.setCartesianVelocities(cartesian_velocities_);
+    }
 }
 
-void JacoArm::jointVelocityTimer(const ros::TimerEvent&){
-    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-    jaco_api_.setVelocities(joint_velocities_);
 
-    if ((ros::Time().now().toSec() - last_joint_vel_cmd_time_.toSec()) > 1) {
+void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
+{
+    double elapsed_time_seconds = ros::Time().now().toSec() - last_joint_vel_cmd_time_.toSec();
+
+    if (elapsed_time_seconds > joint_vel_timeout_seconds_)
+    {
+        ROS_INFO("Joint vel timed out: %f", elapsed_time_seconds);
         joint_vel_timer_.stop();
         joint_vel_timer_flag_ = false;
+    }
+    else
+    {
+        ROS_INFO("Joint vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
+                 joint_velocities_.Actuator1, joint_velocities_.Actuator2, joint_velocities_.Actuator3,
+                 joint_velocities_.Actuator4, joint_velocities_.Actuator5, joint_velocities_.Actuator6);
+        jaco_comm_.setJointVelocities(joint_velocities_);
     }
 }
 
@@ -193,7 +219,7 @@ void JacoArm::publishJointAngles(void) {
 
     // Query arm for current joint angles
     JacoAngles current_angles;
-    jaco_api_.getJointAngles(current_angles);
+    jaco_comm_.getJointAngles(current_angles);
     jaco_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg();
 
     jaco_angles.joint1 = current_angles.Actuator1;
@@ -244,7 +270,7 @@ void JacoArm::publishToolPosition(void) {
     JacoPose pose;
     geometry_msgs::PoseStamped current_position;
 
-    jaco_api_.getCartesianPosition(pose);
+    jaco_comm_.getCartesianPosition(pose);
     current_position.pose = pose.constructPoseMsg();
 
     tool_position_publisher_.publish(current_position);
@@ -259,7 +285,7 @@ void JacoArm::publishFingerPosition(void) {
     FingerAngles fingers;
     //jaco_msgs::FingerPosition finger_position;
 
-    jaco_api_.getFingerPositions(fingers);
+    jaco_comm_.getFingerPositions(fingers);
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
