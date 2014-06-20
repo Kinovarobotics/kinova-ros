@@ -121,10 +121,10 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
             return;
         }
 
-        action_server_.publishFeedback(feedback);
         arm_comm_.getFingerPositions(current_finger_positions);
         current_time = ros::Time::now();
         feedback.fingers = current_finger_positions.constructFingersMsg();
+        action_server_.publishFeedback(feedback);
 
         if (target.isCloseToOther(current_finger_positions, tolerance_))
         {

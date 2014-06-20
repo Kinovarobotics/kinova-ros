@@ -47,41 +47,51 @@
 #include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
+
 namespace jaco
 {
 
-JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &n) :
-    arm_comm_(arm_comm),
-    action_server_(n, "arm_joint_angles", boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false),
-    rate_hz_(10),    // TODO: Make this a parameter
-    tolerance_(2.0)  // TODO: make this a parameter dead zone for position
+JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+    : arm_comm_(arm_comm),
+      nodeHandle_(nh, "joint_angles"),
+      action_server_(nodeHandle_, "arm_joint_angles",
+                     boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false)
 {
+    double tolerance;
+    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 1.0);
+    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
+    nodeHandle_.param<double>("tolerance", tolerance, 2.0);
+    tolerance_ = (float)tolerance;
+
     action_server_.start();
 }
+
 
 JacoAnglesActionServer::~JacoAnglesActionServer()
 {
 }
+
 
 void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
     jaco_msgs::ArmJointAnglesFeedback feedback;
     jaco_msgs::ArmJointAnglesResult result;
     JacoAngles current_joint_angles;
+    ros::Time current_time = ros::Time::now();
 
-    // TODO: Look into the mismatch between joint numbering
-    ROS_INFO("Got an angular goal for the arm: %.3f, %.3f, %.3f, %.3f, %.3f, %.3f",
-             goal->angles.joint1, goal->angles.joint2, goal->angles.joint3,
-             goal->angles.joint4, goal->angles.joint5, goal->angles.joint6);
+    arm_comm_.getJointAngles(current_joint_angles);
 
     if (arm_comm_.isStopped())
     {
         ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
-        arm_comm_.getJointAngles(current_joint_angles);
         result.angles = current_joint_angles.constructAnglesMsg();
         action_server_.setAborted(result);
         return;
     }
+
+    last_nonstall_time_ = current_time;
+    last_nonstall_angles_ = current_joint_angles;
 
     JacoAngles target(goal->angles);
     arm_comm_.setJointAngles(target);
@@ -99,8 +109,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
             action_server_.setPreempted();
             return;
         }
-
-        if (arm_comm_.isStopped())
+        else if (arm_comm_.isStopped())
         {
             result.angles = current_joint_angles.constructAnglesMsg();
             action_server_.setAborted(result);
@@ -108,18 +117,33 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
         }
 
         arm_comm_.getJointAngles(current_joint_angles);
+        current_time = ros::Time::now();
         feedback.angles = current_joint_angles.constructAnglesMsg();
         action_server_.publishFeedback(feedback);
 
         if (target.isCloseToOther(current_joint_angles, tolerance_))
         {
-            ROS_INFO("Angular Control Complete.");
+            // Check if the action has succeeeded
             result.angles = current_joint_angles.constructAnglesMsg();
             action_server_.setSucceeded(result);
             return;
         }
+        else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
+        {
+            // Check if we are outside of a potential stall condition
+            last_nonstall_time_ = current_time;
+            last_nonstall_angles_ = current_joint_angles;
+        }
+        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+        {
+            // Check if the full stall condition has been meet
+            arm_comm_.stop();
+            arm_comm_.start();
+            action_server_.setPreempted();
+            return;
+        }
 
-        rate_hz_.sleep();
+        ros::Rate(rate_hz_).sleep();
     }
 }
 

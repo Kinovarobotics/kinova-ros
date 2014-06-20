@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_pose_action.h
  *  Desc: Action server for jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,8 +38,8 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
@@ -59,18 +59,28 @@ namespace jaco
 
 class JacoPoseActionServer
 {
-	public:
-	JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
-	~JacoPoseActionServer();
-    void ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
-	
-	private:
-	JacoComm &arm;
-    actionlib::SimpleActionServer<jaco_msgs::ArmPoseAction> as_;
-	tf::TransformListener listener;
+ public:
+    JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
+    ~JacoPoseActionServer();
+
+    void actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
+
+ private:
+    ros::NodeHandle nodeHandle_;
+    JacoComm &arm_comm_;
+    actionlib::SimpleActionServer<jaco_msgs::ArmPoseAction> action_server_;
+    tf::TransformListener listener;
+
+    ros::Time last_nonstall_time_;
+    jaco::JacoPose last_nonstall_pose_;
+
+    // Parameters
+    double stall_interval_seconds_;
+    double stall_threshold_;
+    double rate_hz_;
+    float tolerance_;
 };
 
-}
-
-#endif // _JACO_POSE_ACTION_H_
+}  // jaco namespace
+#endif  // _JACO_POSE_ACTION_H_
 

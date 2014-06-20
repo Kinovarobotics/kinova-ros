@@ -47,47 +47,50 @@
 #include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
 
+
 namespace jaco
 {
 
-JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &n) :
-    arm(arm_comm),
-    as_(n, "arm_pose", boost::bind(&JacoPoseActionServer::ActionCallback, this, _1), false)
+JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+    : arm_comm_(arm_comm),
+      nodeHandle_(nh, "arm_pose"),
+      action_server_(nodeHandle_, "arm_pose",
+                     boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
 {
-    as_.start();
+    double tolerance;
+    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 0.005);
+    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
+    nodeHandle_.param<double>("tolerance", tolerance, 0.01);
+    tolerance_ = (float)tolerance;
+
+    action_server_.start();
 }
+
 
 JacoPoseActionServer::~JacoPoseActionServer()
 {
-
 }
 
-void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
+
+void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
 {
     jaco_msgs::ArmPoseFeedback feedback;
     jaco_msgs::ArmPoseResult result;
     feedback.pose.header.frame_id = goal->pose.header.frame_id;
     result.pose.header.frame_id = goal->pose.header.frame_id;
 
-    ROS_INFO("Got a cartesian goal for the arm");
+    JacoAngles current_joint_angles;
+    ros::Time current_time = ros::Time::now();
 
-    ROS_DEBUG("Raw goal");
-    ROS_DEBUG("X = %f", goal->pose.pose.position.x);
-    ROS_DEBUG("Y = %f", goal->pose.pose.position.y);
-    ROS_DEBUG("Z = %f", goal->pose.pose.position.z);
-
-    ROS_DEBUG("RX = %f", goal->pose.pose.orientation.x);
-    ROS_DEBUG("RY = %f", goal->pose.pose.orientation.y);
-    ROS_DEBUG("RZ = %f", goal->pose.pose.orientation.z);
-    ROS_DEBUG("RW = %f", goal->pose.pose.orientation.w);
-
+    // Put the goal pose into the frame used by the arm
     if (ros::ok()
             && !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
                     goal->pose.header.stamp))
     {
         ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement",
                   goal->pose.header.frame_id.c_str());
-        as_.setAborted(result);
+        action_server_.setAborted(result);
         return;
     }
 
@@ -95,71 +98,70 @@ void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
     local_pose.header.frame_id = "/jaco_api_origin";
     listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
 
-    ROS_DEBUG("Transformed MSG");
-    ROS_DEBUG("X = %f", local_pose.pose.position.x);
-    ROS_DEBUG("Y = %f", local_pose.pose.position.y);
-    ROS_DEBUG("Z = %f", local_pose.pose.position.z);
 
-    ROS_DEBUG("RX = %f", local_pose.pose.orientation.x);
-    ROS_DEBUG("RY = %f", local_pose.pose.orientation.y);
-    ROS_DEBUG("RZ = %f", local_pose.pose.orientation.z);
-    ROS_DEBUG("RW = %f", local_pose.pose.orientation.w);
+    JacoPose current_pose;
+    arm_comm_.getCartesianPosition(current_pose);
 
-    JacoPose cur_position;		//holds the current position of the arm
-
-    if (arm.isStopped())
+    if (arm_comm_.isStopped())
     {
-        arm.getCartesianPosition(cur_position);
-        local_pose.pose = cur_position.constructPoseMsg();
-
+        local_pose.pose = current_pose.constructPoseMsg();
         listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
-        as_.setAborted(result);
+        action_server_.setAborted(result);
         return;
     }
 
+    last_nonstall_time_ = current_time;
+    last_nonstall_pose_ = current_pose;
+
     JacoPose target(local_pose.pose);
-    arm.setCartesianPosition(target);
-
-    ros::Rate r(10);
-
-    const float tolerance = 0.05; 	//dead zone for position
+    arm_comm_.setCartesianPosition(target);
 
     //while we have not timed out
     while (true)
     {
         ros::spinOnce();
-        if (as_.isPreemptRequested() || !ros::ok())
+        if (action_server_.isPreemptRequested() || !ros::ok())
         {
-            arm.stop();
-            arm.start();
-            as_.setPreempted();
+            arm_comm_.stop();
+            arm_comm_.start();
+            action_server_.setPreempted();
+            return;
+        }
+        else if (arm_comm_.isStopped())
+        {
+            result.pose = feedback.pose;
+            action_server_.setAborted(result);
             return;
         }
 
-        arm.getCartesianPosition(cur_position);
-        local_pose.pose = cur_position.constructPoseMsg();
-
+        arm_comm_.getCartesianPosition(current_pose);
+        current_time = ros::Time::now();
+        local_pose.pose = current_pose.constructPoseMsg();
         listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
+        action_server_.publishFeedback(feedback);
 
-        if (arm.isStopped())
+        if (target.isCloseToOther(current_pose, tolerance_))
         {
             result.pose = feedback.pose;
-            as_.setAborted(result);
+            action_server_.setSucceeded(result);
+            return;
+        }
+        else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_))
+        {
+            // Check if we are outside of a potential stall condition
+            last_nonstall_time_ = current_time;
+            last_nonstall_pose_ = current_pose;
+        }
+        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+        {
+            // Check if the full stall condition has been meet
+            arm_comm_.stop();
+            arm_comm_.start();
+            action_server_.setPreempted();
             return;
         }
 
-        as_.publishFeedback(feedback);
-
-        if (target.isCloseToOther(cur_position, tolerance))
-        {
-            ROS_INFO("Cartesian Control Complete.");
-
-            result.pose = feedback.pose;
-            as_.setSucceeded(result);
-            return;
-        }
-
-        r.sleep();
+        ros::Rate(rate_hz_).sleep();
     }
 }
 

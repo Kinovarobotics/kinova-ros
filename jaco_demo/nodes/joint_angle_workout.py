@@ -14,10 +14,9 @@ import goal_generators
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_joint_angles'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/joint_angles/arm_joint_angles'
     client = actionlib.SimpleActionClient(action_address,
                                           jaco_msgs.msg.ArmJointAnglesAction)
-    print(action_address)
     client.wait_for_server()
 
     goal = jaco_msgs.msg.ArmJointAnglesGoal()

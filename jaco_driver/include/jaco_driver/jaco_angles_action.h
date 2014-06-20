@@ -61,14 +61,23 @@ class JacoAnglesActionServer
  public:
     JacoAnglesActionServer(JacoComm &, ros::NodeHandle &n);
     ~JacoAnglesActionServer();
+
     void actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &);
 
  private:
+    ros::NodeHandle nodeHandle_;
     JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::ArmJointAnglesAction> action_server_;
-    ros::Rate  rate_hz_;
+
+    ros::Time last_nonstall_time_;
+    JacoAngles last_nonstall_angles_;
+
+    // Parameters
+    double stall_interval_seconds_;
+    double stall_threshold_;
+    double rate_hz_;
     float tolerance_;
 };
 
-}
-#endif // _JACO_ANGLES_ACTION_H_
+}  // jaco namespace
+#endif  // _JACO_ANGLES_ACTION_H_

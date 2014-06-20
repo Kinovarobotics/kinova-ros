@@ -17,10 +17,8 @@ import goal_generators
 
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_pose'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_pose/arm_pose'
     client = actionlib.SimpleActionClient(action_address, jaco_msgs.msg.ArmPoseAction)
-    print(action_address)
-
     client.wait_for_server()
 
     goal = jaco_msgs.msg.ArmPoseGoal()
