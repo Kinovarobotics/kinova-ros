@@ -53,15 +53,15 @@ namespace jaco
 
 JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      nodeHandle_(nh, "fingers"),
-      action_server_(nodeHandle_, "finger_positions",
+      node_handle_(nh, "fingers"),
+      action_server_(node_handle_, "finger_positions",
                      boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
-    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
-    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 1.0);
-    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
-    nodeHandle_.param<double>("tolerance", tolerance, 2.0);
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
+    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("tolerance", tolerance, 2.0);
     tolerance_ = (float)tolerance;
 
     action_server_.start();
@@ -109,8 +109,8 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
         ros::spinOnce();
         if (action_server_.isPreemptRequested() || !ros::ok())
         {
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }
@@ -142,8 +142,8 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
         else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
         {
             // Check if the full stall condition has been meet
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }

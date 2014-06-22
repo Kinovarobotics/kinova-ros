@@ -39,7 +39,7 @@ namespace jaco
 class JacoArm
 {
  public:
-    JacoArm(JacoComm& arm, ros::NodeHandle &nodeHandle);
+    JacoArm(JacoComm& arm, ros::NodeHandle &node_handle);
     ~JacoArm();
 
     void jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel);
@@ -60,7 +60,7 @@ class JacoArm
     void publishFingerPosition(void);
 
     tf::TransformListener tf_listener_;
-    ros::NodeHandle nodeHandle_;
+    ros::NodeHandle node_handle_;
     JacoComm &jaco_comm_;
 
     // Publishers, subscribers, services

@@ -55,10 +55,13 @@
 namespace jaco
 {
 
+
 class JacoComm
 {
  public:
-    JacoComm(ros::NodeHandle nodeHandle);
+    JacoComm(const ros::NodeHandle& node_handle,
+             boost::recursive_mutex& api_mutex,
+             const bool is_movement_on_start);
     ~JacoComm();
 
     bool isHomed(void);
@@ -79,18 +82,18 @@ class JacoComm
     void printPosition(JacoPose &position);
     void printFingers(FingersPosition fingers);
     void printConfig(ClientConfigurations config);
-    void stop();
-    void start();
+    void stopAPI();
+    void startAPI();
     bool isStopped();
     int numFingers();
 
  private:
     void waitForHome(int);
 
-    boost::recursive_mutex api_mutex_;
+    boost::recursive_mutex& api_mutex_;
     jaco::JacoAPI jaco_api_;
     bool is_software_stop_;
-    JacoAngles home_position_;
+    // JacoAngles home_position_;
     int num_fingers_;
 };
 

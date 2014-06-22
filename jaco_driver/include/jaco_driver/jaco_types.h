@@ -55,6 +55,22 @@
 namespace jaco
 {
 
+
+class JacoException : public std::exception {};
+
+
+class JacoCommException : public JacoException
+{
+ public:
+    explicit JacoCommException(const std::string& message, const int error_code);
+    ~JacoCommException() throw() {}
+
+    const char* what() const throw();
+ private:
+    std::string desc_;
+};
+
+
 class JacoPose : public CartesianInfo
 {
  public:

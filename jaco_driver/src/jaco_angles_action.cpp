@@ -53,15 +53,15 @@ namespace jaco
 
 JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      nodeHandle_(nh, "joint_angles"),
-      action_server_(nodeHandle_, "arm_joint_angles",
+      node_handle_(nh, "joint_angles"),
+      action_server_(node_handle_, "arm_joint_angles",
                      boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
-    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
-    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 1.0);
-    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
-    nodeHandle_.param<double>("tolerance", tolerance, 2.0);
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
+    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("tolerance", tolerance, 2.0);
     tolerance_ = (float)tolerance;
 
     action_server_.start();
@@ -70,6 +70,7 @@ JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHand
 
 JacoAnglesActionServer::~JacoAnglesActionServer()
 {
+    ROS_INFO("Tearing down action server class");
 }
 
 
@@ -102,10 +103,11 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
     while (true)
     {
         ros::spinOnce();
+
         if (action_server_.isPreemptRequested() || !ros::ok())
         {
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }
@@ -116,7 +118,15 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
             return;
         }
 
+        try {
         arm_comm_.getJointAngles(current_joint_angles);
+        } catch(const jaco::JacoCommException& e)
+        {
+            ROS_INFO("caugth here");
+            ROS_ERROR_STREAM(e.what());
+            throw JacoCommException(e);
+            ROS_INFO_STREAM(__LINE__);
+        }
         current_time = ros::Time::now();
         feedback.angles = current_joint_angles.constructAnglesMsg();
         action_server_.publishFeedback(feedback);
@@ -137,8 +147,8 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
         else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
         {
             // Check if the full stall condition has been meet
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }

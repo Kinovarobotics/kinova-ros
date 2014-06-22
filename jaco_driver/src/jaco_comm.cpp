@@ -46,109 +46,45 @@
 #include <ros/ros.h>
 #include "jaco_driver/jaco_comm.h"
 
-// TODO: Remove me when done (used for syscall(SYS_gettid))
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-
 
 namespace jaco
 {
 
-template<class T>
-void printRaw(const T& something)
-{
-    void const *qs = static_cast<void const *>(&something);
-    unsigned char const *p = static_cast<unsigned char const *>(qs);
-    for (size_t i=0; i<sizeof(something); i++) {
-        printf("%02x ", p[i]);
-    }
-    putchar('\n');
-    fflush(stdout);
-}
 
-
-float getXmlrpcValue(XmlRpc::XmlRpcValue &value)
-{
-    ROS_ASSERT_MSG((value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
-                   || (value.getType() == XmlRpc::XmlRpcValue::TypeInt),
-                   "Parameter home_position_degrees must contain only numerical values");
-
-    if (value.getType() == XmlRpc::XmlRpcValue::TypeDouble)
-    {
-        return static_cast<double>(value);
-    }
-    else
-    {
-        return (float)static_cast<int>(value);
-    }
-
-    return 0.0f;
-}
-
-
-jaco::JacoAngles getHomePosition(ros::NodeHandle &nh)
-{
-    // Typical home position for a "right-handed" arm
-    jaco::JacoAngles home;
-    home.Actuator1 = 282.8;
-    home.Actuator2 = 154.4;
-    home.Actuator3 = 43.1;
-    home.Actuator4 = 230.7;
-    home.Actuator5 = 83.0;
-    home.Actuator6 = 78.1;
-
-    XmlRpc::XmlRpcValue joints_list;
-    if (nh.getParam("home_position_degrees", joints_list))
-    {
-        ROS_ASSERT_MSG(joints_list.getType() == XmlRpc::XmlRpcValue::TypeArray,
-                       "Attempted to get the home position from the parameter server and did not get the "
-                       "correct type. Check launch file or other places that may set parameter values.");
-        ROS_ASSERT_MSG(joints_list.size() == 6, "Home position on parameter server does not have six (6) elements.");
-
-        home.Actuator1 = getXmlrpcValue(joints_list[0]);
-        home.Actuator2 = getXmlrpcValue(joints_list[1]);
-        home.Actuator3 = getXmlrpcValue(joints_list[2]);
-        home.Actuator4 = getXmlrpcValue(joints_list[3]);
-        home.Actuator5 = getXmlrpcValue(joints_list[4]);
-        home.Actuator6 = getXmlrpcValue(joints_list[5]);
-
-        ROS_INFO("Loaded home_position_degrees from file: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
-    } else {
-        ROS_INFO("Using default home_position_degrees: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-                 home.Actuator1, home.Actuator2, home.Actuator3, home.Actuator4, home.Actuator5, home.Actuator6);
-    }
-
-    return home;
-}
-
-
-JacoComm::JacoComm(ros::NodeHandle nodeHandle)
-    : is_software_stop_(false), home_position_(getHomePosition(nodeHandle))
+JacoComm::JacoComm(const ros::NodeHandle& node_handle,
+                   boost::recursive_mutex& api_mutex,
+                   const bool is_movement_on_start)
+    : is_software_stop_(false), api_mutex_(api_mutex)  //, home_position_(getHomePosition(nodeHandle))
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
     // Get the serial number parameter for the arm we wish to connec to
     std::string serial_number = "";
-    nodeHandle.getParam("serial_number", serial_number);
+    node_handle.getParam("serial_number", serial_number);
 
     std::vector<int> api_version;
-    int api_version_result = jaco_api_.getAPIVersion(api_version);
-    ROS_ASSERT_MSG(api_version_result == NO_ERROR_KINOVA,
-                   "Could not get the Kinova API version, return code: %d", api_version_result);
+    int result = jaco_api_.getAPIVersion(api_version);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the Kinova API version", result);
+    }
+
     ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
                     << api_version[0] << "." << api_version[1] << "." << api_version[2] << ")");
 
-    int init_api_result = jaco_api_.initAPI();
-    ROS_ASSERT_MSG(init_api_result == NO_ERROR_KINOVA,
-                   "Could not initialize Kinova API, return code: %d", init_api_result);
+    result = jaco_api_.initAPI();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not initialize Kinova API", result);
+    }
 
     std::vector<KinovaDevice> devices_list;
-    int devices_result = NO_ERROR_KINOVA;
-    jaco_api_.getDevices(devices_list, devices_result);
-    ROS_ASSERT_MSG(devices_result == NO_ERROR_KINOVA,
-                   "Could not get devices list, return code: %d", devices_result);
+    result = NO_ERROR_KINOVA;
+    jaco_api_.getDevices(devices_list, result);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get devices list", result);
+    }
 
     bool found_arm = false;
     for(int device_i = 0; device_i < devices_list.size(); device_i++)
@@ -157,22 +93,32 @@ JacoComm::JacoComm(ros::NodeHandle nodeHandle)
         if ((serial_number == "")
             || (std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0))
         {
-            ROS_ASSERT_MSG(jaco_api_.setActiveDevice(devices_list[device_i]),
-                           "Could not set the active device");
+            result = jaco_api_.setActiveDevice(devices_list[device_i]);
+            if (result != NO_ERROR_KINOVA)
+            {
+                throw JacoCommException("Could not set the active device", result);
+            }
+
             GeneralInformations general_info;
-            ROS_ASSERT_MSG(jaco_api_.getGeneralInformations(general_info) == 1,
-                           "Could not get general information about the device");
+            result = jaco_api_.getGeneralInformations(general_info);
+            if (result != NO_ERROR_KINOVA)
+            {
+                throw JacoCommException("Could not get general information about the device", result);
+            }
 
             ClientConfigurations configuration;
-            ROS_ASSERT_MSG(jaco_api_.getClientConfigurations(configuration) == 1,
-                           "Could not get the client configuration");
+            getConfig(configuration);
 
             QuickStatus quick_status;
-            ROS_ASSERT_MSG(jaco_api_.getQuickStatus(quick_status) == 1,
-                           "Could not get quick status from the arm");
-            ROS_ASSERT_MSG((quick_status.RobotType == 0) || (quick_status.RobotType == 1),
-                           "Could not get the type of the arm from the quick status, expected "
-                           "either type 0 (JACO), or type 1 (MICO)");
+            getQuickStatus(quick_status);
+
+            if ((quick_status.RobotType != 0) && (quick_status.RobotType != 1))
+            {
+                ROS_ERROR("Could not get the type of the arm from the quick status, expected "
+                          "either type 0 (JACO), or type 1 (MICO), got %d", quick_status.RobotType);
+                throw JacoCommException("Could not get the type of the arm", quick_status.RobotType);
+            }
+
             num_fingers_ = quick_status.RobotType == 0 ? 3 : 2;
 
             ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device at index " << device_i
@@ -186,27 +132,43 @@ JacoComm::JacoComm(ros::NodeHandle nodeHandle)
         }
     }
 
-    ROS_ASSERT_MSG(found_arm, "Could not find the specified arm (serial: %s) among the %d attached devices",
-                   serial_number.c_str(), (int)devices_list.size());
+    if (!found_arm)
+    {
+        ROS_ERROR("Could not find the specified arm (serial: %s) among the %d attached devices",
+                  serial_number.c_str(), (int)devices_list.size());
+        throw JacoCommException("Could not find the specified arm", 0);
+    }
 
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
-    ROS_ASSERT_MSG(jaco_api_.startControlAPI() == 1,
-                   "Could not start the arm API");
-    ros::Duration(3.0).sleep();
-    //    assert(jaco_api_.stopControlAPI() == 1);
+    startAPI();
+    stopAPI();
+    startAPI();
 
     // Set the angular velocity of each of the joints to zero
     TrajectoryPoint jaco_velocity;
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));
     setCartesianVelocities(jaco_velocity.Position.CartesianPosition);
 
-    initFingers();
+    if (is_movement_on_start)
+    {
+        initFingers();
+    }
+    else
+    {
+        ROS_WARN("Movement on connection to the arm has been suppressed on initialization. You may "
+                 "have to home the arm (through the home service) before movement is possible");
+    }
 }
 
-JacoComm::~JacoComm() {
+
+JacoComm::~JacoComm()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    ROS_INFO("Closing API");
     jaco_api_.closeAPI();
 }
+
 
 /*!
  * \brief Determines whether the arm has returned to its "Home" state.
@@ -214,21 +176,24 @@ JacoComm::~JacoComm() {
  * Checks the current joint angles, then compares them to the known "Home"
  * joint angles.
  */
-bool JacoComm::isHomed(void) {
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
+bool JacoComm::isHomed(void)
+{
     QuickStatus quick_status;
     ROS_INFO_STREAM("Getting quick status to check if arm is homed");
     getQuickStatus(quick_status);
 
-    if (quick_status.RetractType == 1) {
+    if (quick_status.RetractType == 1)
+    {
         ROS_INFO("Arm is homed");
         return 1;
-    } else {
+    }
+    else
+    {
         ROS_INFO("Arm is not homed");
         return 0;
     }
 }
+
 
 /*!
  * \brief Send the arm to the "home" position.
@@ -240,24 +205,33 @@ bool JacoComm::isHomed(void) {
  * Fingers are homed by manually opening them fully, then returning them to a
  * half-open position.
  */
-void JacoComm::homeArm(void) {
+void JacoComm::homeArm(void)
+{
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    //    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
 
-    if (isStopped()) {
+    if (isStopped())
+    {
         ROS_INFO("Arm is stopped, cannot home");
         return;
-    } else if (isHomed()) {
+    }
+    else if (isHomed())
+    {
         ROS_INFO("Arm is already in \"home\" position");
         return;
     }
 
-    jaco_api_.stopControlAPI();
-    jaco_api_.startControlAPI();
+    stopAPI();
+    ros::Duration(1.0).sleep();
+    startAPI();
 
     ROS_INFO("Homing the arm");
-    jaco_api_.moveHome();
+    int result = jaco_api_.moveHome();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Move home failed", result);
+    }
 }
+
 
 /*!
  * \brief Initialize finger actuators.
@@ -269,7 +243,11 @@ void JacoComm::initFingers(void)
 {
     ROS_INFO("Initializing fingers...this will take a few seconds and the fingers should open completely");
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    jaco_api_.initFingers();
+    int result = jaco_api_.initFingers();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not init fingers", result);
+    }
     return;
 }
 
@@ -289,25 +267,40 @@ void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push)
         return;
     }
 
+    int result = NO_ERROR_KINOVA;
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
     if (push)
     {
-        jaco_api_.eraseAllTrajectories();
+        result = jaco_api_.eraseAllTrajectories();
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw JacoCommException("Could not erase trajectories", result);
+        }
     }
 
-    jaco_api_.startControlAPI();
-    jaco_api_.setAngularControl();
+    startAPI();
+
+    result = jaco_api_.setAngularControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set angular control", result);
+    }
 
     //Jaco_Position.LimitationsActive = false;
     jaco_position.Position.Delay = 0.0;
     jaco_position.Position.Type = ANGULAR_POSITION;
     jaco_position.Position.Actuators = angles;
 
-    jaco_api_.sendAdvanceTrajectory(jaco_position);
+    result = jaco_api_.sendAdvanceTrajectory(jaco_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send adanced joint angle trajectory", result);
+    }
 }
+
 
 /*!
  * \brief Sends a cartesian coordinate trajectory to the Jaco arm.
@@ -324,19 +317,27 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
         return;
     }
 
+    int result = NO_ERROR_KINOVA;
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
     if (push)
     {
-        jaco_api_.eraseAllTrajectories();
+        result = jaco_api_.eraseAllTrajectories();
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw JacoCommException("Could not erase trajectories", result);
+        }
     }
 
-    jaco_api_.stopControlAPI();
-    jaco_api_.startControlAPI();
-    jaco_api_.setCartesianControl();
+    startAPI();
 
+    result = jaco_api_.setCartesianControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set Cartesian control", result);
+    }
 
     jaco_position.Position.Delay = 0.0;
     jaco_position.Position.Type = CARTESIAN_POSITION;
@@ -353,8 +354,13 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
     jaco_position.Position.CartesianPosition = position;
     //Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
-    jaco_api_.sendBasicTrajectory(jaco_position);
+    result = jaco_api_.sendBasicTrajectory(jaco_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send basic trajectory", result);
+    }
 }
+
 
 /*!
  * \brief Sets the finger positions
@@ -369,16 +375,27 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
         return;
     }
 
+    int result = NO_ERROR_KINOVA;
     TrajectoryPoint jaco_position;
     jaco_position.InitStruct();
     memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
 
     if (push)
     {
-        jaco_api_.eraseAllTrajectories();
+        result = jaco_api_.eraseAllTrajectories();
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw JacoCommException("Could not erase trajectories", result);
+        }
     }
 
-    jaco_api_.startControlAPI();
+    startAPI();
+
+    result = jaco_api_.setCartesianControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set Cartesian control", result);
+    }
 
     // Initialize Cartesian control of the fingers
     jaco_position.Position.HandMode = POSITION_MODE;
@@ -407,7 +424,11 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
     jaco_position.Position.CartesianPosition.ThetaY = pose.ThetaY;
     jaco_position.Position.CartesianPosition.ThetaZ = pose.ThetaZ;
 
-    jaco_api_.sendAdvanceTrajectory(jaco_position);
+    result = jaco_api_.sendAdvanceTrajectory(jaco_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send adanced finger trajectory", result);
+    }
 }
 
 
@@ -429,12 +450,17 @@ void JacoComm::setJointVelocities(AngularInfo joint_vel)
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    jaco_api_.startControlAPI();
+    startAPI();
     jaco_velocity.Position.Type = ANGULAR_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
     jaco_velocity.Position.Actuators = joint_vel;
-    jaco_api_.sendAdvanceTrajectory(jaco_velocity);
+
+    int result = jaco_api_.sendAdvanceTrajectory(jaco_velocity);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send adanced joint velocity trajectory", result);
+    }
 }
 
 
@@ -457,13 +483,19 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities)
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    jaco_api_.startControlAPI();
+    startAPI();
     jaco_velocity.Position.Type = CARTESIAN_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
     jaco_velocity.Position.CartesianPosition = velocities;
-    jaco_api_.sendAdvanceTrajectory(jaco_velocity);
+
+    int result = jaco_api_.sendAdvanceTrajectory(jaco_velocity);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send adanced Cartesian velocity trajectory", result);
+    }
 }
+
 
 /*!
  * \brief Obtains the current arm configuration.
@@ -474,8 +506,13 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities)
 void JacoComm::setConfig(ClientConfigurations config)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    jaco_api_.setClientConfigurations(config);
+    int result = jaco_api_.setClientConfigurations(config);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set the client configuration", result);
+    }
 }
+
 
 /*!
  * \brief API call to obtain the current angular position of all the joints.
@@ -485,9 +522,21 @@ void JacoComm::getJointAngles(JacoAngles &angles)
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     AngularPosition jaco_angles;
     memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
-    jaco_api_.getAngularPosition(jaco_angles);
+
+    ROS_INFO_STREAM(__LINE__);
+    int result = jaco_api_.getAngularPosition(jaco_angles);
+    ROS_INFO_STREAM(__LINE__);
+    if (result != NO_ERROR_KINOVA)
+    {
+        ROS_INFO_STREAM(__LINE__);
+        throw JacoCommException("Could not get the angular position", result);
+        ROS_INFO_STREAM(__LINE__);
+    }
+    ROS_INFO_STREAM(__LINE__);
+
     angles = jaco_angles.Actuators;
 }
+
 
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
@@ -497,9 +546,21 @@ void JacoComm::getCartesianPosition(JacoPose &position)
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     CartesianPosition jaco_cartesian_position;
     memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
-    jaco_api_.getCartesianPosition(jaco_cartesian_position);
+
+    ROS_INFO_STREAM(__LINE__);
+    int result = jaco_api_.getCartesianPosition(jaco_cartesian_position);
+    ROS_INFO_STREAM(__LINE__);
+    if (result != NO_ERROR_KINOVA)
+    {
+        ROS_INFO_STREAM(__LINE__);
+        throw JacoCommException("Could not get the Cartesian position", result);
+        ROS_INFO_STREAM(__LINE__);
+    }
+    ROS_INFO_STREAM(__LINE__);
+
     position = JacoPose(jaco_cartesian_position.Coordinates);
 }
+
 
 /*!
  * \brief API call to obtain the current finger positions.
@@ -509,7 +570,12 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     CartesianPosition jaco_cartesian_position;
     memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
-    jaco_api_.getCartesianPosition(jaco_cartesian_position);
+
+    int result = jaco_api_.getCartesianPosition(jaco_cartesian_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get Cartesian finger position", result);
+    }
 
     if (num_fingers_ == 2)
     {
@@ -520,12 +586,6 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
 }
 
 
-int JacoComm::numFingers()
-{
-    return num_fingers_;
-}
-
-
 /*!
  * \brief API call to obtain the current client configuration.
  */
@@ -533,8 +593,14 @@ void JacoComm::getConfig(ClientConfigurations &config)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     memset(&config, 0, sizeof(config));  // zero structure
-    jaco_api_.getClientConfigurations(config);
+
+    int result = jaco_api_.getClientConfigurations(config);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get client configuration", result);
+    }
 }
+
 
 /*!
  * \brief API call to obtain the current "quick status".
@@ -544,8 +610,55 @@ void JacoComm::getQuickStatus(QuickStatus &quick_status)
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     memset(&quick_status, 0, sizeof(quick_status));  // zero structure
     int result = jaco_api_.getQuickStatus(quick_status);
-    printRaw(quick_status);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get quick status", result);
+    }
 }
+
+
+void JacoComm::stopAPI()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    is_software_stop_ = true;
+
+    int result = jaco_api_.stopControlAPI();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not stop the control API", result);
+    }
+
+    result = jaco_api_.eraseAllTrajectories();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not erase all trajectories", result);
+    }
+}
+
+
+void JacoComm::startAPI()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    if (is_software_stop_)
+    {
+        is_software_stop_ = false;
+        jaco_api_.stopControlAPI();
+        ros::Duration(0.05).sleep();
+    }
+
+    int result = jaco_api_.startControlAPI();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not start the control API", result);
+    }
+}
+
+
+int JacoComm::numFingers()
+{
+    return num_fingers_;
+}
+
 
 /*!
  * \brief Dumps the current joint angles onto the screen.
@@ -556,6 +669,7 @@ void JacoComm::printAngles(JacoAngles &angles)
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
              angles.Actuator4, angles.Actuator5, angles.Actuator6);
 }
+
 
 /*!
  * \brief Dumps the current cartesian positions onto the screen.
@@ -569,6 +683,7 @@ void JacoComm::printPosition(JacoPose &position)
              position.ThetaX, position.ThetaY, position.ThetaZ);
 }
 
+
 /*!
  * \brief Dumps the current finger positions onto the screen.
  */
@@ -577,6 +692,7 @@ void JacoComm::printFingers(FingersPosition fingers)
     ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
              fingers.Finger1, fingers.Finger2, fingers.Finger3);
 }
+
 
 /*!
  * \brief Dumps the client configuration onto the screen.
@@ -605,84 +721,63 @@ void JacoComm::printConfig(ClientConfigurations config)
 }
 
 
-void JacoComm::stop()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    is_software_stop_ = true;
-    jaco_api_.stopControlAPI();
-    jaco_api_.eraseAllTrajectories();
-}
-
-
-void JacoComm::start()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    if (is_software_stop_)
-    {
-        is_software_stop_ = false;
-        jaco_api_.stopControlAPI();
-        ros::Duration(0.05).sleep();
-    }
-    jaco_api_.startControlAPI();
-}
-
-
 bool JacoComm::isStopped()
 {
     return is_software_stop_;
 }
 
-/*!
- * \brief Wait for the arm to reach the "home" position.
- *
- * \param timeout Timeout after which to give up waiting for arm to finish "homing".
- */
-void JacoComm::waitForHome(int timeout)
-{
-    double start_secs;
-    double current_secs;
 
-    // If ros is still running use rostime, else use system time
-    if (ros::ok())
-    {
-        start_secs = ros::Time::now().toSec();
-        current_secs = ros::Time::now().toSec();
-    }
-    else
-    {
-        start_secs = (double) time(NULL);
-        current_secs = (double) time(NULL);
-    }
+///*!
+// * \brief Wait for the arm to reach the "home" position.
+// *
+// * \param timeout Timeout after which to give up waiting for arm to finish "homing".
+// */
+//void JacoComm::waitForHome(int timeout)
+//{
+//    double start_secs;
+//    double current_secs;
 
-    // while we have not timed out
-    while ((current_secs - start_secs) < timeout)
-    {
-        ros::Duration(0.5).sleep();
+//    // If ros is still running use rostime, else use system time
+//    if (ros::ok())
+//    {
+//        start_secs = ros::Time::now().toSec();
+//        current_secs = ros::Time::now().toSec();
+//    }
+//    else
+//    {
+//        start_secs = (double) time(NULL);
+//        current_secs = (double) time(NULL);
+//    }
 
-        //If ros is still running use rostime, else use system time
-        if (ros::ok())
-        {
-            current_secs = ros::Time::now().toSec();
-            ros::spinOnce();
-        }
-        else
-        {
-            current_secs = (double) time(NULL);
-        }
+//    // while we have not timed out
+//    while ((current_secs - start_secs) < timeout)
+//    {
+//        ros::Duration(0.5).sleep();
 
-        if (isHomed())
-        {
-            ROS_INFO("Arm has homed");
-            ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-            return;
-        }
-        else
-        {
-            ROS_INFO("Still homing the arm");
-        }
-    }
+//        //If ros is still running use rostime, else use system time
+//        if (ros::ok())
+//        {
+//            current_secs = ros::Time::now().toSec();
+//            ros::spinOnce();
+//        }
+//        else
+//        {
+//            current_secs = (double) time(NULL);
+//        }
 
-    ROS_WARN("Timed out waiting for arm to return home");
-}
+//        if (isHomed())
+//        {
+//            ROS_INFO("Arm has homed");
+//            ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
+//            return;
+//        }
+//        else
+//        {
+//            ROS_INFO("Still homing the arm");
+//        }
+//    }
+
+//    ROS_WARN("Timed out waiting for arm to return home");
+//}
 
 }  // namespace jaco

@@ -53,15 +53,15 @@ namespace jaco
 
 JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      nodeHandle_(nh, "arm_pose"),
-      action_server_(nodeHandle_, "arm_pose",
+      node_handle_(nh, "arm_pose"),
+      action_server_(node_handle_, "arm_pose",
                      boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
-    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
-    nodeHandle_.param<double>("stall_threshold", stall_threshold_, 0.005);
-    nodeHandle_.param<double>("rate_hz", rate_hz_, 10.0);
-    nodeHandle_.param<double>("tolerance", tolerance, 0.01);
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
+    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("tolerance", tolerance, 0.01);
     tolerance_ = (float)tolerance;
 
     action_server_.start();
@@ -122,8 +122,8 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
         ros::spinOnce();
         if (action_server_.isPreemptRequested() || !ros::ok())
         {
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }
@@ -155,8 +155,8 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
         else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
         {
             // Check if the full stall condition has been meet
-            arm_comm_.stop();
-            arm_comm_.start();
+            arm_comm_.stopAPI();
+            arm_comm_.startAPI();
             action_server_.setPreempted();
             return;
         }

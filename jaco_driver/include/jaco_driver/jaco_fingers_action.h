@@ -65,7 +65,7 @@ class JacoFingersActionServer
     void actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
-    ros::NodeHandle nodeHandle_;
+    ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::SetFingersPositionAction> action_server_;
 

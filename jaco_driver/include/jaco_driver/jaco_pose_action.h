@@ -66,7 +66,7 @@ class JacoPoseActionServer
     void actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
 
  private:
-    ros::NodeHandle nodeHandle_;
+    ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::ArmPoseAction> action_server_;
     tf::TransformListener listener;

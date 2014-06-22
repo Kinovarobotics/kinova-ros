@@ -4,7 +4,7 @@
 
   <!-- group ns="jaco" -->
     <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
-      <rosparam param="home_position_degrees">[282.8, 154.4, 43.1, 230.7, 83, 78.1]</rosparam>
+      <!-- rosparam param="home_position_degrees">[282.8, 154.4, 43.1, 230.7, 83, 78.1]</rosparam -->
       <param name="serial_number" value="PJ00000001030703130" />
     </node>
     

@@ -85,6 +85,22 @@ bool areValuesClose(float first, float second, float tolerance)
 }
 
 
+// Exceptions
+// ----------
+JacoCommException::JacoCommException(const std::string& message, const int error_code)
+{
+    std::stringstream ss;
+        ss << "JacoCommException: " << message << " (return code: " << error_code << ")" << std::endl;
+    desc_ = ss.str();
+}
+
+
+const char* JacoCommException::what() const throw()
+{
+    return desc_.c_str();
+}
+
+
 // Class definitions
 // -----------------
 

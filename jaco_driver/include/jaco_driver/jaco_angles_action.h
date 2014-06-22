@@ -65,7 +65,7 @@ class JacoAnglesActionServer
     void actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &);
 
  private:
-    ros::NodeHandle nodeHandle_;
+    ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
     actionlib::SimpleActionServer<jaco_msgs::ArmJointAnglesAction> action_server_;
 
