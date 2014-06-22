@@ -42,7 +42,6 @@ void JacoTFTree::JointAnglesMSG(const jaco_msgs::JointAnglesConstPtr& joint_angl
 
 void JacoTFTree::CalculatePostion(void)
 {
-
     //Update the forward Kinematics
     kinematics.UpdateForward(kinematics.deg_to_rad(current_angles.joint1),
             kinematics.deg_to_rad(current_angles.joint2), kinematics.deg_to_rad(current_angles.joint3),
@@ -54,7 +53,7 @@ void JacoTFTree::CalculatePostion(void)
 
 void JacoTFTree::TFUpdateTimer(const ros::TimerEvent&)
 {
-    this->CalculatePostion();	//Update TF Tree
+    this->CalculatePostion();  // Update TF Tree
 
     if ((ros::Time().now().toSec() - last_angle_update.toSec()) > 1)
     {
@@ -75,4 +74,6 @@ int main(int argc, char **argv)
     JacoTFTree JacoTF(nh);
 
     ros::spin();
+
+    return 0;
 }

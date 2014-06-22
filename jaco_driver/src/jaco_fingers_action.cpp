@@ -85,70 +85,82 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
     FingerAngles current_finger_positions;
     ros::Time current_time = ros::Time::now();
 
-    arm_comm_.getFingerPositions(current_finger_positions);
-
-    if (arm_comm_.isStopped())
+    try
     {
-        ROS_INFO("Could not complete finger action because the arm is stopped");
-        result.fingers = current_finger_positions.constructFingersMsg();
-        action_server_.setAborted(result);
-        return;
-    }
+        arm_comm_.getFingerPositions(current_finger_positions);
 
-    last_nonstall_time_ = current_time;
-    last_nonstall_finger_positions_ = current_finger_positions;
-
-    FingerAngles target(goal->fingers);
-    arm_comm_.setFingerPositions(target);
-
-    // Loop until the action completed, is preempted, or fails in some way.
-    // timeout is left to the caller since the timeout may greatly depend on
-    // the context of the movement.
-    while (true)
-    {
-        ros::spinOnce();
-        if (action_server_.isPreemptRequested() || !ros::ok())
+        if (arm_comm_.isStopped())
         {
-            arm_comm_.stopAPI();
-            arm_comm_.startAPI();
-            action_server_.setPreempted();
-            return;
-        }
-        else if (arm_comm_.isStopped())
-        {
+            ROS_INFO("Could not complete finger action because the arm is stopped");
             result.fingers = current_finger_positions.constructFingersMsg();
             action_server_.setAborted(result);
             return;
         }
 
-        arm_comm_.getFingerPositions(current_finger_positions);
-        current_time = ros::Time::now();
-        feedback.fingers = current_finger_positions.constructFingersMsg();
-        action_server_.publishFeedback(feedback);
+        last_nonstall_time_ = current_time;
+        last_nonstall_finger_positions_ = current_finger_positions;
 
-        if (target.isCloseToOther(current_finger_positions, tolerance_))
-        {
-            // Check if the action has succeeeded
-            result.fingers = current_finger_positions.constructFingersMsg();
-            action_server_.setSucceeded(result);
-            return;
-        }
-        else if (!last_nonstall_finger_positions_.isCloseToOther(current_finger_positions, stall_threshold_))
-        {
-            // Check if we are outside of a potential stall condition
-            last_nonstall_time_ = current_time;
-            last_nonstall_finger_positions_ = current_finger_positions;
-        }
-        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
-        {
-            // Check if the full stall condition has been meet
-            arm_comm_.stopAPI();
-            arm_comm_.startAPI();
-            action_server_.setPreempted();
-            return;
-        }
+        FingerAngles target(goal->fingers);
+        arm_comm_.setFingerPositions(target);
 
-        ros::Rate(rate_hz_).sleep();
+        // Loop until the action completed, is preempted, or fails in some way.
+        // timeout is left to the caller since the timeout may greatly depend on
+        // the context of the movement.
+        while (true)
+        {
+            ros::spinOnce();
+
+            if (action_server_.isPreemptRequested() || !ros::ok())
+            {
+                result.fingers = current_finger_positions.constructFingersMsg();
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+            else if (arm_comm_.isStopped())
+            {
+                result.fingers = current_finger_positions.constructFingersMsg();
+                action_server_.setAborted(result);
+                return;
+            }
+
+            arm_comm_.getFingerPositions(current_finger_positions);
+            current_time = ros::Time::now();
+            feedback.fingers = current_finger_positions.constructFingersMsg();
+            action_server_.publishFeedback(feedback);
+
+            if (target.isCloseToOther(current_finger_positions, tolerance_))
+            {
+                // Check if the action has succeeeded
+                result.fingers = current_finger_positions.constructFingersMsg();
+                action_server_.setSucceeded(result);
+                return;
+            }
+            else if (!last_nonstall_finger_positions_.isCloseToOther(current_finger_positions, stall_threshold_))
+            {
+                // Check if we are outside of a potential stall condition
+                last_nonstall_time_ = current_time;
+                last_nonstall_finger_positions_ = current_finger_positions;
+            }
+            else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+            {
+                // Check if the full stall condition has been meet
+                result.fingers = current_finger_positions.constructFingersMsg();
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+
+            ros::Rate(rate_hz_).sleep();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        result.fingers = current_finger_positions.constructFingersMsg();
+        ROS_ERROR_STREAM(e.what());
+        action_server_.setAborted(result);
     }
 }
 

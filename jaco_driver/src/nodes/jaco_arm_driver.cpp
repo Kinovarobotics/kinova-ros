@@ -33,9 +33,9 @@ int main(int argc, char **argv)
 
             ros::spin();
         }
-        catch(const jaco::JacoCommException& e)
+//        catch(const jaco::JacoCommException& e)
+        catch(const std::exception& e)
         {
-            ROS_INFO("Something");
             ROS_ERROR_STREAM(e.what());
             jaco::JacoAPI api;
             boost::recursive_mutex::scoped_lock lock(api_mutex);

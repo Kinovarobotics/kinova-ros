@@ -82,87 +82,97 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 
     JacoAngles current_joint_angles;
     ros::Time current_time = ros::Time::now();
-
-    // Put the goal pose into the frame used by the arm
-    if (ros::ok()
-            && !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
-                    goal->pose.header.stamp))
-    {
-        ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement",
-                  goal->pose.header.frame_id.c_str());
-        action_server_.setAborted(result);
-        return;
-    }
-
+    JacoPose current_pose;
     geometry_msgs::PoseStamped local_pose;
     local_pose.header.frame_id = "/jaco_api_origin";
-    listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
 
-
-    JacoPose current_pose;
-    arm_comm_.getCartesianPosition(current_pose);
-
-    if (arm_comm_.isStopped())
+    try
     {
-        local_pose.pose = current_pose.constructPoseMsg();
-        listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
-        action_server_.setAborted(result);
-        return;
-    }
-
-    last_nonstall_time_ = current_time;
-    last_nonstall_pose_ = current_pose;
-
-    JacoPose target(local_pose.pose);
-    arm_comm_.setCartesianPosition(target);
-
-    //while we have not timed out
-    while (true)
-    {
-        ros::spinOnce();
-        if (action_server_.isPreemptRequested() || !ros::ok())
+        // Put the goal pose into the frame used by the arm
+        if (ros::ok()
+                && !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
+                                          goal->pose.header.stamp))
         {
-            arm_comm_.stopAPI();
-            arm_comm_.startAPI();
-            action_server_.setPreempted();
-            return;
-        }
-        else if (arm_comm_.isStopped())
-        {
-            result.pose = feedback.pose;
+            ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement",
+                      goal->pose.header.frame_id.c_str());
             action_server_.setAborted(result);
             return;
         }
 
+        listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
         arm_comm_.getCartesianPosition(current_pose);
-        current_time = ros::Time::now();
-        local_pose.pose = current_pose.constructPoseMsg();
-        listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
-        action_server_.publishFeedback(feedback);
 
-        if (target.isCloseToOther(current_pose, tolerance_))
+        if (arm_comm_.isStopped())
         {
-            result.pose = feedback.pose;
-            action_server_.setSucceeded(result);
-            return;
-        }
-        else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_))
-        {
-            // Check if we are outside of a potential stall condition
-            last_nonstall_time_ = current_time;
-            last_nonstall_pose_ = current_pose;
-        }
-        else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
-        {
-            // Check if the full stall condition has been meet
-            arm_comm_.stopAPI();
-            arm_comm_.startAPI();
-            action_server_.setPreempted();
+            local_pose.pose = current_pose.constructPoseMsg();
+            listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
+            action_server_.setAborted(result);
             return;
         }
 
-        ros::Rate(rate_hz_).sleep();
+        last_nonstall_time_ = current_time;
+        last_nonstall_pose_ = current_pose;
+
+        JacoPose target(local_pose.pose);
+        arm_comm_.setCartesianPosition(target);
+
+        //while we have not timed out
+        while (true)
+        {
+            ros::spinOnce();
+
+            if (action_server_.isPreemptRequested() || !ros::ok())
+            {
+                result.pose = feedback.pose;
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+            else if (arm_comm_.isStopped())
+            {
+                result.pose = feedback.pose;
+                action_server_.setAborted(result);
+                return;
+            }
+
+            arm_comm_.getCartesianPosition(current_pose);
+            current_time = ros::Time::now();
+            local_pose.pose = current_pose.constructPoseMsg();
+            listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
+            action_server_.publishFeedback(feedback);
+
+            if (target.isCloseToOther(current_pose, tolerance_))
+            {
+                result.pose = feedback.pose;
+                action_server_.setSucceeded(result);
+                return;
+            }
+            else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_))
+            {
+                // Check if we are outside of a potential stall condition
+                last_nonstall_time_ = current_time;
+                last_nonstall_pose_ = current_pose;
+            }
+            else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+            {
+                // Check if the full stall condition has been meet
+                result.pose = feedback.pose;
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+
+            ros::Rate(rate_hz_).sleep();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        result.pose = feedback.pose;ROS_ERROR_STREAM(e.what());
+        ROS_ERROR_STREAM(e.what());
+        action_server_.setAborted(result);
     }
 }
 
-}
+}  // namespace jaco
