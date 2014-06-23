@@ -1,21 +1,17 @@
 <launch>
 
-  <!-- node name="rqt_console" pkg="rqt_console" type="rqt_console" / -->
+  <node name="mico_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
+    <param name="serial_number" value="PJ00650002132770005" />
 
-  <!-- group ns="mico" -->
-    <node name="mico_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
-      <!-- rosparam param="home_position_degrees">[282.8, 154.4, 43.1, 230.7, 83, 78.1]</rosparam -->
-      <param name="serial_number" value="PJ00650002132770005" />
-
-      <param name="fingers/stall_interval_seconds" value="0.5" />
-      <param name="fingers/stall_threshold" value="1.0" />
-      <param name="fingers/rate_hz" value="10.0" />
-      <param name="fingers/tolerance" value="15.0" />
+    <param name="fingers/stall_interval_seconds" value="0.5" />
+    <param name="fingers/stall_threshold" value="1.0" />
+    <param name="fingers/rate_hz" value="10.0" />
+    <param name="fingers/tolerance" value="15.0" />
       
-    </node>
+  </node>
     
-    <node name="mico_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node">
-      <remap from="in/joint_angles" to="/mico_arm_driver/out/joint_angles"/>
-    </node>
-  <!-- /group -->
+  <node name="mico_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node">
+    <param name="tf_prefix" value="mico_" />
+    <remap from="/mico_tf_updater/in/joint_angles" to="/mico_arm_driver/out/joint_angles"/>
+  </node>
 </launch>

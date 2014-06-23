@@ -165,7 +165,6 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
 JacoComm::~JacoComm()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    ROS_INFO("Closing API");
     jaco_api_.closeAPI();
 }
 
@@ -179,17 +178,14 @@ JacoComm::~JacoComm()
 bool JacoComm::isHomed(void)
 {
     QuickStatus quick_status;
-    ROS_INFO_STREAM("Getting quick status to check if arm is homed");
     getQuickStatus(quick_status);
 
     if (quick_status.RetractType == 1)
     {
-        ROS_INFO("Arm is homed");
         return 1;
     }
     else
     {
-        ROS_INFO("Arm is not homed");
         return 0;
     }
 }
@@ -523,16 +519,11 @@ void JacoComm::getJointAngles(JacoAngles &angles)
     AngularPosition jaco_angles;
     memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
 
-    ROS_INFO_STREAM(__LINE__);
     int result = jaco_api_.getAngularPosition(jaco_angles);
-    ROS_INFO_STREAM(__LINE__);
     if (result != NO_ERROR_KINOVA)
     {
-        ROS_INFO_STREAM(__LINE__);
         throw JacoCommException("Could not get the angular position", result);
-        ROS_INFO_STREAM(__LINE__);
     }
-    ROS_INFO_STREAM(__LINE__);
 
     angles = jaco_angles.Actuators;
 }
@@ -547,16 +538,11 @@ void JacoComm::getCartesianPosition(JacoPose &position)
     CartesianPosition jaco_cartesian_position;
     memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
 
-    ROS_INFO_STREAM(__LINE__);
     int result = jaco_api_.getCartesianPosition(jaco_cartesian_position);
-    ROS_INFO_STREAM(__LINE__);
     if (result != NO_ERROR_KINOVA)
     {
-        ROS_INFO_STREAM(__LINE__);
         throw JacoCommException("Could not get the Cartesian position", result);
-        ROS_INFO_STREAM(__LINE__);
     }
-    ROS_INFO_STREAM(__LINE__);
 
     position = JacoPose(jaco_cartesian_position.Coordinates);
 }
@@ -726,58 +712,5 @@ bool JacoComm::isStopped()
     return is_software_stop_;
 }
 
-
-///*!
-// * \brief Wait for the arm to reach the "home" position.
-// *
-// * \param timeout Timeout after which to give up waiting for arm to finish "homing".
-// */
-//void JacoComm::waitForHome(int timeout)
-//{
-//    double start_secs;
-//    double current_secs;
-
-//    // If ros is still running use rostime, else use system time
-//    if (ros::ok())
-//    {
-//        start_secs = ros::Time::now().toSec();
-//        current_secs = ros::Time::now().toSec();
-//    }
-//    else
-//    {
-//        start_secs = (double) time(NULL);
-//        current_secs = (double) time(NULL);
-//    }
-
-//    // while we have not timed out
-//    while ((current_secs - start_secs) < timeout)
-//    {
-//        ros::Duration(0.5).sleep();
-
-//        //If ros is still running use rostime, else use system time
-//        if (ros::ok())
-//        {
-//            current_secs = ros::Time::now().toSec();
-//            ros::spinOnce();
-//        }
-//        else
-//        {
-//            current_secs = (double) time(NULL);
-//        }
-
-//        if (isHomed())
-//        {
-//            ROS_INFO("Arm has homed");
-//            ros::Duration(1.0).sleep();  // Grants a bit more time for the arm to "settle"
-//            return;
-//        }
-//        else
-//        {
-//            ROS_INFO("Still homing the arm");
-//        }
-//    }
-
-//    ROS_WARN("Timed out waiting for arm to return home");
-//}
 
 }  // namespace jaco

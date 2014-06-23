@@ -77,10 +77,6 @@ float normalizeInDegrees(float degrees)
 
 bool areValuesClose(float first, float second, float tolerance)
 {
-//    return (fabs(normalizeInDegrees(second - first)) < fabs(tolerance));
-
-
-    // I don't think this captures rollowever...?
     return ((first <= second + tolerance) && (first >= second - tolerance));
 }
 
@@ -104,8 +100,8 @@ const char* JacoCommException::what() const throw()
 // Class definitions
 // -----------------
 
-JacoPose::JacoPose(const geometry_msgs::Pose &pose) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+JacoPose::JacoPose(const geometry_msgs::Pose &pose)
+{
     double tx, ty, tz;
     tf::Quaternion q;
     tf::quaternionMsgToTF(pose.orientation, q);
@@ -123,8 +119,9 @@ JacoPose::JacoPose(const geometry_msgs::Pose &pose) {
     ThetaZ = normalizeInRads(tz);
 }
 
-JacoPose::JacoPose(const CartesianInfo &pose) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+JacoPose::JacoPose(const CartesianInfo &pose)
+{
     X = pose.X;
     Y = pose.Y;
     Z = pose.Z;
@@ -134,8 +131,9 @@ JacoPose::JacoPose(const CartesianInfo &pose) {
     ThetaZ = normalizeInRads(pose.ThetaZ);
 }
 
-geometry_msgs::Pose JacoPose::constructPoseMsg() {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+geometry_msgs::Pose JacoPose::constructPoseMsg()
+{
     geometry_msgs::Pose pose;
     tf::Quaternion position_quaternion;
 
@@ -149,8 +147,9 @@ geometry_msgs::Pose JacoPose::constructPoseMsg() {
     return pose;
 }
 
-bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
+{
     bool status = true;
     status = status && areValuesClose(X, other.X, tolerance);
     status = status && areValuesClose(Y, other.Y, tolerance);
@@ -161,8 +160,9 @@ bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const {
     return status;
 }
 
-JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles)
+{
     Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
     Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
     Actuator3 = normalizePositiveInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
@@ -171,9 +171,9 @@ JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles) {
     Actuator6 = normalizePositiveInDegrees(260.0 - (angles.joint6 * (180.0 / M_PI)));
 }
 
+
 JacoAngles::JacoAngles(const AngularInfo &angles)
 {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
     Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
     Actuator3 = normalizePositiveInDegrees(angles.Actuator3);
@@ -182,9 +182,9 @@ JacoAngles::JacoAngles(const AngularInfo &angles)
     Actuator6 = normalizePositiveInDegrees(angles.Actuator6);
 }
 
+
 jaco_msgs::JointAngles JacoAngles::constructAnglesMsg()
 {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     jaco_msgs::JointAngles angles;
     angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
     angles.joint2 = (Actuator2 - 270.0) / (180.0 / M_PI);
@@ -195,9 +195,9 @@ jaco_msgs::JointAngles JacoAngles::constructAnglesMsg()
     return angles;
 }
 
+
 bool JacoAngles::isCloseToOther(const JacoAngles &other, float tolerance) const
 {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     bool status = true;
     status = status && areValuesClose(Actuator1, other.Actuator1, tolerance);
     status = status && areValuesClose(Actuator2, other.Actuator2, tolerance);
@@ -205,34 +205,28 @@ bool JacoAngles::isCloseToOther(const JacoAngles &other, float tolerance) const
     status = status && areValuesClose(Actuator4, other.Actuator4, tolerance);
     status = status && areValuesClose(Actuator5, other.Actuator5, tolerance);
     status = status && areValuesClose(Actuator6, other.Actuator6, tolerance);
-//    ROS_INFO("Differences: %.2f, %.2f, %.2f, %.2f, %.2f, %.2f",
-//             fabs(normalizeInDegrees(other.Actuator1 - Actuator1)),
-//             fabs(normalizeInDegrees(other.Actuator2 - Actuator2)),
-//             fabs(normalizeInDegrees(other.Actuator3 - Actuator3)),
-//             fabs(normalizeInDegrees(other.Actuator4 - Actuator4)),
-//             fabs(normalizeInDegrees(other.Actuator5 - Actuator5)),
-//             fabs(normalizeInDegrees(other.Actuator6 - Actuator6)));
     return status;
 }
 
+
 FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position)
 {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = position.finger1;
     Finger2 = position.finger2;
     Finger3 = position.finger3;
 }
 
+
 FingerAngles::FingerAngles(const FingersPosition &angle)
 {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
     Finger1 = angle.Finger1;
     Finger2 = angle.Finger2;
     Finger3 = angle.Finger3;
 }
 
-jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+jaco_msgs::FingerPosition FingerAngles::constructFingersMsg()
+{
     jaco_msgs::FingerPosition angles;
     angles.finger1 = Finger1;
     angles.finger2 = Finger2;
@@ -240,8 +234,9 @@ jaco_msgs::FingerPosition FingerAngles::constructFingersMsg() {
     return angles;
 }
 
-bool FingerAngles::isCloseToOther(const FingerAngles &other, float tolerance) const {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+
+bool FingerAngles::isCloseToOther(const FingerAngles &other, float tolerance) const
+{
     bool status = true;
     status = status && areValuesClose(Finger1, other.Finger1, tolerance);
     status = status && areValuesClose(Finger2, other.Finger2, tolerance);

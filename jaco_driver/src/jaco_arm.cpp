@@ -41,11 +41,6 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.005);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.005);
 
-//    nodeHandle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
-//    nodeHandle_.param<double>("stall_threshold_joints_", stall_threshold_joints_, 0.5);
-//    nodeHandle_.param<double>("stall_threshold_cartesian_", stall_threshold_cartesian_, 0.005);
-//    nodeHandle_.param<double>("stall_threshold_fingers_", stall_threshold_fingers_, 1.0);
-
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
 
@@ -231,7 +226,7 @@ void JacoArm::publishJointAngles(void) {
 
     // TODO: change the joint prefix into a parameter
     sensor_msgs::JointState joint_state;
-    const char* nameArgs[] = {"joint_0", "joint_1", "joint_2", "joint_3", "joint_4", "joint_5"};
+    const char* nameArgs[] = {"joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"};
     std::vector<std::string> joint_names(nameArgs, nameArgs + 6);
     joint_state.name = joint_names;
 

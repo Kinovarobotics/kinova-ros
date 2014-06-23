@@ -1,15 +1,12 @@
 <launch>
 
-  <!-- node name="rqt_console" pkg="rqt_console" type="rqt_console" / -->
-
-  <!-- group ns="jaco" -->
-    <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
-      <!-- rosparam param="home_position_degrees">[282.8, 154.4, 43.1, 230.7, 83, 78.1]</rosparam -->
-      <param name="serial_number" value="PJ00000001030703130" />
-    </node>
+  <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
+    <param name="serial_number" value="PJ00000001030703130" />
+  </node>
     
-    <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node">
-      <remap from="in/joint_angles" to="/jaco_arm_driver/out/joint_angles"/>
-    </node>
-  <!-- /group -->
+  <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node">
+    <param name="tf_prefix" value="jaco_" />
+    <remap from="/jaco_tf_updater/in/joint_angles" to="/jaco_arm_driver/out/joint_angles"/>
+  </node>
+
 </launch>
