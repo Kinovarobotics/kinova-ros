@@ -35,89 +35,29 @@ class JacoKinematics
  public:
     JacoKinematics(ros::NodeHandle node_handle);
 
-    static inline float Q1(float joint_angle)
-    {
-        return (-1 * (joint_angle - 180));
-    }
-
-    static inline float Q2(float joint_angle)
-    {
-        return (joint_angle - 270);
-    }
-
-    static inline float Q3(float joint_angle)
-    {
-        return (-1 * (joint_angle - 90));
-    }
-
-    static inline float Q4(float joint_angle)
-    {
-        return (-1 * (joint_angle - 180));
-    }
-
-    static inline float Q5(float joint_angle)
-    {
-        return (-1 * (joint_angle - 180));
-    }
-
-    static inline float Q6(float joint_angle)
-    {
-        return (-1 * (joint_angle - (180 + 80)));
-    }
-
-    /* Robot Length Values (Meters) */
-    static inline double BaseToJ1(void)
-    {
-        return 0.1370+0.0174; 			//Base to J1 (Meters)
-    }
-
-    /* Robot Length Values (Meters) */
-    static inline double J1ToJ2(void)
-    {
-        return 0.1181; 			//J1 to J2 (Meters)
-    }
-
-    static inline double J2ToJ3(void)
-    {
-        return 0.4100;			//Arm Length (Meters)
-    }
-
-    static inline double J3Offset(void)
-    {
-        return 0.0113;			//Arm Length (Meters)
-    }
-
-    static inline double J3ToJ4(void)
-    {
-        return 0.2070;			//Front Arm Length (Meters)
-    }
-
-    static inline double J4ToJ5(void)
-    {
-        return 0.0750;			//First Wrist Length (Meters)
-    }
-
-    static inline double J5ToJ6(void)
-    {
-        return 0.0750;			//Second Wrist Length (Meters)
-    }
-
-    static inline double J6ToEnd(void)
-    {
-        return 0.1850;			//Wrist to Center of Hand(Meters)
-    }
+    void updateForward(float q1,float q2,float q3,float q4,float q5,float q6);
 
     inline float degToRad(float degrees)
     {
         return (degrees * (M_PI / 180));
     }
 
-    void updateForward(float q1,float q2,float q3,float q4,float q5,float q6);
-
-
  private:
     tf::TransformBroadcaster broadcaster_;
     std::string tf_prefix_;
+
+    /* Robot Length Values (Meters) */
+    double base_to_api_;
+    double base_to_j1_;       // base to joint1 (Meters)
+    double j1_to_j2_;         // joint1 to joint2 (Meters)
+    double j2_to_j3_;         // arm length (Meters)
+    double j3_offset_;        // Arm Length (Meters)
+    double j3_to_j4_;         // Front Arm Length (Meters)
+    double j4_to_j5_;         // First Wrist Length (Meters)
+    double j5_to_j6_;         // Second Wrist Length (Meters)
+    double j6_to_end_;        // Wrist to Center of Hand(Meters)
+    double j5_bend_degrees_;  //
+    double j6_bend_degrees_;
 };
 
 }  // jaco namespace
