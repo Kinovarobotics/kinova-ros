@@ -43,14 +43,15 @@
  *
  */
 
-#ifndef _JACO_FINGERS_ACTION_H_
-#define _JACO_FINGERS_ACTION_H_
+#ifndef JACO_DRIVER_JACO_FINGERS_ACTION_H
+#define JACO_DRIVER_JACO_FINGERS_ACTION_H
 
 #include <ros/ros.h>
-#include "jaco_driver/jaco_comm.h"
-
 #include <actionlib/server/simple_action_server.h>
+
 #include <jaco_msgs/SetFingersPositionAction.h>
+
+#include "jaco_driver/jaco_comm.h"
 
 
 namespace jaco
@@ -59,7 +60,7 @@ namespace jaco
 class JacoFingersActionServer
 {
  public:
-    JacoFingersActionServer(JacoComm &, ros::NodeHandle &n);
+    JacoFingersActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoFingersActionServer();
 
     void actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
@@ -80,4 +81,4 @@ class JacoFingersActionServer
 };
 
 }  // namespace jaco
-#endif  // _JACO_FINGERS_ACTION_H_
+#endif  // JACO_DRIVER_JACO_FINGERS_ACTION_H

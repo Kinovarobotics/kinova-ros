@@ -43,18 +43,19 @@
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
+#ifndef JACO_DRIVER_JACO_COMM_H
+#define JACO_DRIVER_JACO_COMM_H
+
+#include <boost/thread/recursive_mutex.hpp>
 
 #include <kinova/KinovaTypes.h>
+
 #include <jaco_driver/jaco_types.h>
 #include "jaco_driver/jaco_api.h"
-#include <boost/thread/recursive_mutex.hpp>
 
 
 namespace jaco
 {
-
 
 class JacoComm
 {
@@ -67,35 +68,32 @@ class JacoComm
     bool isHomed(void);
     void homeArm(void);
     void initFingers(void);
-    void setJointAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-    void setCartesianPosition(JacoPose &position, int timeout = 0, bool push = true);
-    void setFingerPositions(FingerAngles &fingers, int timeout = 0, bool push = true);
-    void setJointVelocities(AngularInfo joint_vel);
-    void setCartesianVelocities(CartesianInfo velocities);
-    void setConfig(ClientConfigurations config);
+    void setJointAngles(const JacoAngles &angles, int timeout = 0, bool push = true);
+    void setCartesianPosition(const JacoPose &position, int timeout = 0, bool push = true);
+    void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
+    void setJointVelocities(const AngularInfo& joint_vel);
+    void setCartesianVelocities(const CartesianInfo &velocities);
+    void setConfig(const ClientConfigurations &config);
     void getJointAngles(JacoAngles &angles);
     void getCartesianPosition(JacoPose &position);
     void getFingerPositions(FingerAngles &fingers);
     void getQuickStatus(QuickStatus &quick_status);
     void getConfig(ClientConfigurations &config);
-    void printAngles(JacoAngles &angles);
-    void printPosition(JacoPose &position);
-    void printFingers(FingersPosition fingers);
-    void printConfig(ClientConfigurations config);
+    void printAngles(const JacoAngles &angles);
+    void printPosition(const JacoPose &position);
+    void printFingers(const FingersPosition &fingers);
+    void printConfig(const ClientConfigurations &config);
     void stopAPI();
     void startAPI();
     bool isStopped();
     int numFingers();
 
  private:
-    void waitForHome(int);
-
     boost::recursive_mutex& api_mutex_;
     jaco::JacoAPI jaco_api_;
     bool is_software_stop_;
-    // JacoAngles home_position_;
     int num_fingers_;
 };
 
-}
-#endif // _JACO_COMM_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_COMM_H

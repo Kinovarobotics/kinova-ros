@@ -7,16 +7,16 @@
 //============================================================================
 
 #include "jaco_driver/jaco_arm.h"
+#include <string>
+#include <vector>
 
 
 namespace jaco
 {
 
-JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
+JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     : jaco_comm_(arm), node_handle_(nodeHandle)
 {
-    ROS_INFO("Creating the ROS interface to the arm (services, action, publishers, and subscribers)");
-
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &JacoArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &JacoArm::startServiceCallback, this);
@@ -34,12 +34,11 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
                                                           &JacoArm::cartesianVelocityCallback, this);
 
-    // TODO: Change these defaults to something else
-    node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 1.0);
-    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_timeout_seconds_, 1.0);
-    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 1.0);
-    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.005);
-    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.005);
+    node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
+    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_timeout_seconds_, 0.25);
+    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 0.25);
+    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.1);
+    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.1);
 
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
@@ -57,9 +56,11 @@ JacoArm::JacoArm(JacoComm &arm, ros::NodeHandle &nodeHandle)
     ROS_INFO("The arm is ready to use.");
 }
 
+
 JacoArm::~JacoArm()
 {
 }
+
 
 bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res)
 {
@@ -69,9 +70,11 @@ bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs
     return true;
 }
 
+
 void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel)
 {
-    if (!jaco_comm_.isStopped()) {
+    if (!jaco_comm_.isStopped())
+    {
         joint_velocities_.Actuator1 = joint_vel->joint1;
         joint_velocities_.Actuator2 = joint_vel->joint2;
         joint_velocities_.Actuator3 = joint_vel->joint3;
@@ -80,12 +83,14 @@ void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& join
         joint_velocities_.Actuator6 = joint_vel->joint6;
         last_joint_vel_cmd_time_ = ros::Time().now();
 
-        if (joint_vel_timer_flag_ == false) {
+        if (joint_vel_timer_flag_ == false)
+        {
             joint_vel_timer_.start();
             joint_vel_timer_flag_ = true;
         }
     }
 }
+
 
 /*!
  * \brief Handler for "stop" service.
@@ -100,6 +105,7 @@ bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop
     ROS_DEBUG("Arm stop requested");
     return true;
 }
+
 
 /*!
  * \brief Handler for "start" service.
@@ -117,7 +123,8 @@ bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::St
 
 void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
 {
-    if (!jaco_comm_.isStopped()) {
+    if (!jaco_comm_.isStopped())
+    {
         cartesian_velocities_.X = cartesian_vel->twist.linear.x;
         cartesian_velocities_.Y = cartesian_vel->twist.linear.y;
         cartesian_velocities_.Z = cartesian_vel->twist.linear.z;
@@ -127,7 +134,8 @@ void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPt
 
         last_cartesian_vel_cmd_time_ = ros::Time().now();
 
-        if (cartesian_vel_timer_flag_ == false) {
+        if (cartesian_vel_timer_flag_ == false)
+        {
             cartesian_vel_timer_.start();
             cartesian_vel_timer_flag_ = true;
         }
@@ -174,29 +182,6 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
     }
 }
 
-///*!
-// * \brief Contains coordinates for an alternate "Home" position
-// *
-// * GoHome() function must be enabled in the initialization routine for this to
-// * work.
-// */
-//void JacoArm::goHome(void) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-///*
-//    AngularInfo joint_home;
-
-//    joint_home.Actuator1 = 176.0;
-//    joint_home.Actuator2 = 111.0;
-//    joint_home.Actuator3 = 107.0;
-//    joint_home.Actuator4 = 459.0;
-//    joint_home.Actuator5 = 102.0;
-//    joint_home.Actuator6 = 106.0;
-
-//    SetAngles(joint_home, 10); //send joints to home position
-
-//    API->SetCartesianControl();
-//*/
-//}
 
 /*!
  * \brief Publishes the current joint angles.
@@ -209,9 +194,8 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  * joint, when this data is made available by the C++ API.  Currenty velocity
  * and effort are reported as being zero (0.0) for all joints.
  */
-void JacoArm::publishJointAngles(void) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-
+void JacoArm::publishJointAngles(void)
+{
     // Query arm for current joint angles
     JacoAngles current_angles;
     jaco_comm_.getJointAngles(current_angles);
@@ -224,7 +208,6 @@ void JacoArm::publishJointAngles(void) {
     jaco_angles.joint5 = current_angles.Actuator5;
     jaco_angles.joint6 = current_angles.Actuator6;
 
-    // TODO: change the joint prefix into a parameter
     sensor_msgs::JointState joint_state;
     const char* nameArgs[] = {"joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"};
     std::vector<std::string> joint_names(nameArgs, nameArgs + 6);
@@ -257,11 +240,12 @@ void JacoArm::publishJointAngles(void) {
     joint_state_publisher_.publish(joint_state);
 }
 
+
 /*!
  * \brief Publishes the current cartesian coordinates
  */
-void JacoArm::publishToolPosition(void) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+void JacoArm::publishToolPosition(void)
+{
     JacoPose pose;
     geometry_msgs::PoseStamped current_position;
 
@@ -271,29 +255,23 @@ void JacoArm::publishToolPosition(void) {
     tool_position_publisher_.publish(current_position);
 }
 
+
 /*!
  * \brief Publishes the current finger positions.
  */
-void JacoArm::publishFingerPosition(void) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
-
+void JacoArm::publishFingerPosition(void)
+{
     FingerAngles fingers;
-    //jaco_msgs::FingerPosition finger_position;
-
     jaco_comm_.getFingerPositions(fingers);
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
 
-void JacoArm::statusTimer(const ros::TimerEvent&) {
-//    ROS_INFO_STREAM("File: " << __FILE__ << ", line: " << __LINE__ << ", function: " << __PRETTY_FUNCTION__);
+void JacoArm::statusTimer(const ros::TimerEvent&)
+{
     publishJointAngles();
     publishToolPosition();
     publishFingerPosition();
-
-//    ROS_INFO_STREAM("Getting quick status for the timer");
-//    QuickStatus current_status;
-//    jaco_api_.getQuickStatus(current_status);
 }
 
 }  // namespace jaco

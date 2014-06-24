@@ -4,7 +4,9 @@
  *  Created on: Mar 10, 2013
  *      Author: mdedonato
  */
+
 #include <jaco_driver/jaco_arm_kinematics.h>
+#include <string>
 
 
 namespace jaco
@@ -18,7 +20,7 @@ std::string concatTfName(const std::string& prefix, const std::string name)
 }
 
 
-JacoKinematics::JacoKinematics(ros::NodeHandle node_handle)
+JacoKinematics::JacoKinematics(const ros::NodeHandle &node_handle)
 {
     node_handle.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
 
@@ -202,9 +204,9 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
      * sin(q4)     cos(q4)       0 *
      * cos(q4)    -sin(q4)       0 *
      *******                *******/
-    rot_matrix.setValue(0,0,-1, sin(q4),
-                        cos(q4), 0, cos(q4),
-                        -sin(q4), 0);
+    rot_matrix.setValue(0, 0, -1,
+                        sin(q4), cos(q4), 0,
+                        cos(q4), -sin(q4), 0);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
@@ -305,16 +307,16 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
 #endif
 
     /**********************end effector**********************/
-    rot_matrix.setValue(1,0,0,0,1,0,0,0,1);
+    rot_matrix.setValue(1, 0, 0, 0, 1, 0, 0, 0, 1);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
-    translation_v.setValue(0,0,-j6_to_end_);
-    transform.setOrigin(translation_v);    //Set Translation
+    translation_v.setValue(0, 0, -j6_to_end_);
+    transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
                                                     concatTfName(tf_prefix_, "joint_6"),
                                                     concatTfName(tf_prefix_, "end_effector")));
 }
 
-}  // jaco namespace
+}  // namespace jaco

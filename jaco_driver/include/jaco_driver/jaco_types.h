@@ -43,18 +43,19 @@
  *
  */
 
-#ifndef _JACO_TYPES_H_
-#define _JACO_TYPES_H_
+#ifndef JACO_DRIVER_JACO_TYPES_H
+#define JACO_DRIVER_JACO_TYPES_H
 
 #include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>
 
+#include <string>
+
 
 namespace jaco
 {
-
 
 class JacoException : public std::exception {};
 
@@ -75,34 +76,36 @@ class JacoPose : public CartesianInfo
 {
  public:
     JacoPose() {}
-    JacoPose(const geometry_msgs::Pose &pose);
-    JacoPose(const CartesianInfo &pose);
+    explicit JacoPose(const geometry_msgs::Pose &pose);
+    explicit JacoPose(const CartesianInfo &pose);
 
     geometry_msgs::Pose constructPoseMsg();
     bool isCloseToOther(const JacoPose &, float tolerance) const;
 };
 
+
 class JacoAngles : public AngularInfo
 {
  public:
     JacoAngles() {}
-    JacoAngles(const jaco_msgs::JointAngles &angles);
-    JacoAngles(const AngularInfo &angles);
+    explicit JacoAngles(const jaco_msgs::JointAngles &angles);
+    explicit JacoAngles(const AngularInfo &angles);
 
     jaco_msgs::JointAngles constructAnglesMsg();
     bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 
+
 class FingerAngles : public FingersPosition
 {
  public:
     FingerAngles() {}
-    FingerAngles(const jaco_msgs::FingerPosition &position);
-    FingerAngles(const FingersPosition &angle);
+    explicit FingerAngles(const jaco_msgs::FingerPosition &position);
+    explicit FingerAngles(const FingersPosition &angle);
 
     jaco_msgs::FingerPosition constructFingersMsg();
     bool isCloseToOther(const FingerAngles &, float tolerance) const;
 };
 
-}
-#endif  // _JACO_TYPES_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_TYPES_H

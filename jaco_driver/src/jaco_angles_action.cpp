@@ -43,15 +43,18 @@
  *
  */
 
-#include "jaco_driver/jaco_angles_action.h"
+
 #include <kinova/KinovaTypes.h>
+
+#include "jaco_driver/jaco_angles_action.h"
+
 #include "jaco_driver/jaco_types.h"
 
 
 namespace jaco
 {
 
-JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "joint_angles"),
       action_server_(node_handle_, "arm_joint_angles",

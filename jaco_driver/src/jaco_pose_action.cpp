@@ -46,23 +46,29 @@
 #include "jaco_driver/jaco_pose_action.h"
 #include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
+#include <string>
 
 
 namespace jaco
 {
 
-JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "arm_pose"),
       action_server_(node_handle_, "arm_pose",
                      boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
-    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 0.01);
-    tolerance_ = (float)tolerance;
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+
+    tolerance_ = static_cast<float>(tolerance);
+    std::stringstream ss;
+    ss << tf_prefix_ << "api_origin";
+    api_origin_frame_ = ss.str();
 
     action_server_.start();
 }
@@ -80,21 +86,20 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
     feedback.pose.header.frame_id = goal->pose.header.frame_id;
     result.pose.header.frame_id = goal->pose.header.frame_id;
 
-    JacoAngles current_joint_angles;
     ros::Time current_time = ros::Time::now();
     JacoPose current_pose;
     geometry_msgs::PoseStamped local_pose;
-    local_pose.header.frame_id = "/jaco_api_origin";
+    local_pose.header.frame_id = api_origin_frame_;
 
     try
     {
         // Put the goal pose into the frame used by the arm
         if (ros::ok()
-                && !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
+                && !listener.canTransform(api_origin_frame_, goal->pose.header.frame_id,
                                           goal->pose.header.stamp))
         {
-            ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement",
-                      goal->pose.header.frame_id.c_str());
+            ROS_ERROR("Could not get transfrom from %s to %s, aborting cartesian movement",
+                      api_origin_frame_.c_str(), goal->pose.header.frame_id.c_str());
             action_server_.setAborted(result);
             return;
         }
@@ -104,6 +109,7 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
 
         if (arm_comm_.isStopped())
         {
+            ROS_INFO("Could not complete cartesian action because the arm is 'stopped'.");
             local_pose.pose = current_pose.constructPoseMsg();
             listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
             action_server_.setAborted(result);
@@ -116,7 +122,6 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
         JacoPose target(local_pose.pose);
         arm_comm_.setCartesianPosition(target);
 
-        //while we have not timed out
         while (true)
         {
             ros::spinOnce();
@@ -169,7 +174,7 @@ void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &
     }
     catch(const std::exception& e)
     {
-        result.pose = feedback.pose;ROS_ERROR_STREAM(e.what());
+        result.pose = feedback.pose;
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
     }

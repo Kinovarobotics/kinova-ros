@@ -7,30 +7,31 @@
  *
  */
 
-#ifndef JACO_ARM_DRIVER_H_
-#define JACO_ARM_DRIVER_H_
+#ifndef JACO_DRIVER_JACO_ARM_H
+#define JACO_DRIVER_JACO_ARM_H
 
 #include <ros/ros.h>
-#include <jaco_driver/jaco_api.h>
-#include "kinova/KinovaTypes.h"
+
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
-#include "jaco_msgs/JointVelocity.h"
-#include "jaco_msgs/FingerPosition.h"
-#include "jaco_msgs/JointAngles.h"
-#include "sensor_msgs/JointState.h"
+#include <sensor_msgs/JointState.h>
 
 #include <jaco_msgs/Stop.h>
 #include <jaco_msgs/Start.h>
 #include <jaco_msgs/HomeArm.h>
-
-#include "jaco_driver/jaco_comm.h"
+#include <jaco_msgs/JointVelocity.h>
+#include <jaco_msgs/FingerPosition.h>
+#include <jaco_msgs/JointAngles.h>
 
 #include <time.h>
 #include <math.h>
 #include <vector>
+
+#include "kinova/KinovaTypes.h"
+#include "jaco_driver/jaco_comm.h"
+#include "jaco_driver/jaco_api.h"
 
 
 namespace jaco
@@ -39,7 +40,7 @@ namespace jaco
 class JacoArm
 {
  public:
-    JacoArm(JacoComm& arm, ros::NodeHandle &node_handle);
+    JacoArm(JacoComm& arm, const ros::NodeHandle &node_handle);
     ~JacoArm();
 
     void jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel);
@@ -88,11 +89,6 @@ class JacoArm
     double joint_vel_interval_seconds_;
     double cartesian_vel_interval_seconds_;
 
-//    double stall_interval_seconds_;
-//    double stall_threshold_joints_;
-//    double stall_threshold_cartesian_;
-//    double stall_threshold_fingers_;
-
     // State tracking or utility members
     bool cartesian_vel_timer_flag_;
     bool joint_vel_timer_flag_;
@@ -105,4 +101,4 @@ class JacoArm
 };
 
 }  // namespace jaco
-#endif  // JACO_ARM_DRIVER_H_
+#endif  // JACO_DRIVER_JACO_ARM_H

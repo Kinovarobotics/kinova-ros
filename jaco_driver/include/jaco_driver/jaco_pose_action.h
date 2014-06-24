@@ -43,16 +43,19 @@
  *
  */
 
-#ifndef _JACO_POSE_ACTION_H_
-#define _JACO_POSE_ACTION_H_
+#ifndef JACO_DRIVER_JACO_POSE_ACTION_H_s
+#define JACO_DRIVER_JACO_POSE_ACTION_H_s
 
 #include <ros/ros.h>
-#include "jaco_driver/jaco_comm.h"
-
 #include <actionlib/server/simple_action_server.h>
-#include <jaco_msgs/ArmPoseAction.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
+
+#include <jaco_msgs/ArmPoseAction.h>
+
+#include <string>
+#include "jaco_driver/jaco_comm.h"
+
 
 namespace jaco
 {
@@ -60,7 +63,7 @@ namespace jaco
 class JacoPoseActionServer
 {
  public:
-    JacoPoseActionServer(JacoComm &, ros::NodeHandle &n);
+    JacoPoseActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoPoseActionServer();
 
     void actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
@@ -74,13 +77,16 @@ class JacoPoseActionServer
     ros::Time last_nonstall_time_;
     jaco::JacoPose last_nonstall_pose_;
 
+    std::string api_origin_frame_;
+
     // Parameters
     double stall_interval_seconds_;
     double stall_threshold_;
     double rate_hz_;
     float tolerance_;
+    std::string tf_prefix_;
 };
 
-}  // jaco namespace
-#endif  // _JACO_POSE_ACTION_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_POSE_ACTION_H_s
 

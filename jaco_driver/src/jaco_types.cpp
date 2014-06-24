@@ -48,6 +48,7 @@
 #include <angles/angles.h>
 #include <tf/tf.h>
 #include <jaco_driver/jaco_types.h>
+#include <string>
 
 
 namespace jaco
@@ -56,10 +57,9 @@ namespace jaco
 // A few helper functions
 // ----------------------
 
-
 float normalizeInRads(float rads)
 {
-    return float(angles::normalize_angle_positive(rads));
+    return static_cast<float>(angles::normalize_angle_positive(rads));
 }
 
 
@@ -110,9 +110,9 @@ JacoPose::JacoPose(const geometry_msgs::Pose &pose)
 
     bt_q.getEulerYPR(tz, ty, tx);
 
-    X = (float) pose.position.x;
-    Y = (float) pose.position.y;
-    Z = (float) pose.position.z;
+    X = static_cast<float>(pose.position.x);
+    Y = static_cast<float>(pose.position.y);
+    Z = static_cast<float>(pose.position.z);
 
     ThetaX = normalizeInRads(tx);
     ThetaY = normalizeInRads(ty);

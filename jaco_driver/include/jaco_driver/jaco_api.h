@@ -6,20 +6,26 @@
  *      Author: mdedonato, Clearpath Robotics
  */
 
-#ifndef JACOLIB_H_
-#define JACOLIB_H_
+#ifndef JACO_DRIVER_JACO_API_H
+#define JACO_DRIVER_JACO_API_H
+
+#include <dlfcn.h>
+#include <ros/ros.h>
+
+#include <iostream>
+#include <vector>
 
 #include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
 #include "kinova/KinovaTypes.h"
-#include <dlfcn.h>
-#include <iostream>
-#include <ros/ros.h>
 
 
-namespace jaco {
+namespace jaco
+{
+
 #define JACO_USB_LIBRARY "Kinova.API.USBCommandLayerUbuntu.so"
 
-class JacoAPI {
+class JacoAPI
+{
  public:
     JacoAPI(void);
 
@@ -46,11 +52,9 @@ class JacoAPI {
     int (*getAngularForce)(AngularPosition &);
     int (*getAngularCurrent)(AngularPosition &);
     int (*getControlType)(int &);
-    // int (*getControlOperator)(int &);
     int (*getActualTrajectoryInfo)(TrajectoryPoint &);
     int (*getGlobalTrajectoryInfo)(TrajectoryFIFO &);
     int (*getSensorsInfo)(SensorsInfo &);
-//    int (*getSingularityVector)(SingularityVector &);
     int (*setAngularControl)();
     int (*setCartesianControl)();
     int (*restoreFactoryDefault)();
@@ -64,8 +68,5 @@ class JacoAPI {
     int (*setActuatorPID)(unsigned int, float, float, float);
 };
 
-std::ostream& operator<< (std::ostream& stream, const QuickStatus& quickStatus);
-
 }  // namespace jaco
-
-#endif  // JACOLIB_H_
+#endif  // JACO_DRIVER_JACO_API_H

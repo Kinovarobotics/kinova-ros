@@ -15,7 +15,6 @@
 
 int main(int argc, char **argv)
 {
-
     ros::init(argc, argv, "jaco_arm_driver");
     ros::NodeHandle nh("~");
     boost::recursive_mutex api_mutex;
@@ -33,7 +32,6 @@ int main(int argc, char **argv)
 
             ros::spin();
         }
-//        catch(const jaco::JacoCommException& e)
         catch(const std::exception& e)
         {
             ROS_ERROR_STREAM(e.what());

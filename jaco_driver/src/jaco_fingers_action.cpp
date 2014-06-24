@@ -43,15 +43,15 @@
  *
  */
 
-#include "jaco_driver/jaco_fingers_action.h"
 #include <kinova/KinovaTypes.h>
+#include "jaco_driver/jaco_fingers_action.h"
 #include "jaco_driver/jaco_types.h"
 
 
 namespace jaco
 {
 
-JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHandle &nh)
+JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "fingers"),
       action_server_(node_handle_, "finger_positions",
@@ -62,14 +62,16 @@ JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, ros::NodeHa
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 2.0);
-    tolerance_ = (float)tolerance;
+    tolerance_ = static_cast<float>(tolerance);
 
     action_server_.start();
 }
 
+
 JacoFingersActionServer::~JacoFingersActionServer()
 {
 }
+
 
 void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal)
 {

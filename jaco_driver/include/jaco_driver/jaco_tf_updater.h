@@ -5,10 +5,12 @@
  *      Author: mdedonato
  */
 
-#ifndef JACO_TF_UPDATER_H_
-#define JACO_TF_UPDATER_H_
+#ifndef JACO_DRIVER_JACO_TF_UPDATER_H
+#define JACO_DRIVER_JACO_TF_UPDATER_H
 
 #include <time.h>
+
+#include <jaco_driver/jaco_arm_kinematics.h>
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
@@ -17,7 +19,6 @@
 #include <tf/transform_listener.h>
 
 #include "jaco_msgs/JointAngles.h"
-#include <jaco_driver/jaco_arm_kinematics.h>
 
 
 namespace jaco
@@ -26,7 +27,7 @@ namespace jaco
 class JacoTFTree
 {
  public:
-    JacoTFTree(ros::NodeHandle nh);
+    explicit JacoTFTree(ros::NodeHandle nh);
 
  private:
     void jointAnglesMsgHandler(const jaco_msgs::JointAnglesConstPtr& joint_angles);
@@ -41,4 +42,4 @@ class JacoTFTree
 };
 
 }  // namespace jaco
-#endif /* JACO_TF_UPDATER_H_ */
+#endif  // JACO_DRIVER_JACO_TF_UPDATER_H

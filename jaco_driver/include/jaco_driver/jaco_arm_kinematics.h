@@ -5,13 +5,16 @@
  *      Author: mdedonato
  */
 
-#ifndef JACO_ARM_KINEMATICS_H_
-#define JACO_ARM_KINEMATICS_H_
+#ifndef JACO_DRIVER_JACO_ARM_KINEMATICS_H
+#define JACO_DRIVER_JACO_ARM_KINEMATICS_H
 
 #include <math.h>
+
+#include <ros/ros.h>
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
-#include <ros/ros.h>
+
+#include <string>
 
 
 /******************************************/
@@ -33,9 +36,9 @@ namespace jaco
 class JacoKinematics
 {
  public:
-    JacoKinematics(ros::NodeHandle node_handle);
+    explicit JacoKinematics(const ros::NodeHandle& node_handle);
 
-    void updateForward(float q1,float q2,float q3,float q4,float q5,float q6);
+    void updateForward(float q1, float q2, float q3, float q4, float q5, float q6);
 
     inline float degToRad(float degrees)
     {
@@ -60,5 +63,5 @@ class JacoKinematics
     double j6_bend_degrees_;
 };
 
-}  // jaco namespace
-#endif  // JACO_ARM_KINEMATICS_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_ARM_KINEMATICS_H

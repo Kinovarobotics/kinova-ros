@@ -43,14 +43,15 @@
  *
  */
 
-#ifndef _JACO_ANGLES_ACTION_H_
-#define _JACO_ANGLES_ACTION_H_
+#ifndef JACO_DRIVER_JACO_ANGLES_ACTION_H
+#define JACO_DRIVER_JACO_ANGLES_ACTION_H
 
 #include <ros/ros.h>
-#include "jaco_driver/jaco_comm.h"
-
 #include <actionlib/server/simple_action_server.h>
+
 #include <jaco_msgs/ArmJointAnglesAction.h>
+
+#include "jaco_driver/jaco_comm.h"
 
 
 namespace jaco
@@ -59,7 +60,7 @@ namespace jaco
 class JacoAnglesActionServer
 {
  public:
-    JacoAnglesActionServer(JacoComm &, ros::NodeHandle &n);
+    JacoAnglesActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoAnglesActionServer();
 
     void actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &);
@@ -79,5 +80,5 @@ class JacoAnglesActionServer
     float tolerance_;
 };
 
-}  // jaco namespace
-#endif  // _JACO_ANGLES_ACTION_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_ANGLES_ACTION_H

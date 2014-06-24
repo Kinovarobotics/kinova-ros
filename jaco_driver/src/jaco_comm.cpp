@@ -45,16 +45,17 @@
 
 #include <ros/ros.h>
 #include "jaco_driver/jaco_comm.h"
+#include <string>
+#include <vector>
 
 
 namespace jaco
 {
 
-
 JacoComm::JacoComm(const ros::NodeHandle& node_handle,
-                   boost::recursive_mutex& api_mutex,
+                   boost::recursive_mutex &api_mutex,
                    const bool is_movement_on_start)
-    : is_software_stop_(false), api_mutex_(api_mutex)  //, home_position_(getHomePosition(nodeHandle))
+    : is_software_stop_(false), api_mutex_(api_mutex)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -87,7 +88,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     }
 
     bool found_arm = false;
-    for(int device_i = 0; device_i < devices_list.size(); device_i++)
+    for (int device_i = 0; device_i < devices_list.size(); device_i++)
     {
         // If no device is specified, just use the first available device
         if ((serial_number == "")
@@ -135,7 +136,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     if (!found_arm)
     {
         ROS_ERROR("Could not find the specified arm (serial: %s) among the %d attached devices",
-                  serial_number.c_str(), (int)devices_list.size());
+                  serial_number.c_str(), static_cast<int>(devices_list.size()));
         throw JacoCommException("Could not find the specified arm", 0);
     }
 
@@ -253,7 +254,7 @@ void JacoComm::initFingers(void)
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push)
+void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -285,7 +286,6 @@ void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push)
         throw JacoCommException("Could not set angular control", result);
     }
 
-    //Jaco_Position.LimitationsActive = false;
     jaco_position.Position.Delay = 0.0;
     jaco_position.Position.Type = ANGULAR_POSITION;
     jaco_position.Position.Actuators = angles;
@@ -303,7 +303,7 @@ void JacoComm::setJointAngles(JacoAngles &angles, int timeout, bool push)
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
+void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -348,7 +348,6 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
     jaco_position.Position.Actuators.Actuator6 = 0.0f;
 
     jaco_position.Position.CartesianPosition = position;
-    //Jaco_Position.Position.CartesianPosition.ThetaZ += 0.0001; // A workaround for a bug in the Kinova API
 
     result = jaco_api_.sendBasicTrajectory(jaco_position);
     if (result != NO_ERROR_KINOVA)
@@ -361,7 +360,7 @@ void JacoComm::setCartesianPosition(JacoPose &position, int timeout, bool push)
 /*!
  * \brief Sets the finger positions
  */
-void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
+void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -401,18 +400,19 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
     jaco_position.LimitationsActive = 0;
 
     // These values will not be used but are initialized anyway.
-    jaco_position.Position.Actuators.Actuator1 = 0.0f;
-    jaco_position.Position.Actuators.Actuator2 = 0.0f;
-    jaco_position.Position.Actuators.Actuator3 = 0.0f;
-    jaco_position.Position.Actuators.Actuator4 = 0.0f;
-    jaco_position.Position.Actuators.Actuator5 = 0.0f;
-    jaco_position.Position.Actuators.Actuator6 = 0.0f;
+    JacoAngles angles;
+    getJointAngles(angles);
+    jaco_position.Position.Actuators.Actuator1 = angles.Actuator1;
+    jaco_position.Position.Actuators.Actuator2 = angles.Actuator2;
+    jaco_position.Position.Actuators.Actuator3 = angles.Actuator3;
+    jaco_position.Position.Actuators.Actuator4 = angles.Actuator4;
+    jaco_position.Position.Actuators.Actuator5 = angles.Actuator5;
+    jaco_position.Position.Actuators.Actuator6 = angles.Actuator6;
 
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
     JacoPose pose;
     getCartesianPosition(pose);
-
     jaco_position.Position.CartesianPosition.X = pose.X;
     jaco_position.Position.CartesianPosition.Y = pose.Y;
     jaco_position.Position.CartesianPosition.Z = pose.Z;
@@ -431,7 +431,7 @@ void JacoComm::setFingerPositions(FingerAngles &fingers, int timeout, bool push)
 /*!
  * \brief Set the angular velocity of the joints
  */
-void JacoComm::setJointVelocities(AngularInfo joint_vel)
+void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -463,7 +463,7 @@ void JacoComm::setJointVelocities(AngularInfo joint_vel)
 /*!
  * \brief Set the cartesian velocity of the tool tip
  */
-void JacoComm::setCartesianVelocities(CartesianInfo velocities)
+void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -499,7 +499,7 @@ void JacoComm::setCartesianVelocities(CartesianInfo velocities)
  * This is the configuration which are stored on the arm itself. Many of these
  * configurations may be set using the Windows interface.
  */
-void JacoComm::setConfig(ClientConfigurations config)
+void JacoComm::setConfig(const ClientConfigurations &config)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = jaco_api_.setClientConfigurations(config);
@@ -525,7 +525,7 @@ void JacoComm::getJointAngles(JacoAngles &angles)
         throw JacoCommException("Could not get the angular position", result);
     }
 
-    angles = jaco_angles.Actuators;
+    angles = JacoAngles(jaco_angles.Actuators);
 }
 
 
@@ -568,7 +568,7 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
         jaco_cartesian_position.Fingers.Finger3 = 0.0;
     }
 
-    fingers = jaco_cartesian_position.Fingers;
+    fingers = FingerAngles(jaco_cartesian_position.Fingers);
 }
 
 
@@ -649,7 +649,7 @@ int JacoComm::numFingers()
 /*!
  * \brief Dumps the current joint angles onto the screen.
  */
-void JacoComm::printAngles(JacoAngles &angles)
+void JacoComm::printAngles(const JacoAngles &angles)
 {
     ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
@@ -660,7 +660,7 @@ void JacoComm::printAngles(JacoAngles &angles)
 /*!
  * \brief Dumps the current cartesian positions onto the screen.
  */
-void JacoComm::printPosition(JacoPose &position)
+void JacoComm::printPosition(const JacoPose &position)
 {
     ROS_INFO("Arm position\n"
              "\tposition (m) -- x: %f, y: %f z: %f\n"
@@ -673,7 +673,7 @@ void JacoComm::printPosition(JacoPose &position)
 /*!
  * \brief Dumps the current finger positions onto the screen.
  */
-void JacoComm::printFingers(FingersPosition fingers)
+void JacoComm::printFingers(const FingersPosition &fingers)
 {
     ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
              fingers.Finger1, fingers.Finger2, fingers.Finger3);
@@ -683,7 +683,7 @@ void JacoComm::printFingers(FingersPosition fingers)
 /*!
  * \brief Dumps the client configuration onto the screen.
  */
-void JacoComm::printConfig(ClientConfigurations config)
+void JacoComm::printConfig(const ClientConfigurations &config)
 {
     ROS_INFO_STREAM("Arm configuration:\n"
                     "\tClientID: " << config.ClientID <<
