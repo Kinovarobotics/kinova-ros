@@ -12,6 +12,7 @@
   <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt (Clearpath)</author>
   <author email="abencz@clearpathrobotics.com">Alex Bencz (Clearpath)</author>
   <author>Matt DeDonato (WPI)</author>
+  <author email="braden@stenning.com">Braden Stenning</author>
   <maintainer email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</maintainer>
   <license>BSD</license>
 
@@ -28,6 +29,7 @@
   <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>tf</build_depend>
+  <build_depend>angles</build_depend>
 
   <run_depend>actionlib</run_depend>
   <run_depend>actionlib_msgs</run_depend>
@@ -38,6 +40,7 @@
   <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>tf</run_depend>
+  <run_depend>angles</run_depend>
 
   <export>
   </export>

@@ -1,0 +1,5 @@
+0.0 -1.571 -1.571 0.0 3.141 0.0            # straight up position
+4.936 2.695 0.752 4.926 1.449 1.363        # typical home position for right-handed arms 
+-1.794 -2.009 0.8117 -0.878 1.695 3.190    # typical home position for left-handed arms 
+-1.577 -2.093 1.107 -1.530 3.044 2.797     # typical retract position for left-handed arms 
+-1.794 -2.009 0.8117 -0.878 1.695 3.190    # typical home position for left-handed arms 

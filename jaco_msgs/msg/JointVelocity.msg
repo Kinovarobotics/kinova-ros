@@ -1,6 +1,6 @@
-float32 Velocity_J1
-float32 Velocity_J2
-float32 Velocity_J3
-float32 Velocity_J4
-float32 Velocity_J5
-float32 Velocity_J6
+float32 joint1
+float32 joint2
+float32 joint3
+float32 joint4
+float32 joint5
+float32 joint6

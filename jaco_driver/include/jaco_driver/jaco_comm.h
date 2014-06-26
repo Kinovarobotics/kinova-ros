@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_comm.h
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,59 +38,62 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
-#ifndef _JACO_COMM_H_
-#define _JACO_COMM_H_
+#ifndef JACO_DRIVER_JACO_COMM_H
+#define JACO_DRIVER_JACO_COMM_H
 
-#include <jaco_driver/KinovaTypes.h>
-#include <jaco_driver/jaco_types.h>
-#include "jaco_driver/jaco_api.h"
 #include <boost/thread/recursive_mutex.hpp>
 
-namespace jaco 
+#include <kinova/KinovaTypes.h>
+
+#include <jaco_driver/jaco_types.h>
+#include "jaco_driver/jaco_api.h"
+
+
+namespace jaco
 {
 
 class JacoComm
 {
-	public:
-	JacoComm(JacoAngles);
-	~JacoComm();
-	bool HomeState(void);
-	void HomeArm(void);
-	void InitializeFingers(void);
-	void SetAngles(JacoAngles &angles, int timeout = 0, bool push = true);
-	void SetPosition(JacoPose &position, int timeout = 0, bool push = true);
-	void SetFingers(FingerAngles &fingers, int timeout = 0, bool push = true);
-	void SetVelocities(AngularInfo joint_vel);
-	void SetCartesianVelocities(CartesianInfo velocities);
-	void SetConfig(ClientConfigurations config);
-	void GetAngles(JacoAngles &angles);
-	void GetPosition(JacoPose &position);
-	void GetFingers(FingerAngles &fingers);
-	void GetQuickStatus(QuickStatus &quickstat);
-	//void GetForcesInfo(ForcesInfo &forces);
-	void GetConfig(ClientConfigurations &config);
-	void PrintAngles(JacoAngles &angles);
-	void PrintPosition(JacoPose &position);
-	void PrintFingers(FingersPosition fingers);
-	void PrintConfig(ClientConfigurations config);
-	void Stop();
-	void Start();
-	bool Stopped();
+ public:
+    JacoComm(const ros::NodeHandle& node_handle,
+             boost::recursive_mutex& api_mutex,
+             const bool is_movement_on_start);
+    ~JacoComm();
 
-	private:
-	boost::recursive_mutex api_mutex;
-	jaco::JacoAPI* API;
-	bool software_stop;
-	JacoAngles home_position;
+    bool isHomed(void);
+    void homeArm(void);
+    void initFingers(void);
+    void setJointAngles(const JacoAngles &angles, int timeout = 0, bool push = true);
+    void setCartesianPosition(const JacoPose &position, int timeout = 0, bool push = true);
+    void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
+    void setJointVelocities(const AngularInfo& joint_vel);
+    void setCartesianVelocities(const CartesianInfo &velocities);
+    void setConfig(const ClientConfigurations &config);
+    void getJointAngles(JacoAngles &angles);
+    void getCartesianPosition(JacoPose &position);
+    void getFingerPositions(FingerAngles &fingers);
+    void getQuickStatus(QuickStatus &quick_status);
+    void getConfig(ClientConfigurations &config);
+    void printAngles(const JacoAngles &angles);
+    void printPosition(const JacoPose &position);
+    void printFingers(const FingersPosition &fingers);
+    void printConfig(const ClientConfigurations &config);
+    void stopAPI();
+    void startAPI();
+    bool isStopped();
+    int numFingers();
 
-	void WaitForHome(int);
+ private:
+    boost::recursive_mutex& api_mutex_;
+    jaco::JacoAPI jaco_api_;
+    bool is_software_stop_;
+    int num_fingers_;
 };
 
-}
-
-#endif // _JACO_COMM_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_COMM_H

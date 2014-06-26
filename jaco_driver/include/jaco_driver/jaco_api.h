@@ -6,56 +6,67 @@
  *      Author: mdedonato, Clearpath Robotics
  */
 
-#ifndef JACOLIB_H_
-#define JACOLIB_H_
+#ifndef JACO_DRIVER_JACO_API_H
+#define JACO_DRIVER_JACO_API_H
 
-#include "jaco_driver/Kinova.API.UsbCommandLayerUbuntu.h"
-#include "jaco_driver/KinovaTypes.h"
 #include <dlfcn.h>
-#include <iostream>
 #include <ros/ros.h>
 
+#include <iostream>
+#include <vector>
+
+#include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "kinova/KinovaTypes.h"
 
 
+namespace jaco
+{
 
-namespace jaco {
-#define JACO_USB_LIBRARY 			"Kinova.API.USBCommandLayerUbuntu.so"
+#define JACO_USB_LIBRARY "Kinova.API.USBCommandLayerUbuntu.so"
 
-class JacoAPI {
+class JacoAPI
+{
+ public:
+    JacoAPI(void);
 
-public:
-	JacoAPI(void);
-	int (*InitAPI)(void);
-	int (*CloseAPI)(void);
-	int (*GetQuickStatus)(QuickStatus &);
-	//int (*GetForcesInfo)(ForcesInfo &);
-	int (*GetCodeVersion)(std::vector<int> &);
-	int (*GetCartesianPosition)(CartesianPosition &);
-	int (*GetAngularPosition)(AngularPosition &);
-	int (*GetCartesianForce)(CartesianPosition &);
-	int (*GetAngularForce)(AngularPosition &);
-	int (*GetAngularCurrent)(AngularPosition &);
-	int (*GetControlOperator)(int &);
-	int (*GetActualTrajectoryInfo)(TrajectoryPoint &);
-	int (*GetGlobalTrajectoryInfo)(TrajectoryFIFO &);
-	int (*GetSensorsInfo)(SensorsInfo &);
-	int (*GetSingularityVector)(SingularityVector &);
-	int (*SetAngularControl)();
-	int (*SetCartesianControl)();
-	int (*StartControlAPI)();
-	int (*StopControlAPI)();
-	int (*MoveHome)();
-	int (*InitFingers)();
-	int (*RestoreFactoryDefault)();
-	int (*SendJoystickCommand)(JoystickCommand);
-	int (*SendAdvanceTrajectory)(TrajectoryPoint);
-	int (*SendBasicTrajectory)(TrajectoryPoint);
-	int (*GetClientConfigurations)(ClientConfigurations &);
-	int (*SetClientConfigurations)(ClientConfigurations);
-	int (*EraseAllTrajectories)();
-	int (*GetPositionCurrentActuators)(std::vector<float> &);
-	int (*SetActuatorPID)(unsigned int, float, float, float);
+    int (*initAPI)(void);
+    int (*closeAPI)(void);
+    int (*getAPIVersion)(std::vector<int> &);
+    int (*getDevices)(std::vector<KinovaDevice> &, int &);
+    int (*setActiveDevice)(KinovaDevice);
 
-	};}
+    int (*getGeneralInformations)(GeneralInformations &);
+    int (*getQuickStatus)(QuickStatus &);
+    // int (*GetForcesInfo)(ForcesInfo &);
 
-#endif /* JACOLIB_H_ */
+    int (*getCodeVersion)(std::vector<int> &);
+    int (*startControlAPI)();
+    int (*stopControlAPI)();
+    int (*initFingers)();
+
+    int (*moveHome)();
+
+    int (*getCartesianPosition)(CartesianPosition &);
+    int (*getAngularPosition)(AngularPosition &);
+    int (*getCartesianForce)(CartesianPosition &);
+    int (*getAngularForce)(AngularPosition &);
+    int (*getAngularCurrent)(AngularPosition &);
+    int (*getControlType)(int &);
+    int (*getActualTrajectoryInfo)(TrajectoryPoint &);
+    int (*getGlobalTrajectoryInfo)(TrajectoryFIFO &);
+    int (*getSensorsInfo)(SensorsInfo &);
+    int (*setAngularControl)();
+    int (*setCartesianControl)();
+    int (*restoreFactoryDefault)();
+    int (*sendJoystickCommand)(JoystickCommand);
+    int (*sendAdvanceTrajectory)(TrajectoryPoint);
+    int (*sendBasicTrajectory)(TrajectoryPoint);
+    int (*getClientConfigurations)(ClientConfigurations &);
+    int (*setClientConfigurations)(ClientConfigurations);
+    int (*eraseAllTrajectories)();
+    int (*getPositionCurrentActuators)(std::vector<float> &);
+    int (*setActuatorPID)(unsigned int, float, float, float);
+};
+
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_API_H

@@ -16,21 +16,21 @@ def pose_client():
     goal = jaco_msgs.msg.ArmJointAnglesGoal()
 
     if len(sys.argv) < 7:
-        goal.angles.Angle_J1 = 1.5285271406173706 
-        goal.angles.Angle_J2 = -1.3800612688064575
-        goal.angles.Angle_J3 = -0.1439174860715866
-        goal.angles.Angle_J4 = 0.15510250627994537
-        goal.angles.Angle_J5 = 0.6960597634315491
-        goal.angles.Angle_J6 = 3.3098342418670654
+        goal.angles.joint1 = 1.5285271406173706 
+        goal.angles.joint2 = -1.3800612688064575
+        goal.angles.joint3 = -0.1439174860715866
+        goal.angles.joint4 = 0.15510250627994537
+        goal.angles.joint5 = 0.6960597634315491
+        goal.angles.joint6 = 3.3098342418670654
 
         rospy.logwarn("Using test goal: \n%s", goal)
     else:
-        goal.angles.Angle_J1 = float(sys.argv[1])
-        goal.angles.Angle_J2 = float(sys.argv[2])
-        goal.angles.Angle_J3 = float(sys.argv[3])
-        goal.angles.Angle_J4 = float(sys.argv[4])
-        goal.angles.Angle_J5 = float(sys.argv[5])
-        goal.angles.Angle_J6 = float(sys.argv[6])
+        goal.angles.joint1 = float(sys.argv[1])
+        goal.angles.joint2 = float(sys.argv[2])
+        goal.angles.joint3 = float(sys.argv[3])
+        goal.angles.joint4 = float(sys.argv[4])
+        goal.angles.joint5 = float(sys.argv[5])
+        goal.angles.joint6 = float(sys.argv[6])
 
 
     client.wait_for_server()
