@@ -52,9 +52,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  nodes/cartesian_workout.py
-  #nodes/goal_generators.py
-  nodes/grip_workout.py
-  nodes/joint_angle_workout.py
+  nodes/jaco_demo/cartesian_workout.py
+  nodes/jaco_demo/grip_workout.py
+  nodes/jaco_demo/joint_angle_workout.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
