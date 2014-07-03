@@ -293,7 +293,7 @@ void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
     result = jaco_api_.sendAdvanceTrajectory(jaco_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send adanced joint angle trajectory", result);
+        throw JacoCommException("Could not send advanced joint angle trajectory", result);
     }
 }
 
@@ -445,7 +445,7 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
     int result = jaco_api_.sendAdvanceTrajectory(jaco_velocity);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send adanced joint velocity trajectory", result);
+        throw JacoCommException("Could not send advanced joint velocity trajectory", result);
     }
 }
 
@@ -478,7 +478,7 @@ void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
     int result = jaco_api_.sendAdvanceTrajectory(jaco_velocity);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send adanced Cartesian velocity trajectory", result);
+        throw JacoCommException("Could not send advanced Cartesian velocity trajectory", result);
     }
 }
 
