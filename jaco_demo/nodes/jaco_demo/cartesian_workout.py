@@ -57,7 +57,7 @@ if __name__ == '__main__':
         else:
             print('Using the specified pose:')
             raw_pose = [float(n) for n in sys.argv[2:]]
-            mag = np.sqrt(sum(np.power(raw_pose[4:], 2)))
+            mag = np.sqrt(sum(np.power(raw_pose[3:], 2)))
             poses = [(raw_pose[:3], raw_pose[3:] / mag)]
 
         for pos, orient in poses:
