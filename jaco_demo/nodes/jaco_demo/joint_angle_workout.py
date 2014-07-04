@@ -56,7 +56,7 @@ if __name__ == '__main__':
             angles = goal_generators.joint_angles_from_file(str(sys.argv[2]))
         else:
             print('Using the specified joint angles:')
-            raw_angles = [float(n) for n in sys.argv[3:]]
+            raw_angles = [float(n) for n in sys.argv[2:]]
             angles = [raw_angles]
 
         for angle_set in angles:
