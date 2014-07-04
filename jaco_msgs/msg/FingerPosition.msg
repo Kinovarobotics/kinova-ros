@@ -1,3 +1,3 @@
-float32 Finger_1
-float32 Finger_2
-float32 Finger_3
+float32 finger1
+float32 finger2
+float32 finger3

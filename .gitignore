@@ -42,3 +42,15 @@ kvh_driver/src/kvh_driver/
 #Vim swap files
 *.swp
 *.swo
+
+# Qt Creator CMakeLists user file
+*CMakeLists.txt.user
+
+# PyCharm
+.idea
+
+# Python
+*.pyc
+
+# Project specific
+jaco_driver/jaco_msgs

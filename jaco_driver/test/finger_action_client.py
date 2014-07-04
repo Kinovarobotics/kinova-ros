@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest('jaco_driver')
+import roslib; roslib.load_manifest('jaco_msgs')
 import rospy
 
 import actionlib
 
-import jaco_driver.msg
+import jaco_msgs.msg
 
 import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/finger_joint_angles', jaco_driver.msg.SetFingersPositionAction)
+    client = actionlib.SimpleActionClient('/jaco/finger_joint_angles', jaco_msgs.msg.SetFingersPositionAction)
 
-    goal = jaco_driver.msg.SetFingersPositionGoal()
+    goal = jaco_msgs.msg.SetFingersPositionGoal()
 
     if len(sys.argv) < 4:
-        goal.fingers.Finger_1 = 4000
-        goal.fingers.Finger_2 = 4000
-        goal.fingers.Finger_3 = 4000
+        goal.fingers.finger1 = 4000
+        goal.fingers.finger2 = 4000
+        goal.fingers.finger3 = 4000
 
         rospy.logwarn("Using test goal: \n%s", goal)
     else:
-        goal.fingers.Finger_1 = float(sys.argv[1])
-        goal.fingers.Finger_2 = float(sys.argv[2])
-        goal.fingers.Finger_3 = float(sys.argv[3])
+        goal.fingers.finger1 = float(sys.argv[1])
+        goal.fingers.finger2 = float(sys.argv[2])
+        goal.fingers.finger3 = float(sys.argv[3])
 
     client.wait_for_server()
     rospy.loginfo("Connected to Finger server")

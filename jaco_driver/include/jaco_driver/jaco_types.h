@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_types.h
  *  Desc: Wrappers around Kinova types.
  *  Auth: Alex Bencz
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,63 +38,74 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
-#ifndef _JACO_TYPES_H_
-#define _JACO_TYPES_H_
+#ifndef JACO_DRIVER_JACO_TYPES_H
+#define JACO_DRIVER_JACO_TYPES_H
 
-#include <jaco_driver/KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>
 
+#include <string>
+
+
 namespace jaco
 {
 
+class JacoException : public std::exception {};
+
+
+class JacoCommException : public JacoException
+{
+ public:
+    explicit JacoCommException(const std::string& message, const int error_code);
+    ~JacoCommException() throw() {}
+
+    const char* what() const throw();
+ private:
+    std::string desc_;
+};
+
+
 class JacoPose : public CartesianInfo
 {
-	public:
-	JacoPose() {}
-	JacoPose(const geometry_msgs::Pose &);
-	JacoPose(const CartesianInfo &);
+ public:
+    JacoPose() {}
+    explicit JacoPose(const geometry_msgs::Pose &pose);
+    explicit JacoPose(const CartesianInfo &pose);
 
-	geometry_msgs::Pose Pose();
-	bool Compare(const JacoPose &, float) const;
-
-	private:
-	float Normalize(float);
+    geometry_msgs::Pose constructPoseMsg();
+    bool isCloseToOther(const JacoPose &, float tolerance) const;
 };
+
 
 class JacoAngles : public AngularInfo
 {
-	public:
-	JacoAngles() {}
-	JacoAngles(const jaco_msgs::JointAngles &);
-	JacoAngles(const AngularInfo &);
+ public:
+    JacoAngles() {}
+    explicit JacoAngles(const jaco_msgs::JointAngles &angles);
+    explicit JacoAngles(const AngularInfo &angles);
 
-	jaco_msgs::JointAngles Angles();
-	bool Compare(const JacoAngles &, float) const;
-
-	private:
-	float Normalize(float);
+    jaco_msgs::JointAngles constructAnglesMsg();
+    bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 
 
 class FingerAngles : public FingersPosition
 {
-	public:
-	FingerAngles() {}
-	FingerAngles(const jaco_msgs::FingerPosition &);
-	FingerAngles(const FingersPosition &);
+ public:
+    FingerAngles() {}
+    explicit FingerAngles(const jaco_msgs::FingerPosition &position);
+    explicit FingerAngles(const FingersPosition &angle);
 
-	jaco_msgs::FingerPosition Fingers();
-	bool Compare(const FingerAngles &, float) const;
+    jaco_msgs::FingerPosition constructFingersMsg();
+    bool isCloseToOther(const FingerAngles &, float tolerance) const;
 };
 
-
-}
-
-#endif // _JACO_TYPES_H_
+}  // namespace jaco
+#endif  // JACO_DRIVER_JACO_TYPES_H

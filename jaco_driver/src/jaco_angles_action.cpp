@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_angles_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,90 +38,128 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
+
+#include <kinova/KinovaTypes.h>
+
 #include "jaco_driver/jaco_angles_action.h"
-#include <jaco_driver/KinovaTypes.h>
+
 #include "jaco_driver/jaco_types.h"
+
 
 namespace jaco
 {
 
-JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, ros::NodeHandle &n) : 
-    arm(arm_comm), 
-    as_(n, "arm_joint_angles", boost::bind(&JacoAnglesActionServer::ActionCallback, this, _1), false)
+JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
+    : arm_comm_(arm_comm),
+      node_handle_(nh, "joint_angles"),
+      action_server_(node_handle_, "arm_joint_angles",
+                     boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false)
 {
-    as_.start();
+    double tolerance;
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
+    node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
+    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("tolerance", tolerance, 2.0);
+    tolerance_ = (float)tolerance;
+
+    action_server_.start();
 }
+
 
 JacoAnglesActionServer::~JacoAnglesActionServer()
 {
-
 }
 
-void JacoAnglesActionServer::ActionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
+
+void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
-	jaco_msgs::ArmJointAnglesFeedback feedback;
-	jaco_msgs::ArmJointAnglesResult result;
+    jaco_msgs::ArmJointAnglesFeedback feedback;
+    jaco_msgs::ArmJointAnglesResult result;
+    JacoAngles current_joint_angles;
+    ros::Time current_time = ros::Time::now();
 
-	ROS_INFO("Got an angular goal for the arm");
+    try
+    {
+        arm_comm_.getJointAngles(current_joint_angles);
 
-	JacoAngles cur_position;		//holds the current position of the arm
+        if (arm_comm_.isStopped())
+        {
+            ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
+            result.angles = current_joint_angles.constructAnglesMsg();
+            action_server_.setAborted(result);
+            return;
+        }
 
-	if (arm.Stopped())
-	{
-		arm.GetAngles(cur_position);
-		result.angles = cur_position.Angles();
+        last_nonstall_time_ = current_time;
+        last_nonstall_angles_ = current_joint_angles;
 
-		as_.setAborted(result);
-		return;
-	}
+        JacoAngles target(goal->angles);
+        arm_comm_.setJointAngles(target);
 
-	JacoAngles target(goal->angles);
-	arm.SetAngles(target);
+        // Loop until the action completed, is preempted, or fails in some way.
+        // timeout is left to the caller since the timeout may greatly depend on
+        // the context of the movement.
+        while (true)
+        {
+            ros::spinOnce();
 
-	ros::Rate r(10);
- 
-	const float tolerance = 2.0; 	//dead zone for position (degrees)
+            if (action_server_.isPreemptRequested() || !ros::ok())
+            {
+                result.angles = current_joint_angles.constructAnglesMsg();
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+            else if (arm_comm_.isStopped())
+            {
+                result.angles = current_joint_angles.constructAnglesMsg();
+                action_server_.setAborted(result);
+                return;
+            }
 
-	//while we have not timed out
-	while (true)
-	{
-		ros::spinOnce();
-		if (as_.isPreemptRequested() || !ros::ok())
-		{
-			arm.Stop();
-			arm.Start();
-			as_.setPreempted();
-			return;
-		}
+            arm_comm_.getJointAngles(current_joint_angles);
+            current_time = ros::Time::now();
+            feedback.angles = current_joint_angles.constructAnglesMsg();
+            action_server_.publishFeedback(feedback);
 
-		arm.GetAngles(cur_position);
-		feedback.angles = cur_position.Angles();
+            if (target.isCloseToOther(current_joint_angles, tolerance_))
+            {
+                // Check if the action has succeeeded
+                result.angles = current_joint_angles.constructAnglesMsg();
+                action_server_.setSucceeded(result);
+                return;
+            }
+            else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
+            {
+                // Check if we are outside of a potential stall condition
+                last_nonstall_time_ = current_time;
+                last_nonstall_angles_ = current_joint_angles;
+            }
+            else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+            {
+                // Check if the full stall condition has been meet
+                result.angles = current_joint_angles.constructAnglesMsg();
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
 
-		if (arm.Stopped())
-		{
-			result.angles = cur_position.Angles();
-			as_.setAborted(result);
-			return;
-		}
-
-		as_.publishFeedback(feedback);
-
-		if (target.Compare(cur_position, tolerance))
-		{
-			ROS_INFO("Angular Control Complete.");
-
-			result.angles = cur_position.Angles();
-			as_.setSucceeded(result);
-			return;
-		}
-
-		r.sleep();
-	}
+            ros::Rate(rate_hz_).sleep();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        result.angles = current_joint_angles.constructAnglesMsg();
+        ROS_ERROR_STREAM(e.what());
+        action_server_.setAborted(result);
+    }
 }
 
-}
+}  // namespace jaco

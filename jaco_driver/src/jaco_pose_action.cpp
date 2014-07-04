@@ -8,15 +8,15 @@
  *   \ \_/ \_/ /  | |  | |  | ++ | |_| || ++ / | ++_/| |_| |  | |  | +-+ |
  *    \  \_/  /   | |_ | |_ | ++ |  _  || |\ \ | |   |  _  |  | |  | +-+ |
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
- *             ROBOTICS™ 
+ *             ROBOTICS™
  *
  *  File: jaco_pose_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
- *  Copyright (c) 2013, Clearpath Robotics, Inc. 
+ *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *     * Redistributions of source code must retain the above copyright
@@ -27,7 +27,7 @@
  *     * Neither the name of Clearpath Robotics, Inc. nor the
  *       names of its contributors may be used to endorse or promote products
  *       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,127 +38,146 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- * Please send comments, questions, or patches to skynet@clearpathrobotics.com 
+ *
+ * Please send comments, questions, or patches to skynet@clearpathrobotics.com
  *
  */
 
 #include "jaco_driver/jaco_pose_action.h"
-#include <jaco_driver/KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include "jaco_driver/jaco_types.h"
+#include <string>
+
 
 namespace jaco
 {
 
-JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, ros::NodeHandle &n) : 
-    arm(arm_comm), 
-    as_(n, "arm_pose", boost::bind(&JacoPoseActionServer::ActionCallback, this, _1), false)
+JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
+    : arm_comm_(arm_comm),
+      node_handle_(nh, "arm_pose"),
+      action_server_(node_handle_, "arm_pose",
+                     boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
 {
-    as_.start();
+    double tolerance;
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
+    node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
+    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("tolerance", tolerance, 0.01);
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+
+    tolerance_ = static_cast<float>(tolerance);
+    std::stringstream ss;
+    ss << tf_prefix_ << "api_origin";
+    api_origin_frame_ = ss.str();
+
+    action_server_.start();
 }
+
 
 JacoPoseActionServer::~JacoPoseActionServer()
 {
-
 }
 
-void JacoPoseActionServer::ActionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
+
+void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
 {
-	jaco_msgs::ArmPoseFeedback feedback;
-	jaco_msgs::ArmPoseResult result;
-	feedback.pose.header.frame_id = goal->pose.header.frame_id;
-	result.pose.header.frame_id = goal->pose.header.frame_id;
+    jaco_msgs::ArmPoseFeedback feedback;
+    jaco_msgs::ArmPoseResult result;
+    feedback.pose.header.frame_id = goal->pose.header.frame_id;
+    result.pose.header.frame_id = goal->pose.header.frame_id;
 
-	ROS_INFO("Got a cartesian goal for the arm");
+    ros::Time current_time = ros::Time::now();
+    JacoPose current_pose;
+    geometry_msgs::PoseStamped local_pose;
+    local_pose.header.frame_id = api_origin_frame_;
 
-	ROS_DEBUG("Raw goal");
-	ROS_DEBUG("X = %f", goal->pose.pose.position.x);
-	ROS_DEBUG("Y = %f", goal->pose.pose.position.y);
-	ROS_DEBUG("Z = %f", goal->pose.pose.position.z);
+    try
+    {
+        // Put the goal pose into the frame used by the arm
+        if (ros::ok()
+                && !listener.canTransform(api_origin_frame_, goal->pose.header.frame_id,
+                                          goal->pose.header.stamp))
+        {
+            ROS_ERROR("Could not get transfrom from %s to %s, aborting cartesian movement",
+                      api_origin_frame_.c_str(), goal->pose.header.frame_id.c_str());
+            action_server_.setAborted(result);
+            return;
+        }
 
-	ROS_DEBUG("RX = %f", goal->pose.pose.orientation.x);
-	ROS_DEBUG("RY = %f", goal->pose.pose.orientation.y);
-	ROS_DEBUG("RZ = %f", goal->pose.pose.orientation.z);
-	ROS_DEBUG("RW = %f", goal->pose.pose.orientation.w);
+        listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
+        arm_comm_.getCartesianPosition(current_pose);
 
-	if (ros::ok()
-			&& !listener.canTransform("/jaco_api_origin", goal->pose.header.frame_id,
-					goal->pose.header.stamp))
-	{
-		ROS_ERROR("Could not get transfrom from /jaco_api_origin to %s, aborting cartesian movement", goal->pose.header.frame_id.c_str());
-		return;
-	}
+        if (arm_comm_.isStopped())
+        {
+            ROS_INFO("Could not complete cartesian action because the arm is 'stopped'.");
+            local_pose.pose = current_pose.constructPoseMsg();
+            listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
+            action_server_.setAborted(result);
+            return;
+        }
 
-	geometry_msgs::PoseStamped local_pose;
-	local_pose.header.frame_id = "/jaco_api_origin";
-	listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
+        last_nonstall_time_ = current_time;
+        last_nonstall_pose_ = current_pose;
 
-	ROS_DEBUG("Transformed MSG");
-	ROS_DEBUG("X = %f", local_pose.pose.position.x);
-	ROS_DEBUG("Y = %f", local_pose.pose.position.y);
-	ROS_DEBUG("Z = %f", local_pose.pose.position.z);
+        JacoPose target(local_pose.pose);
+        arm_comm_.setCartesianPosition(target);
 
-	ROS_DEBUG("RX = %f", local_pose.pose.orientation.x);
-	ROS_DEBUG("RY = %f", local_pose.pose.orientation.y);
-	ROS_DEBUG("RZ = %f", local_pose.pose.orientation.z);
-	ROS_DEBUG("RW = %f", local_pose.pose.orientation.w);
+        while (true)
+        {
+            ros::spinOnce();
 
-	JacoPose cur_position;		//holds the current position of the arm
+            if (action_server_.isPreemptRequested() || !ros::ok())
+            {
+                result.pose = feedback.pose;
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
+            else if (arm_comm_.isStopped())
+            {
+                result.pose = feedback.pose;
+                action_server_.setAborted(result);
+                return;
+            }
 
-	if (arm.Stopped())
-	{
-		arm.GetPosition(cur_position);
-		local_pose.pose = cur_position.Pose();
+            arm_comm_.getCartesianPosition(current_pose);
+            current_time = ros::Time::now();
+            local_pose.pose = current_pose.constructPoseMsg();
+            listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
+            action_server_.publishFeedback(feedback);
 
-		listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
-		as_.setAborted(result);
-		return;
-	}
+            if (target.isCloseToOther(current_pose, tolerance_))
+            {
+                result.pose = feedback.pose;
+                action_server_.setSucceeded(result);
+                return;
+            }
+            else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_))
+            {
+                // Check if we are outside of a potential stall condition
+                last_nonstall_time_ = current_time;
+                last_nonstall_pose_ = current_pose;
+            }
+            else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
+            {
+                // Check if the full stall condition has been meet
+                result.pose = feedback.pose;
+                arm_comm_.stopAPI();
+                arm_comm_.startAPI();
+                action_server_.setPreempted(result);
+                return;
+            }
 
-	JacoPose target(local_pose.pose);
-	arm.SetPosition(target);
-
-	ros::Rate r(10);
- 
-	const float tolerance = 0.05; 	//dead zone for position
-
-	//while we have not timed out
-	while (true)
-	{
-		ros::spinOnce();
-		if (as_.isPreemptRequested() || !ros::ok())
-		{
-			arm.Stop();
-			arm.Start();
-			as_.setPreempted();
-			return;
-		}
-
-		arm.GetPosition(cur_position);
-		local_pose.pose = cur_position.Pose();
-
-		listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
-
-		if (arm.Stopped())
-		{
-			result.pose = feedback.pose;
-			as_.setAborted(result);
-			return;
-		}
-
-		as_.publishFeedback(feedback);
-
-		if (target.Compare(cur_position, tolerance))
-		{
-			ROS_INFO("Cartesian Control Complete.");
-
-			result.pose = feedback.pose;
-			as_.setSucceeded(result);
-			return;
-		}
-
-		r.sleep();
-	}
+            ros::Rate(rate_hz_).sleep();
+        }
+    }
+    catch(const std::exception& e)
+    {
+        result.pose = feedback.pose;
+        ROS_ERROR_STREAM(e.what());
+        action_server_.setAborted(result);
+    }
 }
 
-}
+}  // namespace jaco
