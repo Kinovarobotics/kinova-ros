@@ -22,13 +22,14 @@ def cartesian_pose_client(position, orientation):
     client.wait_for_server()
 
     goal = jaco_msgs.msg.ArmPoseGoal()
-    goal.pose.header = std_msgs.msg.Header(frame_id=(str(sys.argv[1]) + '_arm_base'))
+    goal.pose.header = std_msgs.msg.Header(frame_id=(str(sys.argv[1]) + '_api_origin'))
     goal.pose.pose.position = geometry_msgs.msg.Point(
         x=position[0], y=position[1], z=position[2])
     goal.pose.pose.orientation = geometry_msgs.msg.Quaternion(
         x=orientation[0], y=orientation[1], z=orientation[2], w=orientation[3])
 
     client.send_goal(goal)
+
     if client.wait_for_result(rospy.Duration(10.0)):
         return client.get_result()
     else:
@@ -58,7 +59,8 @@ if __name__ == '__main__':
             print('Using the specified pose:')
             raw_pose = [float(n) for n in sys.argv[2:]]
             mag = np.sqrt(sum(np.power(raw_pose[3:], 2)))
-            poses = [(raw_pose[:3], raw_pose[3:] / mag)]
+            """poses = [(raw_pose[:3], raw_pose[3:] / mag)]"""
+            poses = [(raw_pose[:3], raw_pose[3:])]
 
         for pos, orient in poses:
             print('    position: {},  orientation: {}'.format(pos, orient))
