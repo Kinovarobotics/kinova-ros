@@ -208,7 +208,7 @@ If you would like the ``jaco_arm_driver`` and ``jaco_tf_updater nodes`` to launc
 This version of ``jaco-ros`` supports multiple arms. In order to use multiple arms you must set the the ``serial_number`` parameter for that arm and a ``tf_prefix`` for both the ``arm_driver`` node and the ``tf_updater`` node. For example, include the following lines in the launch file between ``<node pkg="jaco_driver" type="jaco_arm_driver" ...>`` and ``</node>``:
 
     <param name="serial_number" value="PJ00123456789012345" />
-    <param name="arm_pose/tf_prefix" value="jacco_" />
+    <param name="arm_pose/tf_prefix" value="jaco_" />
 
 And the following line in the launch file between ``<node pkg="jaco_driver" type="jaco_tf_updater" ...>`` and ``</node>``:
 
@@ -290,6 +290,8 @@ To set the finger positions, use ``gripper_workout.py``
 5. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
 
 6. Previously, files under ``jaco-ros/jaco_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
+
+7. In certain cases, while commanding the MICO arm using angular commands, the force limits may be exceeded and the arm will stop.  If this occurs, consider increasing the force limits of your arm using JacoSoft, or use shorter movements that put less stress on the arm joints.
 
 ## Additional Resources
 The transformation equations used to convert from the “DH Parameters” to physical angles are listed in the jaco_kinematics.pdf document, included as part of this package.
