@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>jaco_ros</name>
+  <version>0.0.0</version>
+  <description>
+    The ROS JACO Arm metapackage provides a ROS interface for the Kinova
+    Robotics JACO robotic manipulator arm. This metapackage provides access to
+    the Kinova JACO C++ hardware API through ROS.
+  </description>
+
+  <author email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</author>
+  <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt (Clearpath)</author>
+  <author email="abencz@clearpathrobotics.com">Alex Bencz (Clearpath)</author>
+  <author email="braden@stenning.com">Braden Stenning</author>
+  <maintainer email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</maintainer>
+  <license>BSD</license>
+
+  <url>http://wiki.ros.org/jaco_ros</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>jaco_demo</run_depend>
+  <run_depend>jaco_driver</run_depend>
+  <run_depend>jaco_model</run_depend>
+  <run_depend>jaco_msgs</run_depend>
+
+  <export>
+    <metapackage />
+  </export>
+</package>
