@@ -211,7 +211,7 @@ void JacoArm::publishJointAngles(void)
     jaco_angles.joint6 = current_angles.Actuator6;
 
     sensor_msgs::JointState joint_state;
-    const char* nameArgs[] = {"joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"};
+    const char* nameArgs[] = {"jaco_joint_1", "jaco_joint_2", "jaco_joint_3", "jaco_joint_4", "jaco_joint_5", "jaco_joint_6"};
     std::vector<std::string> joint_names(nameArgs, nameArgs + 6);
     joint_state.name = joint_names;
 
