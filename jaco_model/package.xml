@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_model</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>
   3D model of the Kinova JACO arm. Includes the model and URDF files for
   working with the arm in RViz or Gazebo.

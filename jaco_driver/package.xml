@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_driver</name>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <description>
           The ROS JACO Arm stack provides a ROS interface for the Kinova Robotics
           JACO robotic manipulator arm. This stack provides access to the Kinova
