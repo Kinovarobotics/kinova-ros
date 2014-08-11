@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>jaco_ros</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <description>
     The ROS JACO Arm metapackage provides a ROS interface for the Kinova
     Robotics JACO robotic manipulator arm. This metapackage provides access to

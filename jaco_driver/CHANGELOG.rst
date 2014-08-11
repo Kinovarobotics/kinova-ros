@@ -2,8 +2,8 @@
 Changelog for package jaco_driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2014-08-11)
+------------------
 * Added dependency on dynamic_reconfigure
 * Contributors: Alex Bencz
 
