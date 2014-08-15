@@ -163,23 +163,23 @@ bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
 
 JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles)
 {
-    Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
+    Actuator1 = 180.0 - (angles.joint1 * (180.0 / M_PI));
     Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
     Actuator3 = normalizePositiveInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
-    Actuator4 = normalizePositiveInDegrees(180.0 - (angles.joint4 * (180.0 / M_PI)));
-    Actuator5 = normalizePositiveInDegrees(180.0 - (angles.joint5 * (180.0 / M_PI)));
-    Actuator6 = normalizePositiveInDegrees(260.0 - (angles.joint6 * (180.0 / M_PI)));
+    Actuator4 = 180.0 - (angles.joint4 * (180.0 / M_PI));
+    Actuator5 = 180.0 - (angles.joint5 * (180.0 / M_PI));
+    Actuator6 = 260.0 - (angles.joint6 * (180.0 / M_PI));
 }
 
 
 JacoAngles::JacoAngles(const AngularInfo &angles)
 {
-    Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
+    Actuator1 = angles.Actuator1;
     Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
     Actuator3 = normalizePositiveInDegrees(angles.Actuator3);
-    Actuator4 = normalizePositiveInDegrees(angles.Actuator4);
-    Actuator5 = normalizePositiveInDegrees(angles.Actuator5);
-    Actuator6 = normalizePositiveInDegrees(angles.Actuator6);
+    Actuator4 = angles.Actuator4;
+    Actuator5 = angles.Actuator5;
+    Actuator6 = angles.Actuator6;
 }
 
 
