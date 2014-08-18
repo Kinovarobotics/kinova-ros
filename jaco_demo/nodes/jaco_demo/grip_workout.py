@@ -44,9 +44,9 @@ if __name__ == '__main__':
             str(sys.argv[1]) not in ['jaco', 'mico']):
 
         print('Usage:')
-        print('    gripper_workout.py jaco random num   - randomly generate num poses')
-        print('    gripper_workout.py jaco f1 f2 f3     - use that specific pose')
-        print('    gripper_workout.py mico f1 f2        - use that specific pose')
+        print('    grip_workout.py jaco random num   - randomly generate num poses')
+        print('    grip_workout.py jaco f1 f2 f3     - use that specific pose')
+        print('    grip_workout.py mico f1 f2        - use that specific pose')
         exit()
 
     try:
