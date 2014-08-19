@@ -214,7 +214,7 @@ And the following line in the launch file between ``<node pkg="jaco_driver" type
 
     <param name="tf_prefix" value="jaco_" />
 
-If no serial number parameter is set, the node will simply try to connect to the JACO or MICO arm that is present.
+If no serial number parameter is set, the node will simply try to connect to the JACO or MICO arm that is present. In some cases the serial number may not be set in the arm; simply set the serial number parameter to "0."
 
 
 ## Execution 
@@ -270,12 +270,12 @@ To set the arm position using Cartesian co-ordinates, use ``cartesian_workout.py
     rosrun jaco_demo cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose
     e.g., rosrun jaco_demo cartesian_workout.py jaco -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525 
 
-To set the finger positions, use ``gripper_workout.py``
+To set the finger positions, use ``grip_workout.py``
 
-    rosrun jaco_demo gripper_workout.py node_name random num   - randomly generate num poses
-    rosrun jaco_demo gripper_workout.py jaco f1 f2 f3          - use that specific pose
-    rosrun jaco_demo gripper_workout.py mico f1 f2             - use that specific pose
-    e.g., rosrun jaco_demo gripper_workout.py jaco random 10
+    rosrun jaco_demo grip_workout.py node_name random num   - randomly generate num poses
+    rosrun jaco_demo grip_workout.py jaco f1 f2 f3          - use that specific pose
+    rosrun jaco_demo grip_workout.py mico f1 f2             - use that specific pose
+    e.g., rosrun jaco_demo grip_workout.py jaco random 10
 
 
 ## Known Limitations
