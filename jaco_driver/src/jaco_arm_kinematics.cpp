@@ -110,8 +110,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "base"),
-                                                    concatTfName(tf_prefix_, "joint_1")));
+                                                    concatTfName(tf_prefix_, "link_base"),
+                                                    concatTfName(tf_prefix_, "link_1")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 1 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -138,8 +138,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_1"),
-                                                    concatTfName(tf_prefix_, "joint_2")));
+                                                    concatTfName(tf_prefix_, "link_1"),
+                                                    concatTfName(tf_prefix_, "link_2")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 2 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -166,8 +166,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_2"),
-                                                    concatTfName(tf_prefix_, "joint_3")));
+                                                    concatTfName(tf_prefix_, "link_2"),
+                                                    concatTfName(tf_prefix_, "link_3")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 3 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -187,8 +187,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_3"),
-                                                    concatTfName(tf_prefix_, "joint_3_offset")));
+                                                    concatTfName(tf_prefix_, "link_3"),
+                                                    concatTfName(tf_prefix_, "link_3_offset")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 3 Offset Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -215,8 +215,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_3_offset"),
-                                                    concatTfName(tf_prefix_, "joint_4")));
+                                                    concatTfName(tf_prefix_, "link_3_offset"),
+                                                    concatTfName(tf_prefix_, "link_4")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 4 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -256,8 +256,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_4"),
-                                                    concatTfName(tf_prefix_, "joint_5")));
+                                                    concatTfName(tf_prefix_, "link_4"),
+                                                    concatTfName(tf_prefix_, "link_5")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 5 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -296,8 +296,8 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_5"),
-                                                    concatTfName(tf_prefix_, "joint_6")));
+                                                    concatTfName(tf_prefix_, "link_5"),
+                                                    concatTfName(tf_prefix_, "link_hand")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("Joint 6 Rotation: X = %f, Y = %f, Z = %f, W = %f",
@@ -306,17 +306,44 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
              translation_v.getX(), translation_v.getY(), translation_v.getZ());
 #endif
 
-    /**********************end effector**********************/
-    rot_matrix.setValue(1, 0, 0, 0, 1, 0, 0, 0, 1);
+
+    /**********************finger_1**********************/
+    rot_matrix.setRPY(-1.7983, 1.117, 3.1416);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
-    translation_v.setValue(0, 0, -j6_to_end_);
+    translation_v.setValue(-0.03978, 0, -0.10071);
     transform.setOrigin(translation_v);
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "joint_6"),
-                                                    concatTfName(tf_prefix_, "end_effector")));
+                                                    concatTfName(tf_prefix_, "link_hand"),
+                                                    concatTfName(tf_prefix_, "link_finger_1")));
+
+
+    /**********************finger_2**********************/
+    rot_matrix.setRPY(-1.6222, 1.117, -0.23615);
+    rot_matrix.getRotation(rotation_q);
+    transform.setRotation(rotation_q);
+
+    translation_v.setValue(0.03569, -0.0216, -0.10071);
+    transform.setOrigin(translation_v);
+
+    broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
+                                                    concatTfName(tf_prefix_, "link_hand"),
+                                                    concatTfName(tf_prefix_, "link_finger_2")));
+
+
+    /**********************finger_3**********************/
+    rot_matrix.setRPY(-1.5161, 1.1459, 0.23978);
+    rot_matrix.getRotation(rotation_q);
+    transform.setRotation(rotation_q);
+
+    translation_v.setValue(0.03569, 0.0216, -0.10071);
+    transform.setOrigin(translation_v);
+
+    broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
+                                                    concatTfName(tf_prefix_, "link_hand"),
+                                                    concatTfName(tf_prefix_, "link_finger_3")));
 }
 
 }  // namespace jaco
