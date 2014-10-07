@@ -386,7 +386,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
 
     startAPI();
 
-    result = jaco_api_.setCartesianControl();
+    result = jaco_api_.setAngularControl();
     if (result != NO_ERROR_KINOVA)
     {
         throw JacoCommException("Could not set Cartesian control", result);
@@ -394,15 +394,22 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
 
     // Initialize Cartesian control of the fingers
     jaco_position.Position.HandMode = POSITION_MODE;
-    jaco_position.Position.Type = CARTESIAN_POSITION;
+    jaco_position.Position.Type = ANGULAR_POSITION;
     jaco_position.Position.Fingers = fingers;
     jaco_position.Position.Delay = 0.0;
     jaco_position.LimitationsActive = 0;
 
-    // These values will not be used but are initialized anyway.
-    JacoAngles angles;
-    getJointAngles(angles);
-    jaco_position.Position.Actuators = angles;
+    AngularPosition jaco_angles;
+    memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
+
+    result = jaco_api_.getAngularPosition(jaco_angles);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the angular position", result);
+    }
+
+
+    jaco_position.Position.Actuators = jaco_angles.Actuators;
 
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
