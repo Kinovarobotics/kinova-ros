@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<package>
+  <name>jaco_teleop</name>
+  <version>1.0.0</version>
+  <description>
+	<p>Teleoperation support for Jaco arm.</p>
+	<p>Launching jaco_teleop.launch assumes that jaco_driver/jaco_arm.launch has already been running.</p>
+	<p>This node simply remaps gamepad commands to the Jaco dedicated controller commands. The gamepad is assumed to have two analog joysticks (they produce float values), 4 digital buttons (their output is 0/1) on the left (the cross), 4 digital buttons on the right (ABCD or 1234), two digital buttons on the back side, two analog buttons on the back side, and 4 digital buttons on the "front panel" (Start, Back, Mode, Vibration). Some joysticks can be switched to two modes - in one of them, all 4 back buttons are digital, and in the other one, two of the back buttons are analog. This node needs the analog mode to be set.</p>
+	<p>
+		Controls remapping:
+		<dl>
+			<dt>Left joystick</dt>
+			<dd>Translation x/y</dd>
+
+			<dt>Right joystick</dt>
+			<dd>Rotation x/y</dd>
+
+			<dt>Left back buttons (one analog, one digital)</dt>
+			<dd>Translation z</dd>
+
+			<dt>Right back buttons (one analog, one digital)</dt>
+			<dd>Rotation theta (wrist joint)</dd>
+
+			<dt>Left cross up/down</dt>
+			<dd>Open/close all fingers</dd>
+
+			<dt>A (2), X (1) buttons</dt>
+			<dd>Open/close all fingers</dd>
+
+			<dt>B (3)</dt>
+			<dd>Emergency stop (when holding)</dd>
+
+			<dt>Y (4)</dt>
+			<dd>Release emergency stop</dd>
+
+			<dt>Start button</dt>
+			<dd>Home arm/go to retreat (it's always needed to home the arm before you can control it)</dd>
+		</dl>	
+	</p>
+  </description>
+
+  <maintainer email="peckama2@fel.cvut.cz">Martin Pecka</maintainer>
+  <license>BSD</license>
+  <author email="peckama2@fel.cvut.cz">Martin Pecka</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>jaco_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>joy</run_depend>
+  <run_depend>jaco_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>topic_tools</run_depend>
+
+
+  <export>
+  </export>
+</package>

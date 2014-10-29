@@ -1,7 +1,7 @@
 <launch>
 
   <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
-    <param name="serial_number" value="PJ00000001030703130" />
+    <param name="serial_number" value="" />
   </node>
     
   <node name="jaco_tf_updater" pkg="jaco_driver" type="jaco_tf_updater" output="screen" cwd="node">
