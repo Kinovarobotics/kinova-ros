@@ -77,8 +77,8 @@ add_executable(jaco_tf_updater
 add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
 add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES})
-target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES})
+target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES} -ldl)
+target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES} -ldl)
 
 #############
 ## Install ##

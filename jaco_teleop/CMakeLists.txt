@@ -17,6 +17,8 @@ catkin_package(
  CATKIN_DEPENDS actionlib geometry_msgs joy jaco_msgs rospy std_msgs sensor_msgs topic_tools message_runtime
 )
 
+catkin_python_setup()
+
 ###########
 ## Build ##
 ###########

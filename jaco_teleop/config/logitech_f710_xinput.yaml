@@ -1,0 +1,48 @@
+emergency_stop: [ {type: 'button', id: 1} ]
+emergency_release: [ {type: 'button', id: 3} ]
+translate_left_right: [ {type: 'axis', id: 0} ]
+translate_forward_backward: [ {type: 'axis', id: 1, invert: True} ]
+translate_up_down: [ 
+    {type: 'axis', id: 2, hw_min: -1, hw_max: 1, remap_min: -1, remap_max: 0, startup_block_value: 0},
+    {type: 'button', id: 4}
+]
+rotate_x: [ {type: 'axis', id: 3, invert: True} ]
+rotate_y: [ {type: 'axis', id: 4} ]
+rotate_wrist: [ 
+    {type: 'axis', id: 5, hw_min: -1, hw_max: 1, remap_min: -1, remap_max: 0, startup_block_value: 0},
+    {type: 'button', id: 5}
+]
+fingers_open_close: [
+    {type: 'axis', id: 7},
+    {type: 'button', id: 0, on_value: -1},
+    {type: 'button', id: 2}
+]
+home_arm: [ {type: 'button', id: 7} ]
+dead_man: [ ]
+
+description: |
+    # JOYSTICK CONFIG FOR MODEL LOGITECH F710 (XInput mode)
+    # =====================================================
+    #
+    # Thanks to RIVeR-Lab/wpi_jaco for base of this image
+    #
+    #                Controls                
+    #     up/down                 rotate wrist
+    #    ________                 __________    
+    #   /fin.open\_______________/          \   
+    #  |   _| |_    < >  < home >     (4)    |  
+    #  |  |_   _|   < >    < >     (1)   (3) |  
+    #  |    |_|    ___       ___      (2)    |  
+    #  | fin.close/   \     /   \            |  
+    #  |          \___/     \___/            |  
+    #  |       x/y trans  rotate x/y         |  
+    #  |        _______/---\_______          |  
+    #  |       |                    \        |  
+    #   \      /                     \      /   
+    #    \____/                       \____/    
+    #                                        
+    # Buttons:                               
+    #   (1) Fingers open
+    #   (2) Fingers close
+    #   (3) Emergency stop                    
+    #   (4) Emergency release

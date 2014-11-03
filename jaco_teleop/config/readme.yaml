@@ -1,0 +1,91 @@
+# This is a sample joystick configuration to show all the capabilities of JoystickInterface.
+
+# Each entry consists of a key/function (before colon) and the corresponding buttons/axes config.
+button1_function: [ {type: 'button', id: 1} ]
+axis0_function: [ {type: 'axis', id: 0} ]
+
+# In Python code you can then ask the functions for their values like this:
+#       joystickInterface.get_value(joy, 'button1_function')
+# where joy is the current joystick state provided in sensor_msgs/Joy by ROS.
+
+# A function can have multiple buttons/axes assigned. They are "executed" (asked for value) in the same order in which you specify them here.
+multi: [ 
+    {type: 'axis', id: 2},
+    {type: 'button', id: 4}
+]
+# This means if the user moves axis 2, it will be the "value provider". If axis 2 is in the default position, then button 4 becomes the "value provider".
+# An example usage is e.g. when you want to have an up/down function controlled by values -1..1, where an axis controls the range 0..1 and a button 
+# stands for the -1 value.
+
+# This is a special function (due to its name). If specified, without this button being pressed, no other buttons work. 
+# You can also specify more buttons, or even axes for dead man's button. The rule is that as long as this function returns a non-neutral (non-default) value, other buttons work.
+dead_man: [ {type: 'button', id: 0} ]
+
+# This is an example button-type config showing all possible attributes. Optional attributes are shown with their default values. If you omit optional attributes, 
+# they will be automatically filled with these defaults.
+full_button: [ {type: 'button', id: 0, on_value: 1, off_value: 0, neutral_value: 0} ]
+# type (string): Required, allowed values are (as to now) 'button' or 'axis'.
+#
+# id (int): Required. Index to the joy.buttons array provided by ROS in sensor_msgs/Joy message.
+#
+# on_value (any): Optional. The value to return when the button is pressed. It doesn't have to be an int, you can return anything.
+# off_value (any): Optional. The value to return when the button is not pressed. It doesn't have to be an int, you can return anything.
+#
+# neutral_value (any): Optional. The value to treat as neutral. If the button should return the neutral value set here, the next defined button/axis is asked for value. 
+#   The first button/axis that returns a non-neutral value is considered active/pressed. If all buttons return neutral values, then the neutral value of the first 
+#   defined button/axis is returned by get_value. You should make sure neutral_value is set to the same value as either on_value or off_value.
+
+# This is an example button-type config showing all possible attributes. Optional attributes are shown with their default values. If you omit optional attributes, 
+# they will be automatically filled with these defaults. Using hw_min/max, remap_min/max and invert attributes you can do raw/output interval remapping, e.g.
+# to remap raw interval -1..1 to output interval 0..1 .
+full_axis: [ {type: 'axis', id: 0, hw_min: -1.0, hw_max: 1.0, remap_min: -1.0, remap_max: 1.0, invert: False, startup_block_value: None, neutral_value: 0.0} ]
+# type (string): Required, allowed values are (as to now) 'button' or 'axis'.
+#
+# id (int): Required. Index to the joy.axes array provided by ROS in sensor_msgs/Joy message.
+#
+# hw_min (float): Optional. The minimum value returned from ROS for this axis.
+# hw_max (float): Optional. The maximum value returned from ROS for this axis.
+#
+# remap_min (float): Optional. The lower bound of the interval of return values.
+# remap_max (float): Optional. The upper bound of the interval of return values.
+#
+# invert (bool): Optional. If True, the joystick min maps to output max and vice versa.
+#
+# startup_block_value (float): Optional. This is a workaround for axis keys that publish other than neutral values before the axis is moved for the first time. 
+#   Specify here the value the axis publishes until it is moved for the first time. This is e.g. the case of Logitech F710 back side axes in XInput mode 
+#   (the buttons have neutral values -1.0, however until you "initialize" them by pressing them, they publish 0.0). 
+#   Note that contrary to neutral_value, here you have to specify the raw (HW) values in range hw_min to hw_max.
+#
+# neutral_value (float): Optional. The value to treat as neutral. If the axis should return the neutral value set here, the next defined button/axis is asked for value. 
+#   The first button/axis that returns a non-neutral value is considered active/pressed. If all buttons return neutral values, then the neutral value of the first 
+#   defined button/axis is returned by get_value. You should make sure neutral_value is a value from the output range (remap_min to remap_max).
+
+# Finally, provide a drawing illustrating the functions of your config. In YAML, you specify multiline strings by writing vertical bar, newline, and then put your
+# multiline string indented by one tab.
+# This description will be available in function get_description(), so that you can e.g. write it out after loading the config.
+description: |
+    # JOYSTICK CONFIG FOR MODEL LOGITECH F710 (XInput mode)
+    # =====================================================
+    #
+    # Thanks to RIVeR-Lab/wpi_jaco for base of this image
+    #
+    #                Controls                
+    #     up/down                 rotate wrist
+    #    ________                 __________    
+    #   /fin.open\_______________/          \   
+    #  |   _| |_    < >  < home >     (4)    |  
+    #  |  |_   _|   < >    < >     (1)   (3) |  
+    #  |    |_|    ___       ___      (2)    |  
+    #  | fin.close/   \     /   \            |  
+    #  |          \___/     \___/            |  
+    #  |       x/y trans  rotate x/y         |  
+    #  |        _______/---\_______          |  
+    #  |       |                    \        |  
+    #   \      /                     \      /   
+    #    \____/                       \____/    
+    #                                        
+    # Buttons:                               
+    #   (1) Fingers open
+    #   (2) Fingers close
+    #   (3) Emergency stop                    
+    #   (4) Emergency release                   
