@@ -3,10 +3,8 @@ project(jaco_teleop)
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib
-  geometry_msgs
   jaco_msgs
   rospy
-  std_msgs
   sensor_msgs
 )
 
@@ -14,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## catkin specific configuration ##
 ###################################
 catkin_package(
- CATKIN_DEPENDS actionlib geometry_msgs joy jaco_msgs rospy std_msgs sensor_msgs topic_tools message_runtime
+ CATKIN_DEPENDS actionlib joy jaco_msgs rospy sensor_msgs topic_tools message_runtime
 )
 
 catkin_python_setup()
@@ -34,6 +32,12 @@ include_directories(
 install(PROGRAMS
   nodes/jaco_teleop_joy.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/nodes
+)
+
+install(PROGRAMS
+  src/jaco_teleop/__init__.py
+  src/jaco_teleop/joystick_interface.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
