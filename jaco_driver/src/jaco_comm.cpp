@@ -499,6 +499,24 @@ void JacoComm::setConfig(const ClientConfigurations &config)
     }
 }
 
+/*!
+ * \brief Sends a native joystick command to the arm.
+ *
+ * The command simulates the native Kinova Jaco 3-axis joystick's output.
+ */
+void JacoComm::sendJoystickCommand(const JoystickCommand &command)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    startAPI();
+
+    int result = jaco_api_.sendJoystickCommand(command);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not send joystick command", result);
+    }
+}
+
 
 /*!
  * \brief API call to obtain the current angular position of all the joints.

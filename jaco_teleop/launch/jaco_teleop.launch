@@ -1,0 +1,13 @@
+<launch>
+
+    <arg name="joystick_type" default="logitech_f710_xinput" />
+
+	<node pkg="joy" type="joy_node" name="jaco_joy_node" >
+		<param name="autorepeat_rate" value="0.0" />
+	</node>
+
+	<node pkg="jaco_teleop" type="jaco_teleop_joy.py"
+		name="jaco_teleop_joy">
+        <param name="config_file" value="$(find jaco_teleop)/config/$(arg joystick_type).yaml" />
+	</node>
+</launch>

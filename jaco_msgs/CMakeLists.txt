@@ -17,6 +17,7 @@ add_message_files(
   FingerPosition.msg
   JointAngles.msg
   JointVelocity.msg
+  JoystickCommand.msg
 )
 
 add_service_files(

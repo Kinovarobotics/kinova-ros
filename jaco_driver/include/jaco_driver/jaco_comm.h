@@ -74,6 +74,7 @@ class JacoComm
     void setJointVelocities(const AngularInfo& joint_vel);
     void setCartesianVelocities(const CartesianInfo &velocities);
     void setConfig(const ClientConfigurations &config);
+    void sendJoystickCommand(const JoystickCommand &command);
     void getJointAngles(JacoAngles &angles);
     void getCartesianPosition(JacoPose &position);
     void getFingerPositions(FingerAngles &fingers);

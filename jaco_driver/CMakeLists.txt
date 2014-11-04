@@ -53,6 +53,7 @@ add_executable(jaco_arm_driver
   src/jaco_angles_action.cpp
   src/jaco_fingers_action.cpp
   src/jaco_types.cpp
+  src/joystick_command_translator.cpp
   include/jaco_driver/jaco_angles_action.h
   include/jaco_driver/jaco_api.h
   include/jaco_driver/jaco_arm.h
@@ -60,6 +61,7 @@ add_executable(jaco_arm_driver
   include/jaco_driver/jaco_fingers_action.h
   include/jaco_driver/jaco_pose_action.h
   include/jaco_driver/jaco_types.h
+  include/jaco_driver/joystick_command_translator.h
   include/kinova/Kinova.API.CommLayerUbuntu.h
   include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
   include/kinova/KinovaTypes.h
@@ -75,8 +77,8 @@ add_executable(jaco_tf_updater
 add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
 add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES})
-target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES})
+target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES} -ldl)
+target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES} -ldl)
 
 #############
 ## Install ##
