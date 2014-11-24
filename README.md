@@ -287,7 +287,7 @@ To set the finger positions, use ``grip_workout.py``
 
 4. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
 
-5. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
+5. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent.
 
 6. Previously, files under ``jaco-ros/jaco_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
 
