@@ -42,6 +42,8 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.1);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.1);
 
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
 
@@ -253,7 +255,10 @@ void JacoArm::publishToolPosition(void)
     geometry_msgs::PoseStamped current_position;
 
     jaco_comm_.getCartesianPosition(pose);
-    current_position.pose = pose.constructPoseMsg();
+
+    current_position.pose            = pose.constructPoseMsg();
+    current_position.header.stamp    = ros::Time::now();
+    current_position.header.frame_id = tf_prefix_ + "link_base";
 
     tool_position_publisher_.publish(current_position);
 }

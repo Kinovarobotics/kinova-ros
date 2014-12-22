@@ -1,7 +1,9 @@
 <launch>
 
   <node name="mico_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
-    <param name="serial_number" value="PJ00650002132770005" />
+<!-- Set this parameter to use a specific arm on your system --> 
+<!-- <param name="serial_number" value="PJ00650002132770005" /> -->
+    <param name="tf_prefix" value="mico_" />
 
     <param name="fingers/stall_interval_seconds" value="1.0" />
     <param name="fingers/stall_threshold" value="1.0" />

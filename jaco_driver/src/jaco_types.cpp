@@ -137,7 +137,27 @@ geometry_msgs::Pose JacoPose::constructPoseMsg()
     geometry_msgs::Pose pose;
     tf::Quaternion position_quaternion;
 
-    position_quaternion.setRPY(ThetaX, ThetaY, ThetaZ);
+    
+    ROS_DEBUG_THROTTLE(0.5, "Theta: (%f, %f, %f)", ThetaX, ThetaY, ThetaZ);
+
+    // TODO: QUICK FIX, bake this as a quaternion:
+    tf::Matrix3x3 mx(           1,            0,            0, 
+                                0,  cos(ThetaX), -sin(ThetaX),
+                                0,  sin(ThetaX),  cos(ThetaX));
+    tf::Matrix3x3 my( cos(ThetaY),            0,  sin(ThetaY),
+                                0,            1,            0,
+                     -sin(ThetaY),            0,  cos(ThetaY));
+    tf::Matrix3x3 mz( cos(ThetaZ), -sin(ThetaZ),            0,
+                      sin(ThetaZ),  cos(ThetaZ),            0,
+                                0,            0,            1);
+
+    tf::Matrix3x3  mg = mx * my * mz;
+    mg.getRotation(position_quaternion);
+
+    // NOTE: This doesn't work, as angles reported by the API are not fixed.
+    // position_quaternion.setRPY(ThetaX, ThetaY, ThetaZ);
+
+    
     tf::quaternionTFToMsg(position_quaternion, pose.orientation);
 
     pose.position.x = X;
