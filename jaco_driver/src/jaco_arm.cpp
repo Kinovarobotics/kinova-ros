@@ -44,6 +44,21 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
 
     node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
 
+    // Approximative conversion ratio from finger position (0..6000) to joint angle 
+    // in radians (0..0.7).
+    node_handle_.param("finger_angle_conv_ratio", finger_conv_ratio_, 0.7 / 5000.0);
+
+    joint_names_.resize(JACO_JOINTS_COUNT);
+    joint_names_[0] = tf_prefix_ + "joint_1";
+    joint_names_[1] = tf_prefix_ + "joint_2";
+    joint_names_[2] = tf_prefix_ + "joint_3";
+    joint_names_[3] = tf_prefix_ + "joint_4";
+    joint_names_[4] = tf_prefix_ + "joint_5";
+    joint_names_[5] = tf_prefix_ + "joint_6";
+    joint_names_[6] = tf_prefix_ + "joint_finger_1";
+    joint_names_[7] = tf_prefix_ + "joint_finger_2";
+    joint_names_[8] = tf_prefix_ + "joint_finger_3";
+
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
 
@@ -58,6 +73,8 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     cartesian_vel_timer_flag_ = false;
 
     ROS_INFO("The arm is ready to use.");
+
+
 }
 
 
@@ -200,6 +217,9 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  */
 void JacoArm::publishJointAngles(void)
 {
+    FingerAngles fingers;
+    jaco_comm_.getFingerPositions(fingers);
+
     // Query arm for current joint angles
     JacoAngles current_angles;
     jaco_comm_.getJointAngles(current_angles);
@@ -213,11 +233,7 @@ void JacoArm::publishJointAngles(void)
     jaco_angles.joint6 = current_angles.Actuator6;
 
     sensor_msgs::JointState joint_state;
-    // TODO: Use TF prefix, bake the vector
-    const char* nameArgs[] = {"jaco_joint_1", "jaco_joint_2", "jaco_joint_3", "jaco_joint_4", "jaco_joint_5", "jaco_joint_6",
-                              "jaco_joint_finger_1", "jaco_joint_finger_2", "jaco_joint_finger_3"};
-    std::vector<std::string> joint_names(nameArgs, nameArgs + 9);
-    joint_state.name = joint_names;
+    joint_state.name = joint_names_;
     joint_state.header.stamp = ros::Time::now();
 
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
@@ -229,10 +245,9 @@ void JacoArm::publishJointAngles(void)
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
     joint_state.position[5] = (260-jaco_angles.joint6) * (PI / 180);
-    // TODO: Fingers.
-    joint_state.position[6] = 0;
-    joint_state.position[7] = 0;
-    joint_state.position[8] = 0;
+    joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
+    joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
+    joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
 
     // TODO: Add joint velocity
     // joint_state.velocity.resize(6);

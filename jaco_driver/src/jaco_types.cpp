@@ -138,8 +138,6 @@ geometry_msgs::Pose JacoPose::constructPoseMsg()
     tf::Quaternion position_quaternion;
 
     
-    ROS_DEBUG_THROTTLE(0.5, "Theta: (%f, %f, %f)", ThetaX, ThetaY, ThetaZ);
-
     // TODO: QUICK FIX, bake this as a quaternion:
     tf::Matrix3x3 mx(           1,            0,            0, 
                                 0,  cos(ThetaX), -sin(ThetaX),
