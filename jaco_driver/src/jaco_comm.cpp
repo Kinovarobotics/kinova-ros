@@ -278,7 +278,7 @@ void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
         }
     }
 
-    startAPI();
+    //startAPI();
 
     result = jaco_api_.setAngularControl();
     if (result != NO_ERROR_KINOVA)
@@ -327,7 +327,7 @@ void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool 
         }
     }
 
-    startAPI();
+    //startAPI();
 
     result = jaco_api_.setCartesianControl();
     if (result != NO_ERROR_KINOVA)
@@ -384,7 +384,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
         }
     }
 
-    startAPI();
+    //startAPI();
 
     result = jaco_api_.setCartesianControl();
     if (result != NO_ERROR_KINOVA)
@@ -436,7 +436,7 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    startAPI();
+    //startAPI();
     jaco_velocity.Position.Type = ANGULAR_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
@@ -469,7 +469,7 @@ void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
 
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
-    startAPI();
+    //startAPI();
     jaco_velocity.Position.Type = CARTESIAN_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
