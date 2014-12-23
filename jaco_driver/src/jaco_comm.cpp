@@ -113,14 +113,24 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
             QuickStatus quick_status;
             getQuickStatus(quick_status);
 
-            if ((quick_status.RobotType != 0) && (quick_status.RobotType != 1))
+            if ((quick_status.RobotType != 0) && (quick_status.RobotType != 1) && (quick_status.RobotType != 3))
             {
                 ROS_ERROR("Could not get the type of the arm from the quick status, expected "
                           "either type 0 (JACO), or type 1 (MICO), got %d", quick_status.RobotType);
                 throw JacoCommException("Could not get the type of the arm", quick_status.RobotType);
             }
 
-            num_fingers_ = quick_status.RobotType == 0 ? 3 : 2;
+            switch (quick_status.RobotType) {
+                case 0:
+                case 3:
+                    num_fingers_ = 3;
+                    break;
+                case 1:
+                    num_fingers_ = 2;
+                    break;
+                default:
+                    break;
+            }
 
             ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
