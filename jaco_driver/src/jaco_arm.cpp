@@ -213,12 +213,15 @@ void JacoArm::publishJointAngles(void)
     jaco_angles.joint6 = current_angles.Actuator6;
 
     sensor_msgs::JointState joint_state;
-    const char* nameArgs[] = {"jaco_joint_1", "jaco_joint_2", "jaco_joint_3", "jaco_joint_4", "jaco_joint_5", "jaco_joint_6"};
-    std::vector<std::string> joint_names(nameArgs, nameArgs + 6);
+    // TODO: Use TF prefix, bake the vector
+    const char* nameArgs[] = {"jaco_joint_1", "jaco_joint_2", "jaco_joint_3", "jaco_joint_4", "jaco_joint_5", "jaco_joint_6",
+                              "jaco_joint_finger_1", "jaco_joint_finger_2", "jaco_joint_finger_3"};
+    std::vector<std::string> joint_names(nameArgs, nameArgs + 9);
     joint_state.name = joint_names;
+    joint_state.header.stamp = ros::Time::now();
 
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-    joint_state.position.resize(6);
+    joint_state.position.resize(9);
 
     joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
     joint_state.position[1] = (jaco_angles.joint2 - 270) * (PI / 180);
@@ -226,6 +229,10 @@ void JacoArm::publishJointAngles(void)
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
     joint_state.position[5] = (260-jaco_angles.joint6) * (PI / 180);
+    // TODO: Fingers.
+    joint_state.position[6] = 0;
+    joint_state.position[7] = 0;
+    joint_state.position[8] = 0;
 
     // TODO: Add joint velocity
     // joint_state.velocity.resize(6);
