@@ -28,6 +28,7 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     joint_angles_publisher_ = node_handle_.advertise<jaco_msgs::JointAngles>("out/joint_angles", 2);
     joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
     tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>("out/tool_position", 2);
+    tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>("out/tool_wrench", 2);
     finger_position_publisher_ = node_handle_.advertise<jaco_msgs::FingerPosition>("out/finger_position", 2);
 
     /* Set up Subscribers*/
@@ -285,6 +286,24 @@ void JacoArm::publishToolPosition(void)
     tool_position_publisher_.publish(current_position);
 }
 
+/*!
+ * \brief Publishes the current cartesian forces at the end effector. 
+ */
+void JacoArm::publishToolWrench(void)
+{
+    JacoPose wrench;
+    geometry_msgs::WrenchStamped current_wrench;
+
+    jaco_comm_.getCartesianForce(wrench);
+
+    current_wrench.wrench          = wrench.constructWrenchMsg();
+    current_wrench.header.stamp    = ros::Time::now();
+    // TODO: Rotate wrench to fit the end effector frame.
+    // Right now, the orientation of the wrench is in the API's (base) frame.
+    current_wrench.header.frame_id = tf_prefix_ + "api_origin";
+
+    tool_wrench_publisher_.publish(current_wrench);
+}
 
 /*!
  * \brief Publishes the current finger positions.
@@ -301,6 +320,7 @@ void JacoArm::statusTimer(const ros::TimerEvent&)
 {
     publishJointAngles();
     publishToolPosition();
+    publishToolWrench();
     publishFingerPosition();
 }
 

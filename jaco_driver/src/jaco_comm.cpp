@@ -537,6 +537,23 @@ void JacoComm::getCartesianPosition(JacoPose &position)
     position = JacoPose(jaco_cartesian_position.Coordinates);
 }
 
+/*!
+ * \brief API call to obtain the current cartesian force of the arm.
+ */
+void JacoComm::getCartesianForce(JacoPose &cart_force)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    CartesianPosition jaco_cartesian_force;
+    memset(&jaco_cartesian_force, 0, sizeof(jaco_cartesian_force));  // zero structure
+
+    int result = jaco_api_.getCartesianForce(jaco_cartesian_force);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the Cartesian force", result);
+    }
+
+    cart_force = JacoPose(jaco_cartesian_force.Coordinates);
+}
 
 /*!
  * \brief API call to obtain the current finger positions.

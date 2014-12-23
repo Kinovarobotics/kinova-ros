@@ -48,6 +48,7 @@
 
 #include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Wrench.h>
 #include <jaco_msgs/JointAngles.h>
 #include <jaco_msgs/FingerPosition.h>
 
@@ -79,7 +80,9 @@ class JacoPose : public CartesianInfo
     explicit JacoPose(const geometry_msgs::Pose &pose);
     explicit JacoPose(const CartesianInfo &pose);
 
-    geometry_msgs::Pose constructPoseMsg();
+    geometry_msgs::Pose   constructPoseMsg();
+    geometry_msgs::Wrench constructWrenchMsg();
+
     bool isCloseToOther(const JacoPose &, float tolerance) const;
 };
 

@@ -16,6 +16,7 @@
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
 
+    <property name="J_PI" value="3.1415926535897931" />
 
     <xacro:macro name="jaco_link" params="link_name">
     <link name="${link_name}">
@@ -91,6 +92,13 @@
          </collision>
          -->
         </link>
+
+        <joint name="${link_hand}_to_end_effector" type="fixed">
+          <parent link="${link_hand}"/>
+          <child link="${link_end_effector}"/>
+          <origin xyz="0 0 -${end_effector_offset}" rpy="0 ${J_PI} 0" />
+        </joint>
+        <link name="${link_end_effector}" />
 
     </xacro:macro>
 

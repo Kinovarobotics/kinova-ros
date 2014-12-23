@@ -165,6 +165,19 @@ geometry_msgs::Pose JacoPose::constructPoseMsg()
     return pose;
 }
 
+geometry_msgs::Wrench JacoPose::constructWrenchMsg()
+{
+    geometry_msgs::Wrench wrench;
+
+    wrench.force.x  = X;
+    wrench.force.y  = Y;
+    wrench.force.z  = Z;
+    wrench.torque.x = ThetaX;
+    wrench.torque.y = ThetaY;
+    wrench.torque.z = ThetaZ;
+
+    return wrench;
+}
 
 bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
 {

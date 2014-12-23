@@ -15,7 +15,8 @@
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <property name="J_PI" value="3.1415926535897931" />
+  <xacro:include filename="$(find jaco_model)/urdf/jaco_common.xacro" />
+
   <property name="link_base" value="mico_link_base" />
   <property name="link_1" value="mico_link_1" />
   <property name="link_2" value="mico_link_2" />
@@ -80,7 +81,8 @@
   <property name="joint_finger_2_lower_limit" value="0" />
   <property name="joint_finger_2_upper_limit" value="${J_PI/180*40}" />
 
-  <xacro:include filename="$(find jaco_model)/urdf/jaco_common.xacro" />
+  <property name="link_end_effector"   value="mico_end_effector" />
+  <property name="end_effector_offset" value="0.160" />
 
   <xacro:macro name="mico_arm" params="parent">
 

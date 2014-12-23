@@ -76,6 +76,7 @@ class JacoComm
     void setConfig(const ClientConfigurations &config);
     void getJointAngles(JacoAngles &angles);
     void getCartesianPosition(JacoPose &position);
+    void getCartesianForce(JacoPose &position);
     void getFingerPositions(FingerAngles &fingers);
     void getQuickStatus(QuickStatus &quick_status);
     void getConfig(ClientConfigurations &config);

@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
@@ -61,6 +62,7 @@ class JacoArm
 
     void publishJointAngles(void);
     void publishToolPosition(void);
+    void publishToolWrench(void);
     void publishFingerPosition(void);
 
     tf::TransformListener tf_listener_;
@@ -73,6 +75,7 @@ class JacoArm
 
     ros::Publisher joint_angles_publisher_;
     ros::Publisher tool_position_publisher_;
+    ros::Publisher tool_wrench_publisher_;
     ros::Publisher finger_position_publisher_;
     ros::Publisher joint_state_publisher_;
 
