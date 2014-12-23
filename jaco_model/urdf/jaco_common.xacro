@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+
+
+<root xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+
+    <xacro:macro name="jaco_link" params="link_name">
+    <link name="${link_name}">
+          <visual>
+                     <geometry>
+                             <mesh
+              filename="package://jaco_model/meshes/${link_name}.dae"/>
+                    </geometry>
+                    <material name="carbon_fiber">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                    </material>
+            </visual>
+            <collision>
+                    <geometry>
+                             <mesh
+              filename="package://jaco_model/meshes/${link_name}.dae"/>
+                    </geometry>
+            </collision>
+    </link>
+    </xacro:macro>
+
+    <xacro:macro name="jaco_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy">
+    <joint name="${joint_name}" type="${type}">
+        <parent link="${parent}"/>
+        <child link="${child}"/>
+        <axis xyz="${joint_axis_xyz}"/>
+    <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+     </joint>
+    </xacro:macro>
+
+    <xacro:macro name="jaco_finger_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit">
+    <joint name="${joint_name}" type="${type}">
+        <parent link="${parent}"/>
+        <child link="${child}"/>
+        <axis xyz="${joint_axis_xyz}"/>
+    <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
+     </joint>
+    </xacro:macro>
+
+    <xacro:macro name="jaco_struct" params="parent basename">
+        <xacro:jaco_link link_name="${link_base}"/>
+        <xacro:jaco_joint joint_name="${joint_base}" type="fixed" parent="${parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_1}"/>
+        <xacro:jaco_joint joint_name="${joint_1}" type="continuous" parent="${link_base}" child="${link_1}" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_2}"/>
+        <xacro:jaco_joint joint_name="${joint_2}" type="continuous" parent="${link_1}" child="${link_2}" joint_axis_xyz="${joint_2_axis_xyz}" joint_origin_xyz="${joint_2_origin_xyz}" joint_origin_rpy="${joint_2_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_3}"/>
+        <xacro:jaco_joint joint_name="${joint_3}" type="continuous" parent="${link_2}" child="${link_3}" joint_axis_xyz="${joint_3_axis_xyz}" joint_origin_xyz="${joint_3_origin_xyz}" joint_origin_rpy="${joint_3_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_4}"/>
+        <xacro:jaco_joint joint_name="${joint_4}" type="continuous" parent="${link_3}" child="${link_4}" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_5}"/>
+        <xacro:jaco_joint joint_name="${joint_5}" type="continuous" parent="${link_4}" child="${link_5}" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}"/>
+        <xacro:jaco_link link_name="${link_hand}"/>
+        <xacro:jaco_joint joint_name="${joint_6}" type="continuous" parent="${link_5}" child="${link_hand}" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}"/>
+
+       <joint name="${link_base}_to_api_origin" type="fixed">
+         <parent link="${link_base}"/>
+         <child link="${api_origin}"/>
+         <origin xyz="0 0 ${api_offset}" rpy="0 0 0" />
+       </joint>
+       <link name="${api_origin}">
+         <!--
+         <visual>
+           <geometry>
+             <box xyz="0 0 0" size="0.1 0.1 0.1"/>
+           </geometry>
+         </visual>
+         <collision>
+           <geometry>
+             <box xyz="0 0 0" size="0.1 0.1 0.1"/>
+           </geometry>
+         </collision>
+         -->
+        </link>
+
+    </xacro:macro>
+
+
+</root>
