@@ -5,6 +5,8 @@
   <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
     <!-- Set this parameter to use a specific arm on your system    --> 
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
+    <param name="tf_prefix" value="jaco_"/>
+    <param name="finger_angle_conv_ratio" value="0.012"/>
   </node>
     
   <group unless="$(arg use_urdf)">
