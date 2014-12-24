@@ -54,7 +54,7 @@
 
   <property name="joint_4" value="mico_joint_4" />
   <property name="joint_4_axis_xyz" value="0 0 -1" />
-  <property name="joint_4_origin_xyz" value="0.123 0 0.00675" />
+  <property name="joint_4_origin_xyz" value="0.123 0 -0.00700" />
   <property name="joint_4_origin_rpy" value="${J_PI} ${J_PI/2} 0" />
 
   <property name="joint_5" value="mico_joint_5" />
