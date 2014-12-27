@@ -171,15 +171,15 @@ void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
 
     if (elapsed_time_seconds > cartesian_vel_timeout_seconds_)
     {
-        ROS_INFO("Cartesian vel timed out: %f", elapsed_time_seconds);
+        ROS_DEBUG("Cartesian vel timed out: %f", elapsed_time_seconds);
         cartesian_vel_timer_.stop();
         cartesian_vel_timer_flag_ = false;
     }
     else
     {
-        ROS_INFO("Cart vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
-                 cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
-                 cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
+        ROS_DEBUG("Cart vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
+                  cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
+                  cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
         jaco_comm_.setCartesianVelocities(cartesian_velocities_);
     }
 }
@@ -191,15 +191,15 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
 
     if (elapsed_time_seconds > joint_vel_timeout_seconds_)
     {
-        ROS_INFO("Joint vel timed out: %f", elapsed_time_seconds);
+        ROS_DEBUG("Joint vel timed out: %f", elapsed_time_seconds);
         joint_vel_timer_.stop();
         joint_vel_timer_flag_ = false;
     }
     else
     {
-        ROS_INFO("Joint vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
-                 joint_velocities_.Actuator1, joint_velocities_.Actuator2, joint_velocities_.Actuator3,
-                 joint_velocities_.Actuator4, joint_velocities_.Actuator5, joint_velocities_.Actuator6);
+        ROS_DEBUG("Joint vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
+                  joint_velocities_.Actuator1, joint_velocities_.Actuator2, joint_velocities_.Actuator3,
+                  joint_velocities_.Actuator4, joint_velocities_.Actuator5, joint_velocities_.Actuator6);
         jaco_comm_.setJointVelocities(joint_velocities_);
     }
 }
