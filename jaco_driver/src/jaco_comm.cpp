@@ -528,7 +528,41 @@ void JacoComm::getJointAngles(JacoAngles &angles)
     angles = JacoAngles(jaco_angles.Actuators);
 }
 
+/*!
+ * \brief API call to obtain the current angular velocities of all the joints.
+ */
+void JacoComm::getJointVelocities(JacoAngles &vels)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition jaco_vels;
+    memset(&jaco_vels, 0, sizeof(jaco_vels));  // zero structure
 
+    int result = jaco_api_.getAngularVelocity(jaco_vels);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the angular velocity", result);
+    }
+
+    vels = JacoAngles(jaco_vels.Actuators);
+}
+
+/*!
+ * \brief API call to obtain the current torque of all the joints.
+ */
+void JacoComm::getJointTorques(JacoAngles &tqs)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition jaco_tqs;
+    memset(&jaco_tqs, 0, sizeof(jaco_tqs));  // zero structure
+
+    int result = jaco_api_.getAngularForce(jaco_tqs);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the joint torques", result);
+    }
+
+    tqs = JacoAngles(jaco_tqs.Actuators);
+}
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
  */

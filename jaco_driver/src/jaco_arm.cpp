@@ -212,12 +212,13 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  * (JointAngles), and transformed & converted to radians (joint_state) as per
  * the Jaco Kinematics PDF.
  *
- * JointState will eventually also publish the velocity and effort for each
- * joint, when this data is made available by the C++ API.  Currenty velocity
- * and effort are reported as being zero (0.0) for all joints.
+ * Velocities and torques (effort) are only published in the JointStates
+ * message, only for the first 6 joints as these values are not available for
+ * the fingers.
  */
 void JacoArm::publishJointAngles(void)
 {
+    static const double PI_180 = (PI / 180.0);
     FingerAngles fingers;
     jaco_comm_.getFingerPositions(fingers);
 
@@ -250,19 +251,42 @@ void JacoArm::publishJointAngles(void)
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
 
-    // TODO: Add joint velocity
-    // joint_state.velocity.resize(6);
+    // Joint velocities
+    JacoAngles current_vels;
+    jaco_comm_.getJointVelocities(current_vels);
+    joint_state.velocity.resize(9);
+    joint_state.velocity[0] = current_vels.Actuator1;
+    joint_state.velocity[1] = current_vels.Actuator2;
+    joint_state.velocity[2] = current_vels.Actuator3;
+    joint_state.velocity[3] = current_vels.Actuator4;
+    joint_state.velocity[4] = current_vels.Actuator5;
+    joint_state.velocity[5] = current_vels.Actuator6;
+    for (int i = 0; i < 6; ++i) {
+        // Angle velocities from the API are 0..180 for positive values,
+        // and 360..181 for negative ones, in a kind of 2-complement setup.
+        double& qd = joint_state.velocity[i];
+        if (qd > 180.0) {
+            qd -= 360.0;
+        }
+        qd *= PI_180;
+    }
+    // No velocity for the fingers:
+    joint_state.velocity[6] = 0.0;
+    joint_state.velocity[7] = 0.0;
+    joint_state.velocity[8] = 0.0;
 
-    // TODO: Place the arm actuator forces into the array
-    // JacoForces arm_forces;
-    // arm_.GetForcesInfo(arm_forces);
-    // joint_state.effort.resize(6);
-    // joint_state.effort[0] = arm_forces.Actuator1;
-    // joint_state.effort[1] = arm_forces.Actuator2;
-    // joint_state.effort[2] = arm_forces.Actuator3;
-    // joint_state.effort[3] = arm_forces.Actuator4;
-    // joint_state.effort[4] = arm_forces.Actuator5;
-    // joint_state.effort[5] = arm_forces.Actuator6;
+    // Joint torques (effort)
+    JacoAngles joint_tqs;
+    joint_state.effort.resize(9);
+    joint_state.effort[0] = joint_tqs.Actuator1;
+    joint_state.effort[1] = joint_tqs.Actuator2;
+    joint_state.effort[2] = joint_tqs.Actuator3;
+    joint_state.effort[3] = joint_tqs.Actuator4;
+    joint_state.effort[4] = joint_tqs.Actuator5;
+    joint_state.effort[5] = joint_tqs.Actuator6;
+    joint_state.effort[6] = 0.0;
+    joint_state.effort[6] = 0.0;
+    joint_state.effort[8] = 0.0;
 
     joint_angles_publisher_.publish(jaco_angles);
     joint_state_publisher_.publish(joint_state);
