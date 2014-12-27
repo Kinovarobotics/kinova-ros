@@ -1,0 +1,21 @@
+<launch>
+    <arg name="robot" default="jaco"/>
+    <node name="admittance_ctrl"
+           pkg="jaco_demo"
+          type="admittance_ctrl.py">
+        <remap from="wrench"  to="/$(arg robot)_arm_driver/out/tool_wrench"/>
+        <remap from="cmd_vel" to="/$(arg robot)_arm_driver/in/cartesian_velocity"/>
+        <rosparam>
+            # NOTE: Values only tested on a Mico
+            dz_x_min: -2.0
+            dz_x_max:  2.0
+            dz_y_min: -2.0
+            dz_y_max:  2.0
+            dz_z_min: -3.0
+            dz_z_max: 10.0
+            k_f:      -0.1
+            vel_max:   0.2
+        </rosparam>
+    </node>
+
+</launch>
