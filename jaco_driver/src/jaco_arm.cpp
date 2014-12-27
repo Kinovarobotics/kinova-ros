@@ -246,7 +246,7 @@ void JacoArm::publishJointAngles(void)
     joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
-    joint_state.position[5] = (260-jaco_angles.joint6) * (PI / 180);
+    joint_state.position[5] = (270-jaco_angles.joint6) * (PI / 180);
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
@@ -285,7 +285,7 @@ void JacoArm::publishJointAngles(void)
     joint_state.effort[4] = joint_tqs.Actuator5;
     joint_state.effort[5] = joint_tqs.Actuator6;
     joint_state.effort[6] = 0.0;
-    joint_state.effort[6] = 0.0;
+    joint_state.effort[7] = 0.0;
     joint_state.effort[8] = 0.0;
 
     joint_angles_publisher_.publish(jaco_angles);
