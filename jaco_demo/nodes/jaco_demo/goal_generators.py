@@ -14,7 +14,7 @@ def poses_from_file(filepath):
     with open(filepath) as f:
         for line in f.readlines():
             if len(line) > 10:
-                vals = [float(n) for n in line.strip('\n').split(' ')[:7]]
+                vals = [float(n) for n in line.strip('\n').split()[:7]]
                 mag = np.sqrt(sum(np.power(vals[3:], 2)))
                 yield vals[:3], vals[3:] / mag
 
@@ -37,7 +37,7 @@ def joint_angles_from_file(filepath):
     with open(filepath) as f:
         for line in f.readlines():
             if len(line) > 10:
-                yield [float(n) for n in line.strip('\n').split(' ')[:6]]
+                yield [float(n) for n in line.strip('\n').split()[:6]]
 
 
 def random_jaco_finger_positions(n_positions=1):
