@@ -24,6 +24,7 @@ add_service_files(
   Start.srv
   Stop.srv
   HomeArm.srv
+  SetForceControlParams.srv
 )
 
 add_action_files(DIRECTORY action

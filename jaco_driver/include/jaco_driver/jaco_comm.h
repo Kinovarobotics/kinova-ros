@@ -80,6 +80,10 @@ class JacoComm
     void getCartesianPosition(JacoPose &position);
     void getCartesianForce(JacoPose &position);
     void getFingerPositions(FingerAngles &fingers);
+    void setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping);
+    void setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max);
+    void startForceControl();
+    void stopForceControl();
     void getQuickStatus(QuickStatus &quick_status);
     void getConfig(ClientConfigurations &config);
     void printAngles(const JacoAngles &angles);

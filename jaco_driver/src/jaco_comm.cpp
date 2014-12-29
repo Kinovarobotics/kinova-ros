@@ -622,6 +622,57 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
     fingers = FingerAngles(jaco_cartesian_position.Fingers);
 }
 
+/*!
+ * \brief Set the cartesian inertia and damping parameters for force control.
+ */
+void JacoComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = jaco_api_.setCartesianInertiaDamping(inertia, damping);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set cartesian inertia and damping", result);
+    }
+}
+
+/*!
+ * \brief Set the cartesian min and max force parameters for force control.
+ */
+void JacoComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = jaco_api_.setCartesianForceMinMax(min, max);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set cartesian min/max force.", result);
+    }
+}
+
+/*!
+ * \brief Start cartesian force control.
+ */
+void JacoComm::startForceControl()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = jaco_api_.startForceControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not start force control.", result);
+    }
+}
+
+/*!
+ * \brief Stop cartesian force control.
+ */
+void JacoComm::stopForceControl()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = jaco_api_.stopForceControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not stop force control.", result);
+    }
+}
 
 /*!
  * \brief API call to obtain the current client configuration.

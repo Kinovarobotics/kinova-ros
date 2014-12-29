@@ -24,6 +24,10 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     start_service_ = node_handle_.advertiseService("in/start", &JacoArm::startServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &JacoArm::homeArmServiceCallback, this);
 
+    set_force_control_params_service_ = node_handle_.advertiseService("in/set_force_control_params", &JacoArm::setForceControlParamsCallback, this);
+    start_force_control_service_ = node_handle_.advertiseService("in/start_force_control", &JacoArm::startForceControlCallback, this);
+    stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &JacoArm::stopForceControlCallback, this);
+    
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<jaco_msgs::JointAngles>("out/joint_angles", 2);
     joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
@@ -142,6 +146,55 @@ bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::St
     return true;
 }
 
+bool JacoArm::setForceControlParamsCallback(jaco_msgs::SetForceControlParams::Request &req, jaco_msgs::SetForceControlParams::Response &res)
+{
+    CartesianInfo inertia, damping, force_min, force_max;
+    inertia.X      = req.inertia_linear.x;
+    inertia.Y      = req.inertia_linear.y;
+    inertia.Z      = req.inertia_linear.z;
+    inertia.ThetaX = req.inertia_angular.x;
+    inertia.ThetaY = req.inertia_angular.y;
+    inertia.ThetaZ = req.inertia_angular.z;
+    damping.X      = req.damping_linear.x;
+    damping.Y      = req.damping_linear.y;
+    damping.Z      = req.damping_linear.z;
+    damping.ThetaX = req.damping_angular.x;
+    damping.ThetaY = req.damping_angular.y;
+    damping.ThetaZ = req.damping_angular.z;
+
+    jaco_comm_.setCartesianInertiaDamping(inertia, damping);
+
+    force_min.X      = req.force_min_linear.x;
+    force_min.Y      = req.force_min_linear.y;
+    force_min.Z      = req.force_min_linear.z;
+    force_min.ThetaX = req.force_min_angular.x;
+    force_min.ThetaY = req.force_min_angular.y;
+    force_min.ThetaZ = req.force_min_angular.z;
+    force_max.X      = req.force_max_linear.x;
+    force_max.Y      = req.force_max_linear.y;
+    force_max.Z      = req.force_max_linear.z;
+    force_max.ThetaX = req.force_max_angular.x;
+    force_max.ThetaY = req.force_max_angular.y;
+    force_max.ThetaZ = req.force_max_angular.z;
+
+    jaco_comm_.setCartesianForceMinMax(force_min, force_max);
+
+    return true;
+}
+
+bool JacoArm::startForceControlCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
+{
+    jaco_comm_.startForceControl();
+    res.start_result = "Start force control requested.";
+    return true;
+}
+
+bool JacoArm::stopForceControlCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
+{
+    jaco_comm_.stopForceControl();
+    res.stop_result = "Stop force control requested.";
+    return true;
+}
 
 void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
 {

@@ -50,6 +50,10 @@ class JacoAPI
     int (*getAngularPosition)(AngularPosition &);
     int (*getAngularVelocity)(AngularPosition &);
     int (*getCartesianForce)(CartesianPosition &);
+    int (*setCartesianForceMinMax)(CartesianInfo, CartesianInfo);
+    int (*setCartesianInertiaDamping)(CartesianInfo, CartesianInfo);
+    int (*startForceControl)();
+    int (*stopForceControl)();
     int (*getAngularForce)(AngularPosition &);
     int (*getAngularCurrent)(AngularPosition &);
     int (*getControlType)(int &);
