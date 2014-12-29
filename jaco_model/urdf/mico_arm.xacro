@@ -54,30 +54,30 @@
 
   <property name="joint_4" value="mico_joint_4" />
   <property name="joint_4_axis_xyz" value="0 0 -1" />
-  <property name="joint_4_origin_xyz" value="0.123 0 -0.00700" />
+  <property name="joint_4_origin_xyz" value="0.123 0 -0.00845" />
   <property name="joint_4_origin_rpy" value="${J_PI} ${J_PI/2} 0" />
 
   <property name="joint_5" value="mico_joint_5" />
   <property name="joint_5_axis_xyz" value="0 0 -1" />
-  <property name="joint_5_origin_xyz" value="0.03421 0 -0.06562" />
+  <property name="joint_5_origin_xyz" value="0.03700 0 -0.06408" />
   <property name="joint_5_origin_rpy" value="0 -${J_PI/180*60} 0" />
 
   <property name="joint_6" value="mico_joint_6" />
   <property name="joint_6_axis_xyz" value="0 0 -1" />
-  <property name="joint_6_origin_xyz" value="0.03421 0 -0.06562" />
+  <property name="joint_6_origin_xyz" value="0.03700 0 -0.06408" />
   <property name="joint_6_origin_rpy" value="-${J_PI/180*60} 0 ${J_PI/2}" />
 
   <property name="joint_finger_1" value="mico_joint_finger_1" />
   <property name="joint_finger_1_axis_xyz" value="0 0 1" />
   <property name="joint_finger_1_origin_xyz" value="-0.03978 0 -0.10071" />
-  <property name="joint_finger_1_origin_rpy" value="-1.7983 1.117 3.1416" />
+  <property name="joint_finger_1_origin_rpy" value="${-J_PI/2} 1.117 ${J_PI}" />
   <property name="joint_finger_1_lower_limit" value="0" />
   <property name="joint_finger_1_upper_limit" value="${J_PI/180*40}" />
 
   <property name="joint_finger_2" value="mico_joint_finger_2" />
   <property name="joint_finger_2_axis_xyz" value="0 0 1" />
-  <property name="joint_finger_2_origin_xyz" value="0.03569 -0.0216 -0.10071" />
-  <property name="joint_finger_2_origin_rpy" value="-1.6222 1.117 -0.23615" />
+  <property name="joint_finger_2_origin_xyz" value="0.03569 0 -0.10071" />
+  <property name="joint_finger_2_origin_rpy" value="${J_PI/2} ${J_PI - 1.117} ${J_PI}" />
   <property name="joint_finger_2_lower_limit" value="0" />
   <property name="joint_finger_2_upper_limit" value="${J_PI/180*40}" />
 
