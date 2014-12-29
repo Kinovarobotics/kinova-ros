@@ -12,7 +12,7 @@
             dz_y_min: -2.00
             dz_y_max:  2.00
             dz_z_min: -2.00
-            dz_z_max:  9.00
+            dz_z_max: 12.00
             k_f:      -0.08
             vel_max:   0.20
         </rosparam>
