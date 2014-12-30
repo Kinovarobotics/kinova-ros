@@ -48,7 +48,7 @@ namespace kinova_ros_ctrl
         hardware_interface::JointStateInterface      jsi_;
         hardware_interface::PositionJointInterface   pji_;
 
-        ros::Timer                                   timer_;
+        std::vector<double>                          cmd_;
 
     public:
         /// \brief Constructor.

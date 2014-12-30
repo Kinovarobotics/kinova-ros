@@ -195,12 +195,18 @@ void KinovaRobot::sendCommand()
     point.Position.Delay               = 0.0;
     point.Position.Type                = ANGULAR_POSITION;
 
-    point.Position.Actuators.Actuator1 = 180.0 - rad2deg(cmd_[0]);
-    point.Position.Actuators.Actuator2 = rad2deg(cmd_[1]) - 270.0;
-    point.Position.Actuators.Actuator3 =  90.0 - rad2deg(cmd_[2]);
-    point.Position.Actuators.Actuator4 = 180.0 - rad2deg(cmd_[3]);
-    point.Position.Actuators.Actuator5 = 180.0 - rad2deg(cmd_[4]);
-    point.Position.Actuators.Actuator6 = 270.0 - rad2deg(cmd_[5]);
+    // TEMP, grab the current position and only apply a few joints while we test:
+    AngularPosition cur_pos;
+    GetAngularPosition(cur_pos);
+    point.Position.Actuators = cur_pos.Actuators;
+
+    //point.Position.Actuators.Actuator1 = 180.0 - rad2deg(cmd_[0]);
+    // J2 seem to have serious issues:
+    //point.Position.Actuators.Actuator2 = clampRad(rad2deg(cmd_[1])) - 270.0;
+    point.Position.Actuators.Actuator3 =  90.0 - rad2deg(clampRad(cmd_[2]));
+    point.Position.Actuators.Actuator4 = 180.0 - rad2deg(clampRad(cmd_[3]));
+    point.Position.Actuators.Actuator5 = 180.0 - rad2deg(clampRad(cmd_[4]));
+    point.Position.Actuators.Actuator6 = 270.0 - rad2deg(clampRad(cmd_[5]));
 
     point.Position.Fingers.Finger1     = cmd_[6];
     point.Position.Fingers.Finger2     = cmd_[7];
