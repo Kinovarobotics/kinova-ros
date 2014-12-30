@@ -1,9 +1,11 @@
 <launch>
-    <node name="jaco_arm"
-           pkg="kinova_ros_ctrl"
-          type="kinova_node">
+    <node   name="jaco_arm"
+             pkg="kinova_ros_ctrl"
+            type="kinova_node"
+          output="screen"
+    >
         <rosparam>
-            period: 0.01    # 100 Hz
+            period: 0.02    # 50 Hz
         </rosparam>
     </node>
 
@@ -25,7 +27,7 @@
     <node name="robot_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher"
-    /node>
+    />
 
 </launch>
 

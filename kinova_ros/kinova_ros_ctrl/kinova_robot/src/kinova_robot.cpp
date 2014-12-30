@@ -78,7 +78,7 @@ KinovaRobot::KinovaRobot(const std::string& serial)
                     num_fingers_ = 2;
                     break;
                 case 3: // JACO r2
-                    robot_name_  = "jaco2";
+                    robot_name_  = "jaco";
                     num_joints_  = 9;
                     num_fingers_ = 3;
                     break;
