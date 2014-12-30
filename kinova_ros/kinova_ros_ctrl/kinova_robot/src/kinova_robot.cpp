@@ -1,6 +1,7 @@
 #include <kinova_robot/kinova_robot.hpp>
 #include <kinova/KinovaTypes.h>
 #include <kinova/Kinova.API.UsbCommandLayerUbuntu.h>
+#include <sstream>
 
 using namespace kinova_robot;
 
@@ -31,19 +32,26 @@ namespace {
             return d;
         }
     }
+
+    void throwError(const std::string& base, int err)
+    {
+        std::stringstream ss;
+        ss << base << ", error number: " << err;
+        throw KinovaException(ss.str());
+    }
 }
 
 KinovaRobot::KinovaRobot(const std::string& serial)
 {
-    if (InitAPI() != NO_ERROR_KINOVA) {
-        throw KinovaException("Could not initialize API.");
+    int r = InitAPI();
+    if (r != NO_ERROR_KINOVA) {
+        throwError("Could not initialize API", r);
     }
 
     // Enumerate devices, find the one who corresponds to the given serial
     // number.
     typedef std::vector<KinovaDevice> KinovaDevices;
     KinovaDevices devices;
-    int r;
     GetDevices(devices, r);
     if (r != NO_ERROR_KINOVA) {
         throw KinovaException("Could not get the devices list.");
@@ -60,17 +68,17 @@ KinovaRobot::KinovaRobot(const std::string& serial)
             GetQuickStatus(qs);
             switch (qs.RobotType) {
                 case 0: // JACO r1
-                    robot_name_  = "JACO";
+                    robot_name_  = "jaco";
                     num_joints_  = 9;
                     num_fingers_ = 3;
                     break;
                 case 1: // MICO
-                    robot_name_  = "MICO";
+                    robot_name_  = "mico";
                     num_joints_  = 8;
                     num_fingers_ = 2;
                     break;
                 case 3: // JACO r2
-                    robot_name_  = "JACO2";
+                    robot_name_  = "jaco2";
                     num_joints_  = 9;
                     num_fingers_ = 3;
                     break;

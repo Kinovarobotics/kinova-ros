@@ -6,6 +6,7 @@ project(kinova_ros_ctrl)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   hardware_interface
+  controller_manager
   roscpp
 )
 
@@ -116,8 +117,11 @@ add_executable(kinova_node src/kinova_node.cpp)
 # add_dependencies(kinova_ros_ctrl_node kinova_ros_ctrl_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(kinova_node
+target_link_libraries(kinova_ros_ctrl
     kinova_robot
+    ${catkin_LIBRARIES}
+)
+target_link_libraries(kinova_node
     kinova_ros_ctrl
     ${catkin_LIBRARIES}
 )
@@ -137,11 +141,11 @@ target_link_libraries(kinova_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS kinova_ros_ctrl kinova_ros_ctrl_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+install(TARGETS kinova_ros_ctrl kinova_node
+    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
@@ -151,11 +155,10 @@ target_link_libraries(kinova_node
 # )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(FILES
+    kinova_robot/lib/Kinova.API.CommLayerUbuntu.so
+    DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
 #############
 ## Testing ##

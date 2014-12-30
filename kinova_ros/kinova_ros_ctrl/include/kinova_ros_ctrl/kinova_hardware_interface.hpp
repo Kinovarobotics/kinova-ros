@@ -21,6 +21,20 @@ namespace kinova_ros_ctrl
     /// It will automatically connect to a single Kinova robot and expose a set
     /// of position command interfaces for joint-space trajectory control.
     ///
+    /// The interface is meant to be used in a ControllerManager in this
+    /// fashion:
+    ///  KinovaHardwareInterface hw(n, np);    // The robot will be ready.
+    ///  ControllerManager       cm(&hw);
+    ///  ros::Duration           period(0.01); // 100 Hz.
+    ///  while (ros::ok()) {
+    ///    ros::Time start = ros::Time::now();
+    ///    ros::Time end   = start + period;
+    ///    hw.read();
+    ///    cm.update(now, period);
+    ///    hw.write(); 
+    ///    ros::Duration left(end - ros::Time::now()).sleep();
+    ///  }
+    ///
     /// ROS Parameters:
     ///  - serial: The serial number of the robot to connect to.
     ///            If left blank (""), the node will connect to the first 
@@ -30,8 +44,11 @@ namespace kinova_ros_ctrl
     {
     private:
         boost::scoped_ptr<kinova_robot::KinovaRobot> robot_;
+
         hardware_interface::JointStateInterface      jsi_;
         hardware_interface::PositionJointInterface   pji_;
+
+        ros::Timer                                   timer_;
 
     public:
         /// \brief Constructor.
@@ -43,7 +60,11 @@ namespace kinova_ros_ctrl
         /// \brief Destructor.
         ~KinovaHardwareInterface();
         
+        /// \brief Read the state from the robot hardware.
+        void read();
 
+        /// \brief write the command to the robot hardware.
+        void write();
 
     };
 }

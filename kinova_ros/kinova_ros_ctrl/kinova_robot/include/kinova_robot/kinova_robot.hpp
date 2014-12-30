@@ -97,7 +97,7 @@ namespace kinova_robot
         void updateState();
 
         /// \brief Return the current full state of the robot.
-        const RobotState& state();
+        const RobotState& state() const { return state_; }
 
         /// \brief Set the position control point for the robot.
         ///
