@@ -1,0 +1,31 @@
+<launch>
+    <node name="jaco_arm"
+           pkg="kinova_ros_ctrl"
+          type="kinova_node">
+        <rosparam>
+            period: 0.01    # 100 Hz
+        </rosparam>
+    </node>
+
+    <include file="$(find jaco_model)/launch/upload_jaco.launch"/>
+
+    <rosparam>
+        joint_state_controller:
+            type:         joint_state_controller/JointStateController
+            publish_rate: 50
+    </rosparam>
+    
+    <node   name="controller_spawner"
+             pkg="controller_manager"
+            type="spawner"
+          output="screen"
+            args="joint_state_controller"
+    />
+
+    <node name="robot_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher"
+    /node>
+
+</launch>
+

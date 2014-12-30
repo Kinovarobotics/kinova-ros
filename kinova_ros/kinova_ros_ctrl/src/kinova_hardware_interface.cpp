@@ -40,7 +40,13 @@ KinovaHardwareInterface::~KinovaHardwareInterface()
 
 void KinovaHardwareInterface::read()
 {
-    robot_->updateState();
+    if (robot_) {
+        robot_->updateState();
+    } else {
+        ROS_WARN_THROTTLE(1.0, 
+                          "Invalid robot hardware interface, "
+                          "cannot update state.");
+    }
 }
 
 void KinovaHardwareInterface::write()
