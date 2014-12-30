@@ -9,7 +9,7 @@ namespace {
     static const double PI = 3.14159;
 
     /// \brief Clamp an angle (in radians) to 0..2pi.
-    double clampRad(double r)
+    inline double clampRad(double r)
     {
         while (r < 0.0) {
             r += 2 * PI;
@@ -21,13 +21,13 @@ namespace {
     }
 
     /// \brief Convert degrees to radians.
-    double deg2rad(double d)
+    inline double deg2rad(double d)
     {
-        return clampRad(d * PI / 180.0);
+        return (d * PI / 180.0);
     }
 
     /// \brief Convert radians to degrees.
-    double rad2deg(double r)
+    inline double rad2deg(double r)
     {
         return r / PI * 180.0;
     }
@@ -36,13 +36,17 @@ namespace {
     /// The Kinova API returns angle velocities (and torque, apparently) in
     /// the 0..180 range for positive values, and the 360..181 range for
     /// negative ones.
-    double kindeg(double d)
+    inline double kindeg(double d)
     {
+#ifndef DISABLE_KINDEG
         if (d > 180.0) {
             return d - 360.0;
         } else {
             return d;
         }
+#else
+        return d;
+#endif
     }
 
     void throwError(const std::string& base, int err)
@@ -141,12 +145,12 @@ void KinovaRobot::updateState()
     AngularInfo& tq = ap_t.Actuators;
 
     // See Jaco/Mico DH configuration for details on angle conversion.
-    state_.position[0] = deg2rad(180.0 - q.Actuator1);
-    state_.position[1] = deg2rad(q.Actuator2 - 270.0);
-    state_.position[2] = deg2rad( 90.0 - q.Actuator3);
-    state_.position[3] = deg2rad(180.0 - q.Actuator4);
-    state_.position[4] = deg2rad(180.0 - q.Actuator5);
-    state_.position[5] = deg2rad(270.0 - q.Actuator6);
+    state_.position[0] = clampRad(deg2rad(180.0 - q.Actuator1));
+    state_.position[1] = clampRad(deg2rad(q.Actuator2 - 270.0));
+    state_.position[2] = clampRad(deg2rad( 90.0 - q.Actuator3));
+    state_.position[3] = clampRad(deg2rad(180.0 - q.Actuator4));
+    state_.position[4] = clampRad(deg2rad(180.0 - q.Actuator5));
+    state_.position[5] = clampRad(deg2rad(270.0 - q.Actuator6));
 
     // TODO: The need for 'kindeg' might be related to an API issue.
     //       Add a test for this.
