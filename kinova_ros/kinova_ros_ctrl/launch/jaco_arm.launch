@@ -17,6 +17,8 @@
             publish_rate: 50
     </rosparam>
     
+    <!-- NOTE: The spawner hangs when the full launch file is killed, but the
+               controller manager is stopped correctly. -->
     <node   name="controller_spawner"
              pkg="controller_manager"
             type="spawner"

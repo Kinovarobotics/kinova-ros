@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     spinner.start();
 
     ros::Rate rate(period);
-    while (ros::ok()) {
+    while (!ros::isShuttingDown()) {
 
         hwi.read();
         cm.update(ros::Time::now(), period);

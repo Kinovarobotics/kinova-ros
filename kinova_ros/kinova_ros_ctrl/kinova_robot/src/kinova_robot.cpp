@@ -8,10 +8,22 @@ using namespace kinova_robot;
 namespace {
     static const double PI = 3.14159;
 
+    /// \brief Clamp an angle (in radians) to 0..2pi.
+    double clampRad(double r)
+    {
+        while (r < 0.0) {
+            r += 2 * PI;
+        }
+        while (r > 2*PI) {
+            r -= 2 * PI;
+        }
+        return r;
+    }
+
     /// \brief Convert degrees to radians.
     double deg2rad(double d)
     {
-        return d * PI / 180.0;
+        return clampRad(d * PI / 180.0);
     }
 
     /// \brief Convert radians to degrees.
