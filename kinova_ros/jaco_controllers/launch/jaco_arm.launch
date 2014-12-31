@@ -12,29 +12,9 @@
     <include file="$(find jaco_model)/launch/upload_jaco.launch"/>
 
     <rosparam>
-        # Individual controllers (unnecessary for trajectory control):
         joint_state_controller:
             type:         joint_state_controller/JointStateController
             publish_rate: 50
-        j1_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_1
-        j2_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_2
-        j3_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_3
-        j4_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_4
-        j5_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_5
-        j6_pos_controller:
-            type:         position_controllers/JointPositionController
-            joint:        jaco_joint_6
-
         # Joint Trajectory Controller:
         jaco_controller:
             type: position_controllers/JointTrajectoryController
@@ -45,6 +25,7 @@
                 - jaco_joint_4
                 - jaco_joint_5
                 - jaco_joint_6
+        # TODO: Gripper controller for the fingers
     </rosparam>
     
     <!-- NOTE: The spawner hangs when the full launch file is killed, but the
