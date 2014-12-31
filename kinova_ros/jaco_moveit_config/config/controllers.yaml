@@ -1,0 +1,13 @@
+controller_list:
+  - name: "jaco_controller"
+    action_ns: joint_trajectory_action
+    type: FollowJointTrajectory
+    default: true
+    joints:
+        - jaco_joint_1
+        - jaco_joint_2
+        - jaco_joint_3
+        - jaco_joint_4
+        - jaco_joint_5
+        - jaco_joint_6
+
