@@ -3,35 +3,36 @@
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
   jaco_joint_1:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
   jaco_joint_2:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
   jaco_joint_3:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
   jaco_joint_4:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
   jaco_joint_5:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
   jaco_joint_6:
-    has_velocity_limits: false
-    max_velocity: 0
+    has_velocity_limits: true
+    max_velocity: 0.7
     has_acceleration_limits: false
     max_acceleration: 0
+
   jaco_joint_finger_1:
     has_velocity_limits: true
     max_velocity: 5

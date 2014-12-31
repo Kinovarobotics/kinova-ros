@@ -224,14 +224,15 @@ void KinovaRobot::sendCommand()
 
     point.Position.Delay               = 0.0;
     point.Position.Type                = ANGULAR_POSITION;
+    point.Position.HandMode            = POSITION_MODE;
 
     const double& j6o = j6_angle_offset_;
-    point.Position.Actuators.Actuator1 = clampDeg(180.0 - rad2deg(cur_cmd_[0]));
+    point.Position.Actuators.Actuator1 =         (180.0 - rad2deg(cur_cmd_[0]));
     point.Position.Actuators.Actuator2 = clampDeg(270.0 + rad2deg(cur_cmd_[1]));
     point.Position.Actuators.Actuator3 = clampDeg( 90.0 - rad2deg(cur_cmd_[2]));
-    point.Position.Actuators.Actuator4 = clampDeg(180.0 - rad2deg(cur_cmd_[3]));
-    point.Position.Actuators.Actuator5 = clampDeg(180.0 - rad2deg(cur_cmd_[4]));
-    point.Position.Actuators.Actuator6 = clampDeg(j6o   - rad2deg(cur_cmd_[5]));
+    point.Position.Actuators.Actuator4 =         (180.0 - rad2deg(cur_cmd_[3]));
+    point.Position.Actuators.Actuator5 =         (180.0 - rad2deg(cur_cmd_[4]));
+    point.Position.Actuators.Actuator6 =         (j6o   - rad2deg(cur_cmd_[5]));
 
     // TEST: partially closed fingers:
     point.Position.Fingers.Finger1     = 10.0; //cur_cmd_[6];
@@ -240,8 +241,9 @@ void KinovaRobot::sendCommand()
         point.Position.Fingers.Finger3 = 10.0; //cur_cmd_[8];
     }
 
-    SetAngularControl(); // TODO: Make sure this is necessary.
-    if (SendAdvanceTrajectory(point) != NO_ERROR_KINOVA) {
+    EraseAllTrajectories();
+    //SetAngularControl(); // TODO: Make sure this is necessary.
+    if (SendBasicTrajectory(point) != NO_ERROR_KINOVA) {
         throw KinovaException("Could not send command point.");
     }
 
