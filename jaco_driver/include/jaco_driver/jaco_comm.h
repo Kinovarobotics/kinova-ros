@@ -94,12 +94,14 @@ class JacoComm
     void startAPI();
     bool isStopped();
     int numFingers();
+    int robotType();
 
  private:
     boost::recursive_mutex& api_mutex_;
     jaco::JacoAPI jaco_api_;
     bool is_software_stop_;
     int num_fingers_;
+    int robot_type_; 
 };
 
 }  // namespace jaco

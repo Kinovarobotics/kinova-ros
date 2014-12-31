@@ -113,14 +113,15 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
             QuickStatus quick_status;
             getQuickStatus(quick_status);
 
-            if ((quick_status.RobotType != 0) && (quick_status.RobotType != 1) && (quick_status.RobotType != 3))
+            robot_type_ = quick_status.RobotType;
+            if ((robot_type_ != 0) && (robot_type_ != 1) && (robot_type_ != 3))
             {
                 ROS_ERROR("Could not get the type of the arm from the quick status, expected "
                           "either type 0 (JACO), or type 1 (MICO), got %d", quick_status.RobotType);
                 throw JacoCommException("Could not get the type of the arm", quick_status.RobotType);
             }
 
-            switch (quick_status.RobotType) {
+            switch (robot_type_) {
                 case 0:
                 case 3:
                     num_fingers_ = 3;
@@ -747,6 +748,10 @@ int JacoComm::numFingers()
     return num_fingers_;
 }
 
+int JacoComm::robotType()
+{
+    return robot_type_;
+}
 
 /*!
  * \brief Dumps the current joint angles onto the screen.

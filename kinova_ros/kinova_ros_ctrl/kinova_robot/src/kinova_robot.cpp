@@ -95,29 +95,11 @@ KinovaRobot::KinovaRobot(const std::string& serial)
             // Found the device.
             QuickStatus qs;
             GetQuickStatus(qs);
-            switch (qs.RobotType) {
-                case 0: // JACO r1
-                    robot_name_  = "jaco";
-                    num_joints_  = 9;
-                    num_fingers_ = 3;
-                    break;
-                case 1: // MICO
-                    robot_name_  = "mico";
-                    num_joints_  = 8;
-                    num_fingers_ = 2;
-                    break;
-                case 3: // JACO r2
-                    robot_name_  = "jaco";
-                    num_joints_  = 9;
-                    num_fingers_ = 3;
-                    break;
-                default:
-                    throw KinovaException("Unknown device type");
-                    break;
-            };
+            setupRobot(qs.RobotType);
 
-            state_ = RobotState(numJoints());
-            cmd_   = StateVector(numJoints(), 0.0);
+            state_    = RobotState(numJoints());
+            cur_cmd_  = StateVector(numJoints(), 0.0);
+            last_cmd_ = cur_cmd_; 
 
             found = true;
             break;
@@ -135,6 +117,34 @@ KinovaRobot::KinovaRobot(const std::string& serial)
 KinovaRobot::~KinovaRobot()
 {
     CloseAPI();
+}
+
+void KinovaRobot::setupRobot(int type)
+{
+    switch (type) {
+        case 0: // JACO r1
+            robot_name_      = "jaco";
+            num_joints_      = 9;
+            num_fingers_     = 3;
+            j6_angle_offset_ = 260.0;
+            break;
+        case 1: // MICO
+            robot_name_      = "mico";
+            num_joints_      = 8;
+            num_fingers_     = 2;
+            j6_angle_offset_ = 270.0;
+            break;
+        case 3: // JACO r2
+            robot_name_      = "jaco";
+            num_joints_      = 9;
+            num_fingers_     = 3;
+            j6_angle_offset_ = 260.0; // TODO: confirm this.
+            break;
+            break;
+        default:
+            throw KinovaException("Unknown device type");
+            break;
+    };
 }
 
 void KinovaRobot::updateState()
@@ -158,14 +168,13 @@ void KinovaRobot::updateState()
     AngularInfo& tq = ap_t.Actuators;
 
     // See Jaco/Mico DH configuration for details on angle conversion.
+    const double& j6o = j6_angle_offset_;
     state_.position[0] = clampRad(deg2rad(180.0 - q.Actuator1));
     state_.position[1] = clampRad(deg2rad(q.Actuator2 - 270.0));
     state_.position[2] = clampRad(deg2rad( 90.0 - q.Actuator3));
     state_.position[3] = clampRad(deg2rad(180.0 - q.Actuator4));
     state_.position[4] = clampRad(deg2rad(180.0 - q.Actuator5));
-    // NOTE: There seem to be a ~10 deg difference on that link between the Jaco
-    // and the Mico:
-    state_.position[5] = clampRad(deg2rad(260.0 - q.Actuator6));
+    state_.position[5] = clampRad(deg2rad(j6o   - q.Actuator6));
 
     // TODO: The need for 'kindeg' might be related to an API issue.
     //       Add a test for this.
@@ -199,29 +208,36 @@ void KinovaRobot::setPosition(const StateVector& cmd)
     }
 
     // TODO: Angle saturation?
-    cmd_ = cmd;
+    cur_cmd_  = cmd;
 }
 
 void KinovaRobot::sendCommand()
 {
+    // Do not send trajectory points if the command did not change enough - this
+    // seems to saturate the bus.
+    if (!commandChanged()) {
+        return;
+    }
+
     TrajectoryPoint point;
     point.InitStruct();
 
     point.Position.Delay               = 0.0;
     point.Position.Type                = ANGULAR_POSITION;
 
-    point.Position.Actuators.Actuator1 = clampDeg(180.0 - rad2deg(cmd_[0]));
-    point.Position.Actuators.Actuator2 = clampDeg(270.0 + rad2deg(cmd_[1]));
-    point.Position.Actuators.Actuator3 = clampDeg( 90.0 - rad2deg(cmd_[2]));
-    point.Position.Actuators.Actuator4 = clampDeg(180.0 - rad2deg(cmd_[3]));
-    point.Position.Actuators.Actuator5 = clampDeg(180.0 - rad2deg(cmd_[4]));
-    point.Position.Actuators.Actuator6 = clampDeg(260.0 - rad2deg(cmd_[5]));
+    const double& j6o = j6_angle_offset_;
+    point.Position.Actuators.Actuator1 = clampDeg(180.0 - rad2deg(cur_cmd_[0]));
+    point.Position.Actuators.Actuator2 = clampDeg(270.0 + rad2deg(cur_cmd_[1]));
+    point.Position.Actuators.Actuator3 = clampDeg( 90.0 - rad2deg(cur_cmd_[2]));
+    point.Position.Actuators.Actuator4 = clampDeg(180.0 - rad2deg(cur_cmd_[3]));
+    point.Position.Actuators.Actuator5 = clampDeg(180.0 - rad2deg(cur_cmd_[4]));
+    point.Position.Actuators.Actuator6 = clampDeg(j6o   - rad2deg(cur_cmd_[5]));
 
     // TEST: partially closed fingers:
-    point.Position.Fingers.Finger1     = 10.0; // cmd_[6];
-    point.Position.Fingers.Finger2     = 10.0; //cmd_[7];
+    point.Position.Fingers.Finger1     = 10.0; //cur_cmd_[6];
+    point.Position.Fingers.Finger2     = 10.0; //cur_cmd_[7];
     if (numFingers() >= 3) {
-        point.Position.Fingers.Finger3 = 10.0; //cmd_[8];
+        point.Position.Fingers.Finger3 = 10.0; //cur_cmd_[8];
     }
 
     SetAngularControl(); // TODO: Make sure this is necessary.
@@ -229,4 +245,23 @@ void KinovaRobot::sendCommand()
         throw KinovaException("Could not send command point.");
     }
 
+    // Save the last command actually sent:
+    last_cmd_ = cur_cmd_;
+
 }
+
+bool KinovaRobot::commandChanged() const
+{
+    // Check if the squared sum of differences between the last sent command and
+    // the current one is over a certain threshold.
+    static const double EPS = 1e-6;
+
+    double sum = 0.0;
+    for (int i = 0; i < cur_cmd_.size(); ++i) {
+        double d = cur_cmd_[i] - last_cmd_[i];
+        sum += d*d;
+    }
+
+    return sum > EPS;
+}
+

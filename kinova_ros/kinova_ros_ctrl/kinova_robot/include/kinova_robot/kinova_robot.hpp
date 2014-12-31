@@ -63,10 +63,13 @@ namespace kinova_robot
     private:
         std::string robot_name_;
         RobotState  state_;
-        StateVector cmd_;           // In position only!
+        StateVector cur_cmd_;           // In position only!
+        StateVector last_cmd_;
 
         int         num_joints_;
         int         num_fingers_;
+        double      j6_angle_offset_;   // Either 260 or 270 (depends on robot
+                                        // type).
 
     public:
         /// \brief Constructor.
@@ -107,6 +110,11 @@ namespace kinova_robot
 
         /// \brief Update the command point through the API.
         void sendCommand();
+
+    private:
+        void setupRobot(int type);
+        bool commandChanged() const;
+
     };
 }
 
