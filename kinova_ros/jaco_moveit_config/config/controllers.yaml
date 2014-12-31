@@ -1,6 +1,6 @@
 controller_list:
   - name: "jaco_controller"
-    action_ns: joint_trajectory_action
+    action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     default: true
     joints:

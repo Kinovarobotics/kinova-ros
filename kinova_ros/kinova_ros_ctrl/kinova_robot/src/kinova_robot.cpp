@@ -163,7 +163,9 @@ void KinovaRobot::updateState()
     state_.position[2] = clampRad(deg2rad( 90.0 - q.Actuator3));
     state_.position[3] = clampRad(deg2rad(180.0 - q.Actuator4));
     state_.position[4] = clampRad(deg2rad(180.0 - q.Actuator5));
-    state_.position[5] = clampRad(deg2rad(270.0 - q.Actuator6));
+    // NOTE: There seem to be a ~10 deg difference on that link between the Jaco
+    // and the Mico:
+    state_.position[5] = clampRad(deg2rad(260.0 - q.Actuator6));
 
     // TODO: The need for 'kindeg' might be related to an API issue.
     //       Add a test for this.
@@ -213,12 +215,13 @@ void KinovaRobot::sendCommand()
     point.Position.Actuators.Actuator3 = clampDeg( 90.0 - rad2deg(cmd_[2]));
     point.Position.Actuators.Actuator4 = clampDeg(180.0 - rad2deg(cmd_[3]));
     point.Position.Actuators.Actuator5 = clampDeg(180.0 - rad2deg(cmd_[4]));
-    point.Position.Actuators.Actuator6 = clampDeg(270.0 - rad2deg(cmd_[5]));
+    point.Position.Actuators.Actuator6 = clampDeg(260.0 - rad2deg(cmd_[5]));
 
-    point.Position.Fingers.Finger1     = cmd_[6];
-    point.Position.Fingers.Finger2     = cmd_[7];
+    // TEST: partially closed fingers:
+    point.Position.Fingers.Finger1     = 10.0; // cmd_[6];
+    point.Position.Fingers.Finger2     = 10.0; //cmd_[7];
     if (numFingers() >= 3) {
-        point.Position.Fingers.Finger3 = cmd_[8];
+        point.Position.Fingers.Finger3 = 10.0; //cmd_[8];
     }
 
     SetAngularControl(); // TODO: Make sure this is necessary.

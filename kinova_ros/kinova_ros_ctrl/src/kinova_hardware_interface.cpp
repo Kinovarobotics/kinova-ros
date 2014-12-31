@@ -22,9 +22,12 @@ KinovaHardwareInterface::KinovaHardwareInterface(ros::NodeHandle& n,
     typedef hardware_interface::JointHandle      JH;
     for (int i = 0; i < robot_->numJoints(); ++i) {
         std::stringstream jns;
-        jns << robot_->robotName()
-            << "_joint_"
-            << i + 1;
+        jns << robot_->robotName();
+        if (i < 6) {
+            jns << "_joint_"        << i + 1;
+        } else {
+            jns << "_joint_finger_" << i - 5;
+        }
         std::string jn = jns.str();
 
         JSH handle(jn,
