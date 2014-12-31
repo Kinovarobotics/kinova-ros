@@ -5,7 +5,7 @@
           output="screen"
     >
         <rosparam>
-            period: 0.02    # 50 Hz
+            period: 0.10    # 10 Hz
         </rosparam>
     </node>
 

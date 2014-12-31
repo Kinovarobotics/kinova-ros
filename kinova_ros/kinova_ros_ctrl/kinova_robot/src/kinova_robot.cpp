@@ -8,16 +8,29 @@ using namespace kinova_robot;
 namespace {
     static const double PI = 3.14159;
 
-    /// \brief Clamp an angle (in radians) to 0..2pi.
+    /// \brief Clamp an angle (in radians) to -pi..pi.
     inline double clampRad(double r)
     {
-        while (r < 0.0) {
+        while (r < -PI) {
             r += 2 * PI;
         }
-        while (r > 2*PI) {
+        while (r > PI) {
             r -= 2 * PI;
         }
         return r;
+    }
+
+    /// \brief Clamp an angle (in degrees) to 0..360.
+    inline double clampDeg(double d)
+    {
+        while (d < 0) {
+            d += 360.0;
+        }
+        while (d > 360) {
+            d -= 360.0;
+        }
+
+        return d;
     }
 
     /// \brief Convert degrees to radians.
@@ -195,18 +208,12 @@ void KinovaRobot::sendCommand()
     point.Position.Delay               = 0.0;
     point.Position.Type                = ANGULAR_POSITION;
 
-    // TEMP, grab the current position and only apply a few joints while we test:
-    AngularPosition cur_pos;
-    GetAngularPosition(cur_pos);
-    point.Position.Actuators = cur_pos.Actuators;
-
-    //point.Position.Actuators.Actuator1 = 180.0 - rad2deg(cmd_[0]);
-    // J2 seem to have serious issues:
-    //point.Position.Actuators.Actuator2 = clampRad(rad2deg(cmd_[1])) - 270.0;
-    point.Position.Actuators.Actuator3 =  90.0 - rad2deg(clampRad(cmd_[2]));
-    point.Position.Actuators.Actuator4 = 180.0 - rad2deg(clampRad(cmd_[3]));
-    point.Position.Actuators.Actuator5 = 180.0 - rad2deg(clampRad(cmd_[4]));
-    point.Position.Actuators.Actuator6 = 270.0 - rad2deg(clampRad(cmd_[5]));
+    point.Position.Actuators.Actuator1 = clampDeg(180.0 - rad2deg(cmd_[0]));
+    point.Position.Actuators.Actuator2 = clampDeg(270.0 + rad2deg(cmd_[1]));
+    point.Position.Actuators.Actuator3 = clampDeg( 90.0 - rad2deg(cmd_[2]));
+    point.Position.Actuators.Actuator4 = clampDeg(180.0 - rad2deg(cmd_[3]));
+    point.Position.Actuators.Actuator5 = clampDeg(180.0 - rad2deg(cmd_[4]));
+    point.Position.Actuators.Actuator6 = clampDeg(270.0 - rad2deg(cmd_[5]));
 
     point.Position.Fingers.Finger1     = cmd_[6];
     point.Position.Fingers.Finger2     = cmd_[7];
