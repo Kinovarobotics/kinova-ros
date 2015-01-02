@@ -40,6 +40,12 @@ namespace kinova_ros_ctrl
     ///            If left blank (""), the node will connect to the first 
     ///            one found.
     ///            Default: "".
+    ///  - w_skip: Optional throttle of sent commands.
+    ///            If w_skip > 0, the controller will only send 1 in every
+    ///            w_skip loop cycles.
+    ///            This is meant to avoid overflowing the command buffer of the
+    ///            robot.
+    ///            Default: 0 (throttling disabled).
     class KinovaHardwareInterface: public hardware_interface::RobotHW
     {
     private:
@@ -49,6 +55,9 @@ namespace kinova_ros_ctrl
         hardware_interface::PositionJointInterface   pji_;
 
         std::vector<double>                          cmd_;
+
+        int                                          cycle_;
+        int                                          w_skip_;
 
     public:
         /// \brief Constructor.

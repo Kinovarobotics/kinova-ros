@@ -5,7 +5,8 @@ using namespace kinova_ros_ctrl;
 using namespace kinova_robot;
 
 KinovaHardwareInterface::KinovaHardwareInterface(ros::NodeHandle& n,
-                                                 ros::NodeHandle& np)
+                                                 ros::NodeHandle& np):
+    cycle_(0)
 {
     std::string serial;
     np.param("serial", serial, std::string(""));
@@ -16,6 +17,8 @@ KinovaHardwareInterface::KinovaHardwareInterface(ros::NodeHandle& n,
         return;
     }
     
+    np.param("w_skip", w_skip_, 0);
+
     cmd_.resize(robot_->numJoints());
 
     typedef hardware_interface::JointStateHandle JSH;
@@ -74,6 +77,16 @@ void KinovaHardwareInterface::write()
     }
 
     robot_->setPosition(cmd_);
+
+    // Throttling test:
+    if (w_skip_ > 0) {
+        if ((++cycle_ % w_skip_) > 0) {
+            // Only actually send commands 1 every w_skip cycles.
+            return;
+        }
+        cycle_ = 0;
+    }
+
     robot_->sendCommand();
 }
 
