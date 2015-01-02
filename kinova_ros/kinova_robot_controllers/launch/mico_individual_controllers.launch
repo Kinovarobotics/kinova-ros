@@ -6,7 +6,7 @@
     >
         <rosparam>
             period: 0.01   # 100 Hz
-            w_skip:   50   #   2 Hz
+            w_skip:   20   #   5 Hz
         </rosparam>
     </node>
 

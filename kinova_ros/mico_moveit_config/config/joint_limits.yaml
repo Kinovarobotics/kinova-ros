@@ -4,34 +4,34 @@
 joint_limits:
   mico_joint_1:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
   mico_joint_2:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
   mico_joint_3:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
   mico_joint_4:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
   mico_joint_5:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
   mico_joint_6:
     has_velocity_limits: true
-    max_velocity: 0.7
-    has_acceleration_limits: false
-    max_acceleration: 0
+    max_velocity: 0.35
+    has_acceleration_limits: true
+    max_acceleration: 0.35
 
   mico_joint_finger_1:
     has_velocity_limits: true
