@@ -43,7 +43,8 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-    <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <limits effort="30" velocity="0.35"/>
+        <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
 
@@ -52,7 +53,7 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-    <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
      </joint>
     </xacro:macro>
