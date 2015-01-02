@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>jaco_controllers</name>
+  <name>kinova_robot_controllers</name>
   <version>0.0.0</version>
   <description>The kinova_robot_controllers package</description>
 
