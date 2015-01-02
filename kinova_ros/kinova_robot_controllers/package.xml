@@ -2,9 +2,9 @@
 <package>
   <name>jaco_controllers</name>
   <version>0.0.0</version>
-  <description>The jaco_controllers package</description>
+  <description>The kinova_robot_controllers package</description>
 
-  Controller configuration(s) for the Jaco arm from Kinova.
+  Controller configuration(s) for the Jaco and Mico arms from Kinova.
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
