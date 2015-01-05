@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 ### A very basic admittance controller to demonstrate the Wrench output and
-### cartesian velocity input of the Jaco node.
+### cartesian velocity input of the Jaco/Mico node.
+### See the associated launch file for running the complete demo.
 ###
 ### Defines a deadzone box for the applied forces.
 ### When the force exceed the deadzone bounds in a dimension, a cartesian

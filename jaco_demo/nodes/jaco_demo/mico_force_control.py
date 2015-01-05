@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# A basic node to start/stop force control on Kinova arms with force sensors
+# such as Mico.
+# See 'robot' parameter to change the default driver namespace.
 
 import roslib; roslib.load_manifest('jaco_demo')
 import rospy
@@ -8,7 +12,7 @@ from jaco_msgs.srv     import SetForceControlParams, SetForceControlParamsReques
 
 rospy.init_node("force_control")
 
-robot     = rospy.get_param("robot", "jaco")
+robot     = rospy.get_param("robot", "mico")
 
 inertia_lin   = rospy.get_param("inertia_lin",    10.0)
 inertia_ang   = rospy.get_param("inertia_ang",     3.0)

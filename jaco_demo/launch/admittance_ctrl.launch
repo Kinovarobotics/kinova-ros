@@ -1,5 +1,9 @@
 <launch>
-    <arg name="robot" default="jaco"/>
+    <!-- NOTE: This will run on a Jaco arm, but with unexpected results since it
+               does not provide accurate torque feedback. Use at your own risk
+               with something else than the Mico!
+    -->
+    <arg name="robot" default="mico"/>
     <node name="admittance_ctrl"
            pkg="jaco_demo"
           type="admittance_ctrl.py">
