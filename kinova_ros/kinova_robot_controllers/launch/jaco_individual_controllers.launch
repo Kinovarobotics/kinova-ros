@@ -5,7 +5,8 @@
           output="screen"
     >
         <rosparam>
-            period: 0.10   # 10 Hz
+            period: 0.010   # 100 Hz
+            w_skip:    20`  #   5 Hz (write cycle)
         </rosparam>
     </node>
 

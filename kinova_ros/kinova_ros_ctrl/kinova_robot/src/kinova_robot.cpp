@@ -20,6 +20,18 @@ namespace {
         return r;
     }
 
+    /// \brief Clamp an angle (in radians) to -2pi..2pi.
+    inline double clampRd2(double r)
+    {
+        while (r < -2*PI) {
+            r += 2 * PI;
+        }
+        while (r > 2*PI) {
+            r -= 2 * PI;
+        }
+        return r;
+    }
+
     /// \brief Clamp an angle (in degrees) to 0..360.
     inline double clampDeg(double d)
     {
@@ -170,8 +182,8 @@ void KinovaRobot::updateState()
     // See Jaco/Mico DH configuration for details on angle conversion.
     const double& j6o = j6_angle_offset_;
     state_.position[0] = clampRad(deg2rad(180.0 - q.Actuator1));
-    state_.position[1] = clampRad(deg2rad(q.Actuator2 - 270.0));
-    state_.position[2] = clampRad(deg2rad( 90.0 - q.Actuator3));
+    state_.position[1] = clampRd2(deg2rad(q.Actuator2 - 270.0));
+    state_.position[2] = clampRd2(deg2rad( 90.0 - q.Actuator3));
     state_.position[3] = clampRad(deg2rad(180.0 - q.Actuator4));
     state_.position[4] = clampRad(deg2rad(180.0 - q.Actuator5));
     state_.position[5] = clampRad(deg2rad(j6o   - q.Actuator6));

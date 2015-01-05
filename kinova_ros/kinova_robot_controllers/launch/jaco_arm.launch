@@ -5,7 +5,8 @@
           output="screen"
     >
         <rosparam>
-            period: 0.10    # 10 Hz
+            period: 0.01    # 100 Hz
+            w_skip:   10    # Write cycle of 10 Hz
         </rosparam>
     </node>
 
@@ -25,6 +26,26 @@
                 - jaco_joint_4
                 - jaco_joint_5
                 - jaco_joint_6
+            constraints:
+                goal_time: 5.0  # Unusually high
+                jaco_joint_1:
+                    trajectory: 0.60
+                    goal:       0.15
+                jaco_joint_2:
+                    trajectory: 0.60
+                    goal:       0.15
+                jaco_joint_3:
+                    trajectory: 0.60
+                    goal:       0.15
+                jaco_joint_4:
+                    trajectory: 0.60
+                    goal:       0.15
+                jaco_joint_5:
+                    trajectory: 0.60
+                    goal:       0.15
+                jaco_joint_6:
+                    trajectory: 0.60
+                    goal:       0.15
         # TODO: Gripper controller for the fingers
     </rosparam>
     
