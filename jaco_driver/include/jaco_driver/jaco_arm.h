@@ -108,6 +108,7 @@ class JacoArm
     double cartesian_vel_interval_seconds_;
     std::string tf_prefix_;
     double finger_conv_ratio_;
+    bool convert_joint_velocities_;
 
     // State tracking or utility members
     bool cartesian_vel_timer_flag_;

@@ -13,6 +13,25 @@
 #define PI 3.14159265359
 
 
+namespace 
+{
+    /// \brief Convert Kinova-specific angle degree variations (0..180, 360-181) to
+    ///        a more regular representation (0..180, -180..0).
+    inline void convertKinDeg(std::vector<double>& qds)
+    {
+        static const double PI_180 = (PI / 180.0);
+        for (int i = 0; i < qds.size(); ++i) {
+            // Angle velocities from the API are 0..180 for positive values,
+            // and 360..181 for negative ones, in a kind of 2-complement setup.
+            double& qd = qds[i];
+            if (qd > 180.0) {
+                qd -= 360.0;
+            }
+            qd *= PI_180;
+        }
+    }
+}
+
 namespace jaco
 {
 
@@ -52,6 +71,12 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     // Approximative conversion ratio from finger position (0..6000) to joint angle 
     // in radians (0..0.7).
     node_handle_.param("finger_angle_conv_ratio", finger_conv_ratio_, 0.7 / 5000.0);
+
+    // Depending on the API version, the arm might return velocities in the
+    // 0..360 range (0..180 for positive values, 181..360 for negative ones).
+    // This indicates that the ROS node should convert them first before
+    // updating the joint_state topic.
+    node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
 
     joint_names_.resize(JACO_JOINTS_COUNT);
     joint_names_[0] = tf_prefix_ + "joint_1";
@@ -271,7 +296,6 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  */
 void JacoArm::publishJointAngles(void)
 {
-    static const double PI_180 = (PI / 180.0);
     FingerAngles fingers;
     jaco_comm_.getFingerPositions(fingers);
 
@@ -315,15 +339,20 @@ void JacoArm::publishJointAngles(void)
     joint_state.velocity[3] = current_vels.Actuator4;
     joint_state.velocity[4] = current_vels.Actuator5;
     joint_state.velocity[5] = current_vels.Actuator6;
-    for (int i = 0; i < 6; ++i) {
-        // Angle velocities from the API are 0..180 for positive values,
-        // and 360..181 for negative ones, in a kind of 2-complement setup.
-        double& qd = joint_state.velocity[i];
-        if (qd > 180.0) {
-            qd -= 360.0;
-        }
-        qd *= PI_180;
+
+    ROS_DEBUG_THROTTLE(0.1,
+                       "Raw joint velocities: %f %f %f %f %f %f",
+                       joint_state.velocity[0],
+                       joint_state.velocity[1],
+                       joint_state.velocity[2],
+                       joint_state.velocity[3],
+                       joint_state.velocity[4],
+                       joint_state.velocity[5]);
+
+    if (convert_joint_velocities_) {
+        convertKinDeg(joint_state.velocity);
     }
+
     // No velocity for the fingers:
     joint_state.velocity[6] = 0.0;
     joint_state.velocity[7] = 0.0;
@@ -342,6 +371,18 @@ void JacoArm::publishJointAngles(void)
     joint_state.effort[7] = 0.0;
     joint_state.effort[8] = 0.0;
 
+    ROS_DEBUG_THROTTLE(0.1,
+                       "Raw joint torques: %f %f %f %f %f %f",
+                       joint_state.effort[0],
+                       joint_state.effort[1],
+                       joint_state.effort[2],
+                       joint_state.effort[3],
+                       joint_state.effort[4],
+                       joint_state.effort[5]);
+    // Same conversion issue with torque:
+    if (convert_joint_velocities_) {
+        convertKinDeg(joint_state.effort);
+    }
     joint_angles_publisher_.publish(jaco_angles);
     joint_state_publisher_.publish(joint_state);
 }
