@@ -17,18 +17,31 @@ namespace
 {
     /// \brief Convert Kinova-specific angle degree variations (0..180, 360-181) to
     ///        a more regular representation (0..180, -180..0).
-    inline void convertKinDeg(std::vector<double>& qds)
+    inline void convertKinDeg(double& qd)
     {
         static const double PI_180 = (PI / 180.0);
-        for (int i = 0; i < qds.size(); ++i) {
-            // Angle velocities from the API are 0..180 for positive values,
-            // and 360..181 for negative ones, in a kind of 2-complement setup.
-            double& qd = qds[i];
-            if (qd > 180.0) {
-                qd -= 360.0;
-            }
-            qd *= PI_180;
+
+        // Angle velocities from the API are 0..180 for positive values,
+        // and 360..181 for negative ones, in a kind of 2-complement setup.
+        if (qd > 180.0) {
+            qd -= 360.0;
         }
+        qd *= PI_180;
+    }
+
+    inline void convertKinDeg(std::vector<double>& qds)
+    {
+        for (int i = 0; i < qds.size(); ++i) {
+            double& qd = qds[i];
+            convertKinDeg(qd);
+        }
+    }
+
+    inline void convertKinDeg(geometry_msgs::Vector3& qds)
+    {
+        convertKinDeg(qds.x);
+        convertKinDeg(qds.y);
+        convertKinDeg(qds.z);
     }
 }
 
@@ -359,6 +372,7 @@ void JacoArm::publishJointAngles(void)
     joint_state.velocity[8] = 0.0;
 
     // Joint torques (effort)
+    // NOTE: Currently invalid.
     JacoAngles joint_tqs;
     joint_state.effort.resize(9);
     joint_state.effort[0] = joint_tqs.Actuator1;
@@ -379,10 +393,7 @@ void JacoArm::publishJointAngles(void)
                        joint_state.effort[3],
                        joint_state.effort[4],
                        joint_state.effort[5]);
-    // Same conversion issue with torque:
-    if (convert_joint_velocities_) {
-        convertKinDeg(joint_state.effort);
-    }
+
     joint_angles_publisher_.publish(jaco_angles);
     joint_state_publisher_.publish(joint_state);
 }
@@ -420,6 +431,12 @@ void JacoArm::publishToolWrench(void)
     // TODO: Rotate wrench to fit the end effector frame.
     // Right now, the orientation of the wrench is in the API's (base) frame.
     current_wrench.header.frame_id = tf_prefix_ + "api_origin";
+
+
+    // Same conversion issue as with velocities:
+    if (convert_joint_velocities_) {
+        convertKinDeg(current_wrench.wrench.torque);
+    }
 
     tool_wrench_publisher_.publish(current_wrench);
 }
