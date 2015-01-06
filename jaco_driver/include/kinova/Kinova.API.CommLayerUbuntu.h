@@ -78,10 +78,15 @@
 //Header's size of a packet.
 #define PACKET_HEADER_SIZE 8
 
+#define COMM_LAYER_VERSION 10001
+
 //Max character count in our string.
 #define SERIAL_LENGTH 20
 
-//That represents a packet.
+//The maximum devices count that the API can control.
+#define MAX_KINOVA_DEVICE 20
+
+//That represents a packet. As a developper you don't have to use this structure
 struct Packet
 {
 	short IdPacket;
@@ -104,6 +109,17 @@ struct KinovaDevice
 	//the devices.
 	char SerialNumber[SERIAL_LENGTH];
 
+	//The model of the device.
+	char Model[SERIAL_LENGTH];
+
+	//Those variables represents the code version - Major.Minor.Release
+	int VersionMajor;
+	int VersionMinor;
+	int VersionRelease;
+
+	//The type of the device.
+	int DeviceType;
+
 	//This is a device ID used by the API. User should not use it.
 	int DeviceID;
 };
@@ -119,8 +135,10 @@ extern "C" __attribute__ ((visibility ("default"))) Packet SendPacket(Packet &pa
 
 extern "C" __attribute__ ((visibility ("default"))) int ScanForNewDevice();
 
-extern "C" __attribute__ ((visibility ("default"))) int GetDevices(std::vector<KinovaDevice>& list, int &result);
+extern "C" __attribute__ ((visibility ("default"))) int GetDevices(KinovaDevice list[MAX_KINOVA_DEVICE], int &result);
 
 extern "C" __attribute__ ((visibility ("default"))) int SetActiveDevice(KinovaDevice device);
+
+extern "C" __attribute__ ((visibility ("default"))) int GetActiveDevice(KinovaDevice &device);
 
 #endif /* KINOVA_DLL_COMMLAYERUBUNTU_H_ */
