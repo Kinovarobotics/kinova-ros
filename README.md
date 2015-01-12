@@ -1,6 +1,6 @@
 # JACO-ROS
 
-The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
+The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO, JACO2 (see limitations) and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
 
 ## January 2015 Release - What's new
     - New URDF model of the MICO, and various fixes to the JACO.
@@ -222,6 +222,8 @@ This can be done from the command line:
 
     roslaunch jaco_arm_driver jaco_arm.launch use_urdf:=true
 
+NOTE: The URDF model for the JACO2 arm will be available soon.
+
 ## Custom transform publisher (classic and default) mode
 The ``jaco_tf_updater`` begins publishing transform data as soon as it becomes available from the ``jaco_arm_driver node``.
 
@@ -316,23 +318,28 @@ To set the finger positions, use ``grip_workout.py``
 
 
 ## Known Limitations
-1. The ``joint_state`` topic currently reports only the arm position and
+1. Partial support of the JACO2 arm. Control and raw state is available, but the
+will be available later this month.
+For now, the default "jaco_arm.launch" file can be used, but the visualization
+or arm (or forward kinematics in URDF mode) will not be valid.
+
+2. The ``joint_state`` topic currently reports only the arm position and
 velocity. Effort is a placeholder for future compatibility. Depending on your
 firmware version velocity values can be wrong. The behavior of the angle
 velocity conversion can be changed with the "convert_joint_velocities" parameter
 of jaco_arm_driver.
 
-2. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
+3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
-3. After using angular control, the arm may not respond to Cartesian commands (e.g., arm_pose or figer_position) until the arm has been homed.
+4. After using angular control, the arm may not respond to Cartesian commands (e.g., arm_pose or figer_position) until the arm has been homed.
 
-4. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
+5. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
 
-5. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
+6. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
 
-6. Previously, files under ``jaco-ros/jaco_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
+7. Previously, files under ``jaco-ros/jaco_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
 
-7. In certain cases, while commanding the MICO arm using angular commands, the force limits may be exceeded and the arm will stop.  If this occurs, consider increasing the force limits of your arm using JacoSoft, or use shorter movements that put less stress on the arm joints.
+8. In certain cases, while commanding the MICO arm using angular commands, the force limits may be exceeded and the arm will stop.  If this occurs, consider increasing the force limits of your arm using JacoSoft, or use shorter movements that put less stress on the arm joints.
 
 ## Additional Resources
 The transformation equations used to convert from the “DH Parameters” to physical angles are listed in the jaco_kinematics.pdf document, included as part of this package.
