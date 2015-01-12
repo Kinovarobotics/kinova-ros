@@ -210,17 +210,18 @@ Publishing messages to this topic allows for the arm to be controlled using Cart
 
 Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.
 
-## Launch file 
-The jaco_arm.launch or mico_arm.launch files should be run prior to using the JACO arm.  It launches two nodes, ``jaco_arm_driver`` and ``jaco_tf_updater``.  These nodes then perform a number of operations that prepare the arm for use.
+## Launch files
+The jaco_driver package provides two launch files, depending on which robot you want to control.
+The jaco_arm.launch and mico_arm.launch files should be run prior to using the JACO (or MICO) arm.  It launches the main driver node, ``jaco_arm_driver``, and ``jaco_tf_updater`` in classic, non-URDF mode (see next section).  These nodes then perform a number of operations that prepare the arm for use.
 
-On launch, the ``jaco_arm_driver`` announces all of the configurations stored in the JACO arm’s permanent memory.  These are settings that, currently, are most easily set using the Windows-only Kinova GUI.  The fingers may move during initialization, but the arm is not automatically homed. If the arm does not respond after initialization, it may need to be homed.
+On launch, the ``jaco_arm_driver`` announces all of the configurations stored in the arm’s permanent memory.  These are settings that, currently, are most easily set using the Windows-only Kinova GUI.  The fingers may move during initialization, but the arm is not automatically homed. If the arm does not respond after initialization, it may need to be homed.
 
 ## URDF mode
 To enable URDF-based transform publication, set the "use_urdf" launch file
 parameter to 'true'.
 This can be done from the command line:
 
-    roslaunch jaco_arm_driver jaco_arm.launch use_urdf:=true
+    roslaunch jaco_arm_driver [jaco|mico]_arm.launch use_urdf:=true
 
 NOTE: The URDF model for the JACO2 arm will be available soon.
 
