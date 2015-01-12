@@ -2,21 +2,34 @@
 
 The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
 
+## January 2015 Release - What's new
+    - New URDF model of the MICO, and various fixes to the JACO.
+    - Optional URDF-based TF publication (see documentation on launch files).
+    - Publication of joint velocities, see note in limitations section if the
+    values seem wrong.
+    - Access to force control of arms with torque sensors (start, stop and
+      parameters).
+
 ## Overview
 The JACO API is exposed to ROS using a combination of actionlib (for sending trajectory commands to the arm), services (for instant control such as homing the arm or e-stop) and published topics (joint feedback).  The Arm may be commanded using either angular commands or Cartesian co-ordinates.
 
-In addition, a transform publisher enables visualization of the arm via rviz.
+In addition, two techniques are available to visualize the model in your ROS
+environment.
+The custom transform publisher of previous releases is still available, along
+with a URDF-based approach using the JointStates output and robot_state_publisher.
 
 There are three actionlib modules available: ``arm_pose/arm_pose``, ``joint_angles/arm_joint_angles``, and ``fingers/finger_position``.  These server modules accept coordinates which are passed on to the Kinova JACO API for controlling the arm.
 
 The services available are: ``in/home_arm``, ``in/stop``, and ``in/start``.  These services require no input goals, and are intended for quick control of basic arm functions.  When called, home_arm will halt all other movement and return the arm to its "home" position.  The stop service is a software e-stop, which instantly stops the arm and prevents any further movement until the start service is called.
 
-Published topics are: ``out/cartesian_velocity, out/joint_velocity, out/finger_position, out/joint_angles, out/joint_state``, and ``out/tool_position``.  The ``cartesian_velocity`` and ``joint_velocity`` are both subscribers which may be used to set the joint velocity of the arm.  The ``finger_position`` and ``joint_angles`` topics publish the raw angular position of the fingers and joints, respectively, in degrees.  The ``joint_state`` topic publishes via ``sensor_msgs`` the transformed joint angles in radians.  The ``tool_position`` topic publishes the Cartesian co-ordinates of the arm and end effector via ``geometry_msgs``.
+Published topics are: ``out/cartesian_velocity, out/joint_velocity, out/finger_position, out/joint_angles, out/joint_state``, ``out/tool_position``, and ``out/tool_wrench`` for robots with torque sensors.  The ``cartesian_velocity`` and ``joint_velocity`` are both subscribers which may be used to set the joint velocity of the arm.  The ``finger_position`` and ``joint_angles`` topics publish the raw angular position of the fingers and joints, respectively, in degrees.  The ``joint_state`` topic publishes via ``sensor_msgs`` the transformed joint angles in radians.  The ``tool_position`` topic publishes the Cartesian co-ordinates of the arm and end effector via ``geometry_msgs``.
 
 ## JACO-ROS Module Architecture
 The ``jaco_arm_driver`` node acts as an interface between the Kinova JACO C++ API and the various actionservers, message services and topics used to interface with the arm.
 
 The ``jaco_tf_updater`` node subscribes to the jaco_arm_driver node to obtain current joint angle information from the node.  It then publishes a transform which may be used in visualization programs such as rviz.
+This node is now optional and kept for compatibility issues. The URDF-based
+approach is now preferred.
 
 ### Cartesian Control 
 Cartesian control is accomplished via actionserver.  The Cartesian co-ordinates are published as a separate topic. The arm has a maximum reach of about 0.9m (90cm), so the "position" range is about +/-0.9 for all three dimensions.  The three wrist joints are capable of continuous rotation, and therefore capable of being commanded up to +/-174.5 rad. You may want to limit to +/-6.28 rad in software to prevent the joints from rotating excessively.
@@ -141,6 +154,8 @@ Finger control is accomplished via actionserver.  The finger angles are publishe
     float32 finger2 – position of finger 2 in degrees
     float32 finger3 – position of finger 3 in degrees (0 when using the two-fingered MICO)
 
+    The position state of the fingers is also available in the out/joint_state
+    topic.
 
 ### Services 
 These services may be called at any time to enact basic functions on the arm.  They will override any other actions being carried out by the arm.
@@ -163,6 +178,20 @@ When called, this service will disable the software e-stop flag, and restore con
     Topic:  /jaco_arm_driver/in/start   
     Result:  string start_result – a string containing the results of the start service 
 
+#### Start and Stop Force Control
+When called, these services will enable/disable cartesian force control of arms
+with torque sensors.
+
+    Topics: /jaco_arm_driver/in/start_force_control
+    Result: Enable (or disable) force control for robots with torque sensors.
+
+#### Setting Force Control Parameters
+When called, parameters of the cartesian force control algorithm will be changed
+instantly.
+
+    Topic:  /jaco_arm_driver/in/set_force_control_params
+    Result: Instantly change force control parameters. See the Jaco API
+    documentation for details on the meaning of these parameters.
 
 ### Joint Velocity Subscriber
 Publishing messages to this topic allows for the arm to be controlled using joint velocity commands. For example, the following command will cause the arm to spin the sixth joint:
@@ -182,10 +211,18 @@ Publishing messages to this topic allows for the arm to be controlled using Cart
 Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.
 
 ## Launch file 
-The jaco_arm.launch should be run prior to using the JACO arm.  It launches two nodes, ``jaco_arm_driver`` and ``jaco_tf_updater``.  These nodes then perform a number of operations that prepare the arm for use.
+The jaco_arm.launch or mico_arm.launch files should be run prior to using the JACO arm.  It launches two nodes, ``jaco_arm_driver`` and ``jaco_tf_updater``.  These nodes then perform a number of operations that prepare the arm for use.
 
 On launch, the ``jaco_arm_driver`` announces all of the configurations stored in the JACO arm’s permanent memory.  These are settings that, currently, are most easily set using the Windows-only Kinova GUI.  The fingers may move during initialization, but the arm is not automatically homed. If the arm does not respond after initialization, it may need to be homed.
 
+## URDF mode
+To enable URDF-based transform publication, set the "use_urdf" launch file
+parameter to 'true'.
+This can be done from the command line:
+
+    roslaunch jaco_arm_driver jaco_arm.launch use_urdf:=true
+
+## Custom transform publisher (classic and default) mode
 The ``jaco_tf_updater`` begins publishing transform data as soon as it becomes available from the ``jaco_arm_driver node``.
 
 
@@ -279,7 +316,11 @@ To set the finger positions, use ``grip_workout.py``
 
 
 ## Known Limitations
-1. The ``joint_state`` topic currently reports only the arm position.  Velocity and Effort are placeholders for future compatibility.
+1. The ``joint_state`` topic currently reports only the arm position and
+velocity. Effort is a placeholder for future compatibility. Depending on your
+firmware version velocity values can be wrong. The behavior of the angle
+velocity conversion can be changed with the "convert_joint_velocities" parameter
+of jaco_arm_driver.
 
 2. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
