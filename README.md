@@ -196,7 +196,7 @@ instantly.
 ### Joint Velocity Subscriber
 Publishing messages to this topic allows for the arm to be controlled using joint velocity commands. For example, the following command will cause the arm to spin the sixth joint:
 
-    rostopic pub -r 10 /jaco_arm_driver/in/joint_velocity jaco_msgs/JointVelocity 
+    rostopic pub -r 10 /jaco_arm_driver/in/joint_velocity kinova_msgs/JointVelocity 
     "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 0.0, joint5: 0.0, joint6: 10.0}" 
 
 Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.

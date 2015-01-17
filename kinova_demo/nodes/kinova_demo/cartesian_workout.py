@@ -8,7 +8,7 @@ import sys
 import numpy as np
 
 import actionlib
-import jaco_msgs.msg
+import kinova_msgs.msg
 import std_msgs.msg
 import geometry_msgs.msg
 
@@ -18,10 +18,10 @@ import goal_generators
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
     action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_pose/arm_pose'
-    client = actionlib.SimpleActionClient(action_address, jaco_msgs.msg.ArmPoseAction)
+    client = actionlib.SimpleActionClient(action_address, kinova_msgs.msg.ArmPoseAction)
     client.wait_for_server()
 
-    goal = jaco_msgs.msg.ArmPoseGoal()
+    goal = kinova_msgs.msg.ArmPoseGoal()
     goal.pose.header = std_msgs.msg.Header(frame_id=(str(sys.argv[1]) + '_api_origin'))
     goal.pose.pose.position = geometry_msgs.msg.Point(
         x=position[0], y=position[1], z=position[2])

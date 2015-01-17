@@ -192,7 +192,7 @@ bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
 }
 
 
-JacoAngles::JacoAngles(const jaco_msgs::JointAngles &angles)
+JacoAngles::JacoAngles(const kinova_msgs::JointAngles &angles)
 {
     Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
     Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
@@ -214,9 +214,9 @@ JacoAngles::JacoAngles(const AngularInfo &angles)
 }
 
 
-jaco_msgs::JointAngles JacoAngles::constructAnglesMsg()
+kinova_msgs::JointAngles JacoAngles::constructAnglesMsg()
 {
-    jaco_msgs::JointAngles angles;
+    kinova_msgs::JointAngles angles;
     angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
     angles.joint2 = (Actuator2 - 270.0) / (180.0 / M_PI);
     angles.joint3 = (90.0 - Actuator3) / (180.0 / M_PI);
@@ -240,7 +240,7 @@ bool JacoAngles::isCloseToOther(const JacoAngles &other, float tolerance) const
 }
 
 
-FingerAngles::FingerAngles(const jaco_msgs::FingerPosition &position)
+FingerAngles::FingerAngles(const kinova_msgs::FingerPosition &position)
 {
     Finger1 = position.finger1;
     Finger2 = position.finger2;
@@ -256,9 +256,9 @@ FingerAngles::FingerAngles(const FingersPosition &angle)
 }
 
 
-jaco_msgs::FingerPosition FingerAngles::constructFingersMsg()
+kinova_msgs::FingerPosition FingerAngles::constructFingersMsg()
 {
-    jaco_msgs::FingerPosition angles;
+    kinova_msgs::FingerPosition angles;
     angles.finger1 = Finger1;
     angles.finger2 = Finger2;
     angles.finger3 = Finger3;

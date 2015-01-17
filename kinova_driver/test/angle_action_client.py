@@ -5,15 +5,15 @@ import rospy
 
 import actionlib
 
-import jaco_msgs.msg
+import kinova_msgs.msg
 
 import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/arm_joint_angles', jaco_msgs.msg.ArmJointAnglesAction)
+    client = actionlib.SimpleActionClient('/jaco/arm_joint_angles', kinova_msgs.msg.ArmJointAnglesAction)
 
-    goal = jaco_msgs.msg.ArmJointAnglesGoal()
+    goal = kinova_msgs.msg.ArmJointAnglesGoal()
 
     if len(sys.argv) < 7:
         goal.angles.joint1 = 1.5285271406173706 

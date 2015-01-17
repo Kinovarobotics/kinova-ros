@@ -7,7 +7,7 @@ import rospy
 import sys
 
 import actionlib
-import jaco_msgs.msg
+import kinova_msgs.msg
 
 import goal_generators
 
@@ -16,10 +16,10 @@ def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
     action_address = '/' + str(sys.argv[1]) + '_arm_driver/fingers/finger_positions'
     client = actionlib.SimpleActionClient(action_address,
-                                          jaco_msgs.msg.SetFingersPositionAction)
+                                          kinova_msgs.msg.SetFingersPositionAction)
     client.wait_for_server()
 
-    goal = jaco_msgs.msg.SetFingersPositionGoal()
+    goal = kinova_msgs.msg.SetFingersPositionGoal()
     goal.fingers.finger1 = float(finger_positions[0])
     goal.fingers.finger2 = float(finger_positions[1])
 

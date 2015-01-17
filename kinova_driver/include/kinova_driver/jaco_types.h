@@ -49,8 +49,8 @@
 #include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Wrench.h>
-#include <jaco_msgs/JointAngles.h>
-#include <jaco_msgs/FingerPosition.h>
+#include <kinova_msgs/JointAngles.h>
+#include <kinova_msgs/FingerPosition.h>
 
 #include <string>
 
@@ -91,10 +91,10 @@ class JacoAngles : public AngularInfo
 {
  public:
     JacoAngles() {}
-    explicit JacoAngles(const jaco_msgs::JointAngles &angles);
+    explicit JacoAngles(const kinova_msgs::JointAngles &angles);
     explicit JacoAngles(const AngularInfo &angles);
 
-    jaco_msgs::JointAngles constructAnglesMsg();
+    kinova_msgs::JointAngles constructAnglesMsg();
     bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 
@@ -103,10 +103,10 @@ class FingerAngles : public FingersPosition
 {
  public:
     FingerAngles() {}
-    explicit FingerAngles(const jaco_msgs::FingerPosition &position);
+    explicit FingerAngles(const kinova_msgs::FingerPosition &position);
     explicit FingerAngles(const FingersPosition &angle);
 
-    jaco_msgs::FingerPosition constructFingersMsg();
+    kinova_msgs::FingerPosition constructFingersMsg();
     bool isCloseToOther(const FingerAngles &, float tolerance) const;
 };
 

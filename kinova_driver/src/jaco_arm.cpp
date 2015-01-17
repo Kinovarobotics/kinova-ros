@@ -61,11 +61,11 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &JacoArm::stopForceControlCallback, this);
     
     /* Set up Publishers */
-    joint_angles_publisher_ = node_handle_.advertise<jaco_msgs::JointAngles>("out/joint_angles", 2);
+    joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
     joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
     tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>("out/tool_position", 2);
     tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>("out/tool_wrench", 2);
-    finger_position_publisher_ = node_handle_.advertise<jaco_msgs::FingerPosition>("out/finger_position", 2);
+    finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>("out/finger_position", 2);
 
     /* Set up Subscribers*/
     joint_velocity_subscriber_ = node_handle_.subscribe("in/joint_velocity", 1,
@@ -126,7 +126,7 @@ JacoArm::~JacoArm()
 }
 
 
-bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res)
+bool JacoArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res)
 {
     jaco_comm_.homeArm();
     jaco_comm_.initFingers();
@@ -135,7 +135,7 @@ bool JacoArm::homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs
 }
 
 
-void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel)
+void JacoArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)
 {
     if (!jaco_comm_.isStopped())
     {
@@ -162,7 +162,7 @@ void JacoArm::jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& join
  * Instantly stops the arm and prevents further movement until start service is
  * invoked.
  */
-bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
+bool JacoArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
     jaco_comm_.stopAPI();
     res.stop_result = "Arm stopped";
@@ -176,7 +176,7 @@ bool JacoArm::stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop
  *
  * Re-enables control of the arm after a stop.
  */
-bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
+bool JacoArm::startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res)
 {
     jaco_comm_.startAPI();
     res.start_result = "Arm started";
@@ -184,7 +184,7 @@ bool JacoArm::startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::St
     return true;
 }
 
-bool JacoArm::setForceControlParamsCallback(jaco_msgs::SetForceControlParams::Request &req, jaco_msgs::SetForceControlParams::Response &res)
+bool JacoArm::setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req, kinova_msgs::SetForceControlParams::Response &res)
 {
     CartesianInfo inertia, damping, force_min, force_max;
     inertia.X      = req.inertia_linear.x;
@@ -220,14 +220,14 @@ bool JacoArm::setForceControlParamsCallback(jaco_msgs::SetForceControlParams::Re
     return true;
 }
 
-bool JacoArm::startForceControlCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res)
+bool JacoArm::startForceControlCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res)
 {
     jaco_comm_.startForceControl();
     res.start_result = "Start force control requested.";
     return true;
 }
 
-bool JacoArm::stopForceControlCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res)
+bool JacoArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
     jaco_comm_.stopForceControl();
     res.stop_result = "Stop force control requested.";
@@ -315,7 +315,7 @@ void JacoArm::publishJointAngles(void)
     // Query arm for current joint angles
     JacoAngles current_angles;
     jaco_comm_.getJointAngles(current_angles);
-    jaco_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg();
+    kinova_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg();
 
     jaco_angles.joint1 = current_angles.Actuator1;
     jaco_angles.joint2 = current_angles.Actuator2;

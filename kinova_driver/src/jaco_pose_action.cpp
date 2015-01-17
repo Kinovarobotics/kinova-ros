@@ -79,10 +79,10 @@ JacoPoseActionServer::~JacoPoseActionServer()
 }
 
 
-void JacoPoseActionServer::actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &goal)
+void JacoPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &goal)
 {
-    jaco_msgs::ArmPoseFeedback feedback;
-    jaco_msgs::ArmPoseResult result;
+    kinova_msgs::ArmPoseFeedback feedback;
+    kinova_msgs::ArmPoseResult result;
     feedback.pose.header.frame_id = goal->pose.header.frame_id;
     result.pose.header.frame_id = goal->pose.header.frame_id;
 

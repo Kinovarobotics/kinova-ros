@@ -19,13 +19,13 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <ros/ros.h>
-#include <jaco_msgs/cartesian_velocity.h>
+#include <kinova_msgs/cartesian_velocity.h>
 
 using namespace std;
 ros::Publisher pub;
 void TimerCallback(const ros::TimerEvent&)
 {
-	jaco_msgs::cartesian_velocity test_msg;
+	kinova_msgs::cartesian_velocity test_msg;
 
 			test_msg.Velocity_X = 0.0;
 			test_msg.Velocity_Y = 10;
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
 	std::string JointVelocity("CartesianVelocity"); ///String containing the topic name for cartesian commands
 
-	 pub = nh.advertise<jaco_msgs::cartesian_velocity>(JointVelocity,
+	 pub = nh.advertise<kinova_msgs::cartesian_velocity>(JointVelocity,
 			2);
 
 	ros::Timer timer = nh.createTimer(ros::Duration(0.01),TimerCallback);

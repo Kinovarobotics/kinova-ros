@@ -9,7 +9,7 @@ import sys
 import math
 
 import actionlib
-import jaco_msgs.msg
+import kinova_msgs.msg
 
 import goal_generators
 
@@ -18,10 +18,10 @@ def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
     action_address = '/' + str(sys.argv[1]) + '_arm_driver/joint_angles/arm_joint_angles'
     client = actionlib.SimpleActionClient(action_address,
-                                          jaco_msgs.msg.ArmJointAnglesAction)
+                                          kinova_msgs.msg.ArmJointAnglesAction)
     client.wait_for_server()
 
-    goal = jaco_msgs.msg.ArmJointAnglesGoal()
+    goal = kinova_msgs.msg.ArmJointAnglesGoal()
 
     goal.angles.joint1 = angle_set[0]
     goal.angles.joint2 = angle_set[1]

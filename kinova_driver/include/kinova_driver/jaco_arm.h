@@ -19,13 +19,13 @@
 #include <tf/transform_listener.h>
 #include <sensor_msgs/JointState.h>
 
-#include <jaco_msgs/Stop.h>
-#include <jaco_msgs/Start.h>
-#include <jaco_msgs/HomeArm.h>
-#include <jaco_msgs/JointVelocity.h>
-#include <jaco_msgs/FingerPosition.h>
-#include <jaco_msgs/JointAngles.h>
-#include <jaco_msgs/SetForceControlParams.h>
+#include <kinova_msgs/Stop.h>
+#include <kinova_msgs/Start.h>
+#include <kinova_msgs/HomeArm.h>
+#include <kinova_msgs/JointVelocity.h>
+#include <kinova_msgs/FingerPosition.h>
+#include <kinova_msgs/JointAngles.h>
+#include <kinova_msgs/SetForceControlParams.h>
 
 #include <time.h>
 #include <math.h>
@@ -48,19 +48,19 @@ class JacoArm
     JacoArm(JacoComm& arm, const ros::NodeHandle &node_handle);
     ~JacoArm();
 
-    void jointVelocityCallback(const jaco_msgs::JointVelocityConstPtr& joint_vel);
+    void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
     void cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
 
-    bool stopServiceCallback(jaco_msgs::Stop::Request &req, jaco_msgs::Stop::Response &res);
-    bool startServiceCallback(jaco_msgs::Start::Request &req, jaco_msgs::Start::Response &res);
-    bool homeArmServiceCallback(jaco_msgs::HomeArm::Request &req, jaco_msgs::HomeArm::Response &res);
+    bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
+    bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
+    bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
     
-    bool setForceControlParamsCallback(jaco_msgs::SetForceControlParams::Request &req,
-                                       jaco_msgs::SetForceControlParams::Response &res);
-    bool startForceControlCallback(jaco_msgs::Start::Request &req,
-                                   jaco_msgs::Start::Response &res);
-    bool stopForceControlCallback(jaco_msgs::Stop::Request &req,
-                                  jaco_msgs::Stop::Response &res);
+    bool setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req,
+                                       kinova_msgs::SetForceControlParams::Response &res);
+    bool startForceControlCallback(kinova_msgs::Start::Request &req,
+                                   kinova_msgs::Start::Response &res);
+    bool stopForceControlCallback(kinova_msgs::Stop::Request &req,
+                                  kinova_msgs::Stop::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);

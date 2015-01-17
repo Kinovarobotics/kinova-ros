@@ -5,7 +5,7 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   actionlib
   actionlib_msgs
   geometry_msgs
-  jaco_msgs
+  kinova_msgs
   roscpp
   rospy
   sensor_msgs
@@ -21,7 +21,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES kinova_driver
-  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs jaco_msgs roscpp rospy sensor_msgs std_msgs tf
+  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs kinova_msgs roscpp rospy sensor_msgs std_msgs tf
 #  DEPENDS system_lib
 )
 

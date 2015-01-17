@@ -49,7 +49,7 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 
-#include <jaco_msgs/ArmJointAnglesAction.h>
+#include <kinova_msgs/ArmJointAnglesAction.h>
 
 #include "kinova_driver/jaco_comm.h"
 
@@ -63,12 +63,12 @@ class JacoAnglesActionServer
     JacoAnglesActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoAnglesActionServer();
 
-    void actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &);
+    void actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
-    actionlib::SimpleActionServer<jaco_msgs::ArmJointAnglesAction> action_server_;
+    actionlib::SimpleActionServer<kinova_msgs::ArmJointAnglesAction> action_server_;
 
     ros::Time last_nonstall_time_;
     JacoAngles last_nonstall_angles_;

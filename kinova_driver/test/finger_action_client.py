@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 
-import roslib; roslib.load_manifest('jaco_msgs')
+import roslib; roslib.load_manifest('kinova_msgs')
 import rospy
 
 import actionlib
 
-import jaco_msgs.msg
+import kinova_msgs.msg
 
 import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/finger_joint_angles', jaco_msgs.msg.SetFingersPositionAction)
+    client = actionlib.SimpleActionClient('/jaco/finger_joint_angles', kinova_msgs.msg.SetFingersPositionAction)
 
-    goal = jaco_msgs.msg.SetFingersPositionGoal()
+    goal = kinova_msgs.msg.SetFingersPositionGoal()
 
     if len(sys.argv) < 4:
         goal.fingers.finger1 = 4000

@@ -30,7 +30,7 @@ JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
 }
 
 
-void JacoTFTree::jointAnglesMsgHandler(const jaco_msgs::JointAnglesConstPtr& joint_angles)
+void JacoTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles)
 {
     current_angles_.joint1 = joint_angles->joint1;
     current_angles_.joint2 = joint_angles->joint2;

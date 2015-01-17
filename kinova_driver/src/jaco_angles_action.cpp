@@ -76,10 +76,10 @@ JacoAnglesActionServer::~JacoAnglesActionServer()
 }
 
 
-void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
+void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
-    jaco_msgs::ArmJointAnglesFeedback feedback;
-    jaco_msgs::ArmJointAnglesResult result;
+    kinova_msgs::ArmJointAnglesFeedback feedback;
+    kinova_msgs::ArmJointAnglesResult result;
     JacoAngles current_joint_angles;
     ros::Time current_time = ros::Time::now();
 

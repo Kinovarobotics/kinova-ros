@@ -51,7 +51,7 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 
-#include <jaco_msgs/ArmPoseAction.h>
+#include <kinova_msgs/ArmPoseAction.h>
 
 #include <string>
 #include "kinova_driver/jaco_comm.h"
@@ -66,12 +66,12 @@ class JacoPoseActionServer
     JacoPoseActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoPoseActionServer();
 
-    void actionCallback(const jaco_msgs::ArmPoseGoalConstPtr &);
+    void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
-    actionlib::SimpleActionServer<jaco_msgs::ArmPoseAction> action_server_;
+    actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
     tf::TransformListener listener;
 
     ros::Time last_nonstall_time_;

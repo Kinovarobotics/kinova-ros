@@ -73,7 +73,7 @@ JacoFingersActionServer::~JacoFingersActionServer()
 }
 
 
-void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &goal)
+void JacoFingersActionServer::actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &goal)
 {
     if ((arm_comm_.numFingers() < 3) && (goal->fingers.finger3 != 0.0))
     {
@@ -82,8 +82,8 @@ void JacoFingersActionServer::actionCallback(const jaco_msgs::SetFingersPosition
                  "should be set to zero or you make experience delays in action results.");
     }
 
-    jaco_msgs::SetFingersPositionFeedback feedback;
-    jaco_msgs::SetFingersPositionResult result;
+    kinova_msgs::SetFingersPositionFeedback feedback;
+    kinova_msgs::SetFingersPositionResult result;
     FingerAngles current_finger_positions;
     ros::Time current_time = ros::Time::now();
 

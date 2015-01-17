@@ -18,7 +18,7 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
-#include "jaco_msgs/JointAngles.h"
+#include "kinova_msgs/JointAngles.h"
 
 
 namespace jaco
@@ -30,12 +30,12 @@ class JacoTFTree
     explicit JacoTFTree(ros::NodeHandle nh);
 
  private:
-    void jointAnglesMsgHandler(const jaco_msgs::JointAnglesConstPtr& joint_angles);
+    void jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles);
     void calculatePostion(void);
     void tfUpdateHandler(const ros::TimerEvent&);
 
     jaco::JacoKinematics kinematics_;
-    jaco_msgs::JointAngles current_angles_;
+    kinova_msgs::JointAngles current_angles_;
     ros::Time last_angle_update_;
     ros::Subscriber joint_angles_subscriber_;
     ros::Timer tf_update_timer_;

@@ -8,7 +8,7 @@ import roslib; roslib.load_manifest('kinova_demo')
 import rospy
 
 from geometry_msgs.msg import Vector3
-from jaco_msgs.srv     import SetForceControlParams, SetForceControlParamsRequest, Start, Stop
+from kinova_msgs.srv     import SetForceControlParams, SetForceControlParamsRequest, Start, Stop
 
 rospy.init_node("force_control")
 

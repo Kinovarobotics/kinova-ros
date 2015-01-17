@@ -49,7 +49,7 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 
-#include <jaco_msgs/SetFingersPositionAction.h>
+#include <kinova_msgs/SetFingersPositionAction.h>
 
 #include "kinova_driver/jaco_comm.h"
 
@@ -63,12 +63,12 @@ class JacoFingersActionServer
     JacoFingersActionServer(JacoComm &, const ros::NodeHandle &n);
     ~JacoFingersActionServer();
 
-    void actionCallback(const jaco_msgs::SetFingersPositionGoalConstPtr &);
+    void actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
-    actionlib::SimpleActionServer<jaco_msgs::SetFingersPositionAction> action_server_;
+    actionlib::SimpleActionServer<kinova_msgs::SetFingersPositionAction> action_server_;
 
     ros::Time last_nonstall_time_;
     jaco::FingerAngles last_nonstall_finger_positions_;

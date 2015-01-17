@@ -6,7 +6,7 @@ project(kinova_demo)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   kinova_driver
-  jaco_msgs
+  kinova_msgs
   std_msgs
   geometry_msgs
   roscpp
@@ -30,7 +30,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES kinova_demo
-  CATKIN_DEPENDS kinova_driver jaco_msgs roscpp rospy std_msgs geometry_msgs
+  CATKIN_DEPENDS kinova_driver kinova_msgs roscpp rospy std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
