@@ -31,7 +31,7 @@
 ###  - vel_max:  Maximum velocity in any dimension. Default: 0.1.
 ###  - period:   Update period, in s. Default: 0.10 s (10 Hz)
 
-import roslib; roslib.load_manifest('jaco_demo')
+import roslib; roslib.load_manifest('kinova_demo')
 import rospy
 
 from geometry_msgs.msg import Wrench, WrenchStamped, Twist, TwistStamped

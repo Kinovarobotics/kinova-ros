@@ -293,29 +293,29 @@ To obtain the arm’s position in Cartesian units in a standard ``geometry_msgs`
 
 
 ### Arm Control
-Several sample python script action clients are available for manually controlling the arm. These scripts are located in the ``jaco_demo`` package.
+Several sample python script action clients are available for manually controlling the arm. These scripts are located in the ``kinova_demo`` package.
 
 To set the joint angles using DH “transformed” angles in radians, use ``joint_angle_workout.py``
 
-    rosrun jaco_demo joint_angle_workout.py node_name random num        - randomly generate num joint angle sets
-    rosrun jaco_demo joint_angle_workout.py node_name file_path         - use poses from file
-    rosrun jaco_demo joint_angle_workout.py node_name j1 j2 j3 j4 j5 j6 - use these specific angles
-    e.g., rosrun jaco_demo joint_angle_workout.py jaco random 10
+    rosrun kinova_demo joint_angle_workout.py node_name random num        - randomly generate num joint angle sets
+    rosrun kinova_demo joint_angle_workout.py node_name file_path         - use poses from file
+    rosrun kinova_demo joint_angle_workout.py node_name j1 j2 j3 j4 j5 j6 - use these specific angles
+    e.g., rosrun kinova_demo joint_angle_workout.py jaco random 10
 
 
 To set the arm position using Cartesian co-ordinates, use ``cartesian_workout.py``
 
-    rosrun jaco_demo cartesian_workout.py node_name random num          - randomly generate num poses
-    rosrun jaco_demo cartesian_workout.py node_name file_path           - use poses from file
-    rosrun jaco_demo cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose
-    e.g., rosrun jaco_demo cartesian_workout.py jaco -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525 
+    rosrun kinova_demo cartesian_workout.py node_name random num          - randomly generate num poses
+    rosrun kinova_demo cartesian_workout.py node_name file_path           - use poses from file
+    rosrun kinova_demo cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose
+    e.g., rosrun kinova_demo cartesian_workout.py jaco -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525 
 
 To set the finger positions, use ``grip_workout.py``
 
-    rosrun jaco_demo grip_workout.py node_name random num   - randomly generate num poses
-    rosrun jaco_demo grip_workout.py jaco f1 f2 f3          - use that specific pose
-    rosrun jaco_demo grip_workout.py mico f1 f2             - use that specific pose
-    e.g., rosrun jaco_demo grip_workout.py jaco random 10
+    rosrun kinova_demo grip_workout.py node_name random num   - randomly generate num poses
+    rosrun kinova_demo grip_workout.py jaco f1 f2 f3          - use that specific pose
+    rosrun kinova_demo grip_workout.py mico f1 f2             - use that specific pose
+    e.g., rosrun kinova_demo grip_workout.py jaco random 10
 
 
 ## Known Limitations

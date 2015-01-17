@@ -4,7 +4,7 @@
 # such as Mico.
 # See 'robot' parameter to change the default driver namespace.
 
-import roslib; roslib.load_manifest('jaco_demo')
+import roslib; roslib.load_manifest('kinova_demo')
 import rospy
 
 from geometry_msgs.msg import Vector3

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(jaco_demo)
+project(kinova_demo)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -29,7 +29,7 @@ catkin_python_setup()
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES jaco_demo
+#  LIBRARIES kinova_demo
   CATKIN_DEPENDS kinova_driver jaco_msgs roscpp rospy std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
@@ -52,8 +52,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  nodes/jaco_demo/cartesian_workout.py
-  nodes/jaco_demo/grip_workout.py
-  nodes/jaco_demo/joint_angle_workout.py
+  nodes/kinova_demo/cartesian_workout.py
+  nodes/kinova_demo/grip_workout.py
+  nodes/kinova_demo/joint_angle_workout.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

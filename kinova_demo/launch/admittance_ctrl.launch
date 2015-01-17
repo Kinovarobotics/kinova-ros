@@ -5,7 +5,7 @@
     -->
     <arg name="robot" default="mico"/>
     <node name="admittance_ctrl"
-           pkg="jaco_demo"
+           pkg="kinova_demo"
           type="admittance_ctrl.py">
         <remap from="wrench"  to="/$(arg robot)_arm_driver/out/tool_wrench"/>
         <remap from="cmd_vel" to="/$(arg robot)_arm_driver/in/cartesian_velocity"/>
