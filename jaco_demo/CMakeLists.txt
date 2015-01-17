@@ -5,7 +5,7 @@ project(jaco_demo)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  jaco_driver
+  kinova_driver
   jaco_msgs
   std_msgs
   geometry_msgs
@@ -30,7 +30,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES jaco_demo
-  CATKIN_DEPENDS jaco_driver jaco_msgs roscpp rospy std_msgs geometry_msgs
+  CATKIN_DEPENDS kinova_driver jaco_msgs roscpp rospy std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 

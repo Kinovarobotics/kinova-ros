@@ -211,7 +211,7 @@ Publishing messages to this topic allows for the arm to be controlled using Cart
 Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.
 
 ## Launch files
-The jaco_driver package provides two launch files, depending on which robot you want to control.
+The kinova_driver package provides two launch files, depending on which robot you want to control.
 The jaco_arm.launch and mico_arm.launch files should be run prior to using the JACO (or MICO) arm.  It launches the main driver node, ``jaco_arm_driver``, and ``jaco_tf_updater`` in classic, non-URDF mode (see next section).  These nodes then perform a number of operations that prepare the arm for use.
 
 On launch, the ``jaco_arm_driver`` announces all of the configurations stored in the arm’s permanent memory.  These are settings that, currently, are most easily set using the Windows-only Kinova GUI.  The fingers may move during initialization, but the arm is not automatically homed. If the arm does not respond after initialization, it may need to be homed.
@@ -237,20 +237,20 @@ To make ros-jaco part of your workspace, follow these steps (assuming your works
     cd ~/catkin
     catkin_make
 
-To access the arm via usb copy the udev rule file ``99-jaco-arm.rules`` from ``<your_workspace>/ros-jaco-arm/jaco_driver/udev`` to ``/etc/udev/rules.d/``:
+To access the arm via usb copy the udev rule file ``99-jaco-arm.rules`` from ``<your_workspace>/ros-jaco-arm/kinova_driver/udev`` to ``/etc/udev/rules.d/``:
 
-    sudo cp jaco_driver/udev/99-jaco-arm.rules /etc/udev/rules.d/
+    sudo cp kinova_driver/udev/99-jaco-arm.rules /etc/udev/rules.d/
 
 If you would like the ``jaco_arm_driver`` and ``jaco_tf_updater nodes`` to launch automatically when ROS is started, copy the ``jaco_arm.launch`` file contained in the ``/launch`` folder into the relevant ``/core.d`` folder.
 
 
 ### Using Multiple Arms
-This version of ``jaco-ros`` supports multiple arms. In order to use multiple arms you must set the the ``serial_number`` parameter for that arm and a ``tf_prefix`` for both the ``arm_driver`` node and the ``tf_updater`` node. For example, include the following lines in the launch file between ``<node pkg="jaco_driver" type="jaco_arm_driver" ...>`` and ``</node>``:
+This version of ``jaco-ros`` supports multiple arms. In order to use multiple arms you must set the the ``serial_number`` parameter for that arm and a ``tf_prefix`` for both the ``arm_driver`` node and the ``tf_updater`` node. For example, include the following lines in the launch file between ``<node pkg="kinova_driver" type="jaco_arm_driver" ...>`` and ``</node>``:
 
     <param name="serial_number" value="PJ00123456789012345" />
     <param name="arm_pose/tf_prefix" value="jaco_" />
 
-And the following line in the launch file between ``<node pkg="jaco_driver" type="jaco_tf_updater" ...>`` and ``</node>``:
+And the following line in the launch file between ``<node pkg="kinova_driver" type="jaco_tf_updater" ...>`` and ``</node>``:
 
     <param name="tf_prefix" value="jaco_" />
 
@@ -338,7 +338,7 @@ of jaco_arm_driver.
 
 6. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
 
-7. Previously, files under ``jaco-ros/jaco_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
+7. Previously, files under ``jaco-ros/kinova_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
 
 8. In certain cases, while commanding the MICO arm using angular commands, the force limits may be exceeded and the arm will stop.  If this occurs, consider increasing the force limits of your arm using JacoSoft, or use shorter movements that put less stress on the arm joints.
 

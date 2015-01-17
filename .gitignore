@@ -53,4 +53,4 @@ kvh_driver/src/kvh_driver/
 *.pyc
 
 # Project specific
-jaco_driver/jaco_msgs
+kinova_driver/jaco_msgs
