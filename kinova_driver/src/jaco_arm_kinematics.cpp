@@ -9,7 +9,7 @@
 #include <string>
 
 
-namespace jaco
+namespace kinova
 {
 
 std::string concatTfName(const std::string& prefix, const std::string name)
@@ -346,4 +346,4 @@ void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float
                                                     concatTfName(tf_prefix_, "link_finger_3")));
 }
 
-}  // namespace jaco
+}  // namespace kinova

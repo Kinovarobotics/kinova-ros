@@ -19,7 +19,7 @@
 #include "kinova/KinovaTypes.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 #define JACO_USB_LIBRARY "Kinova.API.USBCommandLayerUbuntu.so"
@@ -73,5 +73,5 @@ class JacoAPI
     int (*setActuatorPID)(unsigned int, float, float, float);
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_API_H

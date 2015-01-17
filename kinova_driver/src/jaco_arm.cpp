@@ -45,7 +45,7 @@ namespace
     }
 }
 
-namespace jaco
+namespace kinova
 {
 
 JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
@@ -460,4 +460,4 @@ void JacoArm::statusTimer(const ros::TimerEvent&)
     publishFingerPosition();
 }
 
-}  // namespace jaco
+}  // namespace kinova

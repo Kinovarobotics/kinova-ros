@@ -49,7 +49,7 @@
 #include <string>
 
 
-namespace jaco
+namespace kinova
 {
 
 JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
@@ -180,4 +180,4 @@ void JacoPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr
     }
 }
 
-}  // namespace jaco
+}  // namespace kinova

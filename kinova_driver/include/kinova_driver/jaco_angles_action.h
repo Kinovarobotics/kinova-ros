@@ -54,7 +54,7 @@
 #include "kinova_driver/jaco_comm.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoAnglesActionServer
@@ -80,5 +80,5 @@ class JacoAnglesActionServer
     float tolerance_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_ANGLES_ACTION_H

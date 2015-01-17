@@ -48,7 +48,7 @@
 #include "kinova_driver/jaco_types.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
@@ -166,4 +166,4 @@ void JacoFingersActionServer::actionCallback(const kinova_msgs::SetFingersPositi
     }
 }
 
-}  // namespace jaco
+}  // namespace kinova

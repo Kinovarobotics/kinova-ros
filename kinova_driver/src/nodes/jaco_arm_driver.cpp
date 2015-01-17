@@ -24,18 +24,18 @@ int main(int argc, char **argv)
     {
         try
         {
-            jaco::JacoComm comm(nh, api_mutex, is_first_init);
-            jaco::JacoArm jaco(comm, nh);
-            jaco::JacoPoseActionServer pose_server(comm, nh);
-            jaco::JacoAnglesActionServer angles_server(comm, nh);
-            jaco::JacoFingersActionServer fingers_server(comm, nh);
+            kinova::JacoComm comm(nh, api_mutex, is_first_init);
+            kinova::JacoArm jaco(comm, nh);
+            kinova::JacoPoseActionServer pose_server(comm, nh);
+            kinova::JacoAnglesActionServer angles_server(comm, nh);
+            kinova::JacoFingersActionServer fingers_server(comm, nh);
 
             ros::spin();
         }
         catch(const std::exception& e)
         {
             ROS_ERROR_STREAM(e.what());
-            jaco::JacoAPI api;
+            kinova::JacoAPI api;
             boost::recursive_mutex::scoped_lock lock(api_mutex);
             api.closeAPI();
             ros::Duration(1.0).sleep();

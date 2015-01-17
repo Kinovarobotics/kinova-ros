@@ -9,7 +9,7 @@
 #include <kinova_driver/jaco_tf_updater.h>
 
 
-namespace jaco
+namespace kinova
 {
 
 JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
@@ -65,7 +65,7 @@ void JacoTFTree::tfUpdateHandler(const ros::TimerEvent&)
     }
 }
 
-}  // namespace jaco
+}  // namespace kinova
 
 
 int main(int argc, char **argv)
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "jaco_tf_updater");
     ros::NodeHandle nh("~");
 
-    jaco::JacoTFTree JacoTF(nh);
+    kinova::JacoTFTree JacoTF(nh);
     ros::spin();
 
     return 0;

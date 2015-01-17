@@ -36,7 +36,7 @@
 #include "kinova_driver/jaco_api.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 // Maximum number of joints on Jaco-like robots:
@@ -123,5 +123,5 @@ class JacoArm
     std::vector< std::string > joint_names_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_ARM_H

@@ -51,7 +51,7 @@
 #include "kinova_driver/jaco_types.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
@@ -162,4 +162,4 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
     }
 }
 
-}  // namespace jaco
+}  // namespace kinova

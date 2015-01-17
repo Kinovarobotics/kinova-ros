@@ -51,7 +51,7 @@
 #include <string>
 
 
-namespace jaco
+namespace kinova
 {
 
 // A few helper functions
@@ -275,4 +275,4 @@ bool FingerAngles::isCloseToOther(const FingerAngles &other, float tolerance) co
     return status;
 }
 
-}  // namespace jaco
+}  // namespace kinova

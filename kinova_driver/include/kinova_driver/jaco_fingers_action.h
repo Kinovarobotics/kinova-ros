@@ -54,7 +54,7 @@
 #include "kinova_driver/jaco_comm.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoFingersActionServer
@@ -71,7 +71,7 @@ class JacoFingersActionServer
     actionlib::SimpleActionServer<kinova_msgs::SetFingersPositionAction> action_server_;
 
     ros::Time last_nonstall_time_;
-    jaco::FingerAngles last_nonstall_finger_positions_;
+    kinova::FingerAngles last_nonstall_finger_positions_;
 
     // Parameters
     double stall_interval_seconds_;
@@ -80,5 +80,5 @@ class JacoFingersActionServer
     float tolerance_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_FINGERS_ACTION_H

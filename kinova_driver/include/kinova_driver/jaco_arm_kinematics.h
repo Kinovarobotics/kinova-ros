@@ -30,7 +30,7 @@
 /* 6 * 2*aa       * 0      * d6b * q6     */
 /******************************************/
 
-namespace jaco
+namespace kinova
 {
 
 class JacoKinematics
@@ -63,5 +63,5 @@ class JacoKinematics
     double j6_bend_degrees_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_ARM_KINEMATICS_H

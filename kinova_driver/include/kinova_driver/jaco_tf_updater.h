@@ -21,7 +21,7 @@
 #include "kinova_msgs/JointAngles.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoTFTree
@@ -34,12 +34,12 @@ class JacoTFTree
     void calculatePostion(void);
     void tfUpdateHandler(const ros::TimerEvent&);
 
-    jaco::JacoKinematics kinematics_;
+    kinova::JacoKinematics kinematics_;
     kinova_msgs::JointAngles current_angles_;
     ros::Time last_angle_update_;
     ros::Subscriber joint_angles_subscriber_;
     ros::Timer tf_update_timer_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_TF_UPDATER_H

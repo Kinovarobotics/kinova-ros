@@ -55,7 +55,7 @@
 #include <string>
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoException : public std::exception {};
@@ -110,5 +110,5 @@ class FingerAngles : public FingersPosition
     bool isCloseToOther(const FingerAngles &, float tolerance) const;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_TYPES_H

@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace jaco
+namespace kinova
 {
 
 void* checkApiInit(void * usbLib, const char* name)
@@ -104,4 +104,4 @@ JacoAPI::JacoAPI(void)
     setActuatorPID = (int (*)(unsigned int, float, float, float))checkApiInit(usbLib, "SetActuatorPID");
 }
 
-}  // namespace jaco
+}  // namespace kinova

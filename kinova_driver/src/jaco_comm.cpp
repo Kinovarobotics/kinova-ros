@@ -49,7 +49,7 @@
 #include <vector>
 
 
-namespace jaco
+namespace kinova
 {
 
 JacoComm::JacoComm(const ros::NodeHandle& node_handle,
@@ -820,4 +820,4 @@ bool JacoComm::isStopped()
 }
 
 
-}  // namespace jaco
+}  // namespace kinova

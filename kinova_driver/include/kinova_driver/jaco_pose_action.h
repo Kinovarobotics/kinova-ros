@@ -57,7 +57,7 @@
 #include "kinova_driver/jaco_comm.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoPoseActionServer
@@ -75,7 +75,7 @@ class JacoPoseActionServer
     tf::TransformListener listener;
 
     ros::Time last_nonstall_time_;
-    jaco::JacoPose last_nonstall_pose_;
+    kinova::JacoPose last_nonstall_pose_;
 
     std::string api_origin_frame_;
 
@@ -87,6 +87,6 @@ class JacoPoseActionServer
     std::string tf_prefix_;
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_POSE_ACTION_H_s
 

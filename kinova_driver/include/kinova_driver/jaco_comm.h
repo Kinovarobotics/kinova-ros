@@ -54,7 +54,7 @@
 #include "kinova_driver/jaco_api.h"
 
 
-namespace jaco
+namespace kinova
 {
 
 class JacoComm
@@ -98,11 +98,11 @@ class JacoComm
 
  private:
     boost::recursive_mutex& api_mutex_;
-    jaco::JacoAPI jaco_api_;
+    kinova::JacoAPI jaco_api_;
     bool is_software_stop_;
     int num_fingers_;
     int robot_type_; 
 };
 
-}  // namespace jaco
+}  // namespace kinova
 #endif  // JACO_DRIVER_JACO_COMM_H
