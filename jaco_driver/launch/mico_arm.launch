@@ -44,7 +44,7 @@
   </group>
   
   <group if="$(arg use_urdf)">
-    <include file="$(find jaco_model)/launch/upload_mico.launch"/>
+    <include file="$(find kinova_description)/launch/upload_mico.launch"/>
     <node name="mico_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">

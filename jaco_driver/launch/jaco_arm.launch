@@ -17,7 +17,7 @@
   </group>
 
   <group if="$(arg use_urdf)">
-    <include file="$(find jaco_model)/launch/upload_jaco.launch"/>
+    <include file="$(find kinova_description)/launch/upload_jaco.launch"/>
     <node name="jaco_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">
