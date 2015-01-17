@@ -19,23 +19,23 @@
     <property name="J_PI" value="3.1415926535897931" />
 
     <xacro:macro name="jaco_link" params="link_name">
-    <link name="${link_name}">
-          <visual>
-                     <geometry>
-                             <mesh
-              filename="package://jaco_model/meshes/${link_name}.dae"/>
-                    </geometry>
-                    <material name="carbon_fiber">
-                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-                    </material>
+        <link name="${link_name}">
+            <visual>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
+                <material name="carbon_fiber">
+                    <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                </material>
             </visual>
             <collision>
-                    <geometry>
-                             <mesh
-              filename="package://jaco_model/meshes/${link_name}.dae"/>
-                    </geometry>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
             </collision>
-    </link>
+        </link>
     </xacro:macro>
 
     <xacro:macro name="jaco_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit">

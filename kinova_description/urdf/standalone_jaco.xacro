@@ -13,9 +13,9 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="mico">
+	xmlns:xacro="http://ros.org/wiki/xacro" name="jaco">
 
-  <xacro:include filename="$(find jaco_model)/urdf/mico_arm.xacro" />
+  <xacro:include filename="$(find kinova_description)/urdf/jaco_arm.xacro" />
 
 <link name="root">
       <visual>
@@ -33,6 +33,6 @@
       </collision>     
     </link>
 
-<xacro:mico_arm  parent="root"/>
+<xacro:jaco_arm  parent="root"/>
 
 </robot>

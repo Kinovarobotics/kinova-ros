@@ -17,7 +17,7 @@
 
 
 
-  <xacro:include filename="$(find jaco_model)/urdf/jaco_common.xacro" />
+  <xacro:include filename="$(find kinova_description)/urdf/jaco_common.xacro" />
 
   <property name="link_base" value="jaco_link_base" />
   <property name="link_1" value="jaco_link_1" />
