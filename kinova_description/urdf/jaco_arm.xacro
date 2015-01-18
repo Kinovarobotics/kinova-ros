@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+
+
+<root xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+
+  <xacro:include filename="$(find kinova_description)/urdf/jaco_common.xacro" />
+
+  <property name="link_base" value="jaco_link_base" />
+  <property name="link_1" value="jaco_link_1" />
+  <property name="link_2" value="jaco_link_2" />
+  <property name="link_3" value="jaco_link_3" />
+  <property name="link_4" value="jaco_link_4" />
+  <property name="link_5" value="jaco_link_5" />
+  <property name="link_hand" value="jaco_link_hand" />
+  <property name="link_finger_1" value="jaco_link_finger_1" />
+  <property name="link_finger_2" value="jaco_link_finger_2" />
+  <property name="link_finger_3" value="jaco_link_finger_3" />
+
+  <property name="api_offset" value="0.028" />
+  <property name="api_origin" value="jaco_api_origin" />
+
+  <property name="joint_base" value="jaco_joint_base" />
+  <property name="joint_base_axis_xyz" value="0 0 0" />
+  <property name="joint_base_origin_xyz" value="0 0 0" />
+  <property name="joint_base_origin_rpy" value="0 0 0" />
+
+  <property name="joint_1" value="jaco_joint_1" />
+  <property name="joint_1_axis_xyz" value="0 0 -1" />
+  <property name="joint_1_origin_xyz" value="0 0 0.1535" />
+  <property name="joint_1_origin_rpy" value="${J_PI} 0 ${J_PI}" />
+  <property name="joint_1_lower_limit" value="${-2*J_PI}" />
+  <property name="joint_1_upper_limit" value="${2*J_PI}" />
+
+  <property name="joint_2" value="jaco_joint_2" />
+  <property name="joint_2_axis_xyz" value="0 0 1" />
+  <property name="joint_2_origin_xyz" value="0 0 -0.1185" />
+  <property name="joint_2_origin_rpy" value="-${J_PI/2} ${J_PI} 0" />
+  <property name="joint_2_lower_limit" value="${-J_PI}" />
+  <property name="joint_2_upper_limit" value="${0}" />
+
+  <property name="joint_3" value="jaco_joint_3" />
+  <property name="joint_3_axis_xyz" value="0 0 -1" />
+  <property name="joint_3_origin_xyz" value="0.41 0 0" />
+  <property name="joint_3_origin_rpy" value="${J_PI} 0 ${J_PI/2}" />
+  <property name="joint_3_lower_limit" value="${-5*J_PI/4}" />
+  <property name="joint_3_upper_limit" value="${1*J_PI/4}" />
+
+  <property name="joint_4" value="jaco_joint_4" />
+  <property name="joint_4_axis_xyz" value="0 0 -1" />
+  <property name="joint_4_origin_xyz" value="0.207 0 -0.01125" />
+  <property name="joint_4_origin_rpy" value="${J_PI} ${J_PI/2} 0" />
+  <property name="joint_4_lower_limit" value="${-2*J_PI}" />
+  <property name="joint_4_upper_limit" value="${2*J_PI}" />
+
+  <property name="joint_5" value="jaco_joint_5" />
+  <property name="joint_5_axis_xyz" value="0 0 -1" />
+  <property name="joint_5_origin_xyz" value="0.0343 0 -0.06588" />
+  <property name="joint_5_origin_rpy" value="0 -${J_PI/180*55} 0" />
+  <property name="joint_5_lower_limit" value="${-2*J_PI}" />
+  <property name="joint_5_upper_limit" value="${2*J_PI}" />
+
+  <property name="joint_6" value="jaco_joint_6" />
+  <property name="joint_6_axis_xyz" value="0 0 -1" />
+  <property name="joint_6_origin_xyz" value="0.0343 0 -0.06588" />
+  <property name="joint_6_origin_rpy" value="-${J_PI/180*55} 0 ${J_PI/2}" />
+  <property name="joint_6_lower_limit" value="${-2*J_PI}" />
+  <property name="joint_6_upper_limit" value="${2*J_PI}" />
+
+  <property name="joint_finger_1" value="jaco_joint_finger_1" />
+  <property name="joint_finger_1_axis_xyz" value="0 0 1" />
+  <property name="joint_finger_1_origin_xyz" value="-0.03978 0 -0.10071" />
+  <property name="joint_finger_1_origin_rpy" value="-1.7983 1.117 3.1416" />
+  <property name="joint_finger_1_lower_limit" value="0" />
+  <property name="joint_finger_1_upper_limit" value="${J_PI/180*40}" />
+
+  <property name="joint_finger_2" value="jaco_joint_finger_2" />
+  <property name="joint_finger_2_axis_xyz" value="0 0 1" />
+  <property name="joint_finger_2_origin_xyz" value="0.03569 -0.0216 -0.10071" />
+  <property name="joint_finger_2_origin_rpy" value="-1.6222 1.117 -0.23615" />
+  <property name="joint_finger_2_lower_limit" value="0" />
+  <property name="joint_finger_2_upper_limit" value="${J_PI/180*40}" />
+
+  <property name="joint_finger_3" value="jaco_joint_finger_3" />
+  <property name="joint_finger_3_axis_xyz" value="0 0 1" />
+  <property name="joint_finger_3_origin_xyz" value="0.03569 0.0216 -0.10071" />
+  <property name="joint_finger_3_origin_rpy" value="-1.5161 1.1459 0.23978" />
+  <property name="joint_finger_3_lower_limit" value="0" />
+  <property name="joint_finger_3_upper_limit" value="${J_PI/180*40}" />
+
+  <property name="link_end_effector"   value="jaco_end_effector" />
+  <property name="end_effector_offset" value="0.1687" />
+
+  <xacro:macro name="jaco_arm" params="parent">
+    <xacro:jaco_struct parent="${parent}" basename="jaco"/>
+
+    <xacro:jaco_link link_name="${link_finger_1}"/>
+    <xacro:jaco_finger_joint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger_1}" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}"/>
+
+    <xacro:jaco_link link_name="${link_finger_2}"/>
+    <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
+
+    <xacro:jaco_link link_name="${link_finger_3}"/>
+    <xacro:jaco_finger_joint joint_name="${joint_finger_3}" type="revolute" parent="${link_hand}" child="${link_finger_3}" joint_axis_xyz="${joint_finger_3_axis_xyz}" joint_origin_xyz="${joint_finger_3_origin_xyz}" joint_origin_rpy="${joint_finger_3_origin_rpy}" lower_limit="${joint_finger_3_lower_limit}" upper_limit="${joint_finger_3_upper_limit}"/>
+  </xacro:macro>
+
+
+</root>

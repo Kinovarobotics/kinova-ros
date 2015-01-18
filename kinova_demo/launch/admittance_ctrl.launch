@@ -1,0 +1,25 @@
+<launch>
+    <!-- NOTE: This will run on a Jaco arm, but with unexpected results since it
+               does not provide accurate torque feedback. Use at your own risk
+               with something else than the Mico!
+    -->
+    <arg name="robot" default="mico"/>
+    <node name="admittance_ctrl"
+           pkg="kinova_demo"
+          type="admittance_ctrl.py">
+        <remap from="wrench"  to="/$(arg robot)_arm_driver/out/tool_wrench"/>
+        <remap from="cmd_vel" to="/$(arg robot)_arm_driver/in/cartesian_velocity"/>
+        <rosparam>
+            # NOTE: Values only tested on a Mico
+            dz_x_min: -2.00
+            dz_x_max:  2.00
+            dz_y_min: -2.00
+            dz_y_max:  2.00
+            dz_z_min: -2.00
+            dz_z_max: 12.00
+            k_f:      -0.08
+            vel_max:   0.20
+        </rosparam>
+    </node>
+
+</launch>

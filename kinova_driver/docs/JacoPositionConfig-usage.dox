@@ -1,0 +1,12 @@
+\subsubsection usage Usage
+\verbatim
+<node name="JacoPosition" pkg="kinova_driver" type="JacoPosition">
+  <param name="X_Pose" type="double" value="0.0" />
+  <param name="Y_Pose" type="double" value="0.0" />
+  <param name="Z_Pose" type="double" value="0.0" />
+  <param name="RX_Pose" type="double" value="0.0" />
+  <param name="RY_Pose" type="double" value="0.0" />
+  <param name="RZ_Pose" type="double" value="0.0" />
+</node>
+\endverbatim
+

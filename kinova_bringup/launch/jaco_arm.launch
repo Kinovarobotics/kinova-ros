@@ -1,0 +1,28 @@
+<launch>
+
+  <arg name="use_urdf" default="false"/>
+
+  <node name="jaco_arm_driver" pkg="kinova_driver" type="jaco_arm_driver" output="screen" cwd="node">
+    <!-- Set this parameter to use a specific arm on your system    --> 
+    <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
+    <param name="tf_prefix" value="jaco_"/>
+    <param name="finger_angle_conv_ratio" value="0.012"/>
+  </node>
+    
+  <group unless="$(arg use_urdf)">
+    <node name="jaco_tf_updater" pkg="kinova_driver" type="jaco_tf_updater" output="screen" cwd="node">
+      <param name="tf_prefix" value="jaco_" />
+      <remap from="/jaco_tf_updater/in/joint_angles" to="/jaco_arm_driver/out/joint_angles"/>
+    </node>
+  </group>
+
+  <group if="$(arg use_urdf)">
+    <include file="$(find kinova_description)/launch/upload_jaco.launch"/>
+    <node name="jaco_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher">
+      <remap from="joint_states" to="/jaco_arm_driver/out/joint_state"/>
+    </node>
+  </group>
+
+</launch>
