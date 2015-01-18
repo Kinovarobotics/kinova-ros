@@ -96,6 +96,8 @@ class JacoComm
     int numFingers();
     int robotType();
 
+    void setEndEffectorOffset(float x, float y, float z);
+
  private:
     boost::recursive_mutex& api_mutex_;
     kinova::JacoAPI jaco_api_;

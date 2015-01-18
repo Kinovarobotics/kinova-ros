@@ -25,6 +25,7 @@ add_service_files(
   Stop.srv
   HomeArm.srv
   SetForceControlParams.srv
+  SetEndEffectorOffset.srv
 )
 
 add_action_files(DIRECTORY action

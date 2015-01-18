@@ -60,6 +60,9 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     start_force_control_service_ = node_handle_.advertiseService("in/start_force_control", &JacoArm::startForceControlCallback, this);
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &JacoArm::stopForceControlCallback, this);
     
+    set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
+        &JacoArm::setEndEffectorOffsetCallback, this);
+
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
     joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
@@ -231,6 +234,13 @@ bool JacoArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova_m
 {
     jaco_comm_.stopForceControl();
     res.stop_result = "Stop force control requested.";
+    return true;
+}
+
+bool JacoArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request &req, kinova_msgs::SetEndEffectorOffset::Response &res)
+{
+    jaco_comm_.setEndEffectorOffset(req.offset.x, req.offset.y, req.offset.z);
+
     return true;
 }
 

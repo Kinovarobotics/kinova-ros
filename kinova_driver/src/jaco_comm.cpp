@@ -684,6 +684,29 @@ void JacoComm::stopForceControl()
 }
 
 /*!
+ * \brief Set the end effector offset
+ */
+void JacoComm::setEndEffectorOffset(float x, float y, float z)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    // Recopy the current status:
+    float tx, ty, tz;
+    unsigned int status;
+    int result = jaco_api_.getEndEffectorOffset(status, tx, ty, tz);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get current end effector offset.", result);
+    }
+
+    result = jaco_api_.setEndEffectorOffset(status, x, y, z);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set end effector offset.", result);
+    }
+}
+
+/*!
  * \brief API call to obtain the current client configuration.
  */
 void JacoComm::getConfig(ClientConfigurations &config)

@@ -26,6 +26,7 @@
 #include <kinova_msgs/FingerPosition.h>
 #include <kinova_msgs/JointAngles.h>
 #include <kinova_msgs/SetForceControlParams.h>
+#include <kinova_msgs/SetEndEffectorOffset.h>
 
 #include <time.h>
 #include <math.h>
@@ -62,6 +63,9 @@ class JacoArm
     bool stopForceControlCallback(kinova_msgs::Stop::Request &req,
                                   kinova_msgs::Stop::Response &res);
 
+    bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
+                                      kinova_msgs::SetEndEffectorOffset::Response& res);
+
  private:
     void positionTimer(const ros::TimerEvent&);
     void cartesianVelocityTimer(const ros::TimerEvent&);
@@ -94,6 +98,8 @@ class JacoArm
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;
     ros::ServiceServer stop_force_control_service_;
+
+    ros::ServiceServer set_end_effector_offset_service_;
 
     // Timers for control loops
     ros::Timer status_timer_;
