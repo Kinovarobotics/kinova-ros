@@ -13,7 +13,6 @@
 #include <ros/ros.h>
 
 #include <iostream>
-#include <vector>
 
 #include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
 #include "kinova/KinovaTypes.h"
@@ -22,7 +21,8 @@
 namespace kinova
 {
 
-#define JACO_USB_LIBRARY "Kinova.API.USBCommandLayerUbuntu.so"
+#define JACO_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
+#define JACO_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
 
 class JacoAPI
 {
@@ -31,15 +31,16 @@ class JacoAPI
 
     int (*initAPI)(void);
     int (*closeAPI)(void);
-    int (*getAPIVersion)(std::vector<int> &);
-    int (*getDevices)(std::vector<KinovaDevice> &, int &);
+    int (*getAPIVersion)(int[API_VERSION_COUNT]);
+    int (*getDeviceCount)(int &);
+    int (*getDevices)(KinovaDevice[MAX_KINOVA_DEVICE], int &);
     int (*setActiveDevice)(KinovaDevice);
 
     int (*getGeneralInformations)(GeneralInformations &);
     int (*getQuickStatus)(QuickStatus &);
     // int (*GetForcesInfo)(ForcesInfo &);
 
-    int (*getCodeVersion)(std::vector<int> &);
+    int (*getCodeVersion)(int[CODE_VERSION_COUNT]);
     int (*startControlAPI)();
     int (*stopControlAPI)();
     int (*initFingers)();
@@ -69,8 +70,11 @@ class JacoAPI
     int (*getClientConfigurations)(ClientConfigurations &);
     int (*setClientConfigurations)(ClientConfigurations);
     int (*eraseAllTrajectories)();
-    int (*getPositionCurrentActuators)(std::vector<float> &);
+    int (*getPositionCurrentActuators)(float[POSITION_CURRENT_COUNT]);
     int (*setActuatorPID)(unsigned int, float, float, float);
+
+    int (*getEndEffectorOffset)(unsigned int&, float&, float&, float&);
+    int (*setEndEffectorOffset)(unsigned int, float, float, float);
 };
 
 }  // namespace kinova

@@ -23,23 +23,27 @@ void* checkApiInit(void * usbLib, const char* name)
 
 JacoAPI::JacoAPI(void)
 {
-    void *usbLib = dlopen(JACO_USB_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
-    if (usbLib == NULL)
+    void *usbLib  = dlopen(JACO_USB_LIBRARY,  RTLD_NOW | RTLD_GLOBAL);
+    void *commLib = dlopen(JACO_COMM_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
+
+    if ((usbLib == NULL) || (commLib == NULL))
     {
-        ROS_WARN("%s", dlerror());
+        ROS_FATAL("%s", dlerror());
     }
 
     initAPI = (int (*)())checkApiInit(usbLib, "InitAPI");
 
     closeAPI = (int (*)())checkApiInit(usbLib, "CloseAPI");
 
-    getAPIVersion = (int (*)(std::vector<int> &))checkApiInit(usbLib, "GetAPIVersion");
+    getAPIVersion = (int (*)(int[API_VERSION_COUNT]))checkApiInit(usbLib, "GetAPIVersion");
 
-    getDevices = (int (*)(std::vector<KinovaDevice> &, int &))checkApiInit(usbLib, "GetDevices");
+    getDevices = (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))checkApiInit(usbLib, "GetDevices");
+
+    getDeviceCount = (int (*)(int &))checkApiInit(commLib, "GetDeviceCount");
 
     setActiveDevice = (int (*)(KinovaDevice))checkApiInit(usbLib, "SetActiveDevice");
 
-    getCodeVersion = (int (*)(std::vector<int> &))checkApiInit(usbLib, "GetCodeVersion");
+    getCodeVersion = (int (*)(int[CODE_VERSION_COUNT]))checkApiInit(usbLib, "GetCodeVersion");
 
     getGeneralInformations = (int (*)(GeneralInformations &))checkApiInit(usbLib, "GetGeneralInformations");
 
@@ -99,9 +103,13 @@ JacoAPI::JacoAPI(void)
 
     eraseAllTrajectories = (int (*)())checkApiInit(usbLib, "EraseAllTrajectories");
 
-    getPositionCurrentActuators = (int (*)(std::vector<float> &))checkApiInit(usbLib, "GetPositionCurrentActuators");
+    getPositionCurrentActuators = (int (*)(float[POSITION_CURRENT_COUNT]))checkApiInit(usbLib, "GetPositionCurrentActuators");
 
     setActuatorPID = (int (*)(unsigned int, float, float, float))checkApiInit(usbLib, "SetActuatorPID");
+
+    setEndEffectorOffset = (int (*)(unsigned int, float, float, float))checkApiInit(usbLib, "SetEndEffectorOffset");
+    getEndEffectorOffset = (int (*)(unsigned int&, float&, float&, float&))checkApiInit(usbLib, "GetEndEffectorOffset");
+
 }
 
 }  // namespace kinova

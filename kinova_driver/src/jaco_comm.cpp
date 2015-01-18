@@ -59,12 +59,14 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
+    int result = NO_ERROR_KINOVA;
+
     // Get the serial number parameter for the arm we wish to connec to
     std::string serial_number = "";
     node_handle.getParam("serial_number", serial_number);
 
-    std::vector<int> api_version;
-    int result = jaco_api_.getAPIVersion(api_version);
+    int api_version[API_VERSION_COUNT];
+    result = jaco_api_.getAPIVersion(api_version);
     if (result != NO_ERROR_KINOVA)
     {
         throw JacoCommException("Could not get the Kinova API version", result);
@@ -79,7 +81,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
         throw JacoCommException("Could not initialize Kinova API", result);
     }
 
-    std::vector<KinovaDevice> devices_list;
+    KinovaDevice devices_list[MAX_KINOVA_DEVICE];
     result = NO_ERROR_KINOVA;
     jaco_api_.getDevices(devices_list, result);
     if (result != NO_ERROR_KINOVA)
@@ -87,8 +89,14 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
         throw JacoCommException("Could not get devices list", result);
     }
 
+    int devices_count = jaco_api_.getDeviceCount(result);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get devices list count.", result);
+    }
+
     bool found_arm = false;
-    for (int device_i = 0; device_i < devices_list.size(); device_i++)
+    for (int device_i = 0; device_i < devices_count; device_i++)
     {
         // If no device is specified, just use the first available device
         if ((serial_number == "")
@@ -133,7 +141,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
                     break;
             }
 
-            ROS_INFO_STREAM("Found " << devices_list.size() << " device(s), using device at index " << device_i
+            ROS_INFO_STREAM("Found " << devices_count << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
                             << ", serial number: " << devices_list[device_i].SerialNumber
                             << ", code version: " << general_info.CodeVersion
@@ -147,7 +155,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     if (!found_arm)
     {
         ROS_ERROR("Could not find the specified arm (serial: %s) among the %d attached devices",
-                  serial_number.c_str(), static_cast<int>(devices_list.size()));
+                  serial_number.c_str(), devices_count);
         throw JacoCommException("Could not find the specified arm", 0);
     }
 
