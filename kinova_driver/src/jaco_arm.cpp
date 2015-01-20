@@ -331,13 +331,14 @@ void JacoArm::publishJointAngles(void)
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
     joint_state.position.resize(9);
 
-    double j6o = jaco_comm_.robotType() == 2 ? 270.0 : 260.0;
+    // J6 offset is 260 for Jaco R1 (type 0), and 270 for Mico and Jaco R2.
+    double j6o = jaco_comm_.robotType() == 0 ? 260.0 : 270.0;
     joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
-    joint_state.position[1] = (jaco_angles.joint2 - j6o) * (PI / 180);
+    joint_state.position[1] = (jaco_angles.joint2 - 270) * (PI / 180);
     joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
-    joint_state.position[5] = (270-jaco_angles.joint6) * (PI / 180);
+    joint_state.position[5] = (j6o-jaco_angles.joint6) * (PI / 180);
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
