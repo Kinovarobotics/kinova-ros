@@ -59,7 +59,7 @@
 
   <property name="joint_4" value="jaco2_joint_4" />
   <property name="joint_4_axis_xyz" value="0 0 -1" />
-  <property name="joint_4_origin_xyz" value="0.207 0 0.0025" />
+  <property name="joint_4_origin_xyz" value="0.207 0 -0.01125" />
   <property name="joint_4_origin_rpy" value="${J_PI} ${J_PI/2} 0" />
   <property name="joint_4_lower_limit" value="${-2*J_PI}" />
   <property name="joint_4_upper_limit" value="${2*J_PI}" />
