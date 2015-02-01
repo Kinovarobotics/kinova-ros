@@ -1,0 +1,9 @@
+controller_list:
+  - name: fake_mico_arm_controller
+    joints:
+      - mico_joint_1
+      - mico_joint_2
+      - mico_joint_3
+      - mico_joint_4
+      - mico_joint_5
+      - mico_joint_6
