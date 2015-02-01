@@ -1,0 +1,9 @@
+Pre-build libraries
+-------------------
+
+libkinova_cmd:  Corresponds to Kinova.API.USBCommandLayerUbuntu.so, same code.
+libkinova_comm: A copy of Kinova.API.CommLayerUbuntu.so.
+
+The original Kinova.API.CommLayerUbuntu.so is needed by the renamed
+libkinova_cmd, as the filename of this library is hard-coded in the binary and
+looked for at startup by dlsym calls.

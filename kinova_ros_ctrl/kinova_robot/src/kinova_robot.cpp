@@ -91,16 +91,19 @@ KinovaRobot::KinovaRobot(const std::string& serial)
 
     // Enumerate devices, find the one who corresponds to the given serial
     // number.
-    typedef std::vector<KinovaDevice> KinovaDevices;
-    KinovaDevices devices;
+    KinovaDevice devices[MAX_KINOVA_DEVICE];
     GetDevices(devices, r);
     if (r != NO_ERROR_KINOVA) {
         throw KinovaException("Could not get the devices list.");
     }
+    int devices_count = GetDeviceCount(r);
+    if (r != NO_ERROR_KINOVA) {
+        throw KinovaException("Could not get the devices list.");
+    }
+
     bool found = false;
-    typedef KinovaDevices::const_iterator KDIt;
-    for (KDIt i = devices.begin(); i != devices.end(); ++i) {
-        const KinovaDevice& d = *i;
+    for (int i = 0; i < devices_count; ++i) {
+        const KinovaDevice& d = devices[i];
         if ((serial == "") ||
             (serial == d.SerialNumber)) {
 
