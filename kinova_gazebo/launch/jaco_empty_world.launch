@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="paused" value="true"/>
+    </include>
+
+    <include file="$(find kinova_gazebo)/launch/jaco_gazebo.launch"/>
+</launch>

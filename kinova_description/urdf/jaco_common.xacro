@@ -20,6 +20,17 @@
 
     <xacro:macro name="jaco_link" params="link_name">
         <link name="${link_name}">
+            <inertial>
+                <!-- TODO: Proper mass and inertia values! -->
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="1"/>
+                <inertia ixx="0.1"
+                         ixy="0.0"
+                         ixz="0.0"
+                         iyy="0.1"
+                         iyz="0.0"
+                         izz="0.1"/>
+            </inertial>
             <visual>
                 <geometry>
                     <mesh
@@ -46,6 +57,15 @@
         <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
+     <transmission name="${joint_name}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint_name}">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint_name}_motor">
+            <mechanicalReduction>1.0</mechanicalReduction>
+        </actuator>
+    </transmission>
     </xacro:macro>
 
     <xacro:macro name="jaco_finger_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit">
@@ -60,7 +80,15 @@
 
     <xacro:macro name="jaco_struct" params="parent basename">
         <xacro:jaco_link link_name="${link_base}"/>
-        <xacro:jaco_joint joint_name="${joint_base}" type="fixed" parent="${parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
+        <!-- Separate joint definition for base to avoid creating a transmission
+             on fixed joint.
+        -->
+        <joint name="${joint_base}" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${link_base}"/>
+            <axis xyz="${joint_base_axis_xyz}"/>
+            <origin xyz="${joint_base_origin_xyz}" rpy="${joint_base_origin_rpy}"/>
+        </joint>
         <xacro:jaco_link link_name="${link_1}"/>
         <xacro:jaco_joint joint_name="${joint_1}" type="continuous" parent="${link_base}" child="${link_1}" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" joint_lower_limit="${joint_1_lower_limit}" joint_upper_limit="${joint_1_upper_limit}"/>
         <xacro:jaco_link link_name="${link_2}"/>
@@ -101,6 +129,15 @@
         </joint>
         <link name="${link_end_effector}" />
 
+        <gazebo reference="${link_base}">
+            <material>Gazebo/Black</material>
+            <selfCollide>false</selfCollide>
+            <gravity>false</gravity>
+        </gazebo>
+
+        <gazebo>
+            <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
+        </gazebo>
     </xacro:macro>
 
 
