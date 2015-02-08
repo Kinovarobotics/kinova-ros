@@ -31,7 +31,7 @@ jaco_gripper_controller:
         - jaco_joint_finger_3
           
     gains:
-        jaco_joint_finger_1: {p: 5.0, d: 1.0}
-        jaco_joint_finger_2: {p: 5.0, d: 1.0}
-        jaco_joint_finger_3: {p: 5.0, d: 1.0}
+        jaco_joint_finger_1: {p: 100.0, d: 1.0}
+        jaco_joint_finger_2: {p: 100.0, d: 1.0}
+        jaco_joint_finger_3: {p: 100.0, d: 1.0}
 
