@@ -18,18 +18,17 @@
 
     <property name="J_PI" value="3.1415926535897931" />
 
-    <xacro:macro name="jaco_link" params="link_name">
+    <xacro:macro name="jaco_link" params="link_name link_mass link_cog link_ixx link_ixy link_ixz link_iyy link_iyz link_izz">
         <link name="${link_name}">
             <inertial>
-                <!-- TODO: Proper mass and inertia values! -->
-                <origin xyz="0 0 0" rpy="0 0 0"/>
-                <mass value="1"/>
-                <inertia ixx="0.1"
-                         ixy="0.0"
-                         ixz="0.0"
-                         iyy="0.1"
-                         iyz="0.0"
-                         izz="0.1"/>
+                <origin xyz="${link_cog}" rpy="0 0 0"/>
+                <mass value="${link_mass}"/>
+                <inertia ixx="${link_ixx}"
+                         ixy="${link_ixy}"
+                         ixz="${link_ixz}"
+                         iyy="${link_iyy}"
+                         iyz="${link_iyz}"
+                         izz="${link_izz}"/>
             </inertial>
             <visual>
                 <geometry>
@@ -68,6 +67,37 @@
     </transmission>
     </xacro:macro>
 
+    <xacro:macro name="jaco_finger_link" params="link_name">
+        <link name="${link_name}">
+            <!-- Inertia included in the hand link -->
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="0.010"/>
+                <inertia ixx="0.010"
+                         ixy="0"
+                         ixz="0"
+                         iyy="0.010"
+                         iyz="0"
+                         izz="0.010"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
+                <material name="carbon_fiber">
+                    <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                </material>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+
     <xacro:macro name="jaco_finger_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit">
     <joint name="${joint_name}" type="${type}">
         <parent link="${parent}"/>
@@ -76,10 +106,19 @@
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
      </joint>
+     <transmission name="${joint_name}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint_name}">
+            <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint_name}_motor">
+            <mechanicalReduction>1.0</mechanicalReduction>
+        </actuator>
+    </transmission>
     </xacro:macro>
 
     <xacro:macro name="jaco_struct" params="parent basename">
-        <xacro:jaco_link link_name="${link_base}"/>
+        <xacro:jaco_link link_name="${link_base}" link_mass="${link_base_mass}" link_cog="${link_base_cog}" link_ixx="${link_base_ixx}" link_ixy="${link_base_ixy}" link_ixz="${link_base_ixz}" link_iyy="${link_base_iyy}" link_iyz="${link_base_iyz}" link_izz="${link_base_izz}"/>
         <!-- Separate joint definition for base to avoid creating a transmission
              on fixed joint.
         -->
@@ -89,17 +128,22 @@
             <axis xyz="${joint_base_axis_xyz}"/>
             <origin xyz="${joint_base_origin_xyz}" rpy="${joint_base_origin_rpy}"/>
         </joint>
-        <xacro:jaco_link link_name="${link_1}"/>
+        <xacro:jaco_link link_name="${link_1}" link_mass="${link_1_mass}" link_cog="${link_1_cog}" link_ixx="${link_1_ixx}" link_ixy="${link_1_ixy}" link_ixz="${link_1_ixz}" link_iyy="${link_1_iyy}" link_iyz="${link_1_iyz}" link_izz="${link_1_izz}"/>
         <xacro:jaco_joint joint_name="${joint_1}" type="continuous" parent="${link_base}" child="${link_1}" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" joint_lower_limit="${joint_1_lower_limit}" joint_upper_limit="${joint_1_upper_limit}"/>
-        <xacro:jaco_link link_name="${link_2}"/>
+
+        <xacro:jaco_link link_name="${link_2}" link_mass="${link_2_mass}" link_cog="${link_2_cog}" link_ixx="${link_2_ixx}" link_ixy="${link_2_ixy}" link_ixz="${link_2_ixz}" link_iyy="${link_2_iyy}" link_iyz="${link_2_iyz}" link_izz="${link_2_izz}"/>
         <xacro:jaco_joint joint_name="${joint_2}" type="revolute" parent="${link_1}" child="${link_2}" joint_axis_xyz="${joint_2_axis_xyz}" joint_origin_xyz="${joint_2_origin_xyz}" joint_origin_rpy="${joint_2_origin_rpy}" joint_lower_limit="${joint_2_lower_limit}" joint_upper_limit="${joint_2_upper_limit}"/>
-        <xacro:jaco_link link_name="${link_3}"/>
+
+        <xacro:jaco_link link_name="${link_3}" link_mass="${link_3_mass}" link_cog="${link_3_cog}" link_ixx="${link_3_ixx}" link_ixy="${link_3_ixy}" link_ixz="${link_3_ixz}" link_iyy="${link_3_iyy}" link_iyz="${link_3_iyz}" link_izz="${link_3_izz}"/>
         <xacro:jaco_joint joint_name="${joint_3}" type="revolute" parent="${link_2}" child="${link_3}" joint_axis_xyz="${joint_3_axis_xyz}" joint_origin_xyz="${joint_3_origin_xyz}" joint_origin_rpy="${joint_3_origin_rpy}" joint_lower_limit="${joint_3_lower_limit}" joint_upper_limit="${joint_3_upper_limit}"/>
-        <xacro:jaco_link link_name="${link_4}"/>
+
+        <xacro:jaco_link link_name="${link_4}" link_mass="${link_4_mass}" link_cog="${link_4_cog}" link_ixx="${link_4_ixx}" link_ixy="${link_4_ixy}" link_ixz="${link_4_ixz}" link_iyy="${link_4_iyy}" link_iyz="${link_4_iyz}" link_izz="${link_4_izz}"/>
         <xacro:jaco_joint joint_name="${joint_4}" type="continuous" parent="${link_3}" child="${link_4}" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}" joint_lower_limit="${joint_4_lower_limit}" joint_upper_limit="${joint_4_upper_limit}"/>
-        <xacro:jaco_link link_name="${link_5}"/>
+
+        <xacro:jaco_link link_name="${link_5}" link_mass="${link_5_mass}" link_cog="${link_5_cog}" link_ixx="${link_5_ixx}" link_ixy="${link_5_ixy}" link_ixz="${link_5_ixz}" link_iyy="${link_5_iyy}" link_iyz="${link_5_iyz}" link_izz="${link_5_izz}"/>
         <xacro:jaco_joint joint_name="${joint_5}" type="continuous" parent="${link_4}" child="${link_5}" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" joint_lower_limit="${joint_5_lower_limit}" joint_upper_limit="${joint_5_upper_limit}"/>
-        <xacro:jaco_link link_name="${link_hand}" />
+
+        <xacro:jaco_link link_name="${link_hand}" link_mass="${link_hand_mass}" link_cog="${link_hand_cog}" link_ixx="${link_hand_ixx}" link_ixy="${link_hand_ixy}" link_ixz="${link_hand_ixz}" link_iyy="${link_hand_iyy}" link_iyz="${link_hand_iyz}" link_izz="${link_hand_izz}" />
         <xacro:jaco_joint joint_name="${joint_6}" type="continuous" parent="${link_5}" child="${link_hand}" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_lower_limit="${joint_6_lower_limit}" joint_upper_limit="${joint_6_upper_limit}"/>
 
        <joint name="${link_base}_to_api_origin" type="fixed">

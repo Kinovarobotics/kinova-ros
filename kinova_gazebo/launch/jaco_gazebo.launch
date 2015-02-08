@@ -5,6 +5,11 @@
     <!-- Jaco controller configuration -->
     <rosparam file="$(find kinova_gazebo)/config/jaco_controller.yaml"/>
 
+    <!-- Generic robot state publisher -->
+    <node name="robot_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher"/>
+
     <!-- Gazebo model spawner -->
     <node  name="jaco_model_spawner" 
              pkg="gazebo_ros"
@@ -17,7 +22,7 @@
     <node name="controller_spawner"
            pkg="controller_manager"
           type="spawner"
-          args="joint_state_controller jaco_traj_controller"
+          args="joint_state_controller jaco_controller"
     />
 
 </launch>
