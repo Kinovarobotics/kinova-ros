@@ -263,15 +263,15 @@ This package has been tested in Ubuntu 12.04 LTS with ROS Hydro. The 5.01.01 dri
 ### Basics
 To “home” the arm
 
-    rosservice call jaco/home_arm 
+    rosservice call /jaco_arm_driver/in/home_arm
 
 To activate the e-stop (emergency stop) function
 
-    rosservice call jaco/stop 
+    rosservice call /jaco_arm_driver/in/stop
 
 To restore control of the arm
 
-    rosservice call jaco/start 
+    rosservice call /jaco_arm_driver/in/start 
 
 
 ### Joint Sensors 
