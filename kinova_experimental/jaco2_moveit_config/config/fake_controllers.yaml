@@ -1,0 +1,14 @@
+controller_list:
+  - name: fake_jaco2_arm_controller
+    joints:
+      - jaco2_joint_1
+      - jaco2_joint_2
+      - jaco2_joint_3
+      - jaco2_joint_4
+      - jaco2_joint_5
+      - jaco2_joint_6
+  - name: fake_jaco2_gripper_controller
+    joints:
+      - jaco2_joint_finger_1
+      - jaco2_joint_finger_2
+      - jaco2_joint_finger_3
