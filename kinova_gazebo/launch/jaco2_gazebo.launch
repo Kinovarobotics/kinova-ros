@@ -1,0 +1,28 @@
+<launch>
+    <!-- URDF Model -->
+    <include file="$(find kinova_description)/launch/upload_jaco2.launch"/>
+
+    <!-- Jaco controller configuration -->
+    <rosparam file="$(find kinova_gazebo)/config/jaco2_controller.yaml"/>
+
+    <!-- Generic robot state publisher -->
+    <node name="robot_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher"/>
+
+    <!-- Gazebo model spawner -->
+    <node  name="jaco2_model_spawner" 
+             pkg="gazebo_ros"
+            type="spawn_model"
+          output="screen"
+            args="-z 1.0 -pause -urdf -param robot_description -model jaco2"
+    />
+
+    <!-- Controller spawner -->
+    <node name="controller_spawner"
+           pkg="controller_manager"
+          type="spawner"
+          args="joint_state_controller jaco2_controller jaco2_gripper_controller"
+    />
+
+</launch>

@@ -35,4 +35,11 @@
 
 <xacro:mico_arm  parent="root"/>
 
+<!-- Used to fix the model to the ground in Gazebo. -->
+<link name="world"/>
+<joint name="world_2_root_fixed" type="fixed">
+    <parent link="world"/>
+    <child  link="root"/>
+</joint>
+
 </robot>

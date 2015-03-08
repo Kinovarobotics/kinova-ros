@@ -15,8 +15,6 @@
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
-
-
   <xacro:include filename="$(find kinova_description)/urdf/jaco_common.xacro" />
 
   <property name="link_base" value="jaco_link_base" />
@@ -179,6 +177,5 @@
     <xacro:jaco_finger_link link_name="${link_finger_3}"/>
     <xacro:jaco_finger_joint joint_name="${joint_finger_3}" type="revolute" parent="${link_hand}" child="${link_finger_3}" joint_axis_xyz="${joint_finger_3_axis_xyz}" joint_origin_xyz="${joint_finger_3_origin_xyz}" joint_origin_rpy="${joint_finger_3_origin_rpy}" lower_limit="${joint_finger_3_lower_limit}" upper_limit="${joint_finger_3_upper_limit}"/>
   </xacro:macro>
-
 
 </root>

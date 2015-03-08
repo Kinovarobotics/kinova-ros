@@ -162,13 +162,12 @@
 
     <xacro:jaco_struct parent="${parent}" basename="mico"/>
 
-    <xacro:jaco_link link_name="${link_finger_1}"/>
+    <xacro:jaco_finger_link link_name="${link_finger_1}"/>
     <xacro:jaco_finger_joint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger_1}" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}"/>
 
-    <xacro:jaco_link link_name="${link_finger_2}"/>
+    <xacro:jaco_finger_link link_name="${link_finger_2}"/>
     <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
 
   </xacro:macro>
-
 
 </root>

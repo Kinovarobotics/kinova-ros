@@ -1,0 +1,56 @@
+joint_state_controller:
+    type: joint_state_controller/JointStateController
+
+    publish_rate: 50
+
+mico_controller:
+    type: effort_controllers/JointTrajectoryController
+
+    joints:
+        - mico_joint_1
+        - mico_joint_2
+        - mico_joint_3
+        - mico_joint_4
+        - mico_joint_5
+        - mico_joint_6
+
+    gains:
+        mico_joint_1: {p:  500.0, d: 50.0}
+        mico_joint_2: {p:  800.0, d: 50.0}
+        mico_joint_3: {p:  350.0, d: 30.0}
+        mico_joint_4: {p:  300.0, d:  3.0}
+        mico_joint_5: {p:  500.0, d:  3.0}
+        mico_joint_6: {p:  200.0, d: 30.0}
+
+    constraints:
+        goal_time: 5.0
+        mico_joint_1:
+            goal: 0.05
+            trajectory: 0.10
+        mico_joint_2:
+            goal: 0.05
+            trajectory: 0.10
+        mico_joint_3:
+            goal: 0.05
+            trajectory: 0.10
+        mico_joint_4:
+            goal: 0.05
+            trajectory: 0.10
+        mico_joint_5:
+            goal: 0.05
+            trajectory: 0.10
+        mico_joint_6:
+            goal: 0.05
+            trajectory: 0.10
+
+mico_gripper_controller:
+    type: effort_controllers/JointTrajectoryController
+
+    joints:
+        - mico_joint_finger_1
+        - mico_joint_finger_2
+          
+    gains:
+        mico_joint_finger_1: {p: 100.0, d: 1.0}
+        mico_joint_finger_2: {p: 100.0, d: 1.0}
+
