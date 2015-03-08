@@ -30,8 +30,8 @@
   <property name="link_base_izz"  value="0.100" />
 
   <property name="link_1" value="jaco_link_1" />
-  <property name="link_1_cog"  value="0.0692 0.0001 -0.0103" />
-  <property name="link_1_mass" value="0.748" />
+  <property name="link_1_cog"  value="0.0692 0.0002 -0.0103" />
+  <property name="link_1_mass" value="0.814" />
   <property name="link_1_ixx"  value="1.02e-2" />
   <property name="link_1_ixy"  value="-5.21e-7" />
   <property name="link_1_ixz"  value="-2.12e-3" />
@@ -41,7 +41,7 @@
 
   <property name="link_2" value="jaco_link_2" />
   <property name="link_2_cog"  value="0.2052 0.0000 0.0223" />
-  <property name="link_2_mass" value="1.011" />
+  <property name="link_2_mass" value="1.055" />
   <property name="link_2_ixx"  value="3.79e-1" />
   <property name="link_2_ixy"  value="0.000" />
   <property name="link_2_ixz"  value="0.000" />
@@ -51,43 +51,43 @@
 
   <property name="link_3" value="jaco_link_3" />
   <property name="link_3_cog"  value="0.0196 0.0000 0.0644" />
-  <property name="link_3_mass" value="0.568" />
+  <property name="link_3_mass" value="0.843" />
   <property name="link_3_ixx"  value="5.11e-2" />
   <property name="link_3_ixy"  value="1.92e-7" />
-  <property name="link_3_ixz"  value="-2.67e-7" />
-  <property name="link_3_iyy"  value="1.44e-1" />
-  <property name="link_3_iyz"  value="-9.59e-5" />
+  <property name="link_3_ixz"  value="-1.59e-4" />
+  <property name="link_3_iyy"  value="4.80e-2" />
+  <property name="link_3_iyz"  value="-1.96e-7" />
   <property name="link_3_izz"  value="1.29e-2" />
 
   <property name="link_4" value="jaco_link_4" />
-  <property name="link_4_cog"  value="0.0086 0.0000 -0.0374" />
-  <property name="link_4_mass" value="0.427" />
-  <property name="link_4_ixx"  value="2.46e-3" />
-  <property name="link_4_ixy"  value="8.33e-4" />
-  <property name="link_4_ixz"  value="3.35e-8" />
-  <property name="link_4_iyy"  value="3.42e-3" />
-  <property name="link_4_iyz"  value="3.40e-8" />
-  <property name="link_4_izz"  value="3.63e-3" />
+  <property name="link_4_cog"  value="0.0082 0.0000 -0.0373" />
+  <property name="link_4_mass" value="0.447" />
+  <property name="link_4_ixx"  value="2.81e-3" />
+  <property name="link_4_ixy"  value="8.30e-4" />
+  <property name="link_4_ixz"  value="7.67e-7" />
+  <property name="link_4_iyy"  value="3.96e-3" />
+  <property name="link_4_iyz"  value="-2.66e-7" />
+  <property name="link_4_izz"  value="4.13e-3" />
 
   <property name="link_5" value="jaco_link_5" />
-  <property name="link_5_cog"  value="0.0086 0.0000 -0.0374" />
-  <property name="link_5_mass" value="0.427" />
-  <property name="link_5_ixx"  value="2.46e-3" />
-  <property name="link_5_ixy"  value="8.33e-4" />
-  <property name="link_5_ixz"  value="3.35e-8" />
-  <property name="link_5_iyy"  value="3.42e-3" />
-  <property name="link_5_iyz"  value="3.40e-8" />
-  <property name="link_5_izz"  value="3.63e-3" />
+  <property name="link_5_cog"  value="0.0082 0.0000 -0.0373" />
+  <property name="link_5_mass" value="0.447" />
+  <property name="link_5_ixx"  value="2.81e-3" />
+  <property name="link_5_ixy"  value="8.30e-4" />
+  <property name="link_5_ixz"  value="7.67e-7" />
+  <property name="link_5_iyy"  value="3.96e-3" />
+  <property name="link_5_iyz"  value="-2.66e-7" />
+  <property name="link_5_izz"  value="4.13e-3" />
 
   <property name="link_hand" value="jaco_link_hand" />
-  <property name="link_hand_cog"  value="0.0068 0.0000 -0.0822" />
-  <property name="link_hand_mass" value="0.727" />
-  <property name="link_hand_ixx"  value="4.66e-3" />
-  <property name="link_hand_ixy"  value="4.13e-4" />
-  <property name="link_hand_ixz"  value="-1.05e-5" />
-  <property name="link_hand_iyy"  value="2.65e-3" />
-  <property name="link_hand_iyz"  value="-3.24e-6" />
-  <property name="link_hand_izz"  value="5.25e-3" />
+  <property name="link_hand_cog"  value="0.0192 0.0000 -0.0936" />
+  <property name="link_hand_mass" value="0.948" />
+  <property name="link_hand_ixx"  value="1.591e-2" />
+  <property name="link_hand_ixy"  value="-3.11e-3" />
+  <property name="link_hand_ixz"  value="3.16e-5" />
+  <property name="link_hand_iyy"  value="1.15e-2" />
+  <property name="link_hand_iyz"  value="-6.37e-5" />
+  <property name="link_hand_izz"  value="1.97e-2" />
 
   <property name="link_finger_1" value="jaco_link_finger_1" />
   <property name="link_finger_2" value="jaco_link_finger_2" />

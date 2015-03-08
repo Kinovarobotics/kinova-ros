@@ -86,6 +86,7 @@
   <property name="link_hand_iyy"  value="2.65e-3" />
   <property name="link_hand_iyz"  value="-3.24e-6" />
   <property name="link_hand_izz"  value="5.25e-3" />
+
   <property name="link_finger_1" value="jaco2_link_finger_1" />
   <property name="link_finger_2" value="jaco2_link_finger_2" />
   <property name="link_finger_3" value="jaco2_link_finger_3" />

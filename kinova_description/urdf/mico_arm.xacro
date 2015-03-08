@@ -18,12 +18,75 @@
   <xacro:include filename="$(find kinova_description)/urdf/jaco_common.xacro" />
 
   <property name="link_base" value="mico_link_base" />
+  <property name="link_base_cog"  value="0 0 0" />
+  <property name="link_base_mass" value="0.100" />
+  <property name="link_base_ixx"  value="0.100" />
+  <property name="link_base_ixy"  value="0.000" />
+  <property name="link_base_ixz"  value="0.000" />
+  <property name="link_base_iyy"  value="0.100" />
+  <property name="link_base_iyz"  value="0.000" />
+  <property name="link_base_izz"  value="0.100" />
+
   <property name="link_1" value="mico_link_1" />
+  <property name="link_1_cog"  value="0.0728 0.0000 -0.0077" />
+  <property name="link_1_mass" value="0.825" />
+  <property name="link_1_ixx"  value="2.57e-2" />
+  <property name="link_1_ixy"  value="-1.26e-6" />
+  <property name="link_1_ixz"  value="-9.81e-3" />
+  <property name="link_1_iyy"  value="5.72e-2" />
+  <property name="link_1_iyz"  value="-4.54e-6" />
+  <property name="link_1_izz"  value="6.18e-2" />
+
   <property name="link_2" value="mico_link_2" />
+  <property name="link_2_cog"  value="0.1441 0.0000 0.0261" />
+  <property name="link_2_mass" value="1.215" />
+  <property name="link_2_ixx"  value="2.58e-2" />
+  <property name="link_2_ixy"  value="1.257e-6" />
+  <property name="link_2_ixz"  value="-9.82e-3" />
+  <property name="link_2_iyy"  value="5.72e-2" />
+  <property name="link_2_iyz"  value="4.54e-6" />
+  <property name="link_2_izz"  value="6.18e-2" />
+
   <property name="link_3" value="mico_link_3" />
+  <property name="link_3_cog"  value="0.0215 0.0000 0.0396" />
+  <property name="link_3_mass" value="0.775" />
+  <property name="link_3_ixx"  value="4.42e-2" />
+  <property name="link_3_ixy"  value="-6.63e-6" />
+  <property name="link_3_ixz"  value="3.87e-3" />
+  <property name="link_3_iyy"  value="3.88e-2" />
+  <property name="link_3_iyz"  value="-5.58e-6" />
+  <property name="link_3_izz"  value="2.28e-2" />
+
   <property name="link_4" value="mico_link_4" />
+  <property name="link_4_cog"  value="0.0083 0.0000 -0.0378" />
+  <property name="link_4_mass" value="0.415" />
+  <property name="link_4_ixx"  value="4.87e-3" />
+  <property name="link_4_ixy"  value="5.56e-4" />
+  <property name="link_4_ixz"  value="1.77e-6" />
+  <property name="link_4_iyy"  value="5.53e-3" />
+  <property name="link_4_iyz"  value="3.27e-6" />
+  <property name="link_4_izz"  value="5.45e-3" />
+
   <property name="link_5" value="mico_link_5" />
+  <property name="link_5_cog"  value="0.0083 0.0000 -0.0378" />
+  <property name="link_5_mass" value="0.415" />
+  <property name="link_5_ixx"  value="4.87e-3" />
+  <property name="link_5_ixy"  value="5.56e-4" />
+  <property name="link_5_ixz"  value="1.77e-6" />
+  <property name="link_5_iyy"  value="5.53e-3" />
+  <property name="link_5_iyz"  value="3.27e-6" />
+  <property name="link_5_izz"  value="5.45e-3" />
+
   <property name="link_hand" value="mico_link_hand" />
+  <property name="link_hand_cog"  value="0.0034 0.0000 -0.0808" />
+  <property name="link_hand_mass" value="0.557" />
+  <property name="link_hand_ixx"  value="1.05e-3" />
+  <property name="link_hand_ixy"  value="-1.52e-6" />
+  <property name="link_hand_ixz"  value="4.87e-7" />
+  <property name="link_hand_iyy"  value="1.14e-3" />
+  <property name="link_hand_iyz"  value="-1.90e-8" />
+  <property name="link_hand_izz"  value="1.51e-4" />
+
   <property name="link_finger_1" value="mico_link_finger_1" />
   <property name="link_finger_2" value="mico_link_finger_2" />
   <property name="link_finger_3" value="mico_link_finger_3" />
