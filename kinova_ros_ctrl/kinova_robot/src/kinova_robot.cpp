@@ -150,10 +150,10 @@ void KinovaRobot::setupRobot(int type)
             j6_angle_offset_ = 270.0;
             break;
         case 3: // JACO r2
-            robot_name_      = "jaco";
+            robot_name_      = "jaco2";
             num_joints_      = 9;
             num_fingers_     = 3;
-            j6_angle_offset_ = 260.0; // TODO: confirm this.
+            j6_angle_offset_ = 270.0;
             break;
             break;
         default:

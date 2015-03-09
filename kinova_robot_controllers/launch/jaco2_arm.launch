@@ -1,0 +1,33 @@
+<launch>
+
+  <group ns="jaco2">
+
+    <node   name="jaco2_hardware_interface"
+             pkg="kinova_ros_ctrl"
+            type="kinova_node"
+          output="screen"
+    >
+        <rosparam>
+            period: 0.01    # 100 Hz
+            w_skip:   10    # Write cycle of 10 Hz
+        </rosparam>
+    </node>
+
+    <!--include file="$(find kinova_description)/launch/upload_jaco.launch"/-->
+
+    <rosparam file="$(find kinova_robot_controllers)/config/controllers.yaml" command="load"/>
+
+    <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false"
+	  output="screen" args="spawn
+				 joint_state_controller
+				 position_trajectory_controller
+				 " />
+    
+    <node name="robot_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher"/>
+
+  </group>
+
+</launch>
+
