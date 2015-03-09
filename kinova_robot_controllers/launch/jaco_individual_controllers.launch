@@ -10,7 +10,7 @@
         </rosparam>
     </node>
 
-    <include file="$(find jaco_model)/launch/upload_jaco.launch"/>
+    <include file="$(find kinova_description)/launch/upload_jaco.launch"/>
 
     <rosparam>
         joint_state_controller:
