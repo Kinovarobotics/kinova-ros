@@ -2,7 +2,7 @@
 
   <!--
     NOTE: The JACO r2 arm is not supported by the old forward kinematics
-    node, so use_urdf mode is necessary.
+    node, so use_urdf mode is required and the argument not necessary.
   -->
 
   <node name="jaco2_arm_driver" pkg="kinova_driver" type="jaco_arm_driver" output="screen" cwd="node">

@@ -344,7 +344,7 @@ void JacoArm::publishJointAngles(void)
     // J6 offset is 260 for Jaco R1 (type 0), and 270 for Mico and Jaco R2.
     double j6o = jaco_comm_.robotType() == 0 ? 260.0 : 270.0;
     joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
-    joint_state.position[1] = (jaco_angles.joint2 - 270) * (PI / 180);
+    joint_state.position[1] = (jaco_angles.joint2 - j6o) * (PI / 180);
     joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
@@ -364,7 +364,7 @@ void JacoArm::publishJointAngles(void)
     joint_state.velocity[4] = current_vels.Actuator5;
     joint_state.velocity[5] = current_vels.Actuator6;
 
-    ROS_DEBUG_THROTTLE(0.1,
+    ROS_DEBUG_THROTTLE_NAMED(0.1, "raw",
                        "Raw joint velocities: %f %f %f %f %f %f",
                        joint_state.velocity[0],
                        joint_state.velocity[1],
@@ -396,7 +396,7 @@ void JacoArm::publishJointAngles(void)
     joint_state.effort[7] = 0.0;
     joint_state.effort[8] = 0.0;
 
-    ROS_DEBUG_THROTTLE(0.1,
+    ROS_DEBUG_THROTTLE_NAMED(0.1, "raw",
                        "Raw joint torques: %f %f %f %f %f %f",
                        joint_state.effort[0],
                        joint_state.effort[1],
