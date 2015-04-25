@@ -319,13 +319,15 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  */
 void JacoArm::publishJointAngles(void)
 {
+    double j6o = jaco_comm_.j6o();
+
     FingerAngles fingers;
     jaco_comm_.getFingerPositions(fingers);
 
     // Query arm for current joint angles
     JacoAngles current_angles;
     jaco_comm_.getJointAngles(current_angles);
-    kinova_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg();
+    kinova_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg(j6o);
 
     jaco_angles.joint1 = current_angles.Actuator1;
     jaco_angles.joint2 = current_angles.Actuator2;
@@ -341,8 +343,6 @@ void JacoArm::publishJointAngles(void)
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
     joint_state.position.resize(9);
 
-    // J6 offset is 260 for Jaco R1 (type 0), and 270 for Mico and Jaco R2.
-    double j6o = jaco_comm_.robotType() == 0 ? 260.0 : 270.0;
     joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
     joint_state.position[1] = (jaco_angles.joint2 - 270) * (PI / 180);
     joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);

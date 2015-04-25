@@ -781,12 +781,12 @@ void JacoComm::startAPI()
 }
 
 
-int JacoComm::numFingers()
+int JacoComm::numFingers() const
 {
     return num_fingers_;
 }
 
-int JacoComm::robotType()
+int JacoComm::robotType() const
 {
     return robot_type_;
 }
@@ -857,5 +857,10 @@ bool JacoComm::isStopped()
     return is_software_stop_;
 }
 
+double JacoComm::j6o() const
+{
+    // J6 offset is 260 for Jaco R1 (type 0), and 270 for Mico and Jaco R2.
+    return robotType() == 0 ? 260.0 : 270.0;
+}
 
 }  // namespace kinova

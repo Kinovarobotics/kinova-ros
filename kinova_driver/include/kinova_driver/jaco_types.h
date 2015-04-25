@@ -91,10 +91,10 @@ class JacoAngles : public AngularInfo
 {
  public:
     JacoAngles() {}
-    explicit JacoAngles(const kinova_msgs::JointAngles &angles);
+    explicit JacoAngles(const kinova_msgs::JointAngles &angles, double j6o);
     explicit JacoAngles(const AngularInfo &angles);
 
-    kinova_msgs::JointAngles constructAnglesMsg();
+    kinova_msgs::JointAngles constructAnglesMsg(double j6o);
     bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 

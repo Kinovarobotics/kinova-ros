@@ -90,7 +90,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
         if (arm_comm_.isStopped())
         {
             ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
-            result.angles = current_joint_angles.constructAnglesMsg();
+            result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
             action_server_.setAborted(result);
             return;
         }
@@ -98,7 +98,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
         last_nonstall_time_ = current_time;
         last_nonstall_angles_ = current_joint_angles;
 
-        JacoAngles target(goal->angles);
+        JacoAngles target(goal->angles, arm_comm_.j6o());
         arm_comm_.setJointAngles(target);
 
         // Loop until the action completed, is preempted, or fails in some way.
@@ -110,7 +110,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
 
             if (action_server_.isPreemptRequested() || !ros::ok())
             {
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
@@ -118,20 +118,20 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
             }
             else if (arm_comm_.isStopped())
             {
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
                 action_server_.setAborted(result);
                 return;
             }
 
             arm_comm_.getJointAngles(current_joint_angles);
             current_time = ros::Time::now();
-            feedback.angles = current_joint_angles.constructAnglesMsg();
+            feedback.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
             action_server_.publishFeedback(feedback);
 
             if (target.isCloseToOther(current_joint_angles, tolerance_))
             {
                 // Check if the action has succeeeded
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
                 action_server_.setSucceeded(result);
                 return;
             }
@@ -144,7 +144,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
             else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
             {
                 // Check if the full stall condition has been meet
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
@@ -156,7 +156,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
     }
     catch(const std::exception& e)
     {
-        result.angles = current_joint_angles.constructAnglesMsg();
+        result.angles = current_joint_angles.constructAnglesMsg(arm_comm_.j6o());
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
     }
