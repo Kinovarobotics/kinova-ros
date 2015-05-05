@@ -104,16 +104,267 @@
   <property name="link_end_effector"   value="jaco_end_effector" />
   <property name="end_effector_offset" value="0.1687" />
 
+  <property name="link_base_link_data">
+      <link_data>
+          <collision>
+            <origin rpy="0 0 0" xyz="0 0 0.076" />
+            <geometry>
+                <cylinder length="0.154" radius="0.042" />
+            </geometry>
+        </collision>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0.038 0.084" />
+            <geometry>
+                <box size="0.051 0.011 0.038" />
+            </geometry>
+        </collision>
+      </link_data>
+  </property>
+
+  <property name="link_1_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -0.02" />
+                <geometry>
+                    <cylinder length="0.04" radius="0.042" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="${J_PI/2.0} 0 0" xyz="0 ${0.0395/2} -0.11925" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.0395" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="${J_PI/2.0} 0 0" xyz="0 ${0.0395/2+0.024} -0.11925" />
+                <geometry>
+                    <cylinder length="0.004" radius="0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0.06 0 0" xyz="0 0.031 -0.07875" />
+                <geometry>
+                    <box size="0.079 0.027 0.080" />
+                </geometry>
+            </collision>
+      </link_data>
+  </property>
+
+  <property name="link_2_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -0.027" />
+                <geometry>
+                    <cylinder length="0.056" radius="0.041" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 0 0" xyz="0.411 0 -0.027" />
+                <geometry>
+                    <cylinder length="0.056" radius="0.0395" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 0 0" xyz="${0.411/2} 0 -0.040" />
+                <geometry>
+                    <box size="0.411 0.082 0.027" />
+                </geometry>
+            </collision>
+        </link_data>
+  </property>
+
+  <property name="link_3_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -0.0225" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.041" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${J_PI/2.0} 0" xyz="0.187 0 -0.012" />
+                <geometry>
+                    <cylinder length="0.04" radius="0.032" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.02 0" xyz="${0.25/2-0.02} 0 -0.040" />
+                <geometry>
+                    <box size="0.2 0.03 0.01" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.025 0" xyz="${0.25/2-0.02} 0 -0.035" />
+                <geometry>
+                    <box size="0.2 0.053 0.01" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.03 0" xyz="${0.25/2-0.02} 0 -0.025" />
+                <geometry>
+                    <box size="0.2 0.066 0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.04 0" xyz="${0.25/2-0.02} 0 -0.025" />
+                <geometry>
+                    <box size="0.2 0.066 0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.16 0" xyz="${0.25/2-0.02} 0 -0.013" />
+                <geometry>
+                    <box size="0.18 0.05 0.018" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.20 0" xyz="${0.25/2-0.02} 0 -0.009" />
+                <geometry>
+                    <box size="0.18 0.03 0.016" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.18 0" xyz="0.07 0 -0.025" />
+                <geometry>
+                    <box size="0.13 0.084 0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.18 0" xyz="0.09 0 -0.025" />
+                <geometry>
+                    <box size="0.15 0.072 0.02" />
+                </geometry>
+            </collision>
+        </link_data>
+  </property>
+
+  <property name="link_4_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -${0.045/2}" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.032" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${-J_PI/8-0.08} 0" xyz="0.008 0 ${-0.03-0.045/4}" />
+                <geometry>
+                    <cylinder length="0.030" radius="0.036" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${-J_PI/4-0.16} 0" xyz="0.017 0 ${-0.03-0.045/2}" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.032" />
+                </geometry>
+            </collision>
+        </link_data>
+  </property>
+
+  <property name="link_5_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -${0.045/2}" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.032" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${-J_PI/8-0.08} 0" xyz="0.008 0 ${-0.03-0.045/4}" />
+                <geometry>
+                    <cylinder length="0.030" radius="0.036" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${-J_PI/4-0.16} 0" xyz="0.017 0 ${-0.03-0.045/2}" />
+                <geometry>
+                    <cylinder length="0.045" radius="0.032" />
+                </geometry>
+            </collision>
+        </link_data>
+  </property>
+
+  <property name="link_hand_link_data">
+      <link_data>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 -${0.035/2}" />
+                <geometry>
+                    <cylinder length="0.035" radius="0.032" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="-0.05 0.45 0" xyz="-0.022 0 -0.06" />
+                <geometry>
+                    <cylinder length="0.09" radius="0.035" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="-0.05 0.45 0" xyz="-0.022 0 -0.06" />
+                <geometry>
+                    <cylinder length="0.11" radius="0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="-0.25 -0.45 0" xyz="0.018 -0.014 -0.06" />
+                <geometry>
+                    <cylinder length="0.09" radius="0.034" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="-0.25 -0.45 0" xyz="0.018 -0.014 -0.06" />
+                <geometry>
+                    <cylinder length="0.11" radius="0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0.25 -0.45 0" xyz="0.018 0.014 -0.06" />
+                <geometry>
+                    <cylinder length="0.09" radius="0.034" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0.25 -0.45 0" xyz="0.018 0.014 -0.06" />
+                <geometry>
+                    <cylinder length="0.11" radius="0.02" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 -0.45 0" xyz="0.052 0 -0.055" />
+                <geometry>
+                    <box size="0.01 0.03 0.07" />
+                </geometry>
+            </collision>
+            <collision>
+                <origin rpy="0 ${J_PI/2.0-0.2} -0.03" xyz="-0.005 0 -0.065" />
+                <geometry>
+                    <cylinder length="0.02" radius="0.04" />
+                </geometry>
+            </collision>
+        </link_data>
+  </property>
+
+  <property name="finger_link_data">
+      <link_data>
+          <collision>
+              <origin rpy="0 0 0" xyz="${0.119/2} 0 0" />
+              <geometry>
+                  <box size="0.119 0.022 0.019" />
+              </geometry>
+          </collision>
+      </link_data>
+  </property>
+
+
   <xacro:macro name="jaco_arm" params="parent">
     <xacro:jaco_struct parent="${parent}" basename="jaco"/>
 
-    <xacro:jaco_link link_name="${link_finger_1}"/>
+    <xacro:jaco_link link_name="${link_finger_1}"><xacro:insert_block name="finger_link_data" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger_1}" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}"/>
 
-    <xacro:jaco_link link_name="${link_finger_2}"/>
+    <xacro:jaco_link link_name="${link_finger_2}"><xacro:insert_block name="finger_link_data" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
 
-    <xacro:jaco_link link_name="${link_finger_3}"/>
+    <xacro:jaco_link link_name="${link_finger_3}"><xacro:insert_block name="finger_link_data" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_3}" type="revolute" parent="${link_hand}" child="${link_finger_3}" joint_axis_xyz="${joint_finger_3_axis_xyz}" joint_origin_xyz="${joint_finger_3_origin_xyz}" joint_origin_rpy="${joint_finger_3_origin_rpy}" lower_limit="${joint_finger_3_lower_limit}" upper_limit="${joint_finger_3_upper_limit}"/>
   </xacro:macro>
 
