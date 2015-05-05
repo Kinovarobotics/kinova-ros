@@ -118,18 +118,26 @@
   <property name="link_end_effector"   value="mico_end_effector" />
   <property name="end_effector_offset" value="0.160" />
 
+  <property name="link_base_link_data"><xacro:default_link_data link_name="${link_base}" /></property>
+  <property name="link_1_link_data"><xacro:default_link_data link_name="${link_1}" /></property>
+  <property name="link_2_link_data"><xacro:default_link_data link_name="${link_2}" /></property>
+  <property name="link_3_link_data"><xacro:default_link_data link_name="${link_3}" /></property>
+  <property name="link_4_link_data"><xacro:default_link_data link_name="${link_4}" /></property>
+  <property name="link_5_link_data"><xacro:default_link_data link_name="${link_5}" /></property>
+  <property name="link_hand_link_data"><xacro:default_link_data link_name="${link_hand}" /></property>
+
   <xacro:macro name="mico_arm" params="parent">
 
     <xacro:jaco_struct parent="${parent}" basename="mico"/>
 
-    <xacro:jaco_link link_name="${link_finger_1}"/>
+    <xacro:jaco_link link_name="${link_finger_1}"><xacro:default_link_data link_name="${link_finger_1}" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger_1}" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}"/>
-    <xacro:jaco_link link_name="${link_finger_tip_1}"/>
+    <xacro:jaco_link link_name="${link_finger_tip_1}"><xacro:default_link_data link_name="${link_finger_tip_1}" /></xacro:jaco_link>
     <xacro:jaco_finger_tip_joint joint_name="${joint_finger_tip_1}" type="revolute" parent="${link_finger_1}" child="${link_finger_tip_1}" joint_axis_xyz="${joint_finger_tip_1_axis_xyz}" joint_origin_xyz="${joint_finger_tip_1_origin_xyz}" joint_origin_rpy="${joint_finger_tip_1_origin_rpy}" lower_limit="${joint_finger_tip_1_lower_limit}" upper_limit="${joint_finger_tip_1_upper_limit}" mimic_joint="${joint_finger_1}" mimic_multiplier="${joint_finger_tip_1_mimic_multiplier}" mimic_offset="${joint_finger_tip_1_mimc_offset}"/>
 
-    <xacro:jaco_link link_name="${link_finger_2}"/>
+    <xacro:jaco_link link_name="${link_finger_2}"><xacro:default_link_data link_name="${link_finger_2}" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
-    <xacro:jaco_link link_name="${link_finger_tip_2}"/>
+    <xacro:jaco_link link_name="${link_finger_tip_2}"><xacro:default_link_data link_name="${link_finger_tip_2}" /></xacro:jaco_link>
     <xacro:jaco_finger_tip_joint joint_name="${joint_finger_tip_2}" type="revolute" parent="${link_finger_2}" child="${link_finger_tip_2}" joint_axis_xyz="${joint_finger_tip_2_axis_xyz}" joint_origin_xyz="${joint_finger_tip_2_origin_xyz}" joint_origin_rpy="${joint_finger_tip_2_origin_rpy}" lower_limit="${joint_finger_tip_2_lower_limit}" upper_limit="${joint_finger_tip_2_upper_limit}" mimic_joint="${joint_finger_2}" mimic_multiplier="${joint_finger_tip_2_mimic_multiplier}" mimic_offset="${joint_finger_tip_2_mimc_offset}"/>
 
   </xacro:macro>
