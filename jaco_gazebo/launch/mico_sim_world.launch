@@ -6,7 +6,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="verbose" default="false"/>
-  <arg name="world" default="3boxes_room.world" />
+  <arg name="world" default="empty.world" />
   <arg name="extra_gazebo_args" default="" />
 
   <!-- set command arguments -->
@@ -26,7 +26,7 @@
 
   <!-- start gazebo server-->
   <node name="gazebo" pkg="gazebo_ros" type="$(arg script_type)" respawn="false" output="screen"
-	args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) $(find mico_gazebo)/worlds/$(arg world) $(arg extra_gazebo_args)" launch-prefix="$(optenv OPTIRUN_LAUNCH_PREFIX)" />
+	args="$(arg command_arg1) $(arg command_arg2) $(arg command_arg3) $(find jaco_gazebo)/worlds/$(arg world) $(arg extra_gazebo_args)" launch-prefix="$(optenv OPTIRUN_LAUNCH_PREFIX)" />
 	
   <!-- start gui -->
   <group if="$(arg gui)">

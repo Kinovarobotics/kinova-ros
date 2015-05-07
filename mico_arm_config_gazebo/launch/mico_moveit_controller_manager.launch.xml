@@ -3,5 +3,5 @@
 	<arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
 	<param name="moveit_controller_manager" value="$(arg moveit_controller_manager)"/>
 	<!-- load controller_list -->
-	<rosparam file="$(find mico_arm_config_gazebo_new)/config/controllers.yaml"/>
+	<rosparam file="$(find mico_arm_config_gazebo)/config/controllers.yaml"/>
 </launch>

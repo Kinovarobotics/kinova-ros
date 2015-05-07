@@ -5,6 +5,6 @@
 
   <arg name="pipeline" default="ompl" />
 
-  <include file="$(find mico_arm_config_gazebo_new)/launch/$(arg pipeline)_planning_pipeline.launch.xml" />
+  <include file="$(find mico_arm_config_gazebo)/launch/$(arg pipeline)_planning_pipeline.launch.xml" />
 
 </launch>

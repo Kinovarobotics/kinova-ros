@@ -8,10 +8,10 @@
   <arg name="gui" default="true"/>
   <arg name="world" default="empty.world" />
 
-	<env name="GAZEBO_MODEL_PATH" value="$(find mico_gazebo):$(optenv GAZEBO_MODEL_PATH)"/>
+	<env name="GAZEBO_MODEL_PATH" value="$(find jaco_gazebo):$(optenv GAZEBO_MODEL_PATH)"/>
 
 	<!-- start up world -->
-  <include file="$(find mico_gazebo)/launch/mico_sim_world.launch">
+  <include file="$(find jaco_gazebo)/launch/mico_sim_world.launch">
   	<arg name="use_sim_time" value="$(arg use_sim_time)" />
   	<arg name="gui" value="$(arg gui)" />
   	<arg name="world" value="$(arg world)" />
@@ -19,11 +19,11 @@
   </include>
 
   <!-- spawn the robot in simulation -->
-  <include file="$(find mico_gazebo)/launch/mico_spawn.launch">
+  <include file="$(find jaco_gazebo)/launch/mico_spawn.launch">
   	<arg name="pose" value="$(arg pose)"/>
   	<arg name="robot" value="$(arg robot)"/>
   </include>
   <!-- bringup robot and controllers -->
-  <include file="$(find mico_gazebo)/launch/mico_control.launch">
+  <include file="$(find jaco_gazebo)/launch/mico_control.launch">
   </include>
 </launch>

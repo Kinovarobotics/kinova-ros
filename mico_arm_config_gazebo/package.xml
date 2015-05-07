@@ -1,6 +1,6 @@
 <package>
 
-  <name>mico_arm_config_gazebo_new</name>
+  <name>mico_arm_config_gazebo</name>
   <version>0.2.0</version>
   <description>
      An automatically generated package with all the configuration and launch files for using the mico with the MoveIt Motion Planning Framework
