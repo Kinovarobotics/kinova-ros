@@ -20,6 +20,11 @@
 
     <xacro:macro name="jaco_link" params="link_name">
     <link name="${link_name}">
+	S<inertial>
+                <mass value="0.25"/>
+                <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+                <origin/>
+            </inertial>
           <visual>
                      <geometry>
                              <mesh

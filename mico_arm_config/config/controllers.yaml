@@ -1,6 +1,6 @@
 controller_list:
- - name: mico_arm/joint_velocity_controller
-   action_ns: trajectory
+ - name: mico_arm_driver/joint_trajectory_angles
+   action_ns: joint_velocity_controller
    type: FollowJointTrajectory
    default: true
    joints:
@@ -10,11 +10,5 @@ controller_list:
      - mico_joint_4
      - mico_joint_5
      - mico_joint_6
- - name: mico_arm/fingers_controller
-   action_ns: gripper
-   type: GripperCommand
-   default: true
-   joints:
-     - mico_joint_finger_1
-     - mico_joint_finger_2
+
 

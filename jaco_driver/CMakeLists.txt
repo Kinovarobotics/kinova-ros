@@ -11,6 +11,7 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  ecl_geometry
 )
 generate_dynamic_reconfigure_options(
   #cfg/JacoPositionConfig.cfg
@@ -51,6 +52,7 @@ add_executable(jaco_arm_driver
   src/jaco_comm.cpp
   src/jaco_pose_action.cpp
   src/jaco_angles_action.cpp
+  src/jaco_trajectory_angles_action.cpp
   src/jaco_fingers_action.cpp
   src/jaco_types.cpp
   include/jaco_driver/jaco_angles_action.h
@@ -58,6 +60,7 @@ add_executable(jaco_arm_driver
   include/jaco_driver/jaco_arm.h
   include/jaco_driver/jaco_comm.h
   include/jaco_driver/jaco_fingers_action.h
+  include/jaco_driver/jaco_trajectory_angles_action.h
   include/jaco_driver/jaco_pose_action.h
   include/jaco_driver/jaco_types.h
   include/kinova/Kinova.API.CommLayerUbuntu.h
