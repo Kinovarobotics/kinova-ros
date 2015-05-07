@@ -16,6 +16,7 @@
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:include filename="$(find jaco_model)/urdf/jaco_common.xacro" />
+  <xacro:include filename="$(find jaco_model)/urdf/jaco_transmission_friction.xacro" />
 
   <property name="link_base" value="mico_link_base" />
   <property name="link_1" value="mico_link_1" />
@@ -118,8 +119,39 @@
   <property name="link_end_effector"   value="mico_end_effector" />
   <property name="end_effector_offset" value="0.160" />
 
-  <xacro:macro name="mico_arm" params="parent">
+  <xacro:property name="mu1_default" value="0.2" />
+  <xacro:property name="mu2_default" value="0.2" />
+  <xacro:property name="kp_default" value="1000.0" />
+  <xacro:property name="kd_default" value="1.0" />
 
+  <xacro:macro name="mico_arm" params="parent">
+	<gazebo>
+	    <plugin name="gazebo_ros_controller_manager" filename="libgazebo_ros_control.so">
+		<robotNamespace>/mico_arm</robotNamespace>
+		<robotParam>robot_description</robotParam>
+	    </plugin>
+	</gazebo>
+	<gazebo>
+	    <plugin name="gazebo_ros_joint_trajectory" filename="libgazebo_ros_joint_pose_trajectory.so">
+		<robotNamespace>/mico_arm</robotNamespace>
+		<alwaysOn>true</alwaysOn>
+		<updateRate>100.0</updateRate>
+	    </plugin>
+	</gazebo>
+	<gazebo>
+		<plugin name="mimic_plugin" filename="libgazebo_mimic_plugin.so">
+			<joint>${joint_finger_1}</joint>
+			<mimicJoint>${joint_finger_tip_1}</mimicJoint>
+			<multiplier>${joint_finger_tip_1_mimic_multiplier}</multiplier>
+		</plugin>
+	</gazebo>
+	<gazebo>
+		<plugin name="mimic_plugin" filename="libgazebo_mimic_plugin.so">
+			<joint>${joint_finger_2}</joint>
+			<mimicJoint>${joint_finger_tip_2}</mimicJoint>
+			<multiplier>${joint_finger_tip_2_mimic_multiplier}</multiplier>
+		</plugin>
+	</gazebo>
     <xacro:jaco_struct parent="${parent}" basename="mico"/>
 
     <xacro:jaco_link link_name="${link_finger_1}"/>
@@ -131,7 +163,7 @@
     <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
     <xacro:jaco_link link_name="${link_finger_tip_2}"/>
     <xacro:jaco_finger_tip_joint joint_name="${joint_finger_tip_2}" type="revolute" parent="${link_finger_2}" child="${link_finger_tip_2}" joint_axis_xyz="${joint_finger_tip_2_axis_xyz}" joint_origin_xyz="${joint_finger_tip_2_origin_xyz}" joint_origin_rpy="${joint_finger_tip_2_origin_rpy}" lower_limit="${joint_finger_tip_2_lower_limit}" upper_limit="${joint_finger_tip_2_upper_limit}" mimic_joint="${joint_finger_2}" mimic_multiplier="${joint_finger_tip_2_mimic_multiplier}" mimic_offset="${joint_finger_tip_2_mimc_offset}"/>
-
+  <xacro:jaco_transmission_friction_gazebo/>
   </xacro:macro>
 
 
