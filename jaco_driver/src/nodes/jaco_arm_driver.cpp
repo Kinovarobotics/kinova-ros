@@ -12,7 +12,7 @@
 #include "jaco_driver/jaco_angles_action.h"
 #include "jaco_driver/jaco_fingers_action.h"
 #include "jaco_driver/jaco_trajectory_angles_action.h"
-
+#include "jaco_driver/jaco_gripper_action_server.h"
 
 int main(int argc, char **argv)
 {
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
             jaco::JacoAnglesActionServer angles_server(comm, nh);
             jaco::JacoFingersActionServer fingers_server(comm, nh);
 	    jaco::JacoTrajectoryAnglesActionServer angle_trajectory_server(comm, nh);
-
+	    jaco::JacoGripperActionServer gripper_action_server(comm, nh);
             ros::spin();
         }
         catch(const std::exception& e)
