@@ -1,0 +1,104 @@
+mico_arm:
+
+  # Publish all joint states
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+
+  # Joint 1 Controllers
+  mico_joint1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_1
+    pid: {p: 100.0, i: 0.0, d: 0.0}
+
+  # Joint 2 Controllers
+  mico_joint2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_2
+    pid: {p: 100.0, i: 1.0, d: 1.0}
+
+  # Joint 3 Controllers
+  mico_joint3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_3
+    pid: {p: 100.0, i: 1.0, d: 1.0}
+
+  # Joint 4 Controllers
+  mico_joint4_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_4
+    pid: {p: 50.0, i: 10.0, d: 1.0}
+
+  # Joint 5 Controllers
+  mico_joint5_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_5
+    pid: {p: 100.0, i: 0.1, d: 0.1}
+
+  # Joint 6 Controllers
+  mico_joint6_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_6
+    pid: {p: 50.0, i: 0.1, d: 0.1}
+
+  # Finger 1 Controllers
+  mico_joint_finger_1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_finger_1
+    pid: {p: 10.0, i: 0.1, d: 0.1}
+
+ # Finger 2 Controllers
+  mico_joint_finger_2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: mico_joint_finger_2
+    pid: {p: 10.0, i: 0.1, d: 0.1}
+
+  mico_arm_trajectory_controller:
+    type: effort_controllers/JointTrajectoryController
+    joints:
+      - mico_joint_1
+      - mico_joint_2
+      - mico_joint_3
+      - mico_joint_4
+      - mico_joint_5
+      - mico_joint_6
+    gains:
+      mico_joint_1:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+      mico_joint_2:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+      mico_joint_3:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+      mico_joint_4:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+      mico_joint_5:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+      mico_joint_6:
+        p: 1000.0
+        i: 1.0
+        d: 1.0
+    constraints: 
+      goal_time: 100.0
+      mico_joint_1:
+        trajectory: 0.02
+      mico_joint_2:
+        trajectory: 0.02
+      mico_joint_3:
+        trajectory: 0.02
+      mico_joint_4:
+        trajectory: 0.02
+      mico_joint_5:
+        trajectory: 0.02
+      mico_joint_6:
+        trajectory: 0.02
+
