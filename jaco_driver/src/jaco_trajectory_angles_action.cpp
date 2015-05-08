@@ -38,6 +38,33 @@ JacoTrajectoryAnglesActionServer::~JacoTrajectoryAnglesActionServer()
 {
 }
 
+/** Calculates nearest desired angle to the current angle
+ *  @param desired desired joint angle [-pi, pi]
+ *  @param current current angle (-inf, inf)
+ *  @return the closest equivalent angle (-inf, inf)
+ */
+static inline double nearest_equivalent(double desired, double current)
+{
+  //calculate current number of revolutions
+  double previous_rev = floor(current / (2 * M_PI));
+  double next_rev = ceil(current / (2 * M_PI));
+  double current_rev;
+  if (fabs(current - previous_rev * 2 * M_PI) < fabs(current - next_rev * 2 * M_PI))
+    current_rev = previous_rev;
+  else
+    current_rev = next_rev;
+
+  //determine closest angle
+  double lowVal = (current_rev - 1) * 2 * M_PI + desired;
+  double medVal = current_rev * 2 * M_PI + desired;
+  double highVal = (current_rev + 1) * 2 * M_PI + desired;
+  if (fabs(current - lowVal) <= fabs(current - medVal) && fabs(current - lowVal) <= fabs(current - highVal))
+    return lowVal;
+  if (fabs(current - medVal) <= fabs(current - lowVal) && fabs(current - medVal) <= fabs(current - highVal))
+    return medVal;
+  return highVal;
+}
+
 
 void JacoTrajectoryAnglesActionServer::actionCallback(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal)
 {
@@ -77,13 +104,21 @@ void JacoTrajectoryAnglesActionServer::actionCallback(const control_msgs::Follow
     trajectoryPoints[3][i] = 180.0 - goal->trajectory.points.at(i).positions.at(3)*RAD_TO_DEG;
     trajectoryPoints[4][i] = 180.0 - goal->trajectory.points.at(i).positions.at(4)*RAD_TO_DEG;
     trajectoryPoints[5][i] = 270.0 - goal->trajectory.points.at(i).positions.at(5)*RAD_TO_DEG;*/
+
     // Trajectory points in radians
+    
     trajectoryPoints[0][i] = PI - goal->trajectory.points.at(i).positions.at(0);
     trajectoryPoints[1][i] = j6o_*DEG_TO_RAD + goal->trajectory.points.at(i).positions.at(1);
     trajectoryPoints[2][i] = PI/2.0 - goal->trajectory.points.at(i).positions.at(2);
     trajectoryPoints[3][i] = PI - goal->trajectory.points.at(i).positions.at(3);
     trajectoryPoints[4][i] = PI - goal->trajectory.points.at(i).positions.at(4);
     trajectoryPoints[5][i] = 3.0*PI/2.0 - goal->trajectory.points.at(i).positions.at(5);
+    /*trajectoryPoints[0][i] = goal->trajectory.points.at(i).positions.at(0);
+    trajectoryPoints[1][i] = goal->trajectory.points.at(i).positions.at(1);
+    trajectoryPoints[2][i] = goal->trajectory.points.at(i).positions.at(2);
+    trajectoryPoints[3][i] = goal->trajectory.points.at(i).positions.at(3);
+    trajectoryPoints[4][i] = goal->trajectory.points.at(i).positions.at(4);
+    trajectoryPoints[5][i] = goal->trajectory.points.at(i).positions.at(5);*/
     /*for (unsigned int j = 0; j < NUM_JACO_JOINTS; j++)
     {
       trajectoryPoints[j][i] = goal->trajectory.points.at(i).positions.at(j);
@@ -200,6 +235,20 @@ while (!trajectoryComplete)
       current_joint_pos[3] = current_joint_angles.Actuator4 * DEG_TO_RAD;
       current_joint_pos[4] = current_joint_angles.Actuator5 * DEG_TO_RAD;
       current_joint_pos[5] = current_joint_angles.Actuator6 * DEG_TO_RAD;
+      /*current_joint_pos[0] = (180 - current_joint_angles.Actuator1) * DEG_TO_RAD;
+      current_joint_pos[1] = (current_joint_angles.Actuator2 - j6o_) * DEG_TO_RAD;
+      current_joint_pos[2] = (90 - current_joint_angles.Actuator3) * DEG_TO_RAD;
+      current_joint_pos[3] = (180 - current_joint_angles.Actuator4) * DEG_TO_RAD;
+      current_joint_pos[4] = (180 - current_joint_angles.Actuator5) * DEG_TO_RAD;
+      current_joint_pos[5] = (270 - current_joint_angles.Actuator6) * DEG_TO_RAD;*/
+/*joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
+    joint_state.position[1] = (jaco_angles.joint2 - j6o) * (PI / 180);
+    joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
+    joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
+    joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
+    joint_state.position[5] = (270-jaco_angles.joint6) * (PI / 180);
+    joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
+    joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;*/
 
       totalError = 0;
       for (unsigned int i = 0; i < NUM_JACO_JOINTS; i++)
@@ -211,7 +260,7 @@ while (!trajectoryComplete)
         totalError += fabs(error[i]);
       }
 
-      if (totalError < .03)
+      if (totalError < .06)
       {
         trajPoint.Actuator1 = 0.0;
         trajPoint.Actuator2 = 0.0;
@@ -234,12 +283,19 @@ while (!trajectoryComplete)
         //GetAngularPosition(position_data);
 	arm_comm_.getJointAngles(current_joint_angles);
       }
+
       current_joint_pos[0] = current_joint_angles.Actuator1 * DEG_TO_RAD;
       current_joint_pos[1] = current_joint_angles.Actuator2 * DEG_TO_RAD;
       current_joint_pos[2] = current_joint_angles.Actuator3 * DEG_TO_RAD;
       current_joint_pos[3] = current_joint_angles.Actuator4 * DEG_TO_RAD;
       current_joint_pos[4] = current_joint_angles.Actuator5 * DEG_TO_RAD;
       current_joint_pos[5] = current_joint_angles.Actuator6 * DEG_TO_RAD;
+      /*current_joint_pos[0] = (180 - current_joint_angles.Actuator1) * DEG_TO_RAD;
+      current_joint_pos[1] = (current_joint_angles.Actuator2 - j6o_) * DEG_TO_RAD;
+      current_joint_pos[2] = (90 - current_joint_angles.Actuator3) * DEG_TO_RAD;
+      current_joint_pos[3] = (180 - current_joint_angles.Actuator4) * DEG_TO_RAD;
+      current_joint_pos[4] = (180 - current_joint_angles.Actuator5) * DEG_TO_RAD;
+      current_joint_pos[5] = (270 - current_joint_angles.Actuator6) * DEG_TO_RAD;*/
       for (unsigned int i = 0; i < NUM_JACO_JOINTS; i++)
       {
         //currentPoint = simplify_angle(current_joint_pos[i]);
@@ -258,7 +314,7 @@ while (!trajectoryComplete)
     trajPoint.Actuator6 = (KP * error[5] + KV * (error[5] - prevError[5]) * RAD_TO_DEG);
 
     //for debugging:
-    // cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
+    //cout << "Errors: " << error[0] << ", " << error[1] << ", " << error[2] << ", " << error[3] << ", " << error[4] << ", " << error[5] << endl;
 
     //send the velocity command
     //executeAngularTrajectoryPoint(trajPoint, true);
