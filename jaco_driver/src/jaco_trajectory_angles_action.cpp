@@ -65,7 +65,19 @@ static inline double nearest_equivalent(double desired, double current)
   return highVal;
 }
 
-
+/** Adjust angle to equivalent angle on [-pi, pi]
+ *  @param angle the angle to be simplified (-inf, inf)
+ *  @return the simplified angle on [-pi, pi]
+ */
+static inline double simplify_angle(double angle)
+{
+  double previous_rev = floor(angle / (2.0 * M_PI)) * 2.0 * M_PI;
+  double next_rev = ceil(angle / (2.0 * M_PI)) * 2.0 * M_PI;
+  double current_rev;
+  if (fabs(angle - previous_rev) < fabs(angle - next_rev))
+    return angle - previous_rev;
+  return angle - next_rev;
+}
 void JacoTrajectoryAnglesActionServer::actionCallback(const control_msgs::FollowJointTrajectoryGoalConstPtr &goal)
 {
     /*control_msgs::FollowJointTrajectoryActionFeedback feedback;
@@ -253,6 +265,7 @@ while (!trajectoryComplete)
       totalError = 0;
       for (unsigned int i = 0; i < NUM_JACO_JOINTS; i++)
       {
+	if 
         //currentPoint = simplify_angle(current_joint_pos[i]);
         /*error[i] = nearest_equivalent(simplify_angle((splines.at(i))(timePoints.at(timePoints.size() - 1))),
                                       currentPoint) - currentPoint;*/

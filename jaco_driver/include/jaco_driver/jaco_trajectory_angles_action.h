@@ -24,8 +24,8 @@
 #define PI 3.14159265359
 #define DEG_TO_RAD (M_PI/180)
 #define RAD_TO_DEG (180/M_PI)
-#define KP 300.0
-#define KV 20.0
+#define KP 50.0
+#define KV 25.0
 #define ERROR_THRESHOLD .03 //threshold in radians for combined joint error to consider motion a success
 namespace jaco
 {
