@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- bringup ROS controllers -->
+	<!-- Load joint controller configurations from YAML file to parameter server -->
+	<rosparam file="$(find jaco_gazebo)/config/mico_control.yaml" command="load"/>
+
+	  <!-- Load the controllers -->
+	  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+	    output="screen" ns="/mico_arm" args="
+		mico_joint_finger_1_position_controller
+		mico_joint_finger_2_position_controller
+		joint_state_controller
+		mico_arm_trajectory_controller " />
+<!--<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+	    output="screen" ns="/mico_arm" args="joint_state_controller" />-->
+	<!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+   <remap from="/joint_states" to="/mico_arm/joint_states" />
+  </node>
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  </node>
+</launch>

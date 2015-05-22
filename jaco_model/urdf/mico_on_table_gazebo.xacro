@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+
+<robot xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro" name="mico">
+
+  <xacro:include filename="$(find jaco_model)/urdf/mico_arm.xacro" />
+
+<link name="root">
+      <visual>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<geometry>
+	  <box size = "0 0 0"/> <!--making it slightly bigger in x and z direction-->
+	</geometry>
+	<!--<material name="Black" /> -->
+      </visual>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0" />
+	<geometry>
+	  <box size = "0 0 0"/> <!--making it slightly bigger in x and z direction-->
+	</geometry>
+      </collision>     
+    </link>
+<link name="world"/>
+	<joint name="fixed" type="fixed">
+	    <parent link="world"/>
+	    <child link="root"/>
+	    <origin xyz="0.0 -0.95 1.01" rpy="0.0 0.0 0.0" />
+	</joint>
+<xacro:mico_arm  parent="root"/>
+
+</robot>
