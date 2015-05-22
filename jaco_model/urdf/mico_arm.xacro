@@ -172,7 +172,7 @@
     <xacro:jaco_finger_joint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
     <xacro:jaco_link link_name="${link_finger_tip_2}"><xacro:default_link_data link_name="${link_finger_tip_2}" /></xacro:jaco_link>
     <xacro:jaco_finger_tip_joint joint_name="${joint_finger_tip_2}" type="revolute" parent="${link_finger_2}" child="${link_finger_tip_2}" joint_axis_xyz="${joint_finger_tip_2_axis_xyz}" joint_origin_xyz="${joint_finger_tip_2_origin_xyz}" joint_origin_rpy="${joint_finger_tip_2_origin_rpy}" lower_limit="${joint_finger_tip_2_lower_limit}" upper_limit="${joint_finger_tip_2_upper_limit}" mimic_joint="${joint_finger_2}" mimic_multiplier="${joint_finger_tip_2_mimic_multiplier}" mimic_offset="${joint_finger_tip_2_mimc_offset}"/>
-  <xacro:jaco_transmission_friction_gazebo/>
+  <xacro:mico_transmission_friction_gazebo/>
   </xacro:macro>
 
 

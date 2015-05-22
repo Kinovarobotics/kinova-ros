@@ -214,6 +214,28 @@ JacoAngles::JacoAngles(const AngularInfo &angles)
 }
 
 
+JacoAngles::JacoAngles(const AngularInfo &angles,bool normalize)
+{
+   if (normalize==true)
+   {
+    Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
+    Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
+    Actuator3 = normalizePositiveInDegrees(angles.Actuator3);
+    Actuator4 = normalizePositiveInDegrees(angles.Actuator4);
+    Actuator5 = normalizePositiveInDegrees(angles.Actuator5);
+    Actuator6 = normalizePositiveInDegrees(angles.Actuator6);
+   }
+   else{
+   Actuator1 = angles.Actuator1;
+    Actuator2 = angles.Actuator2;
+    Actuator3 = angles.Actuator3;
+    Actuator4 = angles.Actuator4;
+    Actuator5 = angles.Actuator5;
+    Actuator6 = angles.Actuator6;
+   }
+}
+
+
 jaco_msgs::JointAngles JacoAngles::constructAnglesMsg()
 {
     jaco_msgs::JointAngles angles;
