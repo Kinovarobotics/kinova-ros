@@ -67,7 +67,7 @@ void JacoTrajectoryAnglesActionServer::actionCallback(const control_msgs::Follow
   int numPoints = goal->trajectory.points.size();
 
   // Converting the actual arm angles to the DH angles
-  arm_comm_.getJointAnglesCommand(current_joint_angles);
+  arm_comm_.getJointAnglesNotNormalized(current_joint_angles);
   current_joint_pos[0] = (180 - current_joint_angles.Actuator1) * DEG_TO_RAD;
   current_joint_pos[1] = (current_joint_angles.Actuator2 - j6o_) * DEG_TO_RAD;
   current_joint_pos[2] = (90 - current_joint_angles.Actuator3) * DEG_TO_RAD;
@@ -89,7 +89,7 @@ void JacoTrajectoryAnglesActionServer::actionCallback(const control_msgs::Follow
     trajectoryPoints[3][i] = PI - goal->trajectory.points.at(i).positions.at(3)-delta_for_trajectory[3];
     trajectoryPoints[4][i] = PI - goal->trajectory.points.at(i).positions.at(4)-delta_for_trajectory[4];
     trajectoryPoints[5][i] = 3.0*PI/2.0 - goal->trajectory.points.at(i).positions.at(5)-delta_for_trajectory[5];
-
+  }
   //initialize arrays needed to fit a smooth trajectory to the given points
   ecl::Array<double> timePoints(numPoints);
   timePoints[0] = 0.0;
@@ -184,7 +184,7 @@ while (!trajectoryComplete)
     {
       //use final trajectory point as the goal to calculate error until the error
       //is small enough to be considered successful
-      arm_comm_.getJointAnglesCommand(current_joint_angles);
+      arm_comm_.getJointAnglesNotNormalized(current_joint_angles);
       current_joint_pos[0] = current_joint_angles.Actuator1 * DEG_TO_RAD;
       current_joint_pos[1] = current_joint_angles.Actuator2 * DEG_TO_RAD;
       current_joint_pos[2] = current_joint_angles.Actuator3 * DEG_TO_RAD;
@@ -216,7 +216,7 @@ while (!trajectoryComplete)
     else
     {
       //calculate error
-      arm_comm_.getJointAnglesCommand(current_joint_angles);
+      arm_comm_.getJointAnglesNotNormalized(current_joint_angles);
       current_joint_pos[0] = current_joint_angles.Actuator1 * DEG_TO_RAD;
       current_joint_pos[1] = current_joint_angles.Actuator2 * DEG_TO_RAD;
       current_joint_pos[2] = current_joint_angles.Actuator3 * DEG_TO_RAD;
