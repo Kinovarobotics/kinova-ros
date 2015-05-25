@@ -12,11 +12,11 @@ The global launcher is [gazebo.launch](launch/gazebo.launch), which has defined 
 
 ### Launching the arm in the empty.world
 
-  roslaunch jaco_gazebo gazebo.launch robot:=jaco_arm
+	roslaunch jaco_gazebo gazebo.launch robot:=jaco_arm
 
 ### Launching the arm in the table_kinect_and_objects.world
 
-  roslaunch jaco_gazebo gazebo.launch robot:=jaco_arm world:=table_kinect_and_objects.world pose:="-x 0.0 -y -0.95 -z 1.01 -R 0.0 -P 0.0 -Y 0.0"
+    roslaunch jaco_gazebo gazebo.launch robot:=jaco_arm world:=table_kinect_and_objects.world pose:="-x 0.0 -y -0.95 -z 1.01 -R 0.0 -P 0.0 -Y 0.0"
 
 ##Mico arm
 
