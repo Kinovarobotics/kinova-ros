@@ -1,6 +1,5 @@
 controller_list:
-  - name: "/jaco_arm/jaco_arm_trajectory_controller"
-    action_ns: follow_joint_trajectory
+  - name: "/jaco_joint_trajectory_action_server"
     type: FollowJointTrajectory
     joints:
       - jaco_joint_1

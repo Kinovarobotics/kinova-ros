@@ -37,9 +37,9 @@
 	<gazebo reference="${joint_name}">
 		<kd value="${kd}" />
 		<kp value="${kp}" />
-		<stopCfm value="${kp}" />
+		<!--<stopCfm value="${kp}" />
 		<stopErp value="${kd}" />
-		<fudgeFactor value="1.0" />
+		<fudgeFactor value="1.0" />-->
 	</gazebo>
 </xacro:macro>
 <xacro:macro name="mico_transmission_friction_gazebo">

@@ -5,12 +5,24 @@
 	<rosparam file="$(find jaco_gazebo)/config/mico_control.yaml" command="load"/>
 
 	  <!-- Load the controllers -->
+		<!-- mico_joint1_position_controller
+		mico_joint2_position_controller
+		mico_joint3_position_controller
+		mico_joint4_position_controller
+		mico_joint5_position_controller
+		mico_joint6_position_controller
+		mico_arm_trajectory_controller-->
 	  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	    output="screen" ns="/mico_arm" args="
+		joint_state_controller
 		mico_joint_finger_1_position_controller
 		mico_joint_finger_2_position_controller
-		joint_state_controller
-		mico_arm_trajectory_controller " />
+		mico_joint1_position_controller
+		mico_joint2_position_controller
+		mico_joint3_position_controller
+		mico_joint4_position_controller
+		mico_joint5_position_controller
+		mico_joint6_position_controller" />
 <!--<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	    output="screen" ns="/mico_arm" args="joint_state_controller" />-->
 	<!-- convert joint states to TF transforms for rviz, etc -->
@@ -21,3 +33,4 @@
 <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
   </node>
 </launch>
+

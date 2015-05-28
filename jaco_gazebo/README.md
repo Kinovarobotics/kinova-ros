@@ -4,6 +4,8 @@ This package provides the basic tools to run the URDF files of Jaco and Mico arm
 
 The controllers above serve only as a debugging test bed for other algorithms, such as motion planning integrated with visual input, reaching for grasping etc.
 
+The tested configuration is ROS Indigo and its corresponding Gazebo version (2.2.x) from ROS packages. 
+
 ## Launching the simulator and loading the world
 
 The global launcher is [gazebo.launch](launch/gazebo.launch), which has defined parameters for the arm, world file and arm pose amongst others. By default the simulator is paused, because the controllers take a little while to start. Thus, after verifying that the controllers are up and running, the play button can be pressed.
@@ -31,5 +33,4 @@ The global launcher is [gazebo.launch](launch/gazebo.launch), which has defined 
 ## Known limitations
 
 * The grippers of Jaco and Mico do not behave like the actual grippers
-* Masses and inertias need to be updated with their real values
-* Joints' stiffness and damping need revision to emulate the arms behavior
+* Masses and inertias are set to a [default value](http://answers.gazebosim.org/question/7142/strange-behaviour-of-robot-model-when-using/) that works well for the ros effort controllers. 

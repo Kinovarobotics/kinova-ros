@@ -21,11 +21,13 @@
   <build_depend>roscpp</build_depend>
   <build_depend>gazebo_ros</build_depend>
   <build_depend>joint_state_controller</build_depend>
+  <build_depend>joint_trajectory_controller</build_depend>
   <build_depend>effort_controllers</build_depend>
 
   <run_depend>gazebo_ros</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>joint_state_controller</run_depend>
+  <run_depend>joint_trajectory_controller</run_depend>
   <run_depend>effort_controllers</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->

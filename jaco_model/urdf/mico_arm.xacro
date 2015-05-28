@@ -119,6 +119,10 @@
   <property name="link_end_effector"   value="mico_end_effector" />
   <property name="end_effector_offset" value="0.160" />
 
+  <!--<xacro:property name="mu1_default" value="0.0" />
+  <xacro:property name="mu2_default" value="0.0" />
+  <xacro:property name="kp_default" value="0.0" />
+  <xacro:property name="kd_default" value="0.0" />-->
   <xacro:property name="mu1_default" value="0.2" />
   <xacro:property name="mu2_default" value="0.2" />
   <xacro:property name="kp_default" value="1000.0" />
@@ -144,7 +148,8 @@
 	    <plugin name="gazebo_ros_joint_trajectory" filename="libgazebo_ros_joint_pose_trajectory.so">
 		<robotNamespace>/mico_arm</robotNamespace>
 		<alwaysOn>true</alwaysOn>
-		<updateRate>100.0</updateRate>
+		<updateRate>1000.0</updateRate>
+		<disablePhysicsUpdates>true</disablePhysicsUpdates>
 	    </plugin>
 	</gazebo>
 	<gazebo>

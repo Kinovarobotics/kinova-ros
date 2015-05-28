@@ -11,7 +11,12 @@
 		jaco_joint_finger_2_position_controller
 		jaco_joint_finger_3_position_controller
 		joint_state_controller
-		jaco_arm_trajectory_controller " />
+		jaco_joint1_position_controller
+		jaco_joint2_position_controller
+		jaco_joint3_position_controller
+		jaco_joint4_position_controller
+		jaco_joint5_position_controller
+		jaco_joint6_position_controller" />
 <!--<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	    output="screen" ns="/jaco_arm" args="joint_state_controller" />-->
 	<!-- convert joint states to TF transforms for rviz, etc -->

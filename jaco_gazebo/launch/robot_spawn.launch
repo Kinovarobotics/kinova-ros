@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="robot" default="mico_arm"/>
-  <arg name="pose" default="-x 0 -y 0 -z 0.0 -R 0.0 -P 0.0 -Y 0.0"/>
+  <arg name="pose" default="-x 0.0 -y 0.0 -z 0.0 -R 0.0 -P 0.0 -Y 0.0"/>
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description" command="$(find xacro)/xacro.py $(find jaco_model)/urdf/standalone_$(arg robot)_gazebo.xacro" />

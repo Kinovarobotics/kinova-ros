@@ -1,5 +1,5 @@
 controller_list:
-  - name: "/mico_arm/mico_arm_trajectory_controller"
+  - name: "/mico_joint_trajectory_action_server"
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     joints:
