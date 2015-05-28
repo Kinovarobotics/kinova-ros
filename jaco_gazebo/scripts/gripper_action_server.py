@@ -30,18 +30,20 @@ class MicoGripperAction(object):
         rospy.loginfo('%s: Preempted' % self._action_name)
         self._as.set_preempted()
         return False
+    r = rospy.Rate(5) # 10hz
     #self._joint_1_pub.publish(60.0*180.0/math.pi)
     #self._joint_2_pub.publish(60.0*180.0/math.pi)
     #print 'Sending goal ' + str(goal)
     self._joint_1_pub.publish(goal.command.position)
     self._joint_2_pub.publish(goal.command.position)
-    r = rospy.Rate(5) # 10hz
+    r.sleep()
+    self.gripper_not_moving = False
     while not self.gripper_not_moving:
 	    #print 'Closing gripper'
 	    current_finger_1 = self._position_finger_1
 	    #print self._position_finger_1
 	    current_finger_2 = self._position_finger_2
-	    if math.fabs(current_finger_1 - self._previous_position_finger_1) < 0.01 and math.fabs(current_finger_2 - self._previous_position_finger_2) < 0.01:
+	    if math.fabs(current_finger_1 - self._previous_position_finger_1) < 0.001 and math.fabs(current_finger_2 - self._previous_position_finger_2) < 0.001:
 		#print 'Not moving anymore'
 		self.gripper_not_moving = True
 	    else:
@@ -52,7 +54,7 @@ class MicoGripperAction(object):
 	    r.sleep()
     if self.gripper_not_moving:
 	#print 'Not moving anymore'
-	if math.fabs(self._position_finger_1 - goal.command.position) < 0.01 and math.fabs(self._position_finger_2 - goal.command.position) < 0.01:
+	if math.fabs(self._position_finger_1 - goal.command.position) < 0.001 and math.fabs(self._position_finger_2 - goal.command.position) < 0.001:
 	    #print 'Sending success'
 	    reached_goal_ = True
         else:
