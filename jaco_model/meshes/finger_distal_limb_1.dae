@@ -8,7 +8,7 @@
     <created>2015-03-25T11:39:55</created>
     <modified>2015-03-25T11:39:55</modified>
     <unit name="meter" meter="1"/>
-    <up_axis>Z_UP</up_axis>
+    <up_axis>Y_UP</up_axis>
   </asset>
   <library_cameras>
     <camera id="Camera-camera" name="Camera">
