@@ -452,7 +452,6 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
     TrajectoryPoint jaco_velocity;
     jaco_velocity.InitStruct();
 
-#if 1
     memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
 
     //startAPI();
@@ -466,25 +465,6 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
     {
         throw JacoCommException("Could not send advanced joint velocity trajectory", result);
     }
-#else
-    jaco_velocity.Position.Type = ANGULAR_VELOCITY;
-
-    //We set a velocity of 48 degrees per second.
-    jaco_velocity.Position.Actuators.Actuator1 = 0;
-    jaco_velocity.Position.Actuators.Actuator2 = 0;
-    jaco_velocity.Position.Actuators.Actuator3 = 0;
-    jaco_velocity.Position.Actuators.Actuator4 = 0;
-    jaco_velocity.Position.Actuators.Actuator5 = 0;
-    jaco_velocity.Position.Actuators.Actuator6 = 48;
-    jaco_velocity.Position.Fingers.Finger1 = 45.0f;
-    jaco_velocity.Position.Fingers.Finger2 = 45.0f;
-    jaco_velocity.Position.Fingers.Finger3 = 45.0f;
-    int result = jaco_api_.sendBasicTrajectory(jaco_velocity);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw JacoCommException("Could not send advanced joint velocity trajectory", result);
-    }
-#endif
 }
 
 
