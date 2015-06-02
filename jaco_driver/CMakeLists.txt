@@ -29,6 +29,8 @@ catkin_package(
 ## Build ##
 ###########
 
+add_definitions(-g -ggdb -Wall)
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}

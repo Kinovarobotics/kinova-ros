@@ -7,6 +7,7 @@
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/>
+    <param name="joint_angular_vel_interval" value="0.010"/>
   </node>
     
   <group unless="$(arg use_urdf)">
