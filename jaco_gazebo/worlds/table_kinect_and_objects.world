@@ -81,6 +81,7 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <model name='kinect'>
+      <static>true</static>
       <pose>-1 -0.492968 0.036 0 -0 0</pose>
       <link name='kinect_link'>
         <inertial>
@@ -132,6 +133,31 @@
               <far>3</far>
             </clip>
           </camera>
+<plugin name="kinect_controller" filename="libgazebo_ros_openni_kinect.so">
+    <baseline>0.2</baseline>
+    <alwaysOn>true</alwaysOn>
+    <updateRate>1.0</updateRate>
+    <cameraName>camera_ir</cameraName>
+    <imageTopicName>/camera/depth/image_raw</imageTopicName>
+    <cameraInfoTopicName>/camera/depth/camera_info</cameraInfoTopicName>
+    <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+    <!--<depthImageInfoTopicName>/${camera_name}/depth/camera_info</depthImageInfoTopicName>-->
+    <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+    <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+    <pointCloudCutoffMax>5.0</pointCloudCutoffMax>
+    <frameName>camera_frame</frameName>
+    <pointCloudCutoff>0.3</pointCloudCutoff>
+    <distortionK1>0.00000001</distortionK1>
+    <distortionK2>0.00000001</distortionK2>
+    <distortionK3>0.00000001</distortionK3>
+    <distortionT1>0.00000001</distortionT1>
+    <distortionT2>0.00000001</distortionT2>
+    <CxPrime>0</CxPrime>
+    <Cx>0</Cx>
+    <Cy>0</Cy>
+    <focalLength>0</focalLength>
+    <hackBaseline>0</hackBaseline>
+  </plugin>
         </sensor>
         <velocity_decay>
           <linear>0</linear>
@@ -547,9 +573,9 @@
       <real_time>293 503810802</real_time>
       <wall_time>1431949841 720494136</wall_time>
       <model name='beer'>
-        <pose>-0.490444 -0.525327 1.015 1e-06 -2.7e-05 0.001982</pose>
+        <pose>0.490444 -0.525327 1.015 1e-06 -2.7e-05 0.001982</pose>
         <link name='beer_link'>
-          <pose>-0.490447 -0.525327 1.13 1e-06 -2.7e-05 0.001982</pose>
+          <pose>0.490447 -0.525327 1.13 1e-06 -2.7e-05 0.001982</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -583,9 +609,12 @@
         </link>
       </model>
       <model name='kinect'>
-        <pose>-0.84551 -0.495683 1.05105 1.9e-05 -0.001285 0.000443</pose>
+	<!--<static>true</static>-->
+        <!--<pose>-0.84551 -0.495683 1.05105 1.9e-05 -0.001285 0.000443</pose>-->
+	<pose>-0.84551 -0.495683 1.5 0 0.523598776 0.00</pose>
         <link name='kinect_link'>
-          <pose>-0.84551 -0.495683 1.05105 1.9e-05 -0.001285 0.000443</pose>
+	  <pose>-0.84551 -0.495683 1.5 0 0.523598776 0.00</pose>
+          <!--<pose>-0.84551 -0.495683 1.05105 1.9e-05 -0.001285 0.000443</pose>-->
           <velocity>3.4e-05 6.8e-05 -0.000294 -0.001881 0.000938 2.11758e-22</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
