@@ -4,6 +4,6 @@ sensors:
     max_range: 4.0
     frame_subsample: 1
     point_subsample: 1
-    shape_padding: 0.005
-    shape_scale: 1.0
+    padding_offset: 0.01
+    padding_scale: 1.0
     filtered_cloud_topic: filtered_cloud
