@@ -3,6 +3,7 @@ project(jaco_gazebo)
 
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
+  rospy
   gazebo_ros 
 )
 

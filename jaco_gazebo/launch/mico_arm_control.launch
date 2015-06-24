@@ -28,9 +28,9 @@
 	<!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
-   <remap from="/joint_states" to="/mico_arm/joint_states" />
+    <remap from="/joint_states" to="/mico_arm/joint_states" />
   </node>
-<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-  </node>
+<!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+  </node>-->
 </launch>
 

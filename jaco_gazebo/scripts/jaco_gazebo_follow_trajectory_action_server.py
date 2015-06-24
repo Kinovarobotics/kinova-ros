@@ -29,7 +29,7 @@ class JacoFollowJointTrajectoryAction(object):
     self._joint_4_pub = rospy.Publisher(robotName + "_arm/" + robotName + "_joint4_position_controller/command", std_msgs.msg.Float64, queue_size=3)
     self._joint_5_pub = rospy.Publisher(robotName + "_arm/" + robotName + "_joint5_position_controller/command", std_msgs.msg.Float64, queue_size=3)
     self._joint_6_pub = rospy.Publisher(robotName + "_arm/" + robotName + "_joint6_position_controller/command", std_msgs.msg.Float64, queue_size=3)
-
+    rospy.loginfo('FINISHED INITIALIZING')
     self.finished_trajectory = False
     self._as.start()
   def execute_cb(self, goal):

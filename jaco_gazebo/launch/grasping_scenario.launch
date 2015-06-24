@@ -7,7 +7,7 @@ rosrun tf static_transform_publisher -0.84551 -0.49568 1.35 0.0 0.523598 0.0 wor
   <!-- Tabletop segmentation -->
   <include file="$(find jaco_gazebo)/launch/mico_on_table.launch">
 	<arg name="robot" value="mico_arm" />
-	<arg name="world" value="table_kinect_and_objects.world" />
+	<arg name="world" value="table_kinect_and_plastic_cup.world" />
   </include>
 
 <node pkg="tf" type="static_transform_publisher" name="tf_kinect_to_optical" args="0 0 0 -$(arg J_PI_HALF) 0 -$(arg J_PI_HALF) kinect_frame camera_frame 50" />
