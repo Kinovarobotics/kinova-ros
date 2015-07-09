@@ -54,8 +54,9 @@ namespace jaco
 
 JacoComm::JacoComm(const ros::NodeHandle& node_handle,
                    boost::recursive_mutex &api_mutex,
-                   const bool is_movement_on_start)
-    : is_software_stop_(false), api_mutex_(api_mutex)
+                   const bool is_movement_on_start,
+                   const std::string & api_lib)
+    : api_mutex_(api_mutex), jaco_api_(api_lib), is_software_stop_(false)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -88,7 +89,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     }
 
     bool found_arm = false;
-    for (int device_i = 0; device_i < devices_list.size(); device_i++)
+    for (unsigned int device_i = 0; device_i < devices_list.size(); device_i++)
     {
         // If no device is specified, just use the first available device
         if ((serial_number == "")

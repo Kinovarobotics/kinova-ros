@@ -52,8 +52,8 @@ namespace jaco
 {
 
 JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
-    : arm_comm_(arm_comm),
-      node_handle_(nh, "fingers"),
+    : node_handle_(nh, "fingers"),
+      arm_comm_(arm_comm),
       action_server_(node_handle_, "finger_positions",
                      boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false)
 {

@@ -31,7 +31,7 @@ namespace
 
     inline void convertKinDeg(std::vector<double>& qds)
     {
-        for (int i = 0; i < qds.size(); ++i) {
+        for (unsigned int i = 0; i < qds.size(); ++i) {
             double& qd = qds[i];
             convertKinDeg(qd);
         }
@@ -49,7 +49,7 @@ namespace jaco
 {
 
 JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
-    : jaco_comm_(arm), node_handle_(nodeHandle)
+    : node_handle_(nodeHandle), jaco_comm_(arm)
 {
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &JacoArm::stopServiceCallback, this);

@@ -18,13 +18,15 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "jaco_arm_driver");
     ros::NodeHandle nh("~");
     boost::recursive_mutex api_mutex;
+    std::string api_lib; 
+    nh.param<std::string>("api_lib", api_lib, "");
 
     bool is_first_init = true;
     while (ros::ok())
     {
         try
         {
-            jaco::JacoComm comm(nh, api_mutex, is_first_init);
+            jaco::JacoComm comm(nh, api_mutex, is_first_init, api_lib);
             jaco::JacoArm jaco(comm, nh);
             jaco::JacoPoseActionServer pose_server(comm, nh);
             jaco::JacoAnglesActionServer angles_server(comm, nh);
@@ -35,7 +37,7 @@ int main(int argc, char **argv)
         catch(const std::exception& e)
         {
             ROS_ERROR_STREAM(e.what());
-            jaco::JacoAPI api;
+            jaco::JacoAPI api(api_lib);
             boost::recursive_mutex::scoped_lock lock(api_mutex);
             api.closeAPI();
             ros::Duration(1.0).sleep();

@@ -62,7 +62,8 @@ class JacoComm
  public:
     JacoComm(const ros::NodeHandle& node_handle,
              boost::recursive_mutex& api_mutex,
-             const bool is_movement_on_start);
+             const bool is_movement_on_start,
+             const std::string & api_lib = "");
     ~JacoComm();
 
     bool isHomed(void);
