@@ -286,6 +286,13 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
     if (elapsed_time_seconds > joint_vel_timeout_seconds_)
     {
         ROS_WARN("Joint vel timed out: %f", elapsed_time_seconds);
+        joint_velocities_.Actuator1 = 0.0;
+        joint_velocities_.Actuator2 = 0.0;
+        joint_velocities_.Actuator3 = 0.0;
+        joint_velocities_.Actuator4 = 0.0;
+        joint_velocities_.Actuator5 = 0.0;
+        joint_velocities_.Actuator6 = 0.0;
+        jaco_comm_.setJointVelocities(joint_velocities_);
         joint_vel_timer_.stop();
         joint_vel_timer_flag_ = false;
     }

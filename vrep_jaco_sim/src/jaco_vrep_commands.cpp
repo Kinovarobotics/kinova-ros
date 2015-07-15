@@ -210,6 +210,8 @@ extern "C" {
                     return ERROR_LIBUSB_NOT_SUPPORTED;
                 if ((fabs(ci.ThetaX)+fabs(ci.ThetaY)+fabs(ci.ThetaZ)) > 1e-2)
                     return ERROR_LIBUSB_NOT_SUPPORTED;
+                interface->setVelocityControl();
+                interface->publishControl(0,0,0,0,0,0);
                 return NO_ERROR_KINOVA;
             default:
                 return ERROR_LIBUSB_NOT_SUPPORTED;
