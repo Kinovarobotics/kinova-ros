@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find openni_launch)/launch/openni.launch"/>
+  <include file="$(find mitsubishi_arm_move)/launch/move_arm.launch"/>
+  <include file="$(find arm_camera_calibration)/launch/ar_track_alvar.launch"/>
+  <node name="arm_camera_calibration" pkg="arm_camera_calibration" type="arm_camera_calibration" output="screen">
+     
+    <!-- CONFIG PARAMETERS -->
+    <param name="number_of_points" value="12" />  <!-- Minimum number of samples for the transformation calculation -->
+
+    <param name="base_link" value="base_link" /> <!-- arm base frame -->
+    <param name="camera_link" value="camera_link" />  <!-- camera frame -->
+    <param name="end_effector_link" value="end_effector" />  <!-- end effector frame, where the AR marker should be placed -->
+    <param name="marker_link" value="ar_marker_4" /> <!-- marker id --> 
+
+    <!-- workspace (arm base_link frame) from which the samples are taken (in meters) -->
+    <param name="min_x" value="0.5" /> 
+    <param name="max_x" value="1.0" /> 
+    <param name="min_y" value="-0.2" /> 
+    <param name="max_y" value="-0.7" /> 
+    <param name="min_z" value="0.2" /> 
+    <param name="max_z" value="0.4" /> 
+
+    <param name="range" value="0.2" /> <!-- end effector cartesian position workspace from which the samples are taken (in meters) -->
+    <param name="roll_angle_range" value="0.001" /> <!-- end effector roll orientation range [-value,value] (radians)-->
+    <param name="roll_angle_offset" value="1.56" /> <!-- end effector roll orientation offset (radians)-->
+    <param name="pitch_angle_range" value="1.0" /> <!-- end effector pitch orientation range [-value,value] (radians)-->
+    <param name="pitch_angle_offset" value="0.1" /> <!-- end effector roll orientation offset (radians)-->
+    <param name="yaw_angle_range" value="1.0" /> <!-- end effector yaw orientation range [-value,value] (radians)-->
+    <param name="yaw_angle_offset" value="0.1" /> <!-- end effector roll orientation offset (radians)-->
+  </node>
+</launch>
