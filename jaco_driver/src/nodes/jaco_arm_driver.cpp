@@ -8,6 +8,7 @@
 
 #include "jaco_driver/jaco_api.h"
 #include "jaco_driver/jaco_arm.h"
+#include "jaco_driver/jaco_comm.h"
 #include "jaco_driver/jaco_pose_action.h"
 #include "jaco_driver/jaco_angles_action.h"
 #include "jaco_driver/jaco_fingers_action.h"
@@ -17,6 +18,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "jaco_arm_driver");
     ros::NodeHandle nh("~");
+    
     boost::recursive_mutex api_mutex;
     std::string api_lib; 
     nh.param<std::string>("api_lib", api_lib, "");
@@ -27,11 +29,14 @@ int main(int argc, char **argv)
         try
         {
             jaco::JacoComm comm(nh, api_mutex, is_first_init, api_lib);
-            jaco::JacoArm jaco(comm, nh);
+            jaco::JacoIKSolver ik;
+            jaco::JacoKinematicController controller(comm, ik, nh);
+            jaco::JacoArm jaco(comm, nh, controller);
             jaco::JacoPoseActionServer pose_server(comm, nh);
             jaco::JacoAnglesActionServer angles_server(comm, nh);
             jaco::JacoFingersActionServer fingers_server(comm, nh);
 
+			
             ros::spin();
         }
         catch(const std::exception& e)
