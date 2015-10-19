@@ -1,0 +1,338 @@
+<robot name="jaco2">
+  <link name="root">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/root.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/root.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="jaco_link_base">
+    <inertial>
+      <origin xyz="-0.00048086 -0.0009379 0.062122" rpy="0 0 0" />
+      <mass value="0.64" />
+      <inertia
+        ixx="0.00052184"
+        ixy="-2.8998E-06"
+        ixz="-4.2007E-06"
+        iyy="0.0005163"
+        iyz="1.4357E-05"
+        izz="0.00025116" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_base.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_base" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="root" />
+    <child link="jaco_link_base" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <link name="jaco_link_1">
+    <inertial>
+      <origin xyz="-2.5613E-05 0.010847 -0.049232" rpy="0 0 0" />
+      <mass value="0.60" />
+      <inertia
+        ixx="0.00022732"
+        ixy="-9.3733E-09"
+        ixz="-1.4106E-07"
+        iyy="0.00024309"
+        iyz="2.9898E-05"
+        izz="9.0733E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_1.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_1" type="revolute">
+    <origin xyz="0 0 0.2755" rpy="0 0 0" />
+    <parent link="jaco_link_base" />
+    <child link="jaco_link_1" />
+    <axis xyz="0 0 -1" />
+    <limit
+      lower="-6.28318"
+      upper="6.28318"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_2">
+    <inertial>
+      <origin xyz="0.20365 4.2202E-05 -0.033866" rpy="0 0 0" />
+      <mass value="0.57" />
+      <inertia
+        ixx="0.00012024"
+        ixy="1.6528E-07"
+        ixz="-0.00016726"
+        iyy="0.0035495"
+        iyz="-2.6936E-08"
+        izz="0.0036058" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_2.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_2" type="revolute">
+    <origin xyz="0 0 0" rpy="-1.571 -0.0047116 0.047796" />
+    <parent link="jaco_link_1" />
+    <child link="jaco_link_2" />
+    <axis xyz="0.047778 0 0.99886" />
+    <limit
+      lower="-3.8223"
+      upper="0.69813"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_3">
+    <inertial>
+      <origin xyz="3.97161549881009E-06 -0.0639591049584705 -0.00776484013323698" rpy="0 0 0" />
+      <mass value="0.60" />
+      <inertia
+        ixx="0.000394848359931103"
+        ixy="1.3834611049663E-07"
+        ixz="-1.13410769041363E-08"
+        iyy="5.28367288413468E-05"
+        iyz="-1.41783013459014E-05"
+        izz="0.00041829974857606" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_3.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_3" type="revolute">
+    <origin xyz="0.41 0 -0.0098" rpy="3.1416 0.047796 -8.7885E-05" />
+    <parent link="jaco_link_2" />
+    <child link="jaco_link_3" />
+    <axis xyz="0 0 1" />
+    <limit
+      lower="-1.2392"
+      upper="4.3808"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_4">
+    <inertial>
+      <origin xyz="-8.9415E-06 0.0076371 0.0043996" rpy="0 0 0" />
+      <mass value="0.37" />
+      <inertia
+        ixx="3.2741E-05"
+        ixy="-4.6123E-09"
+        ixz="2.119E-09"
+        iyy="3.3128E-05"
+        iyz="-3.6398E-06"
+        izz="2.8899E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_4.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_4" type="revolute">
+    <origin xyz="0 -0.250007041555164 0" rpy="-1.5707963267949 -0.00872928550116707 -2.51544487854265E-17" />
+    <parent link="jaco_link_3" />
+    <child link="jaco_link_4" />
+    <axis xyz="0 0 1" />
+    <limit
+      lower="-6.28318"
+      upper="6.28318"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_5">
+    <inertial>
+      <origin xyz="-8.03918582154006E-06 0.00763799005245824 0.00439948624791736" rpy="0 0 0" />
+      <mass value="0.37" />
+      <inertia
+        ixx="3.27418465657114E-05"
+        ixy="-4.99510510229687E-09"
+        ixz="2.41495135849963E-09"
+        iyy="3.31268784561237E-05"
+        iyz="-3.63861583896267E-06"
+        izz="2.88972602355983E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_5.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_5" type="revolute">
+    <origin xyz="0 0.0740573683548742 -0.0427570415551623" rpy="1.04719681759719 -0.00159413288422581 0.000920373959407822" />
+    <parent link="jaco_link_4" />
+    <child link="jaco_link_5" />
+    <axis xyz="0 0 1" />
+    <limit
+      lower="-6.28318"
+      upper="6.28318"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_6">
+    <inertial>
+      <origin xyz="-0.00732468781232704 -0.000118167445930656 0.0136767983896894" rpy="0 0 0" />
+      <mass value="0.37" />
+      <inertia
+        ixx="0.000621360138889287"
+        ixy="-5.60714046582573E-07"
+        ixz="5.21840696017167E-05"
+        iyy="0.000845244363679134"
+        iyz="1.34223091504283E-06"
+        izz="0.000531606778571858" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_6.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_6" type="revolute">
+    <origin xyz="0 0.123631224555881 -0.0713785207775813" rpy="1.04717823212089 0.00818052578169576 -0.00472315168238664" />
+    <parent link="jaco_link_5" />
+    <child link="jaco_link_6" />
+    <axis xyz="0 0 1" />
+    <limit
+      lower="-6.28318"
+      upper="6.28318"
+      effort="150.0"
+      velocity="3.15" />
+  </joint>
+
+  <link name="jaco_link_hand">
+    <inertial>
+      <origin xyz="-0.00732497926601078 9.84573300621336E-05 -0.0136767983896894" rpy="0 0 0" />
+      <mass value="0.68" />
+      <inertia
+        ixx="0.00062136477756224"
+        ixy="1.16314419699673E-06"
+        ixz="-5.21874924280308E-05"
+        iyy="0.000845239725006181"
+        iyz="1.20180618252278E-06"
+        izz="0.000531606778571858" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_hand.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://jaco2/meshes/jaco_link_hand.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="jaco_joint_hand" type="fixed">
+    <origin xyz="0 0 0" rpy="-3.14159265358979 0 0.00269086032742485" />
+    <parent link="jaco_link_6" />
+    <child link="jaco_link_hand" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+</robot>

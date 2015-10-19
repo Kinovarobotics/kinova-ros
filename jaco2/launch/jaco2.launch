@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="limited" default="false"/>
+  <arg name="paused" default="false"/>
+  <arg name="gui" default="true"/>
+  
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" default="worlds/empty.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <!-- send robot urdf to param server -->
+  <!--<param name="robot_description" textfile="$(find jaco2)/robots/jaco2_gazebo.urdf" />-->
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find jaco2)/urdf/jaco2_robot.urdf.xacro'"/>
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -z 0.1" respawn="false" output="screen" />
+
+  <include file="$(find jaco2)/launch/controller_utils.launch"/>
+
+  <rosparam file="$(find jaco2)/controller/arm_controller.yaml" command="load"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="spawner" args="arm_controller" />
+
+</launch>
