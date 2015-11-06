@@ -6,6 +6,7 @@
 #include <kdl_parser/kdl_parser.hpp>
 
 #include <kdl/tree.hpp>
+#include <tf_conversions/tf_kdl.h>
 
 #define DTR 0.0174532925
 #define RTD 57.295779513
@@ -112,11 +113,25 @@ bool JacoIKSolver::initFromURDF(const std::string urdf, const std::string root_n
 
  //----------------------------------------------------------------------------------------------------
 
-//bool JacoIKSolver::jointsToCartesian(const KDL::Frame& f_in, KDL::JntArray& q_out)
-//{
-//    int status = fk_solver_->JntToCart(q_in, p_out, f_in,);
-//    return (status == 0);
-//}
+geometry_msgs::Pose JacoIKSolver::jointsToCartesian(JacoAngles JAngle)
+{
+	KDL::JntArray joint_in;
+	KDL::Frame position_out;
+	geometry_msgs::Pose p_out;
+	joint_in.resize(6);
+	joint_in(0) = ( JAngle.Actuator1 - 180.0 ) * DTR;
+	joint_in(1) = ( JAngle.Actuator2 - 270.0 ) * DTR;
+	joint_in(2) = ( JAngle.Actuator3 - 90.0  ) * DTR;
+	joint_in(3) = ( JAngle.Actuator4 - 180.0 ) * DTR;
+	joint_in(4) = ( JAngle.Actuator5 - 180.0 ) * DTR;
+	joint_in(5) = ( JAngle.Actuator6 - 270.0 ) * DTR;
+	
+	
+    fk_solver_->JntToCart(joint_in, position_out);
+    
+    tf::poseKDLToMsg(position_out, p_out);
+    return p_out;
+}
 
  //----------------------------------------------------------------------------------------------------
 

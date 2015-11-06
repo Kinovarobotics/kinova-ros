@@ -290,7 +290,7 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
     }
     else if (null_space_controller_)
     {
-		jaco_controller_.callNullSpace(joint_velocities_);
+		jaco_controller_.callBothNullSpace(joint_velocities_);
 	}
 	else
     {
@@ -336,7 +336,7 @@ void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
     }
     else if (use_kinematic_controller_)
     {
-        jaco_controller_.call(cartesian_velocities_);
+        jaco_controller_.callBoth(cartesian_velocities_);
  //       jaco_controller_.callForceManip(cartesian_velocities_);
         //jaco_controller_.callMotionManip(cartesian_velocities_);
     }

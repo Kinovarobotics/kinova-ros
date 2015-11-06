@@ -1,6 +1,7 @@
 #include <kinova/KinovaTypes.h>
 
 #include "jaco_driver/jaco_kinematic_controller.h"
+#include <geometry_msgs/Pose.h>
 
 #include "jaco_driver/jaco_types.h"
 #include "jaco_driver/jaco_ik_solver.h"
@@ -22,6 +23,9 @@ namespace jaco
 		node_handle_.param<string>("root_name", root_name_, "jaco_link_base");
 		node_handle_.param<string>("tip_name", tip_name_, "jaco_link_6");
 		node_handle_.param<string>("error", err_, "");
+		node_handle_.param<bool>("use_motion_manipulator_index", use_motion_manipulator_index_, false);
+		node_handle_.param<bool>("use_force_manipulator_index", use_force_manipulator_index_, false);
+		node_handle_.param<bool>("use_joint_limit_avoid", use_joint_limit_avoid_, true);
 		
 		max_iter_ = 10;
 		mode = 0;
@@ -39,6 +43,8 @@ namespace jaco
         vGoal  = VectorXf::Zero(6,1);
         Jq     = VectorXf::Zero(6,1);
         vGoalTest = VectorXf::Zero(3,1);
+        exdQ   = VectorXf::Zero(8,1);
+        exnQ   = VectorXf::Zero(8,1);
 
         mJaco  = MatrixXf::Zero(6,6);
 		nJaco  = MatrixXf::Zero(3,6);
@@ -48,8 +54,13 @@ namespace jaco
         nPNewJaco = MatrixXf::Zero(6,3);
         dJaco = MatrixXf::Zero(3,6);
         
+        exJaco = MatrixXf::Zero(6,8);
+        exPJaco = MatrixXf::Zero(8,6);
+        
         manip_.values.resize(1);
         manip_pub_ = node_handle_.advertise<sensor_msgs::ChannelFloat32>("minipulability", 1);
+        
+        husky_cmd_pub_ = node_handle_.advertise<geometry_msgs::Twist>("vrep/twistCommand", 1);
 
 		watchdog_timer = node_handle_.createTimer(ros::Duration(watchdog_interval_seconds),
 											   &JacoKinematicController::watchdog, this);
@@ -60,6 +71,68 @@ namespace jaco
     JacoKinematicController::~JacoKinematicController()
     {
 		watchdog_timer.stop();
+	}
+	
+	void JacoKinematicController::callBoth(CartesianInfo dV)
+	{
+		mode = 0;
+		
+		vGoal(0) = dV.X;
+		vGoal(1) = dV.Y;
+		vGoal(2) = dV.Z;
+		vGoal(3) = dV.ThetaX;
+		vGoal(4) = dV.ThetaY;
+		vGoal(5) = dV.ThetaZ;
+
+		updateConfig(mode);
+
+		exPJaco = calcPJacobian(exJaco);
+
+		exdQ = calcexdQ(exPJaco, vGoal, 1);
+		
+		if(use_joint_limit_avoid_ == true)
+		{
+			callJointLimit();
+		}
+		
+		if(use_motion_manipulator_index_ == true)
+		{
+			callMotionManip(dV);
+			updateexdQ();
+		}
+		
+		
+		if(use_force_manipulator_index_ == true)
+		{
+			callForceManip(dV);
+			updateexdQ();
+		}
+		
+			
+		actionAll(exdQ);
+	}
+	
+	void JacoKinematicController::callBothNullSpace(AngularInfo dJ)
+	{
+		mode = 0;
+		
+		exnQ(0) = 0.0;
+		exnQ(1) = 0.0;
+		exnQ(2) = dJ.Actuator1;
+		exnQ(3) = dJ.Actuator2;
+		exnQ(4) = dJ.Actuator3;
+		exnQ(5) = dJ.Actuator4;
+		exnQ(6) = dJ.Actuator5;
+		exnQ(7) = dJ.Actuator6;
+
+		updateConfig(mode);
+
+		exPJaco = calcPJacobian(exJaco);
+
+		exdQ = calcexdQ(exPJaco, exnQ, 2);
+		
+		actionAll(exdQ);
+		
 	}
 	
 	void JacoKinematicController::call(CartesianInfo dV)
@@ -85,68 +158,55 @@ namespace jaco
 	
 	void JacoKinematicController::callForceManip(CartesianInfo dV)
 	{
-		mode = 3;
-		start_time = ros::Time::now();
-		vGoalTest(0) = dV.X;
-		vGoalTest(1) = dV.Y;
-		vGoalTest(2) = dV.Z;
-
-		updateConfig(mode);
-
-		nPJaco = calcNullSpacePseudoJacobian(nJaco);
-
-		dQ = calcdQ(nPJaco, vGoalTest, mode);
+		vGoalTest(0) = 0.0;
+		vGoalTest(1) = 0.0;
+		vGoalTest(2) = -1.0;
 		
-		float norm_dq = dQ.norm();
-		
-		VectorXf dQQ = VectorXf::Zero(6,1);
-		
-		if (fabsf(vGoalTest(0)) > 1 ||  fabsf(vGoalTest(1)) > 1 || fabsf(vGoalTest(2)) > 1)
+		if (fabsf(vGoalTest(0)) > 0.01 ||  fabsf(vGoalTest(1)) > 0.01 || fabsf(vGoalTest(2)) > 0.01)
 		{
+			getJacobian();
+			nPJaco = calcNullSpacePseudoJacobian(nJaco);
+			VectorXf dQQ = VectorXf::Zero(6,1);
+			float norm_dq = dQ.norm();
+
 			for (int i = 0; i < 6; i++)
 			{
-				
 				dQQ(i) = dQ(i)/norm_dq;
-				derivativeJaco(dQQ, dQQ(i));		
+				derivativeJaco(dQQ, dQ(i));		
 				maxForceManipulability(vGoalTest, i);
 				dQQ(i) = 0.0;
+				Jq(i) = fabsf(Jq(i))< 0.001?0.0:Jq(i);	
 			}
-		
+
 			nQ = linearRegression(Jq, 5000);
 			dQ = calcdQnQ(nPJaco, vGoalTest, nQ);
+			
+			manip_.values[0] = fManip;
+			manip_pub_.publish(manip_);
 		}
-		elipsed_time = ros::Time::now().toSec() - start_time.toSec();
-		
-		action(dQ);
-		manip_.values[0] = fManip;
-		manip_pub_.publish(manip_);
-//		ROS_INFO("ELIPSED_TIME: %f", elipsed_time);
+		else
+		{
+			dQ = VectorXf::Zero(6,1);
+		}
+
 	}
 	
-		void JacoKinematicController::callMotionManip(CartesianInfo dV)
-	{
-		mode = 3;
-		
-		start_time = ros::Time::now();
-		
+	void JacoKinematicController::callMotionManip(CartesianInfo dV)
+	{		
 		vGoalTest(0) = dV.X;
 		vGoalTest(1) = dV.Y;
 		vGoalTest(2) = dV.Z;
 
-		updateConfig(mode);
-
-		nPJaco = calcNullSpacePseudoJacobian(nJaco);
-
-		dQ = calcdQ(nPJaco, vGoalTest, mode);
-		
-		VectorXf dQQ = VectorXf::Zero(6,1);
-		
-		if (fabsf(vGoalTest(0)) > 1 ||  fabsf(vGoalTest(1)) > 1 || fabsf(vGoalTest(2)) > 1)
+		if (fabsf(vGoalTest(0)) > 0.01 ||  fabsf(vGoalTest(1)) > 0.01 || fabsf(vGoalTest(2)) > 0.01)
 		{
+			getJacobian();
+			nPJaco = calcNullSpacePseudoJacobian(nJaco);
+			VectorXf dQQ = VectorXf::Zero(6,1);
+			float norm_dq = dQ.norm();
+	
 			for (int i = 0; i < 6; i++)
 			{
-				
-				dQQ(i) = dQ(i);
+				dQQ(i) = dQ(i)/norm_dq;
 				derivativeJaco(dQQ, dQ(i));		
 				maxMotionManipulability(vGoalTest, i);
 				dQQ(i) = 0.0;
@@ -155,13 +215,15 @@ namespace jaco
 
 			nQ = linearRegression(Jq, 50);
 			dQ = calcdQnQ(nPJaco, vGoalTest, nQ);
+			
+			manip_.values[0] = mManip;
+			manip_pub_.publish(manip_);
 		}
-		elipsed_time = ros::Time::now().toSec() - start_time.toSec();
-		
-		action(dQ);
-		manip_.values[0] = mManip;
-		manip_pub_.publish(manip_);
-//		ROS_INFO("ELIPSED_TIME: %f", elipsed_time);
+		else
+		{
+			dQ = VectorXf::Zero(6,1);
+		}
+
 	}
 	
 	void JacoKinematicController::callNullSpace(AngularInfo dJ)
@@ -184,6 +246,24 @@ namespace jaco
 		action(dQ);
 		
 	}
+	
+	void JacoKinematicController::callJointLimit()
+	{
+		exnQ = VectorXf::Zero(8,1);			
+		exnQ(2) = (90.0 - ( current_angle.Actuator1 - 180.0 )) * DTR;
+//		dQ(1) = ( current_angle.Actuator2 - 270.0 ) * DTR;
+//		dQ(2) = ( current_angle.Actuator3 - 90.0  ) * DTR;
+//		dQ(3) = ( current_angle.Actuator4 - 180.0 ) * DTR;
+//		dQ(4) = ( current_angle.Actuator5 - 180.0 ) * DTR;
+//		dQ(5) = ( current_angle.Actuator6 - 270.0 ) * DTR;
+		
+		exnQ = calcexdQ(exPJaco, exnQ, 2);
+		exdQ += exnQ;
+//		ROS_INFO("JOINT LIMIT DQ: %f, %f, %f, %f, %f, %f, %f, %f", exnQ(0), exnQ(1), exnQ(2), exnQ(3), exnQ(4), exnQ(5), exnQ(6), exnQ(7));
+	}
+		
+			
+		
 	
 	void JacoKinematicController::derivativeJaco(VectorXf dq, float dqq)
 	{
@@ -293,11 +373,28 @@ namespace jaco
 	
 	void JacoKinematicController::updateConfig(int md)
 	{		
+		geometry_msgs::Pose ee_pos;
 		arm_comm_.getJointAngles(current_angle);
 		j_ = ik_solver_.jointToJacobian(current_angle);
-		
+		ee_pos = ik_solver_.jointsToCartesian(current_angle);
+//		ROS_INFO("POSITION: x:%f, y: %f", ee_pos.position.x, ee_pos.position.y);
 		switch (md)
 		{
+			case 0:
+			
+			for (int i = 0; i < 6; i++)
+			{
+				for (int j = 0; j < 6; j++)
+				{
+					exJaco(i,j+2) = j_(i,j);
+				}
+			}
+			exJaco(0,0) = -1.0;
+			exJaco(5,1) = 1.0;
+			exJaco(0,1) = -ee_pos.position.y+0.31;
+			exJaco(1,1) = -ee_pos.position.x;
+			break;
+			
 			case 1:
 				
 			for (int i = 0; i < 6; i++)
@@ -334,6 +431,29 @@ namespace jaco
 			
 			break;
 		}
+	}
+	
+	void JacoKinematicController::getJacobian()
+	{		
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 6; j++)
+			{
+				nJaco(i,j) = exJaco(i,j+2);
+				dQ(j) = exdQ(j+2);
+			}
+		}
+	}
+			
+	
+	void JacoKinematicController::updateexdQ()
+	{
+		exdQ(2) += dQ(0);
+		exdQ(3) += dQ(1);
+		exdQ(4) += dQ(2);
+		exdQ(5) += dQ(3);
+		exdQ(6) += dQ(4);
+		exdQ(7) += dQ(5);
 	}
 
 
@@ -383,6 +503,18 @@ namespace jaco
 		
 		
 	}
+	
+	MatrixXf JacoKinematicController::calcPJacobian(MatrixXf mJ)
+	{		
+		MatrixXf mPJ1 = MatrixXf::Zero(6,6);
+		MatrixXf mPJ2 = MatrixXf::Zero(8,6);
+		mPJ1 = mJ * mJ.transpose();
+		mPJ1 = mPJ1.inverse();
+		mPJ2 = mJ.transpose()*mPJ1;
+			
+		return mPJ2;
+
+	}
 			
 	
 	VectorXf JacoKinematicController::calcdQ(MatrixXf PJ, VectorXf x, int md)
@@ -391,6 +523,11 @@ namespace jaco
 		
 		switch (md)
 		{
+			case 0:
+			dq = PJ*x;
+			
+			break;
+			
 			case 1:
 			dq = PJ*x;
 			
@@ -406,6 +543,30 @@ namespace jaco
 			
 			break;
 		}
+		return dq;
+//		double K = 1.0;	
+//		dq = PJ*(x+K*(pGoal-cP));
+
+	}
+	
+	VectorXf JacoKinematicController::calcexdQ(MatrixXf PJ, VectorXf x, int md)
+	{
+		VectorXf dq = VectorXf::Zero(8,1);
+		switch (md)
+		{
+			case 1:
+			dq = PJ*x;
+			
+			break;
+			
+			case 2:
+			dq = (MatrixXf::Identity(8,8)-PJ*exJaco)*x;
+
+			break;
+		}
+		
+//		dq = (MatrixXf::Identity(8,8)-PJ*exJaco)*x;
+
 		return dq;
 //		double K = 1.0;	
 //		dq = PJ*(x+K*(pGoal-cP));
@@ -437,12 +598,24 @@ namespace jaco
 		arm_comm_.setJointVelocities(joint_velocities_);
 	}
 	
-
-	MatrixXf JacoKinematicController::getJacobian()
+	void JacoKinematicController::actionAll(VectorXf dq)
 	{
-		return mJaco;
-	};
+		geometry_msgs::Twist husky_cmd;
+		husky_cmd.linear.x = dq(0);
+		husky_cmd.angular.z = dq(1);
+		
+		husky_cmd_pub_.publish(husky_cmd);
+		
+		joint_velocities_.Actuator1 = dq(2);
+		joint_velocities_.Actuator2 = dq(3);
+		joint_velocities_.Actuator3 = dq(4);
+		joint_velocities_.Actuator4 = dq(5);
+		joint_velocities_.Actuator5 = dq(6);
+		joint_velocities_.Actuator6 = dq(7);
 
+        
+		arm_comm_.setJointVelocities(joint_velocities_);
+	}
 
 	MatrixXf JacoKinematicController::getPseudoJacobian()
 	{

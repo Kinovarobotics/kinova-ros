@@ -15,13 +15,14 @@ class JacoVREPInterface {
         struct VelPosData {
             float position;
             float velocity;
-            VelPosData() : position(0.0), velocity(0.0) {}
+            float offset;
+            VelPosData() : position(0.0), velocity(0.0), offset(0.0) {}
 
             void cb(sensor_msgs::JointStateConstPtr msg) {
                 assert(msg->position.size()>0);
                 assert(msg->velocity.size()>0);
-                position = msg->position[0];
-                velocity = msg->velocity[0];
+                position = (msg->position[0])/M_PI*180.0+offset;
+                velocity = (msg->velocity[0])/M_PI*180.0;
             }
         };
 

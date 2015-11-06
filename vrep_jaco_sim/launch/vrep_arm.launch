@@ -9,6 +9,7 @@
     <param name="api_lib" value="Dream.API.VREPCommandLayerUbuntu.so"/>
     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/>
+    <remap from="/jaco_arm_driver/vrep/twistCommand" to="/vrep/twistCommand"/>
   </node>
     
   <group unless="$(arg use_urdf)">

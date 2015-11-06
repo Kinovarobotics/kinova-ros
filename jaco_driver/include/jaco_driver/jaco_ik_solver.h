@@ -15,6 +15,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include <geometry_msgs/Pose.h>
+
 #include "jaco_driver/jaco_types.h"
 
 namespace urdf
@@ -24,7 +26,7 @@ namespace urdf
 
 namespace KDL
 {
-	class ChainFkSolverPos;
+    class ChainFkSolverPos;
     class ChainIkSolverVel;
     class ChainIkSolverPos;
     
@@ -45,6 +47,8 @@ public:
 
     bool initFromURDF(const std::string urdf, const std::string root_name,
                       const std::string tip_name, unsigned int max_iter, std::string error);
+    
+    geometry_msgs::Pose jointsToCartesian(JacoAngles JAngle);
 
     bool cartesianToJoints(const KDL::Frame& f_in, KDL::JntArray& q_out);
 
@@ -68,7 +72,7 @@ private:
     KDL::JntArray q_min_, q_max_, q_seed_;
 
     std::vector<std::string> joint_names_;
-
+	
     // Solvers
     boost::shared_ptr<KDL::ChainFkSolverPos> fk_solver_;
     boost::shared_ptr<KDL::ChainIkSolverVel> ik_vel_solver_;

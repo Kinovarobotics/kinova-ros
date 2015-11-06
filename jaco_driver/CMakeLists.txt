@@ -11,6 +11,7 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  tf_conversions
   trajectory_msgs
   control_msgs
   industrial_msgs
@@ -30,7 +31,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES jaco_driver
-  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs jaco_msgs roscpp rospy sensor_msgs std_msgs tf trajectory_msgs control_msgs industrial_msgs kdl_parser urdf
+  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs jaco_msgs roscpp rospy sensor_msgs std_msgs tf tf_conversions trajectory_msgs control_msgs industrial_msgs kdl_parser urdf
   DEPENDS Eigen
 )
 

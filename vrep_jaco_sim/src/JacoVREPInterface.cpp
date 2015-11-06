@@ -17,6 +17,13 @@ JacoVREPInterface::JacoVREPInterface() : nh("~") {
     controlPub = nh.advertise<std_msgs::Int32>("/vrep/armControlMode",1);
     positionControl = false;
     setVelocityControl();
+    vp[0].offset = 180.0;
+    vp[1].offset = 180.0;
+    vp[2].offset = 71.0;
+    vp[3].offset = 0.0;
+    vp[4].offset = 0.0;
+    vp[5].offset = 90.0;
+    
 }
 
 
