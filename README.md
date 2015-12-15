@@ -2,6 +2,9 @@
 
 The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO, JACO2 (see limitations) and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
 
+## January 2016 - What's new
+Significant Moveit! performance improvement using TRACLabs Inc. Inverse Kinematics solver TRAC-IK: http://www.ros.org/news/2015/11/introducing-a-better-inverse-kinematics-package.html
+
 ## January 2015 Release - What's new
     - New URDF model of the MICO, and various fixes to the JACO.
     - Optional URDF-based TF publication (see documentation on launch files).
