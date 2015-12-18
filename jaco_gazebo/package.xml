@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<package>
+  <name>jaco_gazebo</name>
+  <version>1.0.0</version>
+  <description>
+
+    This package holds all the needed launches and elements for
+    mico arm simulation on GAZEBO.
+
+  </description>
+
+  <maintainer email="plinio@isr.tecnico.ulisboa.pt">Plinio Moreno</maintainer>
+  <author>Plinio Moreno</author>
+
+  <license>BSD</license>
+
+  <!--<url type="website">https://github.com/vislab-tecnico-lisboa/vizzy/vizzy_gazebo</url>
+  <url type="bugtracker">https://github.com/vislab-tecnico-lisboa/vizzy/issues</url> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>gazebo_ros</build_depend>
+  <build_depend>gazebo_ros_control</build_depend>
+  <build_depend>joint_state_controller</build_depend>
+  <build_depend>joint_trajectory_controller</build_depend>
+  <build_depend>effort_controllers</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>joint_state_controller</run_depend>
+  <run_depend>joint_trajectory_controller</run_depend>
+  <run_depend>effort_controllers</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+  	<gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" />
+  </export>
+</package>
+

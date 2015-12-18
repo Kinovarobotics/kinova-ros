@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+        <arg name="robot_name" default="mico" />
+	<!-- Gazebo -->
+  	<include file="$(find jaco_gazebo)/launch/grasping_scenario.launch" />
+
+	<!-- follow joint trajectory action -->
+  	<node pkg="jaco_gazebo" name="$(arg robot_name)_joint_trajectory_action_server" type="jaco_gazebo_follow_trajectory_action_server.py" respawn="true" output="screen" args="$(arg robot_name)"/>
+
+	<!--gripper stuff -->
+  	<node pkg="jaco_gazebo" name="gripper_action_server" type="gripper_action_server.py" respawn="true" output="screen"/>
+
+</launch>
+

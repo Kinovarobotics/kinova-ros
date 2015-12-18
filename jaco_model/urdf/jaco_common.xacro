@@ -20,6 +20,11 @@
 
     <xacro:macro name="jaco_link" params="link_name **link_data">
     <link name="${link_name}">
+	<inertial>
+                <mass value="0.01"/>
+                <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+                <origin/>
+            </inertial>
           <visual>
                      <geometry>
                              <mesh
@@ -52,6 +57,7 @@
         <axis xyz="${joint_axis_xyz}"/>
         <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <dynamics damping="0.0"/>
      </joint>
     </xacro:macro>
 
@@ -61,7 +67,8 @@
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-        <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
+        <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="0.3"/>
+        <dynamics damping="0.0"/>
      </joint>
     </xacro:macro>
 

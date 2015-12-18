@@ -350,6 +350,10 @@ The transformation equations used to convert from the “DH Parameters” to phy
 
 The Kinova JACO website: http://kinovarobotics.com/products/jaco-research-edition/
 
+Instructions for running jaco and mico in [gazebo](gazebosim.org) are in the [readme file](jaco_gazebo/README.md)
+
+Instructions for running [Moveit!](moveit.ros.org) motion planner with simulated arms (jaco and mico) and with the real mico arm are in the [readme file](moveit_config/README.md)
+
 ## Report a Bug
 Any bugs, issues or suggestions may be sent to ros@kinovarobotics.com.
 

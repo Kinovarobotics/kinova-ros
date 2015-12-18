@@ -93,6 +93,7 @@ class JacoAngles : public AngularInfo
     JacoAngles() {}
     explicit JacoAngles(const jaco_msgs::JointAngles &angles);
     explicit JacoAngles(const AngularInfo &angles);
+    explicit JacoAngles(const AngularInfo &angles,bool normalization);
 
     jaco_msgs::JointAngles constructAnglesMsg();
     bool isCloseToOther(const JacoAngles &, float tolerance) const;

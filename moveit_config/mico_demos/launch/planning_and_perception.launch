@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- moveit -->
+  	<!-- <include file="$(find mico_arm_on_table_and_gripper_gazebo_config)/launch/moveit.launch"/> -->
+	<include file="$(find mico_arm_on_table_test_config_gazebo)/launch/moveit.launch"/>
+
+	<!-- perception server -->
+  	<include file="$(find perception)/launch/perception_mico_gazebo.launch"/>
+
+  	<!-- Grasp generation -->
+  	<include file="$(find ist_generate_grasps)/launch/generate_grasps_sim.launch"/>
+
+  	<!-- Grasp server -->
+  	<node pkg="grasping_pipeline" name="grasping_pipeline_server" type="grasping_pipeline_server" respawn="true" output="screen"/>
+
+</launch>

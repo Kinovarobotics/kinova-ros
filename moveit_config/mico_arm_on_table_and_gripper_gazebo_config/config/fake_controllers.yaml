@@ -1,0 +1,14 @@
+controller_list:
+  - name: fake_mico_arm_group_controller
+    joints:
+      - mico_joint_1
+      - mico_joint_2
+      - mico_joint_3
+      - mico_joint_4
+      - mico_joint_5
+      - mico_joint_6
+  - name: fake_mico_end_effector_group_controller
+    joints:
+      - mico_joint_6
+      - mico_joint_finger_1
+      - mico_joint_finger_2

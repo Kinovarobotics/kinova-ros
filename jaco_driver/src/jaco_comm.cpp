@@ -537,6 +537,25 @@ void JacoComm::getJointAngles(JacoAngles &angles)
 }
 
 /*!
+ * \brief API call to obtain the current angular position of all the joints.
+ */
+void JacoComm::getJointAnglesNotNormalized(JacoAngles &angles)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition jaco_angles;
+    memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
+
+    int result = jaco_api_.getAngularPosition(jaco_angles);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not get the angular position", result);
+    }
+
+    angles = JacoAngles(jaco_angles.Actuators,false);
+}
+
+
+/*!
  * \brief API call to obtain the current angular velocities of all the joints.
  */
 void JacoComm::getJointVelocities(JacoAngles &vels)

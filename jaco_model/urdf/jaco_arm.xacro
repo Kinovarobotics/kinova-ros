@@ -18,6 +18,7 @@
 
 
   <xacro:include filename="$(find jaco_model)/urdf/jaco_common.xacro" />
+  <xacro:include filename="$(find jaco_model)/urdf/jaco_transmission_friction.xacro" />
 
   <property name="link_base" value="jaco_link_base" />
   <property name="link_1" value="jaco_link_1" />
@@ -353,9 +354,26 @@
           </collision>
       </link_data>
   </property>
-
+  <xacro:property name="mu1_default" value="0.2" />
+  <xacro:property name="mu2_default" value="0.2" />
+  <xacro:property name="kp_default" value="1000.0" />
+  <xacro:property name="kd_default" value="1.0" />
 
   <xacro:macro name="jaco_arm" params="parent">
+    	<gazebo>
+	    <plugin name="gazebo_ros_controller_manager" filename="libgazebo_ros_control.so">
+		<robotNamespace>/jaco_arm</robotNamespace>
+		<robotParam>robot_description</robotParam>
+	    </plugin>
+	</gazebo>
+	<gazebo>
+	    <plugin name="gazebo_ros_joint_trajectory" filename="libgazebo_ros_joint_pose_trajectory.so">
+		<robotNamespace>/jaco_arm</robotNamespace>
+		<alwaysOn>true</alwaysOn>
+		<updateRate>100.0</updateRate>
+	    </plugin>
+	</gazebo>
+
     <xacro:jaco_struct parent="${parent}" basename="jaco"/>
 
     <xacro:jaco_link link_name="${link_finger_1}"><xacro:insert_block name="finger_link_data" /></xacro:jaco_link>
@@ -366,7 +384,7 @@
 
     <xacro:jaco_link link_name="${link_finger_3}"><xacro:insert_block name="finger_link_data" /></xacro:jaco_link>
     <xacro:jaco_finger_joint joint_name="${joint_finger_3}" type="revolute" parent="${link_hand}" child="${link_finger_3}" joint_axis_xyz="${joint_finger_3_axis_xyz}" joint_origin_xyz="${joint_finger_3_origin_xyz}" joint_origin_rpy="${joint_finger_3_origin_rpy}" lower_limit="${joint_finger_3_lower_limit}" upper_limit="${joint_finger_3_upper_limit}"/>
+    <xacro:jaco_transmission_friction_gazebo/>
   </xacro:macro>
-
 
 </root>

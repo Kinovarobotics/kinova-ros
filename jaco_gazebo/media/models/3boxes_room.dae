@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
+    </contributor>
+    <created>2012-10-29T15:21:42</created>
+    <modified>2012-10-29T15:21:42</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_cameras/>
+  <library_lights/>
+  <library_images>
+    <image id="wood-floorboards-texture_jpg" name="wood-floorboards-texture_jpg">
+      <init_from>textures/wood-floorboards-texture.jpg</init_from>
+    </image>
+  </library_images>
+  <library_effects>
+    <effect id="BlueMat-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0 0.1770176 0.4871757 1</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.25 0.25 0.25 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">48</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+    <effect id="RedMat-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.4871757 0.05870273 0.02509696 1</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.25 0.25 0.25 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">48</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+    <effect id="GreenMat-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0 0.4871757 0.009621761 1</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.25 0.25 0.25 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">48</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+    <effect id="Wall-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.32 0.32 0.32 1</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.25 0.25 0.25 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">50</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+    <effect id="Ground-effect">
+      <profile_COMMON>
+        <newparam sid="wood-floorboards-texture_jpg-surface">
+          <surface type="2D">
+            <init_from>wood-floorboards-texture_jpg</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="wood-floorboards-texture_jpg-sampler">
+          <sampler2D>
+            <source>wood-floorboards-texture_jpg-surface</source>
+          </sampler2D>
+        </newparam>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <texture texture="wood-floorboards-texture_jpg-sampler" texcoord="UVMap"/>
+            </diffuse>
+            <specular>
+              <color sid="specular">0.5 0.5 0.5 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">50</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="BlueMat-material" name="BlueMat">
+      <instance_effect url="#BlueMat-effect"/>
+    </material>
+    <material id="RedMat-material" name="RedMat">
+      <instance_effect url="#RedMat-effect"/>
+    </material>
+    <material id="GreenMat-material" name="GreenMat">
+      <instance_effect url="#GreenMat-effect"/>
+    </material>
+    <material id="Wall-material" name="Wall">
+      <instance_effect url="#Wall-effect"/>
+    </material>
+    <material id="Ground-material" name="Ground">
+      <instance_effect url="#Ground-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Ground_Plane-mesh" name="Ground_Plane">
+      <mesh>
+        <source id="Ground_Plane-mesh-positions">
+          <float_array id="Ground_Plane-mesh-positions-array" count="108">19.59892 0 -15 -19.59892 0 -15 -19.59893 0 14.99999 19.59892 0 15 -6 0.1 -6.5 -6 0.1 -5.5 -7 0.1 -5.5 -6 1.9 -6.5 -7 1.9 -6.5 -6 1.9 -5.5 -7 1.9 -5.5 -7 0.1 -6.5 -3 0.1 2.5 -3 0.1 3.5 -4 0.1 3.5 -3 1.9 2.5 -4 1.9 2.5 -4 1.9 3.5 -3 1.9 3.5 -4 0.1 2.5 -7 0.1 -0.5 -7 0.1 0.5 -8 0.1 -0.5 -7 1.9 -0.5 -8 1.9 -0.5 -8 1.9 0.5 -7 1.9 0.5 -8 0.1 0.5 -22.52375 4.336228 -14.04711 -22.52376 -0.10153 -14.04711 22.42766 -0.101532 -14.04711 -17.71215 -0.066724 -15.29355 -17.71215 4.371035 -15.29356 -17.71215 4.371036 14.52562 22.42766 4.336228 -14.04711 -17.71215 -0.066724 14.52562</float_array>
+          <technique_common>
+            <accessor source="#Ground_Plane-mesh-positions-array" count="36" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Ground_Plane-mesh-normals">
+          <float_array id="Ground_Plane-mesh-normals-array" count="126">0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 -1 0 0 1 0 1 0 0 0 0 1 -1 0 0 0 0 -1 0 1 0 0 1 0 0 0 1 1 0 0 0 0 1 1 0 0</float_array>
+          <technique_common>
+            <accessor source="#Ground_Plane-mesh-normals-array" count="42" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Ground_Plane-mesh-map-0">
+          <float_array id="Ground_Plane-mesh-map-0-array" count="252">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9712584 0.8605386 0.02874165 0.8605386 0.02874153 0.1391852 0.9712583 0.1391848 0.9712584 0.8605386 0.02874153 0.1391852 0 0 1 0 1 1 0 0 0.995876 0 0.995876 1 0 1 0 0 1 1 0 1 0 0 0.995876 1</float_array>
+          <technique_common>
+            <accessor source="#Ground_Plane-mesh-map-0-array" count="126" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Ground_Plane-mesh-vertices">
+          <input semantic="POSITION" source="#Ground_Plane-mesh-positions"/>
+        </vertices>
+        <polylist material="BlueMat" count="12">
+          <input semantic="VERTEX" source="#Ground_Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ground_Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Ground_Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>12 0 0 13 0 1 14 0 2 15 1 3 16 1 4 17 1 5 12 2 6 15 2 7 18 2 8 13 3 9 18 3 10 17 3 11 14 4 12 17 4 13 16 4 14 15 5 15 12 5 16 19 5 17 19 6 18 12 6 19 14 6 20 18 7 21 15 7 22 17 7 23 13 8 24 12 8 25 18 8 26 14 9 27 13 9 28 17 9 29 19 10 30 14 10 31 16 10 32 16 11 33 15 11 34 19 11 35</p>
+        </polylist>
+        <polylist material="RedMat" count="12">
+          <input semantic="VERTEX" source="#Ground_Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ground_Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Ground_Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>20 12 36 21 12 37 22 12 38 23 13 39 24 13 40 25 13 41 20 14 42 23 14 43 26 14 44 21 15 45 26 15 46 25 15 47 27 16 48 25 16 49 24 16 50 23 17 51 20 17 52 22 17 53 21 18 54 27 18 55 22 18 56 26 19 57 23 19 58 25 19 59 21 20 60 20 20 61 26 20 62 27 21 63 21 21 64 25 21 65 22 22 66 27 22 67 24 22 68 24 23 69 23 23 70 22 23 71</p>
+        </polylist>
+        <polylist material="GreenMat" count="12">
+          <input semantic="VERTEX" source="#Ground_Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ground_Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Ground_Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>4 24 72 5 24 73 6 24 74 7 25 75 8 25 76 9 25 77 4 26 78 7 26 79 9 26 80 5 27 81 9 27 82 10 27 83 6 28 84 10 28 85 8 28 86 7 29 87 4 29 88 11 29 89 11 30 90 4 30 91 6 30 92 8 31 93 10 31 94 9 31 95 5 32 96 4 32 97 9 32 98 6 33 99 5 33 100 10 33 101 11 34 102 6 34 103 8 34 104 8 35 105 7 35 106 11 35 107</p>
+        </polylist>
+        <polylist material="Wall" count="4">
+          <input semantic="VERTEX" source="#Ground_Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ground_Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Ground_Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 </vcount>
+          <p>28 38 114 29 38 115 30 38 116 31 39 117 32 39 118 33 39 119 34 40 120 28 40 121 30 40 122 35 41 123 31 41 124 33 41 125</p>
+        </polylist>
+        <polylist material="Ground" count="2">
+          <input semantic="VERTEX" source="#Ground_Plane-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Ground_Plane-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Ground_Plane-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 </vcount>
+          <p>0 36 108 1 36 109 2 36 110 3 37 111 0 37 112 2 37 113</p>
+        </polylist>
+      </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Mesh" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 90.00001</rotate>
+        <scale sid="scale">0.9999999 1 1</scale>
+        <instance_geometry url="#Ground_Plane-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="BlueMat" target="#BlueMat-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="RedMat" target="#RedMat-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="GreenMat" target="#GreenMat-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Wall" target="#Wall-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+              <instance_material symbol="Ground" target="#Ground-material">
+                <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
+

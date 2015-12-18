@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="mico">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="mico_arm_group">
+        <joint name="fixed" />
+        <joint name="mico_joint_base" />
+        <joint name="mico_joint_1" />
+        <joint name="mico_joint_2" />
+        <joint name="mico_joint_3" />
+        <joint name="mico_joint_4" />
+        <joint name="mico_joint_5" />
+        <joint name="mico_joint_6" />
+    </group>
+    <group name="mico_gripper">
+        <link name="mico_link_hand" />
+        <link name="finger_proximal_limb_1" />
+        <link name="finger_distal_limb_1" />
+        <link name="finger_proximal_limb_2" />
+        <link name="finger_distal_limb_2" />
+    </group>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="mico_arm_ee" parent_link="mico_link_5" group="mico_gripper" />
+    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
+    <passive_joint name="mico_joint_finger_tip_1" />
+    <passive_joint name="mico_joint_finger_tip_2" />
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="finger_distal_limb_1" link2="finger_distal_limb_2" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="finger_proximal_limb_1" reason="Adjacent" />
+    <disable_collisions link1="finger_distal_limb_1" link2="finger_proximal_limb_2" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="mico_link_3" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="mico_link_4" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="mico_link_5" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="mico_link_hand" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_1" link2="root" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="finger_proximal_limb_1" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="finger_proximal_limb_2" reason="Adjacent" />
+    <disable_collisions link1="finger_distal_limb_2" link2="mico_link_3" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="mico_link_4" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="mico_link_5" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="mico_link_hand" reason="Never" />
+    <disable_collisions link1="finger_distal_limb_2" link2="root" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="finger_proximal_limb_2" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="mico_link_3" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="mico_link_4" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="mico_link_5" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="mico_link_hand" reason="Adjacent" />
+    <disable_collisions link1="finger_proximal_limb_1" link2="root" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_2" link2="mico_link_3" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_2" link2="mico_link_4" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_2" link2="mico_link_5" reason="Never" />
+    <disable_collisions link1="finger_proximal_limb_2" link2="mico_link_hand" reason="Adjacent" />
+    <disable_collisions link1="finger_proximal_limb_2" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_1" link2="mico_link_2" reason="Adjacent" />
+    <disable_collisions link1="mico_link_1" link2="mico_link_3" reason="Never" />
+    <disable_collisions link1="mico_link_1" link2="mico_link_4" reason="Never" />
+    <disable_collisions link1="mico_link_1" link2="mico_link_5" reason="Never" />
+    <disable_collisions link1="mico_link_1" link2="mico_link_base" reason="Adjacent" />
+    <disable_collisions link1="mico_link_1" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_2" link2="mico_link_3" reason="Adjacent" />
+    <disable_collisions link1="mico_link_2" link2="mico_link_base" reason="Never" />
+    <disable_collisions link1="mico_link_2" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_3" link2="mico_link_4" reason="Adjacent" />
+    <disable_collisions link1="mico_link_3" link2="mico_link_base" reason="Never" />
+    <disable_collisions link1="mico_link_3" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_4" link2="mico_link_5" reason="Adjacent" />
+    <disable_collisions link1="mico_link_4" link2="mico_link_base" reason="Never" />
+    <disable_collisions link1="mico_link_4" link2="mico_link_hand" reason="Default" />
+    <disable_collisions link1="mico_link_4" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_5" link2="mico_link_base" reason="Never" />
+    <disable_collisions link1="mico_link_5" link2="mico_link_hand" reason="Adjacent" />
+    <disable_collisions link1="mico_link_5" link2="root" reason="Never" />
+    <disable_collisions link1="mico_link_base" link2="root" reason="Adjacent" />
+    <disable_collisions link1="mico_link_hand" link2="root" reason="Never" />
+</robot>

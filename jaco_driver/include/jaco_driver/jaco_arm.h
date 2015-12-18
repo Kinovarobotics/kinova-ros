@@ -40,7 +40,7 @@ namespace jaco
 {
 
 // Maximum number of joints on Jaco-like robots:
-static const int     JACO_JOINTS_COUNT = 9;
+//static const int     JACO_JOINTS_COUNT = 9;
 
 class JacoArm
 {
@@ -121,6 +121,8 @@ class JacoArm
     ros::Time last_cartesian_vel_cmd_time_;
 
     std::vector< std::string > joint_names_;
+    int JACO_JOINTS_COUNT;
+    bool is_jaco;
 };
 
 }  // namespace jaco

@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+
+<root xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro">
+
+<xacro:macro name="jaco_joint_transmission" params="transmission_name joint_name motor_name">
+	<transmission name="${transmission_name}">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="${joint_name}">
+			<hardwareInterface>EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="${motor_name}">
+		<mechanicalReduction>1</mechanicalReduction>
+		</actuator>
+	</transmission>
+</xacro:macro>
+
+<xacro:macro name="jaco_link_friction_gazebo" params="link_name mu1 mu2">
+	<gazebo reference="${link_name}">
+		<mu1 value="${mu1}" />
+		<mu2  value="${mu2}"/>
+		<selfCollide value="true" />
+	</gazebo>
+</xacro:macro>
+<xacro:macro name="jaco_joint_params_gazebo" params="joint_name kp kd">
+	<gazebo reference="${joint_name}">
+		<kd value="${kd}" />
+		<kp value="${kp}" />
+		<!--<stopCfm value="${kp}" />
+		<stopErp value="${kd}" />
+		<fudgeFactor value="1.0" />-->
+	</gazebo>
+</xacro:macro>
+<xacro:macro name="mico_transmission_friction_gazebo">
+	<xacro:jaco_link_friction_gazebo link_name="${link_base}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_1}" mu1="${mu1_default}" mu2="${mu2_default}"  />
+	<xacro:jaco_link_friction_gazebo link_name="${link_2}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_3}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_4}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_5}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_hand}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_finger_1}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_finger_2}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_1}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_2}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_3}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_4}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_5}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_6}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_1}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_2}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_tip_1}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_tip_2}" kp="${kp_default}" kd="${kd_default}" />
+
+	<xacro:jaco_joint_transmission transmission_name="${joint_1}_transmission" joint_name="${joint_1}" motor_name="${joint_1}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_2}_transmission" joint_name="${joint_2}" motor_name="${joint_2}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_3}_transmission" joint_name="${joint_3}" motor_name="${joint_3}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_4}_transmission" joint_name="${joint_4}" motor_name="${joint_4}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_5}_transmission" joint_name="${joint_5}" motor_name="${joint_5}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_6}_transmission" joint_name="${joint_6}" motor_name="${joint_6}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_1}_transmission" joint_name="${joint_finger_1}" motor_name="${joint_finger_1}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_2}_transmission" joint_name="${joint_finger_2}" motor_name="${joint_finger_2}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_tip_1}_transmission" joint_name="${joint_finger_tip_1}" motor_name="${joint_finger_tip_1}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_tip_2}_transmission" joint_name="${joint_finger_tip_2}" motor_name="${joint_finger_tip_2}_motor"/>
+</xacro:macro>
+
+<xacro:macro name="jaco_transmission_friction_gazebo">
+	<xacro:jaco_link_friction_gazebo link_name="${link_base}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_1}" mu1="${mu1_default}" mu2="${mu2_default}"  />
+	<xacro:jaco_link_friction_gazebo link_name="${link_2}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_3}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_4}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_5}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_hand}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_finger_1}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_link_friction_gazebo link_name="${link_finger_2}" mu1="${mu1_default}" mu2="${mu2_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_1}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_2}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_3}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_4}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_5}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_6}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_1}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_2}" kp="${kp_default}" kd="${kd_default}" />
+	<xacro:jaco_joint_params_gazebo joint_name="${joint_finger_3}" kp="${kp_default}" kd="${kd_default}" />
+
+	<xacro:jaco_joint_transmission transmission_name="${joint_1}_transmission" joint_name="${joint_1}" motor_name="${joint_1}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_2}_transmission" joint_name="${joint_2}" motor_name="${joint_2}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_3}_transmission" joint_name="${joint_3}" motor_name="${joint_3}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_4}_transmission" joint_name="${joint_4}" motor_name="${joint_4}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_5}_transmission" joint_name="${joint_5}" motor_name="${joint_5}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_6}_transmission" joint_name="${joint_6}" motor_name="${joint_6}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_1}_transmission" joint_name="${joint_finger_1}" motor_name="${joint_finger_1}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_2}_transmission" joint_name="${joint_finger_2}" motor_name="${joint_finger_2}_motor"/>
+	<xacro:jaco_joint_transmission transmission_name="${joint_finger_3}_transmission" joint_name="${joint_finger_3}" motor_name="${joint_finger_3}_motor"/>
+</xacro:macro>
+</root>

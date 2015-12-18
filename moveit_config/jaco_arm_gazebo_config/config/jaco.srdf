@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="jaco">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="jaco_arm_group">
+        <joint name="fixed" />
+        <joint name="jaco_joint_base" />
+        <joint name="jaco_joint_1" />
+        <joint name="jaco_joint_2" />
+        <joint name="jaco_joint_3" />
+        <joint name="jaco_joint_4" />
+        <joint name="jaco_joint_5" />
+        <joint name="jaco_joint_6" />
+    </group>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="jaco_gripper" parent_link="jaco_link_hand" group="jaco_arm_group" />
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_2" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_3" reason="Never" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_4" reason="Never" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_5" reason="Never" />
+    <disable_collisions link1="jaco_link_1" link2="jaco_link_base" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_1" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_3" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_4" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_5" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_2" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_4" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_5" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="jaco_link_hand" reason="Never" />
+    <disable_collisions link1="jaco_link_3" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_5" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="jaco_link_hand" reason="Never" />
+    <disable_collisions link1="jaco_link_4" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_base" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_1" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_5" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_5" link2="root" reason="Never" />
+    <disable_collisions link1="jaco_link_base" link2="root" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_1" link2="jaco_link_finger_2" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_1" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_2" link2="jaco_link_finger_3" reason="Never" />
+    <disable_collisions link1="jaco_link_finger_2" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_finger_3" link2="jaco_link_hand" reason="Adjacent" />
+    <disable_collisions link1="jaco_link_hand" link2="root" reason="Never" />
+</robot>

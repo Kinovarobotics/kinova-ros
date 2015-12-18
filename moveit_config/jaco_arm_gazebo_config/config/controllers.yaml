@@ -1,0 +1,16 @@
+controller_list:
+  - name: "/jaco_joint_trajectory_action_server"
+    type: FollowJointTrajectory
+    joints:
+      - jaco_joint_1
+      - jaco_joint_2
+      - jaco_joint_3
+      - jaco_joint_4
+      - jaco_joint_5
+      - jaco_joint_6
+  - name: /gripper_action_server
+    type: GripperCommand
+    joints:
+      - jaco_joint_finger_1
+      - jaco_joint_finger_2
+      - jaco_joint_finger_3
