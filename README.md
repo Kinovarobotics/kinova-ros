@@ -121,7 +121,7 @@ All the joints have a range limit.  Joints 1, 4, 5 and 6 have a range of -10,000
     Message format:
     string name – array containing the names of the joints 
     float64[] position – array containing joint positions, in transformed radians, of the joints 
-    float64[] velocity – array containing the joint velocities (placeholder, contains no data) 
+    float64[] velocity – array containing the joint velocities
     float64[] effort – array containing the joint forces in newtons (placeholder, contains no data) 
 
 ### Finger Control
@@ -348,7 +348,7 @@ of jaco_arm_driver.
 ## Additional Resources
 The transformation equations used to convert from the “DH Parameters” to physical angles are listed in the jaco_kinematics.pdf document, included as part of this package.
 
-The Kinova JACO website: http://kinovarobotics.com/products/jaco-research-edition/
+The Kinova JACO website: http://www.kinovarobotics.com/service-robotics/products/robot-arms
 
 ## Report a Bug
 Any bugs, issues or suggestions may be sent to ros@kinovarobotics.com.
