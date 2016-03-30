@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : jaco_arm_driver.cpp
+// Name        : kinova_arm_driver.cpp
 // Author      : WPI, Clearpath Robotics
 // Version     : 0.5
 // Copyright   : BSD
@@ -15,7 +15,7 @@
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "jaco_arm_driver");
+    ros::init(argc, argv, "kinova_arm_driver");
     ros::NodeHandle nh("~");
     boost::recursive_mutex api_mutex;
 

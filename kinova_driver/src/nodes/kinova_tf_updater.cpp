@@ -1,12 +1,12 @@
 /*
- * jaco_tf_updater.cpp
+ * kinova_tf_updater.cpp
 
  *
  *  Created on: Apr 16, 2013
  *      Author: mdedonato
  */
 
-#include <kinova_driver/jaco_tf_updater.h>
+#include <kinova_driver/kinova_tf_updater.h>
 
 
 namespace kinova
@@ -71,7 +71,7 @@ void JacoTFTree::tfUpdateHandler(const ros::TimerEvent&)
 int main(int argc, char **argv)
 {
     /* Set up ROS */
-    ros::init(argc, argv, "jaco_tf_updater");
+    ros::init(argc, argv, "kinova_tf_updater");
     ros::NodeHandle nh("~");
 
     kinova::JacoTFTree JacoTF(nh);

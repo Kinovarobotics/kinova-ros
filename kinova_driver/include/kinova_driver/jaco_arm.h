@@ -1,5 +1,5 @@
 /*
- * jaco_arm_driver.h
+ * kinova_arm_driver.h
  *
  *  Created on: Feb 26, 2013
  *  Modified on: June 25, 2013

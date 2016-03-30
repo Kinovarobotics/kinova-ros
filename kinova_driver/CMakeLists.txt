@@ -44,8 +44,8 @@ include_directories(
 # Nodes
 # Note, the headers are shown here so they show up in the project view when using
 # Qt Creator. There must be a better way...
-add_executable(jaco_arm_driver
-  src/nodes/jaco_arm_driver.cpp
+add_executable(kinova_arm_driver
+  src/nodes/kinova_arm_driver.cpp
   src/jaco_api.cpp
   src/jaco_arm.cpp
   src/jaco_comm.cpp
@@ -55,16 +55,16 @@ add_executable(jaco_arm_driver
   src/jaco_types.cpp
 )
 
-add_executable(jaco_tf_updater
-  src/nodes/jaco_tf_updater.cpp
-  src/jaco_arm_kinematics.cpp
+add_executable(kinova_tf_updater
+  src/nodes/kinova_tf_updater.cpp
+  src/kinova_arm_kinematics.cpp
 )
 
-add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
-add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
+add_dependencies(kinova_arm_driver ${catkin_EXPORTED_TARGETS})
+add_dependencies(kinova_tf_updater ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES} dl)
-target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES})
+target_link_libraries(kinova_arm_driver ${catkin_LIBRARIES} dl)
+target_link_libraries(kinova_tf_updater ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -91,7 +91,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 
 ## Mark executables and/or libraries for installation
-install(TARGETS jaco_arm_driver jaco_tf_updater
+install(TARGETS kinova_arm_driver kinova_tf_updater
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

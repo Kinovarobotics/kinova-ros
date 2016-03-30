@@ -5,7 +5,7 @@
  *      Author: mdedonato
  */
 
-#include <kinova_driver/jaco_arm_kinematics.h>
+#include <kinova_driver/kinova_arm_kinematics.h>
 #include <string>
 
 

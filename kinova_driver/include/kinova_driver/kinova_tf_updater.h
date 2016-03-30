@@ -10,7 +10,7 @@
 
 #include <time.h>
 
-#include <kinova_driver/jaco_arm_kinematics.h>
+#include <kinova_driver/kinova_arm_kinematics.h>
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
