@@ -6,7 +6,7 @@
 // Description : A ROS driver for controlling the Kinova Jaco robotic manipulator arm
 //============================================================================
 
-#include "kinova_driver/jaco_api.h"
+#include "kinova_driver/kinova_api.h"
 #include "kinova_driver/jaco_arm.h"
 #include "kinova_driver/jaco_pose_action.h"
 #include "kinova_driver/jaco_angles_action.h"

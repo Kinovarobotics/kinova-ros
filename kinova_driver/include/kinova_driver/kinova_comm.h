@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_comm.h
+ *  File: kinova_comm.h
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -51,7 +51,7 @@
 #include <kinova/KinovaTypes.h>
 
 #include <kinova_driver/jaco_types.h>
-#include "kinova_driver/jaco_api.h"
+#include "kinova_driver/kinova_api.h"
 
 
 namespace kinova
@@ -102,7 +102,7 @@ class JacoComm
 
  private:
     boost::recursive_mutex& api_mutex_;
-    kinova::JacoAPI jaco_api_;
+    kinova::JacoAPI kinova_api_;
     bool is_software_stop_;
     int num_fingers_;
     int robot_type_; 

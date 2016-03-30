@@ -33,8 +33,8 @@
 #include <vector>
 
 #include "kinova/KinovaTypes.h"
-#include "kinova_driver/jaco_comm.h"
-#include "kinova_driver/jaco_api.h"
+#include "kinova_driver/kinova_comm.h"
+#include "kinova_driver/kinova_api.h"
 
 
 namespace kinova
@@ -79,7 +79,7 @@ class JacoArm
 
     tf::TransformListener tf_listener_;
     ros::NodeHandle node_handle_;
-    JacoComm &jaco_comm_;
+    JacoComm &kinova_comm_;
 
     // Publishers, subscribers, services
     ros::Subscriber joint_velocity_subscriber_;

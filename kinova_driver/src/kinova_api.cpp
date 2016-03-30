@@ -6,7 +6,7 @@
  *      Author: mdedonato, Clearpath Robotics
  */
 
-#include <kinova_driver/jaco_api.h>
+#include <kinova_driver/kinova_api.h>
 #include <vector>
 
 

@@ -51,7 +51,7 @@
 
 #include <kinova_msgs/SetFingersPositionAction.h>
 
-#include "kinova_driver/jaco_comm.h"
+#include "kinova_driver/kinova_comm.h"
 
 
 namespace kinova

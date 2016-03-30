@@ -46,9 +46,9 @@ include_directories(
 # Qt Creator. There must be a better way...
 add_executable(kinova_arm_driver
   src/nodes/kinova_arm_driver.cpp
-  src/jaco_api.cpp
+  src/kinova_api.cpp
   src/jaco_arm.cpp
-  src/jaco_comm.cpp
+  src/kinova_comm.cpp
   src/jaco_pose_action.cpp
   src/jaco_angles_action.cpp
   src/jaco_fingers_action.cpp

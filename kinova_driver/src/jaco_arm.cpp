@@ -49,7 +49,7 @@ namespace kinova
 {
 
 JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
-    : jaco_comm_(arm), node_handle_(nodeHandle)
+    : kinova_comm_(arm), node_handle_(nodeHandle)
 {
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &JacoArm::stopServiceCallback, this);
@@ -131,8 +131,8 @@ JacoArm::~JacoArm()
 
 bool JacoArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res)
 {
-    jaco_comm_.homeArm();
-    jaco_comm_.initFingers();
+    kinova_comm_.homeArm();
+    kinova_comm_.initFingers();
     res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
     return true;
 }
@@ -140,7 +140,7 @@ bool JacoArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_
 
 void JacoArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)
 {
-    if (!jaco_comm_.isStopped())
+    if (!kinova_comm_.isStopped())
     {
         joint_velocities_.Actuator1 = joint_vel->joint1;
         joint_velocities_.Actuator2 = joint_vel->joint2;
@@ -167,7 +167,7 @@ void JacoArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& jo
  */
 bool JacoArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
-    jaco_comm_.stopAPI();
+    kinova_comm_.stopAPI();
     res.stop_result = "Arm stopped";
     ROS_DEBUG("Arm stop requested");
     return true;
@@ -181,7 +181,7 @@ bool JacoArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::
  */
 bool JacoArm::startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res)
 {
-    jaco_comm_.startAPI();
+    kinova_comm_.startAPI();
     res.start_result = "Arm started";
     ROS_DEBUG("Arm start requested");
     return true;
@@ -203,7 +203,7 @@ bool JacoArm::setForceControlParamsCallback(kinova_msgs::SetForceControlParams::
     damping.ThetaY = req.damping_angular.y;
     damping.ThetaZ = req.damping_angular.z;
 
-    jaco_comm_.setCartesianInertiaDamping(inertia, damping);
+    kinova_comm_.setCartesianInertiaDamping(inertia, damping);
 
     force_min.X      = req.force_min_linear.x;
     force_min.Y      = req.force_min_linear.y;
@@ -218,35 +218,35 @@ bool JacoArm::setForceControlParamsCallback(kinova_msgs::SetForceControlParams::
     force_max.ThetaY = req.force_max_angular.y;
     force_max.ThetaZ = req.force_max_angular.z;
 
-    jaco_comm_.setCartesianForceMinMax(force_min, force_max);
+    kinova_comm_.setCartesianForceMinMax(force_min, force_max);
 
     return true;
 }
 
 bool JacoArm::startForceControlCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res)
 {
-    jaco_comm_.startForceControl();
+    kinova_comm_.startForceControl();
     res.start_result = "Start force control requested.";
     return true;
 }
 
 bool JacoArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
-    jaco_comm_.stopForceControl();
+    kinova_comm_.stopForceControl();
     res.stop_result = "Stop force control requested.";
     return true;
 }
 
 bool JacoArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request &req, kinova_msgs::SetEndEffectorOffset::Response &res)
 {
-    jaco_comm_.setEndEffectorOffset(req.offset.x, req.offset.y, req.offset.z);
+    kinova_comm_.setEndEffectorOffset(req.offset.x, req.offset.y, req.offset.z);
 
     return true;
 }
 
 void JacoArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
 {
-    if (!jaco_comm_.isStopped())
+    if (!kinova_comm_.isStopped())
     {
         cartesian_velocities_.X = cartesian_vel->twist.linear.x;
         cartesian_velocities_.Y = cartesian_vel->twist.linear.y;
@@ -281,7 +281,7 @@ void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
         ROS_DEBUG("Cart vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
                   cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
                   cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
-        jaco_comm_.setCartesianVelocities(cartesian_velocities_);
+        kinova_comm_.setCartesianVelocities(cartesian_velocities_);
     }
 }
 
@@ -301,7 +301,7 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
         ROS_DEBUG("Joint vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
                   joint_velocities_.Actuator1, joint_velocities_.Actuator2, joint_velocities_.Actuator3,
                   joint_velocities_.Actuator4, joint_velocities_.Actuator5, joint_velocities_.Actuator6);
-        jaco_comm_.setJointVelocities(joint_velocities_);
+        kinova_comm_.setJointVelocities(joint_velocities_);
     }
 }
 
@@ -319,14 +319,14 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
  */
 void JacoArm::publishJointAngles(void)
 {
-    double j6o = jaco_comm_.j6o();
+    double j6o = kinova_comm_.j6o();
 
     FingerAngles fingers;
-    jaco_comm_.getFingerPositions(fingers);
+    kinova_comm_.getFingerPositions(fingers);
 
     // Query arm for current joint angles
     JacoAngles current_angles;
-    jaco_comm_.getJointAngles(current_angles);
+    kinova_comm_.getJointAngles(current_angles);
     kinova_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg(j6o);
 
     jaco_angles.joint1 = current_angles.Actuator1;
@@ -355,7 +355,7 @@ void JacoArm::publishJointAngles(void)
 
     // Joint velocities
     JacoAngles current_vels;
-    jaco_comm_.getJointVelocities(current_vels);
+    kinova_comm_.getJointVelocities(current_vels);
     joint_state.velocity.resize(9);
     joint_state.velocity[0] = current_vels.Actuator1;
     joint_state.velocity[1] = current_vels.Actuator2;
@@ -418,7 +418,7 @@ void JacoArm::publishToolPosition(void)
     JacoPose pose;
     geometry_msgs::PoseStamped current_position;
 
-    jaco_comm_.getCartesianPosition(pose);
+    kinova_comm_.getCartesianPosition(pose);
 
     current_position.pose            = pose.constructPoseMsg();
     current_position.header.stamp    = ros::Time::now();
@@ -435,7 +435,7 @@ void JacoArm::publishToolWrench(void)
     JacoPose wrench;
     geometry_msgs::WrenchStamped current_wrench;
 
-    jaco_comm_.getCartesianForce(wrench);
+    kinova_comm_.getCartesianForce(wrench);
 
     current_wrench.wrench          = wrench.constructWrenchMsg();
     current_wrench.header.stamp    = ros::Time::now();
@@ -458,7 +458,7 @@ void JacoArm::publishToolWrench(void)
 void JacoArm::publishFingerPosition(void)
 {
     FingerAngles fingers;
-    jaco_comm_.getFingerPositions(fingers);
+    kinova_comm_.getFingerPositions(fingers);
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 

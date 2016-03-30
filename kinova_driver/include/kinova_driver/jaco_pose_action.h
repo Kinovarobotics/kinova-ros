@@ -54,7 +54,7 @@
 #include <kinova_msgs/ArmPoseAction.h>
 
 #include <string>
-#include "kinova_driver/jaco_comm.h"
+#include "kinova_driver/kinova_comm.h"
 
 
 namespace kinova
