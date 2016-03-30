@@ -19,7 +19,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <tf/tf.h>
 #include <ros/ros.h>
-#include <kinova_driver/JacoPositionConfig.h>
+#include <kinova_driver/KinovaPositionConfig.h>
 #include <dynamic_reconfigure/server.h>
 using namespace std;
 
@@ -35,7 +35,7 @@ float	 ry_pose=0;
 float	 rz_pose=0;
 
 
-void callback(kinova_driver::JacoPositionConfig &config, uint32_t level) {
+void callback(kinova_driver::KinovaPositionConfig &config, uint32_t level) {
 
 	 x_pose=config.X_Pose;
 	 y_pose=config.Y_Pose;
@@ -83,8 +83,8 @@ int main(int argc, char **argv) {
 			2);
 
 	pub = &pub2;
-	dynamic_reconfigure::Server<kinova_driver::JacoPositionConfig>  dr_server;
- dynamic_reconfigure::Server<kinova_driver::JacoPositionConfig>::CallbackType	dr_call = boost::bind(&callback, _1, _2);
+	dynamic_reconfigure::Server<kinova_driver::KinovaPositionConfig>  dr_server;
+ dynamic_reconfigure::Server<kinova_driver::KinovaPositionConfig>::CallbackType	dr_call = boost::bind(&callback, _1, _2);
 	dr_server.setCallback(dr_call);
 	  ros::Timer	timer = nh.createTimer(ros::Duration(0.1),&TimerCallback);
 

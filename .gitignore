@@ -1,6 +1,6 @@
 #Back files
 *.*~
-
+*.autosave
 # Compiled Object files
 *.slo
 *.lo
@@ -51,4 +51,3 @@ kvh_driver/src/kvh_driver/
 
 # Python
 *.pyc
-

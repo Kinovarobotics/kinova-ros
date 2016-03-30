@@ -61,7 +61,7 @@ void CartesianVelTest::TimerCallback(const ros::TimerEvent&)
 
 }
 
-void CartesianVelTest::callback(kinova_msgs::JacoVelocityConfig &config, uint32_t level) {
+void CartesianVelTest::callback(kinova_msgs::KinovaVelocityConfig &config, uint32_t level) {
 
 	 x_vel=config.X_Vel;
 	 y_vel=config.Y_Vel;
