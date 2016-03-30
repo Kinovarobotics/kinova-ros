@@ -1,8 +1,10 @@
+#ifndef KINOVA_TYPE_H_
+#define KINOVA_TYPE_H_
+
 /**
  * @file KinovaTypes.h
  * @brief This file contains all data structures and all data type(enum and typedef) that you'll need to use this API.
  */
-#pragma once
 
 /**
  * @brief Size of the @link ControlsModeMap @endlink array in the structure @link JoystickCommand @endlink.
@@ -123,22 +125,56 @@ enum POSITION_TYPE
 	NOMOVEMENT_POSITION = 0,    /*!< Used for initialisation. */
 	CARTESIAN_POSITION = 1,     /*!< A cartesian position described by a translation X, Y, Z and an orientation ThetaX, thetaY and ThetaZ. */
 	ANGULAR_POSITION = 2,       /*!< An angular position described by a value for each actuator. */
+	RETRACTED = 3,              /*!< The robotic arm is in retracted mode. It may be anywhere between the HOME position and the RETRACTED position. */
+	PREDEFINED1 = 4,   			/*!< The robotic arm is moving to the pre defined position #1. */
+	PREDEFINED2 = 5,   			/*!< The robotic arm is moving to the pre defined position #2. */
+	PREDEFINED3 = 6, 			/*!< The robotic arm is moving to the pre defined position #3. */
 	CARTESIAN_VELOCITY = 7,     /*!< A velocity vector used for velocity control. */
 	ANGULAR_VELOCITY = 8,       /*!< Used for initialisation. */
+	PREDEFINED4 = 9,  			/*!< The robotic arm is moving to the pre defined position #4. */
+	PREDEFINED5 = 10,  			/*!< The robotic arm is moving to the pre defined position #5. */
 	ANY_TRAJECTORY = 11,        /*!< Not used. */
-	TIME_DELAY = 12,            /*!< Position used as a time delay. */
+	TIME_DELAY = 12,            /*!< The robotic arm is on time delay. */
 };
 
 
+
+/**
+ * @brief That represents the type of port from a peripheral.
+ */
+enum PORT_TYPE
+{
+	PERIPHERAL_PORT_ANY = 0,                      /*!< generic port. */
+	PERIPHERAL_PORT_CAN_INTERNAL = 1,             /*!< Internal CAN port. */
+	PERIPHERAL_PORT_PORT_CAN_EXTERNAL = 2,        /*!< External CAN port. */
+	PERIPHERAL_PORT_PORT_SPI_0 = 3,               /*!< SPI 0 port. */
+	PERIPHERAL_PORT_PORT_SPI_1 = 4,               /*!< SPI 1 port. */
+	PERIPHERAL_PORT_PORT_USB = 5,                 /*!< USB port. */
+	PERIPHERAL_PORT_PORT_UART_0 = 6,              /*!< UART 0 port. */
+	PERIPHERAL_PORT_PORT_UART_1 = 7,              /*!< UART 1 port. */
+	PERIPHERAL_PORT_PORT_UART_2 = 8,              /*!< UART 2 port. */
+	PERIPHERAL_PORT_PORT_VIRTUAL = 9,             /*!< Virtual port. */
+};
+
+/**
+ * @brief That represents the type of a peripheral.
+ */
 enum PERIPHERAL_TYPE
 {
-	PERIPHERAL_TYPE_NONE = 0,               /*!< Unknown type. */
-	PERIPHERAL_TYPE_ANY = 1,                /*!< Abstract peripheral. internal use only.*/
-	PERIPHERAL_TYPE_ACTUATORK01 = 100,      /*!< A joint's actuator. */
-	PERIPHERAL_TYPE_FINGERK01 = 200,        /*!< A finger. */
-	PERIPHERAL_TYPE_JOYSTICK = 300,         /*!< A joystick. */
-	PERIPHERAL_TYPE_VIRTUAL_JOYSTICK = 301, /*!< A virtual joystick. This is mainly used by the API. */
-	PERIPHERAL_TYPE_CAN_INTERFACE = 400,    /*!< A CAN interface on the main board. */
+	PERIPHERAL_TYPE_NONE = 0,                      /*!< Unknown type. */
+	PERIPHERAL_TYPE_ANY = 1,                       /*!< Abstract peripheral. internal use only.*/
+	PERIPHERAL_TYPE_UNKNOWN = 2,                   /*!< Unknown peripheral. internal use only.*/
+	PERIPHERAL_TYPE_ACTUATOR_GENERIC = 100,        /*!< A generic rotary actuator. */
+	PERIPHERAL_TYPE_ACTUATOR_BIG_19NM = 101,       /*!< A big 19 Newton*Meter rotary actuator. */
+	PERIPHERAL_TYPE_ACTUATOR_BIG_37NM = 102,       /*!< A big 37 Newton*Meter rotary actuator. */
+	PERIPHERAL_TYPE_ACTUATOR_SMALL_7NM = 103,      /*!< A small 7 Newton*Meter rotary actuator. */
+	PERIPHERAL_TYPE_LINEAR_ACTUATOR_GENERIC = 200, /*!< A generic linear actuator. */
+	PERIPHERAL_TYPE_LINEAR_ACTUATOR_120N = 201,    /*!< A 120 Newton(finger) linear actuator. */
+	PERIPHERAL_TYPE_JOYSTICK = 300,                /*!< A generic joystick. */
+	PERIPHERAL_TYPE_VIRTUAL_JOYSTICK = 301,        /*!< A virtual joystick. This is mainly used by the API. */
+	PERIPHERAL_TYPE_KINOVA_JOYSTICK_3AXIS = 302,   /*!< A kinovian joystick. */
+	PERIPHERAL_TYPE_UNIVERSAL_INTERFACE_V2 = 303,  /*!< A universal interface V2. */
+	PERIPHERAL_TYPE_CAN_INTERFACE = 400            /*!< A CAN interface on the main board. */
 };
 
 /**
@@ -160,6 +196,19 @@ enum ArmLaterality
 	LEFTHAND,  /*!< Left handed */
 };
 
+enum TORQUECONTROL_TYPE
+{
+	DIRECTTORQUE = 0,
+	IMPEDANCEANGULAR = 1,
+	IMPEDANCECARTESIAN = 2
+};
+
+enum GENERALCONTROL_TYPE
+{
+	POSITION, /*!< General position control. That include velocity control. */
+	  TORQUE, /*!< General torque control. */
+};
+
 /**
  * @brief This represents a type of controller. A controller is an entity that can send control
  * commands to the robot.
@@ -177,13 +226,15 @@ enum Controller
 };
 
 /**
- * @brief This represents a type of control. For now, there is 2 type of control, it can either
- * cartesian control or angular control.
+ * @brief This represents a type of control. For now, there is 3 type of control, the
+ * cartesian control, the angular control or the force control.
  */
 enum CONTROL_TYPE
 {
 	CONTROL_TYPE_CARTESIAN = 0, /*!< Cartesian control. (translation and orientation) */
-	CONTROL_TYPE_ANGULAR = 1    /*!< Angular control. (joint by joint) */
+	CONTROL_TYPE_ANGULAR = 1,    /*!< Angular control. (joint by joint) */
+
+	CONTROL_TYPE_UNKNOWN = 9999,    /*!< Unknown control type. */
 };
 
 /**
@@ -278,7 +329,12 @@ enum RETRACT_TYPE
 	  /**
 	  * @brief The robotical arm is not initialized.
 	  */
-	 RETRACT_TYPE_NOT_INITIALIZED = 6
+	 RETRACT_TYPE_NOT_INITIALIZED = 6,
+
+	 /**
+	  * @brief An error has occured during the retract process.
+	  */
+	 RETRACT_ERROR = 25000
 };
 
 /** @brief This data structure holds values in an angular(joint by joint) control context. As an example struct could contains position, temperature, torque, ...
@@ -582,6 +638,15 @@ struct AngularPosition
 	 * @brief This contains value regarding the actuators.
 	 */
 	FingersPosition Fingers;
+
+	/**
+	 * This method will initialises all the values to 0
+	 */
+	void InitStruct()
+	{
+		Actuators.InitStruct();
+		Fingers.InitStruct();
+	}
 };
 
 /** @brief This data structure represents all limitation that can be applied to a control context.
@@ -681,9 +746,14 @@ struct TrajectoryPoint
 	UserPosition Position;
 
 	/**
-	 * @brief A flag that indicatesif the limitation are active or not (1 is active 0 is not).
+	 * @brief A flag that indicates if the limitation are active or not (1 is active 0 is not).
 	 */
 	int LimitationsActive;
+
+	/**
+	* @brief A flag that indicates if the tracjetory's synchronization is active. (1 is active 0 is not). ONLY AVAILABLE IN ANGULAR CONTROL.
+	*/
+	int SynchroType;
 
 	/**
 	 * @brief Limitation applied to this point if the limitation flag is active.
@@ -694,6 +764,8 @@ struct TrajectoryPoint
 	{
 		Position.InitStruct();
 		LimitationsActive = 0;
+		Limitations.InitStruct();
+		SynchroType = 0;
 		Limitations.InitStruct();
 	}
 };
@@ -923,10 +995,14 @@ struct ClientConfigurations
 	 */
 	int EnableFlashPositionLog;
 
+	int RobotConfigSelect;
+
+	int TorqueSensorsEnable;
+
 	/**
 	 * @brief Not used for now.
 	 */
-	int Expansion[198];
+	int Expansion[196];
 };
 
 /**
@@ -2484,3 +2560,27 @@ struct PeripheralInfo
 	 */
 	unsigned int CodeVersion;
 };
+
+/** @brief This data structure holds information that describes how you define the gravity.
+ */
+enum GRAVITY_TYPE
+{
+	MANUAL_INPUT = 0,           /*!< You manually input the gravity. */
+	OPTIMAL = 1,                /*!< You set the gravity via an automatic routine.*/
+};
+
+enum ROBOT_TYPE
+{
+	JACOV1_ASSISTIVE = 0,
+	MICO_6DOF_SERVICE = 1,
+	MICO_4DOF_SERVICE = 2,
+	JACOV2_6DOF_SERVICE = 3,
+	JACOV2_4DOF_SERVICE = 4,
+	MICO_6DOF_ASSISTIVE = 5,
+	JACOV2_6DOF_ASSISTIVE = 6,
+
+	ROBOT_ERROR = 255,
+	GENERIC_ROBOT = 254
+};
+
+#endif

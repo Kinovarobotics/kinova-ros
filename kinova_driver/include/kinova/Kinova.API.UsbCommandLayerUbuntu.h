@@ -86,10 +86,12 @@
 //This represents the size of the array returned by the function GetSpasmFilterValues and sent to SetSpasmFilterValues.
 #define SPASM_FILTER_COUNT 1
 
-//Version of the API 5.01.04
-#define COMMAND_LAYER_VERSION 50104
+//Version of the API 5.02.00
+#define COMMAND_LAYER_VERSION 50200
 
 #define COMMAND_SIZE 70
+
+#define OPTIMAL_Z_PARAM_SIZE 16
 
 #define GRAVITY_VECTOR_SIZE 3
 
@@ -256,3 +258,111 @@ extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetCommandVelocity(float cartesianVe
 extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
 
 extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetEndEffectorOffset(unsigned int status, float x, float y, float z);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SendAngularTorqueCommand(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SendCartesianForceCommand(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueActuatorGain(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueActuatorDamping(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SwitchTrajectoryTorque(GENERALCONTROL_TYPE type);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueCommandMax(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueSafetyFactor(float factor);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueGainMax(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueRateLimiter(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFeedCurrent(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFeedVelocity(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorquePositionLimitDampingGain(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorquePositionLimitDampingMax(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorquePositionLimitRepulsGain(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorquePositionLimitRepulsMax(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFilterVelocity(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFilterMeasuredTorque(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFilterError(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFilterControlEffort(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetGravityType(GRAVITY_TYPE type);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetGravityVector(float gravityVector[GRAVITY_VECTOR_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetGravityOptimalZParam(float Command[GRAVITY_PARAM_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetGravityManualInputParam(float Command[GRAVITY_PARAM_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetAngularTorqueCommand(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetAngularTorqueGravityEstimation(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetActuatorMaxVelocity(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetSwitchThreshold(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetPositionLimitDistance(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueControlType(TORQUECONTROL_TYPE type);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetGravityPayload(float Command[GRAVITY_PAYLOAD_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueVibrationController(float activationStatus);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueRobotProtection(int protectionLevel);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueVelocityLimitFilter(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFeedFilter(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueStaticFriction(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueErrorDeadband(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueBrake(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueInactivityTimeActuator(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueInactivityTimeMainController(int time);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueDampingMax(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFeedVelocityUnderGain(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueFeedCurrentVoltage(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueStaticFrictionMax(float Command[COMMAND_SIZE]);
+
+//Internal use only
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueErrorResend(float Command[COMMAND_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int RunGravityZEstimationSequence(ROBOT_TYPE type, double OptimalzParam[OPTIMAL_Z_PARAM_SIZE]);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int GetTrajectoryTorqueMode(int&);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API int SetTorqueInactivityType(int);
+
+extern "C" KINOVAAPIUSBCOMMANDLAYER_API  int GetActuatorsPosition(float *positionList);
