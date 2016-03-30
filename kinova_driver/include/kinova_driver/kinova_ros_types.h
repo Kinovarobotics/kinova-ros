@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_types.h
+ *  File: kinova_ros_types.h
  *  Desc: Wrappers around Kinova types.
  *  Auth: Alex Bencz
  *

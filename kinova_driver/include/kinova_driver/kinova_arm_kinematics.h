@@ -1,5 +1,5 @@
 /*
- * jaco_arm.h
+ * kinova_arm.h
  *
  *  Created on: Mar 6, 2013
  *      Author: mdedonato

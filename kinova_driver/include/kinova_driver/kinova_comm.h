@@ -50,7 +50,7 @@
 
 #include <kinova/KinovaTypes.h>
 
-#include <kinova_driver/jaco_types.h>
+#include <kinova_driver/kinova_ros_types.h>
 #include "kinova_driver/kinova_api.h"
 
 

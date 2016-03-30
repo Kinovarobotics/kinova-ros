@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_types.cpp
+ *  File: kinova_ros_types.cpp
  *  Desc: Wrappers around Kinova structs to facilitate easier conversion to ROS
  *		  types.
  *  Auth: Alex Bencz
@@ -47,7 +47,7 @@
 #include <math.h>
 #include <angles/angles.h>
 #include <tf/tf.h>
-#include <kinova_driver/jaco_types.h>
+#include <kinova_driver/kinova_ros_types.h>
 #include <string>
 
 

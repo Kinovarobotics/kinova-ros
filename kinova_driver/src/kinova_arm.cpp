@@ -1,12 +1,12 @@
 //============================================================================
-// Name        : jaco_arm.cpp
+// Name        : kinova_arm.cpp
 // Author      : WPI, Clearpath Robotics
 // Version     : 0.5
 // Copyright   : BSD
 // Description : A ROS driver for controlling the Kinova Jaco robotic manipulator arm
 //============================================================================
 
-#include "kinova_driver/jaco_arm.h"
+#include "kinova_driver/kinova_arm.h"
 #include <string>
 #include <vector>
 

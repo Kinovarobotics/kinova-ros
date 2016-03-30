@@ -7,7 +7,7 @@
 //============================================================================
 
 /**
- * @file jaco_arm_control.cpp
+ * @file kinova_arm_control.cpp
  *
  * @date   Feb 20, 2013
  * @author parallels
@@ -43,7 +43,7 @@ void TimerCallback(const ros::TimerEvent&)
 int main(int argc, char **argv) {
 
 	/* Set up ROS */
-	ros::init(argc, argv, "test_jaco_arm_vel");
+	ros::init(argc, argv, "test_kinova_arm_vel");
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 

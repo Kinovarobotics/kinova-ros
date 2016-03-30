@@ -7,7 +7,7 @@
 //============================================================================
 
 /**
- * @file jaco_arm_control.cpp
+ * @file kinova_arm_control.cpp
  *
  * @date   Feb 20, 2013
  * @author parallels
@@ -15,7 +15,7 @@
  */
 
 //License File
-#include <kinova_driver/test_jaco_arm_car_vel.h>
+#include <kinova_driver/test_kinova_arm_car_vel.h>
 
 using namespace std;
 
@@ -42,7 +42,7 @@ void CartesianVelTest::TimerCallback(const ros::TimerEvent&)
 	geometry_msgs::TwistStamped test_msg;
 
 
-	test_msg.header.frame_id	= "/jaco_arm_api";
+	test_msg.header.frame_id	= "/kinova_arm_api";
 	test_msg.header.stamp	= ros::Time().now();
 
 
@@ -78,7 +78,7 @@ void CartesianVelTest::callback(kinova_msgs::JacoVelocityConfig &config, uint32_
 int main(int argc, char **argv) {
 
 	/* Set up ROS */
-	ros::init(argc, argv, "test_jaco_arm_car_vel");
+	ros::init(argc, argv, "test_kinova_arm_car_vel");
 	ros::NodeHandle nh;
 	ros::NodeHandle param_nh("~");
 

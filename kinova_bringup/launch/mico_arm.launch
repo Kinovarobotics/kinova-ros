@@ -2,7 +2,7 @@
 
   <arg name="use_urdf" default="false"/>
 
-  <node name="mico_arm_driver" pkg="kinova_driver" type="jaco_arm_driver" output="screen" cwd="node">
+  <node name="mico_arm_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node">
     <!-- Set this parameter to use a specific arm on your system    --> 
     <!-- <param name="serial_number" value="PJ00650002132770005" /> -->
     <param name="tf_prefix" value="mico_" />

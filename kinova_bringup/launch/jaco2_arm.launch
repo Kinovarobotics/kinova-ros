@@ -5,7 +5,7 @@
     node, so use_urdf mode is necessary.
   -->
 
-  <node name="jaco2_arm_driver" pkg="kinova_driver" type="jaco_arm_driver" output="screen" cwd="node">
+  <node name="jaco2_arm_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node">
     <!-- Set this parameter to use a specific arm on your system    --> 
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
     <param name="tf_prefix" value="jaco2_"/>

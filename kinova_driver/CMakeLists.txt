@@ -35,11 +35,11 @@ include_directories(
 )
 
 #Testers
-#add_executable(test_jaco_arm_control src/testers/test_jaco_arm_controller.cpp )
-#add_dependencies(test_jaco_arm_control ${PROJECT_NAME}_gencfg)
-#add_dependencies(test_jaco_arm_control ${${PROJECT_NAME}_EXPORTED_TARGETS})
-#add_executable(test_jaco_arm_vel src/testers/test_jaco_arm_vel.cpp )
-#add_executable(test_jaco_arm_car_vel src/testers/test_jaco_arm_car_vel.cpp )
+#add_executable(test_kinova_arm_control src/testers/test_kinova_arm_controller.cpp )
+#add_dependencies(test_kinova_arm_control ${PROJECT_NAME}_gencfg)
+#add_dependencies(test_kinova_arm_control ${${PROJECT_NAME}_EXPORTED_TARGETS})
+#add_executable(test_kinova_arm_vel src/testers/test_kinova_arm_vel.cpp )
+#add_executable(test_kinova_arm_car_vel src/testers/test_kinova_arm_car_vel.cpp )
 
 # Nodes
 # Note, the headers are shown here so they show up in the project view when using
@@ -47,12 +47,12 @@ include_directories(
 add_executable(kinova_arm_driver
   src/nodes/kinova_arm_driver.cpp
   src/kinova_api.cpp
-  src/jaco_arm.cpp
+  src/kinova_arm.cpp
   src/kinova_comm.cpp
   src/jaco_pose_action.cpp
   src/jaco_angles_action.cpp
   src/jaco_fingers_action.cpp
-  src/jaco_types.cpp
+  src/kinova_ros_types.cpp
 )
 
 add_executable(kinova_tf_updater
