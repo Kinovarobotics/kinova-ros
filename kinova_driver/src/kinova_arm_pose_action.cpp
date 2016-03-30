@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_pose_action.cpp
+ *  File: kinova_arm_pose_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,7 +43,7 @@
  *
  */
 
-#include "kinova_driver/jaco_pose_action.h"
+#include "kinova_driver/kinova_arm_pose_action.h"
 #include <kinova/KinovaTypes.h>
 #include "kinova_driver/kinova_ros_types.h"
 #include <string>

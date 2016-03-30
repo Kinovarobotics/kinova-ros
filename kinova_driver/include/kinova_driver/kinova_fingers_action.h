@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_pose_action.h
- *  Desc: Action server for jaco arm.
- *  Auth: Alex Bencz, Jeff Schmidt
+ *  File: kinova_fingers_action.h
+ *  Desc: Action server for jaco arm fingers.
+ *  Auth: Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
@@ -43,50 +43,42 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_POSE_ACTION_H_s
-#define JACO_DRIVER_JACO_POSE_ACTION_H_s
+#ifndef JACO_DRIVER_JACO_FINGERS_ACTION_H
+#define JACO_DRIVER_JACO_FINGERS_ACTION_H
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
-#include <tf/tf.h>
-#include <tf/transform_listener.h>
 
-#include <kinova_msgs/ArmPoseAction.h>
+#include <kinova_msgs/SetFingersPositionAction.h>
 
-#include <string>
 #include "kinova_driver/kinova_comm.h"
 
 
 namespace kinova
 {
 
-class JacoPoseActionServer
+class JacoFingersActionServer
 {
  public:
-    JacoPoseActionServer(JacoComm &, const ros::NodeHandle &n);
-    ~JacoPoseActionServer();
+    JacoFingersActionServer(JacoComm &, const ros::NodeHandle &n);
+    ~JacoFingersActionServer();
 
-    void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
+    void actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
-    actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
-    tf::TransformListener listener;
+    actionlib::SimpleActionServer<kinova_msgs::SetFingersPositionAction> action_server_;
 
     ros::Time last_nonstall_time_;
-    kinova::JacoPose last_nonstall_pose_;
-
-    std::string api_origin_frame_;
+    kinova::FingerAngles last_nonstall_finger_positions_;
 
     // Parameters
     double stall_interval_seconds_;
     double stall_threshold_;
     double rate_hz_;
     float tolerance_;
-    std::string tf_prefix_;
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_POSE_ACTION_H_s
-
+#endif  // JACO_DRIVER_JACO_FINGERS_ACTION_H

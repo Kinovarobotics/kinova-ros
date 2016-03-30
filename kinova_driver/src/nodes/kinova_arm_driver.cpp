@@ -8,9 +8,9 @@
 
 #include "kinova_driver/kinova_api.h"
 #include "kinova_driver/kinova_arm.h"
-#include "kinova_driver/jaco_pose_action.h"
-#include "kinova_driver/jaco_angles_action.h"
-#include "kinova_driver/jaco_fingers_action.h"
+#include "kinova_driver/kinova_arm_pose_action.h"
+#include "kinova_driver/kinova_arm_joints_action.h"
+#include "kinova_driver/kinova_fingers_action.h"
 
 
 int main(int argc, char **argv)

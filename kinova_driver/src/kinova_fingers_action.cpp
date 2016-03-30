@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_fingers_action.cpp
+ *  File: kinova_fingers_action.cpp
  *  Desc: Class for moving/querying jaco arm fingers.
  *  Auth: Jeff Schmidt
  *
@@ -44,7 +44,7 @@
  */
 
 #include <kinova/KinovaTypes.h>
-#include "kinova_driver/jaco_fingers_action.h"
+#include "kinova_driver/kinova_fingers_action.h"
 #include "kinova_driver/kinova_ros_types.h"
 
 

@@ -10,9 +10,9 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_fingers_action.h
- *  Desc: Action server for jaco arm fingers.
- *  Auth: Jeff Schmidt
+ *  File: kinova_arm_pose_action.h
+ *  Desc: Action server for jaco arm.
+ *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.
  *  All Rights Reserved
@@ -43,42 +43,50 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_FINGERS_ACTION_H
-#define JACO_DRIVER_JACO_FINGERS_ACTION_H
+#ifndef JACO_DRIVER_JACO_POSE_ACTION_H_s
+#define JACO_DRIVER_JACO_POSE_ACTION_H_s
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
 
-#include <kinova_msgs/SetFingersPositionAction.h>
+#include <kinova_msgs/ArmPoseAction.h>
 
+#include <string>
 #include "kinova_driver/kinova_comm.h"
 
 
 namespace kinova
 {
 
-class JacoFingersActionServer
+class JacoPoseActionServer
 {
  public:
-    JacoFingersActionServer(JacoComm &, const ros::NodeHandle &n);
-    ~JacoFingersActionServer();
+    JacoPoseActionServer(JacoComm &, const ros::NodeHandle &n);
+    ~JacoPoseActionServer();
 
-    void actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &);
+    void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     JacoComm &arm_comm_;
-    actionlib::SimpleActionServer<kinova_msgs::SetFingersPositionAction> action_server_;
+    actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
+    tf::TransformListener listener;
 
     ros::Time last_nonstall_time_;
-    kinova::FingerAngles last_nonstall_finger_positions_;
+    kinova::JacoPose last_nonstall_pose_;
+
+    std::string api_origin_frame_;
 
     // Parameters
     double stall_interval_seconds_;
     double stall_threshold_;
     double rate_hz_;
     float tolerance_;
+    std::string tf_prefix_;
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_FINGERS_ACTION_H
+#endif  // JACO_DRIVER_JACO_POSE_ACTION_H_s
+

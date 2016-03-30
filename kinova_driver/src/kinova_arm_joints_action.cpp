@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_angles_action.cpp
+ *  File: kinova_arm_joints_action.cpp
  *  Desc: Class for moving/querying jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -46,7 +46,7 @@
 
 #include <kinova/KinovaTypes.h>
 
-#include "kinova_driver/jaco_angles_action.h"
+#include "kinova_driver/kinova_arm_joints_action.h"
 
 #include "kinova_driver/kinova_ros_types.h"
 

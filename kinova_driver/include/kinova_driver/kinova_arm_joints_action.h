@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: jaco_angles_action.h
+ *  File: kinova_arm_joints_action.h
  *  Desc: Action server for jaco arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
