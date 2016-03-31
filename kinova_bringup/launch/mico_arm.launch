@@ -12,11 +12,11 @@
     <param name="fingers/rate_hz" value="10.0" />
     <param name="fingers/tolerance" value="15.0" />
 
-    <param name="arm_pose/stall_interval_seconds" value="1.0" />
-    <param name="arm_pose/stall_threshold" value="0.005" />
-    <param name="arm_pose/rate_hz" value="10.0" />
-    <param name="arm_pose/tolerance" value="0.005" />
-    <param name="arm_pose/tf_prefix" value="mico_" />
+    <param name="tool_pose/stall_interval_seconds" value="1.0" />
+    <param name="tool_pose/stall_threshold" value="0.005" />
+    <param name="tool_pose/rate_hz" value="10.0" />
+    <param name="tool_pose/tolerance" value="0.005" />
+    <param name="tool_pose/tf_prefix" value="mico_" />
 
     <param name="joint_angles/stall_interval_seconds" value="1.0" />
     <param name="joint_angles/stall_threshold" value="1.0" />

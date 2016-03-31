@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: kinova_arm_joints_action.cpp
+ *  File: kinova_joint_angles_action.cpp
  *  Desc: Class for moving/querying kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -46,7 +46,7 @@
 
 #include <kinova/KinovaTypes.h>
 
-#include "kinova_driver/kinova_arm_joints_action.h"
+#include "kinova_driver/kinova_joint_angles_action.h"
 
 #include "kinova_driver/kinova_ros_types.h"
 
@@ -56,8 +56,8 @@ namespace kinova
 
 KinovaAnglesActionServer::KinovaAnglesActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      node_handle_(nh, "joint_angles"),
-      action_server_(node_handle_, "arm_joint_angles",
+      node_handle_(nh, "joints_action"),
+      action_server_(node_handle_, "joint_angles",
                      boost::bind(&KinovaAnglesActionServer::actionCallback, this, _1), false)
 {
     double tolerance;

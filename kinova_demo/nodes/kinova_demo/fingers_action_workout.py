@@ -14,7 +14,7 @@ import goal_generators
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/fingers/finger_positions'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/fingers_action/finger_positions'
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.SetFingersPositionAction)
     client.wait_for_server()
@@ -44,9 +44,9 @@ if __name__ == '__main__':
             str(sys.argv[1]) not in ['kinova', 'mico']):
 
         print('Usage:')
-        print('    grip_workout.py kinova random num   - randomly generate num poses')
-        print('    grip_workout.py kinova f1 f2 f3     - use that specific pose')
-        print('    grip_workout.py mico f1 f2        - use that specific pose')
+        print('    fingers_action_client.py kinova random num   - randomly generate num poses')
+        print('    fingers_action_client.py kinova f1 f2 f3     - use that specific pose')
+        print('    fingers_action_client.py mico f1 f2        - use that specific pose')
         exit()
 
     try:

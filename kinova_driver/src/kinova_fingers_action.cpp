@@ -53,7 +53,7 @@ namespace kinova
 
 KinovaFingersActionServer::KinovaFingersActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      node_handle_(nh, "fingers"),
+      node_handle_(nh, "fingers_action"),
       action_server_(node_handle_, "finger_positions",
                      boost::bind(&KinovaFingersActionServer::actionCallback, this, _1), false)
 {

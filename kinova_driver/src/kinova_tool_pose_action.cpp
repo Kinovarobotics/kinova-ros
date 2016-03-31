@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: kinova_arm_pose_action.cpp
+ *  File: kinova_tool_pose_action.cpp
  *  Desc: Class for moving/querying kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,7 +43,7 @@
  *
  */
 
-#include "kinova_driver/kinova_arm_pose_action.h"
+#include "kinova_driver/kinova_tool_pose_action.h"
 #include <kinova/KinovaTypes.h>
 #include "kinova_driver/kinova_ros_types.h"
 #include <string>
@@ -54,8 +54,8 @@ namespace kinova
 
 KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
-      node_handle_(nh, "arm_pose"),
-      action_server_(node_handle_, "arm_pose",
+      node_handle_(nh, "pose_action"),
+      action_server_(node_handle_, "tool_pose",
                      boost::bind(&KinovaPoseActionServer::actionCallback, this, _1), false)
 {
     double tolerance;

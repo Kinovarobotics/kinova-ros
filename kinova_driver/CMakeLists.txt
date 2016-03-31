@@ -49,8 +49,8 @@ add_executable(kinova_arm_driver
   src/kinova_api.cpp
   src/kinova_arm.cpp
   src/kinova_comm.cpp
-  src/kinova_arm_pose_action.cpp
-  src/kinova_arm_joints_action.cpp
+  src/kinova_tool_pose_action.cpp
+  src/kinova_joint_angles_action.cpp
   src/kinova_fingers_action.cpp
   src/kinova_ros_types.cpp
 )

@@ -16,7 +16,7 @@ import goal_generators
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/joint_angles/arm_joint_angles'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/joints_action/joint_angles'
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.ArmJointAnglesAction)
     client.wait_for_server()
@@ -44,13 +44,13 @@ def joint_angle_client(angle_set):
 if __name__ == '__main__':
     if len(sys.argv) not in [3, 4, 8] or 'help' in str(sys.argv):
         print('Usage:')
-        print('    joint_angle_workout.py node_name random num          - randomly generate num joint angle sets')
-        print('    joint_angle_workout.py node_name file_path           - use poses from file')
-        print('    joint_angle_workout.py node_name j1 j2 j3 j4 j5 j6   - use these specific angle')
+        print('    joints_action_client.py node_name random num          - randomly generate num joint angle sets')
+        print('    joints_action_client.py node_name file_path           - use poses from file')
+        print('    joints_action_client.py node_name j1 j2 j3 j4 j5 j6   - use these specific angle')
         exit()
 
     try:
-        rospy.init_node(str(sys.argv[1]) + '_joint_angle_workout')
+        rospy.init_node(str(sys.argv[1]) + '_joints_action_client')
 
         if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
             print('Using {} randomly generated joint angle sets'.format(int(sys.argv[3])))

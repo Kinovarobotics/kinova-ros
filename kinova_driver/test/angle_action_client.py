@@ -48,7 +48,7 @@ def pose_client():
 
 if __name__ == '__main__':
     try:
-        rospy.init_node('arm_pose_client')
+        rospy.init_node('tool_pose_client')
         result = pose_client()
         rospy.loginfo("Result: %s", result)
     except rospy.ROSInterruptException: 

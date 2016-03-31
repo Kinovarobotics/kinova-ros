@@ -17,7 +17,7 @@ import goal_generators
 
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
-    action_address = '/' + str(sys.argv[1]) + '_arm_driver/arm_pose/arm_pose'
+    action_address = '/' + str(sys.argv[1]) + '_arm_driver/pose_action/tool_pose'
     client = actionlib.SimpleActionClient(action_address, kinova_msgs.msg.ArmPoseAction)
     client.wait_for_server()
 
@@ -41,13 +41,13 @@ def cartesian_pose_client(position, orientation):
 if __name__ == '__main__':
     if len(sys.argv) not in [3, 4, 9] or 'help' in str(sys.argv):
         print('Usage:')
-        print('    cartesian_workout.py node_name random num          - randomly generate num poses')
-        print('    cartesian_workout.py node_name file_path           - use poses from file')
-        print('    cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose')
+        print('    pose_action_client.py node_name random num          - randomly generate num poses')
+        print('    pose_action_client.py node_name file_path           - use poses from file')
+        print('    pose_action_client.py node_name x y z qx qy qz qw   - use that specific pose')
         exit()
 
     try:
-        rospy.init_node(str(sys.argv[1]) + '_cartesian_workout')
+        rospy.init_node(str(sys.argv[1]) + '_pose_action_client')
 
         if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
             print('Using {} randomly generated poses'.format(int(sys.argv[3])))

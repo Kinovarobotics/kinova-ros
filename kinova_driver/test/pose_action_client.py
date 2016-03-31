@@ -11,7 +11,7 @@ import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/kinova/arm_pose', kinova_msgs.msg.ArmPoseAction)
+    client = actionlib.SimpleActionClient('/kinova/tool_pose', kinova_msgs.msg.ArmPoseAction)
 
     goal = kinova_msgs.msg.ArmPoseGoal()
 
@@ -54,7 +54,7 @@ def pose_client():
 
 if __name__ == '__main__':
     try:
-        rospy.init_node('arm_pose_client')
+        rospy.init_node('tool_pose_client')
         result = pose_client()
         rospy.loginfo("Result: %s", result)
     except rospy.ROSInterruptException: 

@@ -10,7 +10,7 @@
  *     \_____/    \___/|___||___||_| |_||_| \_\|_|   |_| |_|  |_|  |_| |_|
  *             ROBOTICS™
  *
- *  File: kinova_arm_joints_action.h
+ *  File: kinova_tool_pose_action.h
  *  Desc: Action server for kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
@@ -43,42 +43,50 @@
  *
  */
 
-#ifndef KINOVA_DRIVER_KINOVA_ANGLES_ACTION_H
-#define KINOVA_DRIVER_KINOVA_ANGLES_ACTION_H
+#ifndef KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
+#define KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
 
-#include <kinova_msgs/ArmJointAnglesAction.h>
+#include <kinova_msgs/ArmPoseAction.h>
 
+#include <string>
 #include "kinova_driver/kinova_comm.h"
 
 
 namespace kinova
 {
 
-class KinovaAnglesActionServer
+class KinovaPoseActionServer
 {
  public:
-    KinovaAnglesActionServer(KinovaComm &, const ros::NodeHandle &n);
-    ~KinovaAnglesActionServer();
+    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n);
+    ~KinovaPoseActionServer();
 
-    void actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &);
+    void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
     KinovaComm &arm_comm_;
-    actionlib::SimpleActionServer<kinova_msgs::ArmJointAnglesAction> action_server_;
+    actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
+    tf::TransformListener listener;
 
     ros::Time last_nonstall_time_;
-    KinovaAngles last_nonstall_angles_;
+    kinova::KinovaPose last_nonstall_pose_;
+
+    std::string api_origin_frame_;
 
     // Parameters
     double stall_interval_seconds_;
     double stall_threshold_;
     double rate_hz_;
     float tolerance_;
+    std::string tf_prefix_;
 };
 
 }  // namespace kinova
-#endif  // KINOVA_DRIVER_KINOVA_ANGLES_ACTION_H
+#endif  // KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
+

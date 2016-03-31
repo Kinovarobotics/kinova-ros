@@ -18,7 +18,7 @@ environment.
 The custom transform publisher of previous releases is still available, along
 with a URDF-based approach using the JointStates output and robot_state_publisher.
 
-There are three actionlib modules available: ``arm_pose/arm_pose``, ``joint_angles/arm_joint_angles``, and ``fingers/finger_position``.  These server modules accept coordinates which are passed on to the Kinova JACO API for controlling the arm.
+There are three actionlib modules available: ``pose_actitool_poseose``, ``joints_action/arm_joint_angles``, and ``fingers_action/finger_position``.  These server modules accept coordinates which are passed on to the Kinova JACO API for controlling the arm.
 
 The services available are: ``in/home_arm``, ``in/stop``, and ``in/start``.  These services require no input goals, and are intended for quick control of basic arm functions.  When called, home_arm will halt all other movement and return the arm to its "home" position.  The stop service is a software e-stop, which instantly stops the arm and prevents any further movement until the start service is called.
 
@@ -36,7 +36,7 @@ Cartesian control is accomplished via actionserver.  The Cartesian co-ordinates 
 
 #### Cartesian Control Actionserver Topic, Command, and Parameters
 
-    /kinova_arm_driver/arm_pose/arm_pose
+    /kinova_arm_driver/pose_actitool_poseose
 
     Message format:
     float64 position.x – end effector distance from the base in meters (left-right relative to base)
@@ -48,15 +48,15 @@ Cartesian control is accomplished via actionserver.  The Cartesian co-ordinates 
     float64 orientation.w – end effector quaternion orientation
 
     Parameters on the parameter server (can be set in the launch file):
-    /kinova_arm_driver/arm_pose/tf_prefix – prefix for the tf tree (needed for distinct tf
+    /kinova_arm_driver/tool_pose/tf_prefix – prefix for the tf tree (needed for distinct tf
         trees with multiple arms)
-    /kinova_arm_driver/arm_pose/stall_interval_seconds – duration over which the stall condition is tested
-    /kinova_arm_driver/arm_pose/stall_threshold – threshold over which the stall condition is tested
+    /kinova_arm_driver/tool_pose/stall_interval_seconds – duration over which the stall condition is tested
+    /kinova_arm_driver/tool_pose/stall_threshold – threshold over which the stall condition is tested
         (e.g., if there is less than stall_threshold change in measurement over stall_interval_seconds, 
         the action will aborted due to a stall condition)
-    /kinova_arm_driver/arm_pose/rate_hz – rate at which the action is tested for completion, stall, or
+    /kinova_arm_driver/tool_pose/rate_hz – rate at which the action is tested for completion, stall, or
         other termination condition
-    /kinova_arm_driver/arm_pose/tolerance – tolerance between the measured position and the goal position
+    /kinova_arm_driver/tool_pose/tolerance – tolerance between the measured position and the goal position
         to complete the action
 
 #### Published Topic for Cartesian Position
@@ -79,7 +79,7 @@ All the joints have a range limit.  Joints 1, 4, 5 and 6 have a range of -10,000
 
 #### Angular Control Actionserver Topic, Command, and Parameters
 
-    /kinova_arm_driver/joint_angles/arm_joint_angles
+    /kinova_arm_driver/joints_action/arm_joint_angles
 
     Message format:
     float32 joint1 – “base” joint angle in radians 
@@ -126,7 +126,7 @@ Finger control is accomplished via actionserver.  The finger angles are publishe
 
 #### Finger Control Actionserver Topic, Command, and Parameters
 
-    /kinova_arm_driver/fingers/finger_positions
+    /kinova_arm_driver/fingers_action/finger_positions
 
     Message format:
     float32 finger1 – position of finger 1 in degrees 
@@ -250,7 +250,7 @@ If you would like the ``kinova_arm_driver`` and ``kinova_tf_updater nodes`` to l
 This version of ``kinova-ros`` supports multiple arms. In order to use multiple arms you must set the the ``serial_number`` parameter for that arm and a ``tf_prefix`` for both the ``arm_driver`` node and the ``tf_updater`` node. For example, include the following lines in the launch file between ``<node pkg="kinova_driver" type="kinova_arm_driver" ...>`` and ``</node>``:
 
     <param name="serial_number" value="PJ00123456789012345" />
-    <param name="arm_pose/tf_prefix" value="kinova_" />
+    <param name="tool_pose/tf_prefix" value="kinova_" />
 
 And the following line in the launch file between ``<node pkg="kinova_driver" type="kinova_tf_updater" ...>`` and ``</node>``:
 
@@ -297,27 +297,27 @@ To obtain the arm’s position in Cartesian units in a standard ``geometry_msgs`
 ### Arm Control
 Several sample python script action clients are available for manually controlling the arm. These scripts are located in the ``kinova_demo`` package.
 
-To set the joint angles using DH “transformed” angles in radians, use ``joint_angle_workout.py``
+To set the joint angles using DH “transformed” angles in radians, use ``joints_action_client.py``
 
-    rosrun kinova_demo joint_angle_workout.py node_name random num        - randomly generate num joint angle sets
-    rosrun kinova_demo joint_angle_workout.py node_name file_path         - use poses from file
-    rosrun kinova_demo joint_angle_workout.py node_name j1 j2 j3 j4 j5 j6 - use these specific angles
-    e.g., rosrun kinova_demo joint_angle_workout.py kinova random 10
+    rosrun kinova_demo joints_action_client.py node_name random num        - randomly generate num joint angle sets
+    rosrun kinova_demo joints_action_client.py node_name file_path         - use poses from file
+    rosrun kinova_demo joints_action_client.py node_name j1 j2 j3 j4 j5 j6 - use these specific angles
+    e.g., rosrun kinova_demo joints_action_client.py kinova random 10
 
 
-To set the arm position using Cartesian co-ordinates, use ``cartesian_workout.py``
+To set the arm position using Cartesian co-ordinates, use ``pose_action_client.py``
 
-    rosrun kinova_demo cartesian_workout.py node_name random num          - randomly generate num poses
-    rosrun kinova_demo cartesian_workout.py node_name file_path           - use poses from file
-    rosrun kinova_demo cartesian_workout.py node_name x y z qx qy qz qw   - use that specific pose
-    e.g., rosrun kinova_demo cartesian_workout.py kinova -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525
+    rosrun kinova_demo pose_action_client.py node_name random num          - randomly generate num poses
+    rosrun kinova_demo pose_action_client.py node_name file_path           - use poses from file
+    rosrun kinova_demo pose_action_client.py node_name x y z qx qy qz qw   - use that specific pose
+    e.g., rosrun kinova_demo pose_action_client.py kinova -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525
 
-To set the finger positions, use ``grip_workout.py``
+To set the finger positions, use ``fingers_action_client.py``
 
-    rosrun kinova_demo grip_workout.py node_name random num   - randomly generate num poses
-    rosrun kinova_demo grip_workout.py kinova f1 f2 f3          - use that specific pose
-    rosrun kinova_demo grip_workout.py mico f1 f2             - use that specific pose
-    e.g., rosrun kinova_demo grip_workout.py kinova random 10
+    rosrun kinova_demo fingers_action_client.py node_name random num   - randomly generate num poses
+    rosrun kinova_demo fingers_action_client.py kinova f1 f2 f3          - use that specific pose
+    rosrun kinova_demo fingers_action_client.py mico f1 f2             - use that specific pose
+    e.g., rosrun kinova_demo fingers_action_client.py kinova random 10
 
 
 ## Known Limitations
@@ -334,7 +334,7 @@ of kinova_arm_driver.
 
 3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
-4. After using angular control, the arm may not respond to Cartesian commands (e.g., arm_pose or figer_position) until the arm has been homed.
+4. After using angular control, the arm may not respond to Cartesian commands (e.g., tool_pose or figer_position) until the arm has been homed.
 
 5. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
 

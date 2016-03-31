@@ -52,8 +52,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  nodes/kinova_demo/cartesian_workout.py
-  nodes/kinova_demo/grip_workout.py
-  nodes/kinova_demo/joint_angle_workout.py
+  nodes/kinova_demo/pose_action_client.py
+  nodes/kinova_demo/fingers_action_client.py
+  nodes/kinova_demo/joints_action_client.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
