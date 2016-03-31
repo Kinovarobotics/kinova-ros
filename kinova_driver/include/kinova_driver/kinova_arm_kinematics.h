@@ -5,8 +5,8 @@
  *      Author: mdedonato
  */
 
-#ifndef JACO_DRIVER_JACO_ARM_KINEMATICS_H
-#define JACO_DRIVER_JACO_ARM_KINEMATICS_H
+#ifndef KINOVA_DRIVER_KINOVA_ARM_KINEMATICS_H
+#define KINOVA_DRIVER_KINOVA_ARM_KINEMATICS_H
 
 #include <math.h>
 
@@ -64,4 +64,4 @@ class JacoKinematics
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_ARM_KINEMATICS_H
+#endif  // KINOVA_DRIVER_KINOVA_ARM_KINEMATICS_H

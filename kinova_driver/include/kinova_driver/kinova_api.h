@@ -6,8 +6,8 @@
  *      Author: mdedonato, Clearpath Robotics
  */
 
-#ifndef JACO_DRIVER_JACO_API_H
-#define JACO_DRIVER_JACO_API_H
+#ifndef KINOVA_DRIVER_KINOVA_API_H
+#define KINOVA_DRIVER_KINOVA_API_H
 
 #include <dlfcn.h>
 #include <ros/ros.h>
@@ -21,8 +21,8 @@
 namespace kinova
 {
 
-#define JACO_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
-#define JACO_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
+#define KINOVA_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
+#define KINOVA_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
 
 class JacoAPI
 {
@@ -78,4 +78,4 @@ class JacoAPI
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_API_H
+#endif  // KINOVA_DRIVER_KINOVA_API_H

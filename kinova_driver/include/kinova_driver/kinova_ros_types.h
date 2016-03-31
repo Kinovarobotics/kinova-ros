@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_TYPES_H
-#define JACO_DRIVER_JACO_TYPES_H
+#ifndef KINOVA_DRIVER_KINOVA_TYPES_H
+#define KINOVA_DRIVER_KINOVA_TYPES_H
 
 #include <kinova/KinovaTypes.h>
 #include <geometry_msgs/Pose.h>
@@ -111,4 +111,4 @@ class FingerAngles : public FingersPosition
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_TYPES_H
+#endif  // KINOVA_DRIVER_KINOVA_TYPES_H

@@ -23,8 +23,8 @@ void* checkApiInit(void * usbLib, const char* name)
 
 JacoAPI::JacoAPI(void)
 {
-    void *usbLib  = dlopen(JACO_USB_LIBRARY,  RTLD_NOW | RTLD_GLOBAL);
-    void *commLib = dlopen(JACO_COMM_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
+    void *usbLib  = dlopen(KINOVA_USB_LIBRARY,  RTLD_NOW | RTLD_GLOBAL);
+    void *commLib = dlopen(KINOVA_COMM_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
 
     if ((usbLib == NULL) || (commLib == NULL))
     {

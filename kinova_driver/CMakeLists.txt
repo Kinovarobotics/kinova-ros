@@ -13,7 +13,7 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   tf
 )
 generate_dynamic_reconfigure_options(
-  #cfg/JacoPositionConfig.cfg
+  #cfg/KinovaPositionConfig.cfg
 )
 
 link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})

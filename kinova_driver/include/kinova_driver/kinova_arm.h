@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_ARM_H
-#define JACO_DRIVER_JACO_ARM_H
+#ifndef KINOVA_DRIVER_KINOVA_ARM_H
+#define KINOVA_DRIVER_KINOVA_ARM_H
 
 #include <ros/ros.h>
 
@@ -41,7 +41,7 @@ namespace kinova
 {
 
 // Maximum number of joints on Jaco-like robots:
-static const int     JACO_JOINTS_COUNT = 9;
+static const int     KINOVA_JOINTS_COUNT = 9;
 
 class JacoArm
 {
@@ -130,4 +130,4 @@ class JacoArm
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_ARM_H
+#endif  // KINOVA_DRIVER_KINOVA_ARM_H

@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_POSE_ACTION_H_s
-#define JACO_DRIVER_JACO_POSE_ACTION_H_s
+#ifndef KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
+#define KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
@@ -88,5 +88,5 @@ class JacoPoseActionServer
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_POSE_ACTION_H_s
+#endif  // KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
 

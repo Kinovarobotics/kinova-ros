@@ -5,8 +5,8 @@
  *      Author: mdedonato
  */
 
-#ifndef JACO_DRIVER_JACO_TF_UPDATER_H
-#define JACO_DRIVER_JACO_TF_UPDATER_H
+#ifndef KINOVA_DRIVER_KINOVA_TF_UPDATER_H
+#define KINOVA_DRIVER_KINOVA_TF_UPDATER_H
 
 #include <time.h>
 
@@ -42,4 +42,4 @@ class JacoTFTree
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_TF_UPDATER_H
+#endif  // KINOVA_DRIVER_KINOVA_TF_UPDATER_H

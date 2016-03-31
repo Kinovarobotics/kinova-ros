@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_COMM_H
-#define JACO_DRIVER_JACO_COMM_H
+#ifndef KINOVA_DRIVER_KINOVA_COMM_H
+#define KINOVA_DRIVER_KINOVA_COMM_H
 
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -109,4 +109,4 @@ class JacoComm
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_COMM_H
+#endif  // KINOVA_DRIVER_KINOVA_COMM_H

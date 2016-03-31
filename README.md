@@ -1,4 +1,4 @@
-# JACO-ROS
+# KINOVA-ROS
 
 The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO, JACO2 (see limitations) and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
 
@@ -11,7 +11,7 @@ The ``jaco-ros`` module provides a ROS interface for the Kinova Robotics JACO, J
       parameters).
 
 ## Overview
-The JACO API is exposed to ROS using a combination of actionlib (for sending trajectory commands to the arm), services (for instant control such as homing the arm or e-stop) and published topics (joint feedback).  The Arm may be commanded using either angular commands or Cartesian co-ordinates.
+The KINOVA API is exposed to ROS using a combination of actionlib (for sending trajectory commands to the arm), services (for instant control such as homing the arm or e-stop) and published topics (joint feedback).  The Arm may be commanded using either angular commands or Cartesian co-ordinates.
 
 In addition, two techniques are available to visualize the model in your ROS
 environment.
@@ -24,7 +24,7 @@ The services available are: ``in/home_arm``, ``in/stop``, and ``in/start``.  The
 
 Published topics are: ``out/cartesian_velocity, out/joint_velocity, out/finger_position, out/joint_angles, out/joint_state``, ``out/tool_position``, and ``out/tool_wrench`` for robots with torque sensors.  The ``cartesian_velocity`` and ``joint_velocity`` are both subscribers which may be used to set the joint velocity of the arm.  The ``finger_position`` and ``joint_angles`` topics publish the raw angular position of the fingers and joints, respectively, in degrees.  The ``joint_state`` topic publishes via ``sensor_msgs`` the transformed joint angles in radians.  The ``tool_position`` topic publishes the Cartesian co-ordinates of the arm and end effector via ``geometry_msgs``.
 
-## JACO-ROS Module Architecture
+## KINOVA-ROS Module Architecture
 The ``jaco_arm_driver`` node acts as an interface between the Kinova JACO C++ API and the various actionservers, message services and topics used to interface with the arm.
 
 The ``jaco_tf_updater`` node subscribes to the jaco_arm_driver node to obtain current joint angle information from the node.  It then publishes a transform which may be used in visualization programs such as rviz.
@@ -167,7 +167,7 @@ When called, this service will return the arm to its pre-programmed “home” p
     Result:  string homearm_result – a string containing the results of the home_arm service
 
 #### Emergency Stop 
-When called, this service will immediately stop the arm if it is moving, erase any trajectories still residing in the JACO arm’s FIFO, and enable a software e-stop flag.  This flag will prevent any further movement of the arm, including homing.  Joint angle feedback will continue to function.  The service requires no input parameters.
+When called, this service will immediately stop the arm if it is moving, erase any trajectories still residing in the KINOVA arm’s FIFO, and enable a software e-stop flag.  This flag will prevent any further movement of the arm, including homing.  Joint angle feedback will continue to function.  The service requires no input parameters.
 
     Topic:  /jaco_arm_driver/in/stop 
     Result:  string stop_result – a string containing the results of the stop service 
@@ -338,7 +338,7 @@ of jaco_arm_driver.
 
 5. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
 
-6. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
+6. With the latest firmware, the KINOVA arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
 
 7. Previously, files under ``jaco-ros/kinova_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
 

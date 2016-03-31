@@ -94,7 +94,7 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     // updating the joint_state topic.
     node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
 
-    joint_names_.resize(JACO_JOINTS_COUNT);
+    joint_names_.resize(KINOVA_JOINTS_COUNT);
     joint_names_[0] = tf_prefix_ + "joint_1";
     joint_names_[1] = tf_prefix_ + "joint_2";
     joint_names_[2] = tf_prefix_ + "joint_3";
@@ -133,7 +133,7 @@ bool JacoArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_
 {
     kinova_comm_.homeArm();
     kinova_comm_.initFingers();
-    res.homearm_result = "JACO ARM HAS BEEN RETURNED HOME";
+    res.homearm_result = "KINOVA ARM HAS BEEN RETURNED HOME";
     return true;
 }
 

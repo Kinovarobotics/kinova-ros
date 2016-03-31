@@ -59,7 +59,7 @@ if __name__ == '__main__':
             else:
                 positions = goal_generators.random_mico_finger_positions(int(sys.argv[3]))
         elif str(sys.argv[1]) == 'jaco' and len(sys.argv) == 5:
-            print('Using the specified JACO finger positions:')
+            print('Using the specified KINOVA finger positions:')
             raw_positions = [float(n) for n in sys.argv[2:]]
             positions = [raw_positions]
         elif str(sys.argv[1]) == 'mico' and len(sys.argv) == 4:

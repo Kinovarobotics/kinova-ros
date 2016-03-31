@@ -43,8 +43,8 @@
  *
  */
 
-#ifndef JACO_DRIVER_JACO_FINGERS_ACTION_H
-#define JACO_DRIVER_JACO_FINGERS_ACTION_H
+#ifndef KINOVA_DRIVER_KINOVA_FINGERS_ACTION_H
+#define KINOVA_DRIVER_KINOVA_FINGERS_ACTION_H
 
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
@@ -81,4 +81,4 @@ class JacoFingersActionServer
 };
 
 }  // namespace kinova
-#endif  // JACO_DRIVER_JACO_FINGERS_ACTION_H
+#endif  // KINOVA_DRIVER_KINOVA_FINGERS_ACTION_H
