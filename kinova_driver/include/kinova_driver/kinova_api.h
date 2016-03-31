@@ -1,5 +1,5 @@
 /*
- * jacolib.h
+ * kinovalib.h
  *
  *  Created on: Feb 16, 2013
  *  Modified on: June 25, 2013

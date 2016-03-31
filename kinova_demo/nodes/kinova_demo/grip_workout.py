@@ -41,11 +41,11 @@ def gripper_client(finger_positions):
 if __name__ == '__main__':
     if (len(sys.argv) not in [4, 5] or
             'help' in str(sys.argv) or
-            str(sys.argv[1]) not in ['jaco', 'mico']):
+            str(sys.argv[1]) not in ['kinova', 'mico']):
 
         print('Usage:')
-        print('    grip_workout.py jaco random num   - randomly generate num poses')
-        print('    grip_workout.py jaco f1 f2 f3     - use that specific pose')
+        print('    grip_workout.py kinova random num   - randomly generate num poses')
+        print('    grip_workout.py kinova f1 f2 f3     - use that specific pose')
         print('    grip_workout.py mico f1 f2        - use that specific pose')
         exit()
 
@@ -54,11 +54,11 @@ if __name__ == '__main__':
 
         if str(sys.argv[2]) == 'random' and len(sys.argv) == 4:
             print('Using {} randomly generated finger positions'.format(int(sys.argv[3])))
-            if str(sys.argv[1]) == 'jaco':
-                positions = goal_generators.random_jaco_finger_positions(int(sys.argv[3]))
+            if str(sys.argv[1]) == 'kinova':
+                positions = goal_generators.random_kinova_finger_positions(int(sys.argv[3]))
             else:
                 positions = goal_generators.random_mico_finger_positions(int(sys.argv[3]))
-        elif str(sys.argv[1]) == 'jaco' and len(sys.argv) == 5:
+        elif str(sys.argv[1]) == 'kinova' and len(sys.argv) == 5:
             print('Using the specified KINOVA finger positions:')
             raw_positions = [float(n) for n in sys.argv[2:]]
             positions = [raw_positions]

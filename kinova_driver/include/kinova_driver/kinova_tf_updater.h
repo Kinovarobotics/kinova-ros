@@ -1,5 +1,5 @@
 /*
- * jaco_tf_updater.h
+ * kinova_tf_updater.h
  *
  *  Created on: Apr 16, 2013
  *      Author: mdedonato

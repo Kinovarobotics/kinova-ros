@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_fingers_action.h
- *  Desc: Action server for jaco arm fingers.
+ *  Desc: Action server for kinova arm fingers.
  *  Auth: Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.

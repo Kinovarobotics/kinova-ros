@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_comm.cpp
- *  Desc: Class for moving/querying jaco arm.
+ *  Desc: Class for moving/querying kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.
@@ -165,9 +165,9 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     startAPI();
 
     // Set the angular velocity of each of the joints to zero
-    TrajectoryPoint jaco_velocity;
-    memset(&jaco_velocity, 0, sizeof(jaco_velocity));
-    setCartesianVelocities(jaco_velocity.Position.CartesianPosition);
+    TrajectoryPoint kinova_velocity;
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));
+    setCartesianVelocities(kinova_velocity.Position.CartesianPosition);
 
     if (is_movement_on_start)
     {
@@ -283,9 +283,9 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint jaco_position;
-    jaco_position.InitStruct();
-    memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
+    TrajectoryPoint kinova_position;
+    kinova_position.InitStruct();
+    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
 
     if (push)
     {
@@ -304,11 +304,11 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
         throw KinovaCommException("Could not set angular control", result);
     }
 
-    jaco_position.Position.Delay = 0.0;
-    jaco_position.Position.Type = ANGULAR_POSITION;
-    jaco_position.Position.Actuators = angles;
+    kinova_position.Position.Delay = 0.0;
+    kinova_position.Position.Type = ANGULAR_POSITION;
+    kinova_position.Position.Actuators = angles;
 
-    result = kinova_api_.sendAdvanceTrajectory(jaco_position);
+    result = kinova_api_.sendAdvanceTrajectory(kinova_position);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced joint angle trajectory", result);
@@ -332,9 +332,9 @@ void KinovaComm::setCartesianPosition(const KinovaPose &position, int timeout, b
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint jaco_position;
-    jaco_position.InitStruct();
-    memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
+    TrajectoryPoint kinova_position;
+    kinova_position.InitStruct();
+    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
 
     if (push)
     {
@@ -353,21 +353,21 @@ void KinovaComm::setCartesianPosition(const KinovaPose &position, int timeout, b
         throw KinovaCommException("Could not set Cartesian control", result);
     }
 
-    jaco_position.Position.Delay = 0.0;
-    jaco_position.Position.Type = CARTESIAN_POSITION;
-    jaco_position.Position.HandMode = HAND_NOMOVEMENT;
+    kinova_position.Position.Delay = 0.0;
+    kinova_position.Position.Type = CARTESIAN_POSITION;
+    kinova_position.Position.HandMode = HAND_NOMOVEMENT;
 
     // These values will not be used but are initialized anyway.
-    jaco_position.Position.Actuators.Actuator1 = 0.0f;
-    jaco_position.Position.Actuators.Actuator2 = 0.0f;
-    jaco_position.Position.Actuators.Actuator3 = 0.0f;
-    jaco_position.Position.Actuators.Actuator4 = 0.0f;
-    jaco_position.Position.Actuators.Actuator5 = 0.0f;
-    jaco_position.Position.Actuators.Actuator6 = 0.0f;
+    kinova_position.Position.Actuators.Actuator1 = 0.0f;
+    kinova_position.Position.Actuators.Actuator2 = 0.0f;
+    kinova_position.Position.Actuators.Actuator3 = 0.0f;
+    kinova_position.Position.Actuators.Actuator4 = 0.0f;
+    kinova_position.Position.Actuators.Actuator5 = 0.0f;
+    kinova_position.Position.Actuators.Actuator6 = 0.0f;
 
-    jaco_position.Position.CartesianPosition = position;
+    kinova_position.Position.CartesianPosition = position;
 
-    result = kinova_api_.sendBasicTrajectory(jaco_position);
+    result = kinova_api_.sendBasicTrajectory(kinova_position);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send basic trajectory", result);
@@ -389,9 +389,9 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint jaco_position;
-    jaco_position.InitStruct();
-    memset(&jaco_position, 0, sizeof(jaco_position));  // zero structure
+    TrajectoryPoint kinova_position;
+    kinova_position.InitStruct();
+    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
 
     if (push)
     {
@@ -411,31 +411,31 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     // Initialize Cartesian control of the fingers
-    jaco_position.Position.HandMode = POSITION_MODE;
-    jaco_position.Position.Type = ANGULAR_POSITION;
-    jaco_position.Position.Fingers = fingers;
-    jaco_position.Position.Delay = 0.0;
-    jaco_position.LimitationsActive = 0;
+    kinova_position.Position.HandMode = POSITION_MODE;
+    kinova_position.Position.Type = ANGULAR_POSITION;
+    kinova_position.Position.Fingers = fingers;
+    kinova_position.Position.Delay = 0.0;
+    kinova_position.LimitationsActive = 0;
 
-    AngularPosition jaco_angles;
-    memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
+    AngularPosition kinova_angles;
+    memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
 
-    result = kinova_api_.getAngularPosition(jaco_angles);
+    result = kinova_api_.getAngularPosition(kinova_angles);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the angular position", result);
     }
 
 
-    jaco_position.Position.Actuators = jaco_angles.Actuators;
+    kinova_position.Position.Actuators = kinova_angles.Actuators;
 
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
     KinovaPose pose;
     getCartesianPosition(pose);
-    jaco_position.Position.CartesianPosition = pose;
+    kinova_position.Position.CartesianPosition = pose;
 
-    result = kinova_api_.sendAdvanceTrajectory(jaco_position);
+    result = kinova_api_.sendAdvanceTrajectory(kinova_position);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
@@ -456,18 +456,18 @@ void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
         return;
     }
 
-    TrajectoryPoint jaco_velocity;
-    jaco_velocity.InitStruct();
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
 
-    memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
 
     //startAPI();
-    jaco_velocity.Position.Type = ANGULAR_VELOCITY;
+    kinova_velocity.Position.Type = ANGULAR_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
-    jaco_velocity.Position.Actuators = joint_vel;
+    kinova_velocity.Position.Actuators = joint_vel;
 
-    int result = kinova_api_.sendAdvanceTrajectory(jaco_velocity);
+    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
@@ -489,18 +489,18 @@ void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
         return;
     }
 
-    TrajectoryPoint jaco_velocity;
-    jaco_velocity.InitStruct();
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
 
-    memset(&jaco_velocity, 0, sizeof(jaco_velocity));  // zero structure
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
 
     //startAPI();
-    jaco_velocity.Position.Type = CARTESIAN_VELOCITY;
+    kinova_velocity.Position.Type = CARTESIAN_VELOCITY;
 
     // confusingly, velocity is passed in the position struct
-    jaco_velocity.Position.CartesianPosition = velocities;
+    kinova_velocity.Position.CartesianPosition = velocities;
 
-    int result = kinova_api_.sendAdvanceTrajectory(jaco_velocity);
+    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
@@ -531,16 +531,16 @@ void KinovaComm::setConfig(const ClientConfigurations &config)
 void KinovaComm::getJointAngles(KinovaAngles &angles)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition jaco_angles;
-    memset(&jaco_angles, 0, sizeof(jaco_angles));  // zero structure
+    AngularPosition kinova_angles;
+    memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
 
-    int result = kinova_api_.getAngularPosition(jaco_angles);
+    int result = kinova_api_.getAngularPosition(kinova_angles);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the angular position", result);
     }
 
-    angles = KinovaAngles(jaco_angles.Actuators);
+    angles = KinovaAngles(kinova_angles.Actuators);
 }
 
 /*!
@@ -549,16 +549,16 @@ void KinovaComm::getJointAngles(KinovaAngles &angles)
 void KinovaComm::getJointVelocities(KinovaAngles &vels)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition jaco_vels;
-    memset(&jaco_vels, 0, sizeof(jaco_vels));  // zero structure
+    AngularPosition kinova_vels;
+    memset(&kinova_vels, 0, sizeof(kinova_vels));  // zero structure
 
-    int result = kinova_api_.getAngularVelocity(jaco_vels);
+    int result = kinova_api_.getAngularVelocity(kinova_vels);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the angular velocity", result);
     }
 
-    vels = KinovaAngles(jaco_vels.Actuators);
+    vels = KinovaAngles(kinova_vels.Actuators);
 }
 
 /*!
@@ -567,16 +567,16 @@ void KinovaComm::getJointVelocities(KinovaAngles &vels)
 void KinovaComm::getJointTorques(KinovaAngles &tqs)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition jaco_tqs;
-    memset(&jaco_tqs, 0, sizeof(jaco_tqs));  // zero structure
+    AngularPosition kinova_tqs;
+    memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
 
-    int result = kinova_api_.getAngularForce(jaco_tqs);
+    int result = kinova_api_.getAngularForce(kinova_tqs);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the joint torques", result);
     }
 
-    tqs = KinovaAngles(jaco_tqs.Actuators);
+    tqs = KinovaAngles(kinova_tqs.Actuators);
 }
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
@@ -584,16 +584,16 @@ void KinovaComm::getJointTorques(KinovaAngles &tqs)
 void KinovaComm::getCartesianPosition(KinovaPose &position)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition jaco_cartesian_position;
-    memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
+    CartesianPosition kinova_cartesian_position;
+    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
 
-    int result = kinova_api_.getCartesianPosition(jaco_cartesian_position);
+    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the Cartesian position", result);
     }
 
-    position = KinovaPose(jaco_cartesian_position.Coordinates);
+    position = KinovaPose(kinova_cartesian_position.Coordinates);
 }
 
 /*!
@@ -602,16 +602,16 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
 void KinovaComm::getCartesianForce(KinovaPose &cart_force)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition jaco_cartesian_force;
-    memset(&jaco_cartesian_force, 0, sizeof(jaco_cartesian_force));  // zero structure
+    CartesianPosition kinova_cartesian_force;
+    memset(&kinova_cartesian_force, 0, sizeof(kinova_cartesian_force));  // zero structure
 
-    int result = kinova_api_.getCartesianForce(jaco_cartesian_force);
+    int result = kinova_api_.getCartesianForce(kinova_cartesian_force);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the Cartesian force", result);
     }
 
-    cart_force = KinovaPose(jaco_cartesian_force.Coordinates);
+    cart_force = KinovaPose(kinova_cartesian_force.Coordinates);
 }
 
 /*!
@@ -620,10 +620,10 @@ void KinovaComm::getCartesianForce(KinovaPose &cart_force)
 void KinovaComm::getFingerPositions(FingerAngles &fingers)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition jaco_cartesian_position;
-    memset(&jaco_cartesian_position, 0, sizeof(jaco_cartesian_position));  // zero structure
+    CartesianPosition kinova_cartesian_position;
+    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
 
-    int result = kinova_api_.getCartesianPosition(jaco_cartesian_position);
+    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get Cartesian finger position", result);
@@ -631,10 +631,10 @@ void KinovaComm::getFingerPositions(FingerAngles &fingers)
 
     if (num_fingers_ == 2)
     {
-        jaco_cartesian_position.Fingers.Finger3 = 0.0;
+        kinova_cartesian_position.Fingers.Finger3 = 0.0;
     }
 
-    fingers = FingerAngles(jaco_cartesian_position.Fingers);
+    fingers = FingerAngles(kinova_cartesian_position.Fingers);
 }
 
 /*!

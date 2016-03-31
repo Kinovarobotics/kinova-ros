@@ -11,7 +11,7 @@ import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/finger_joint_angles', kinova_msgs.msg.SetFingersPositionAction)
+    client = actionlib.SimpleActionClient('/kinova/finger_joint_angles', kinova_msgs.msg.SetFingersPositionAction)
 
     goal = kinova_msgs.msg.SetFingersPositionGoal()
 

@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_arm_pose_action.cpp
- *  Desc: Class for moving/querying jaco arm.
+ *  Desc: Class for moving/querying kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.
@@ -63,7 +63,7 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 0.01);
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
 
     tolerance_ = static_cast<float>(tolerance);
     std::stringstream ss;

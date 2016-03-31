@@ -82,7 +82,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle)
     node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.1);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.01);
 
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
 
     // Approximative conversion ratio from finger position (0..6000) to joint angle 
     // in radians (0..0.7).
@@ -327,14 +327,14 @@ void KinovaArm::publishJointAngles(void)
     // Query arm for current joint angles
     KinovaAngles current_angles;
     kinova_comm_.getJointAngles(current_angles);
-    kinova_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg(j6o);
+    kinova_msgs::JointAngles kinova_angles = current_angles.constructAnglesMsg(j6o);
 
-    jaco_angles.joint1 = current_angles.Actuator1;
-    jaco_angles.joint2 = current_angles.Actuator2;
-    jaco_angles.joint3 = current_angles.Actuator3;
-    jaco_angles.joint4 = current_angles.Actuator4;
-    jaco_angles.joint5 = current_angles.Actuator5;
-    jaco_angles.joint6 = current_angles.Actuator6;
+    kinova_angles.joint1 = current_angles.Actuator1;
+    kinova_angles.joint2 = current_angles.Actuator2;
+    kinova_angles.joint3 = current_angles.Actuator3;
+    kinova_angles.joint4 = current_angles.Actuator4;
+    kinova_angles.joint5 = current_angles.Actuator5;
+    kinova_angles.joint6 = current_angles.Actuator6;
 
     sensor_msgs::JointState joint_state;
     joint_state.name = joint_names_;
@@ -343,12 +343,12 @@ void KinovaArm::publishJointAngles(void)
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
     joint_state.position.resize(9);
 
-    joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
-    joint_state.position[1] = (jaco_angles.joint2 - 270) * (PI / 180);
-    joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
-    joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
-    joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
-    joint_state.position[5] = (j6o-jaco_angles.joint6) * (PI / 180);
+    joint_state.position[0] = (180- kinova_angles.joint1) * (PI / 180);
+    joint_state.position[1] = (kinova_angles.joint2 - 270) * (PI / 180);
+    joint_state.position[2] = (90-kinova_angles.joint3) * (PI / 180);
+    joint_state.position[3] = (180-kinova_angles.joint4) * (PI / 180);
+    joint_state.position[4] = (180-kinova_angles.joint5) * (PI / 180);
+    joint_state.position[5] = (j6o-kinova_angles.joint6) * (PI / 180);
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
@@ -405,7 +405,7 @@ void KinovaArm::publishJointAngles(void)
                        joint_state.effort[4],
                        joint_state.effort[5]);
 
-    joint_angles_publisher_.publish(jaco_angles);
+    joint_angles_publisher_.publish(kinova_angles);
     joint_state_publisher_.publish(joint_state);
 }
 

@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_arm_joints_action.cpp
- *  Desc: Class for moving/querying jaco arm.
+ *  Desc: Class for moving/querying kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.

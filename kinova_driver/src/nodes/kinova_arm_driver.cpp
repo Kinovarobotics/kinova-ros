@@ -25,7 +25,7 @@ int main(int argc, char **argv)
         try
         {
             kinova::KinovaComm comm(nh, api_mutex, is_first_init);
-            kinova::KinovaArm jaco(comm, nh);
+            kinova::KinovaArm kinova(comm, nh);
             kinova::KinovaPoseActionServer pose_server(comm, nh);
             kinova::KinovaAnglesActionServer angles_server(comm, nh);
             kinova::KinovaFingersActionServer fingers_server(comm, nh);

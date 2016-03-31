@@ -11,7 +11,7 @@ import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/arm_joint_angles', kinova_msgs.msg.ArmJointAnglesAction)
+    client = actionlib.SimpleActionClient('/kinova/arm_joint_angles', kinova_msgs.msg.ArmJointAnglesAction)
 
     goal = kinova_msgs.msg.ArmJointAnglesGoal()
 

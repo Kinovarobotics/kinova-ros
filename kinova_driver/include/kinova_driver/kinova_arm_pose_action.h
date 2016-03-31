@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_arm_pose_action.h
- *  Desc: Action server for jaco arm.
+ *  Desc: Action server for kinova arm.
  *  Auth: Alex Bencz, Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.

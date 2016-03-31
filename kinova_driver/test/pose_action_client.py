@@ -11,11 +11,11 @@ import sys
 
 
 def pose_client():
-    client = actionlib.SimpleActionClient('/jaco/arm_pose', kinova_msgs.msg.ArmPoseAction)
+    client = actionlib.SimpleActionClient('/kinova/arm_pose', kinova_msgs.msg.ArmPoseAction)
 
     goal = kinova_msgs.msg.ArmPoseGoal()
 
-    goal.pose.header.frame_id = "/jaco_api_origin"
+    goal.pose.header.frame_id = "/kinova_api_origin"
     pose = goal.pose.pose
 
     if len(sys.argv) < 8: # default pose

@@ -4,7 +4,7 @@ Meanwhile, the master branch of Jaco-ROS will be saved as a new branch with name
 
 ***
 
-TBD for renaming from jaco-ros to kinova-ros:
+TBD for renaming from kinova-ros to kinova-ros:
 
  - the file to access arm from usb doesnot updated yet, since it might not be recognized if its name changes. Corresponding name might need to change in the file in low communication level.
  the file is located in:

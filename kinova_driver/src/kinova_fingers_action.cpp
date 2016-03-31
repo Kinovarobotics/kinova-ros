@@ -11,7 +11,7 @@
  *             ROBOTICS™
  *
  *  File: kinova_fingers_action.cpp
- *  Desc: Class for moving/querying jaco arm fingers.
+ *  Desc: Class for moving/querying kinova arm fingers.
  *  Auth: Jeff Schmidt
  *
  *  Copyright (c) 2013, Clearpath Robotics, Inc.

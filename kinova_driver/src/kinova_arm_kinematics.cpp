@@ -1,5 +1,5 @@
 /*
- * jacolib.cpp
+ * kinovalib.cpp
  *
  *  Created on: Mar 10, 2013
  *      Author: mdedonato
@@ -22,7 +22,7 @@ std::string concatTfName(const std::string& prefix, const std::string name)
 
 KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle)
 {
-    node_handle.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
+    node_handle.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
 
     node_handle.param<double>("base_to_api", base_to_api_, 0.028);
     node_handle.param<double>("base_to_j1", base_to_j1_, 0.1544);
