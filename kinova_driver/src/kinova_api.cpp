@@ -21,7 +21,7 @@ void* checkApiInit(void * usbLib, const char* name)
 }
 
 
-JacoAPI::JacoAPI(void)
+KinovaAPI::KinovaAPI(void)
 {
     void *usbLib  = dlopen(KINOVA_USB_LIBRARY,  RTLD_NOW | RTLD_GLOBAL);
     void *commLib = dlopen(KINOVA_COMM_LIBRARY, RTLD_NOW | RTLD_GLOBAL);

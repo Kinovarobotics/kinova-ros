@@ -20,7 +20,7 @@ std::string concatTfName(const std::string& prefix, const std::string name)
 }
 
 
-JacoKinematics::JacoKinematics(const ros::NodeHandle &node_handle)
+KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle)
 {
     node_handle.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
 
@@ -38,7 +38,7 @@ JacoKinematics::JacoKinematics(const ros::NodeHandle &node_handle)
 }
 
 
-void JacoKinematics::updateForward(float q1, float q2, float q3, float q4, float q5, float q6)
+void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, float q5, float q6)
 {
     tf::Transform transform;
     tf::Quaternion rotation_q(0, 0, 0, 1);

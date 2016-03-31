@@ -60,22 +60,22 @@
 namespace kinova
 {
 
-class JacoPoseActionServer
+class KinovaPoseActionServer
 {
  public:
-    JacoPoseActionServer(JacoComm &, const ros::NodeHandle &n);
-    ~JacoPoseActionServer();
+    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n);
+    ~KinovaPoseActionServer();
 
     void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
-    JacoComm &arm_comm_;
+    KinovaComm &arm_comm_;
     actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
     tf::TransformListener listener;
 
     ros::Time last_nonstall_time_;
-    kinova::JacoPose last_nonstall_pose_;
+    kinova::KinovaPose last_nonstall_pose_;
 
     std::string api_origin_frame_;
 

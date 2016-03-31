@@ -52,7 +52,7 @@
 namespace kinova
 {
 
-JacoComm::JacoComm(const ros::NodeHandle& node_handle,
+KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                    boost::recursive_mutex &api_mutex,
                    const bool is_movement_on_start)
     : is_software_stop_(false), api_mutex_(api_mutex)
@@ -69,7 +69,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     result = kinova_api_.getAPIVersion(api_version);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the Kinova API version", result);
+        throw KinovaCommException("Could not get the Kinova API version", result);
     }
 
     ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
@@ -78,7 +78,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     result = kinova_api_.initAPI();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not initialize Kinova API", result);
+        throw KinovaCommException("Could not initialize Kinova API", result);
     }
 
     KinovaDevice devices_list[MAX_KINOVA_DEVICE];
@@ -86,13 +86,13 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     kinova_api_.getDevices(devices_list, result);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get devices list", result);
+        throw KinovaCommException("Could not get devices list", result);
     }
 
     int devices_count = kinova_api_.getDeviceCount(result);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get devices list count.", result);
+        throw KinovaCommException("Could not get devices list count.", result);
     }
 
     bool found_arm = false;
@@ -105,14 +105,14 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
             result = kinova_api_.setActiveDevice(devices_list[device_i]);
             if (result != NO_ERROR_KINOVA)
             {
-                throw JacoCommException("Could not set the active device", result);
+                throw KinovaCommException("Could not set the active device", result);
             }
 
             GeneralInformations general_info;
             result = kinova_api_.getGeneralInformations(general_info);
             if (result != NO_ERROR_KINOVA)
             {
-                throw JacoCommException("Could not get general information about the device", result);
+                throw KinovaCommException("Could not get general information about the device", result);
             }
 
             ClientConfigurations configuration;
@@ -136,7 +136,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
                     break;
                 default:
                     ROS_ERROR("Unknown robot type: %d", quick_status.RobotType);
-                    throw JacoCommException("Could not recognize the type of the arm", quick_status.RobotType);
+                    throw KinovaCommException("Could not recognize the type of the arm", quick_status.RobotType);
                     break;
             };
 
@@ -155,7 +155,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     {
         ROS_ERROR("Could not find the specified arm (serial: %s) among the %d attached devices",
                   serial_number.c_str(), devices_count);
-        throw JacoCommException("Could not find the specified arm", 0);
+        throw KinovaCommException("Could not find the specified arm", 0);
     }
 
     // On a cold boot the arm may not respond to commands from the API right away.
@@ -181,7 +181,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
 }
 
 
-JacoComm::~JacoComm()
+KinovaComm::~KinovaComm()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     kinova_api_.closeAPI();
@@ -194,7 +194,7 @@ JacoComm::~JacoComm()
  * Checks the current joint angles, then compares them to the known "Home"
  * joint angles.
  */
-bool JacoComm::isHomed(void)
+bool KinovaComm::isHomed(void)
 {
     QuickStatus quick_status;
     getQuickStatus(quick_status);
@@ -220,7 +220,7 @@ bool JacoComm::isHomed(void)
  * Fingers are homed by manually opening them fully, then returning them to a
  * half-open position.
  */
-void JacoComm::homeArm(void)
+void KinovaComm::homeArm(void)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -243,7 +243,7 @@ void JacoComm::homeArm(void)
     int result = kinova_api_.moveHome();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Move home failed", result);
+        throw KinovaCommException("Move home failed", result);
     }
 }
 
@@ -254,25 +254,25 @@ void JacoComm::homeArm(void)
  * Move fingers to the full-open position to initialize them for use.
  * Note, The this routine requires firmware version 5.05.x (or higher?).
  */
-void JacoComm::initFingers(void)
+void KinovaComm::initFingers(void)
 {
     ROS_INFO("Initializing fingers...this will take a few seconds and the fingers should open completely");
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.initFingers();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not init fingers", result);
+        throw KinovaCommException("Could not init fingers", result);
     }
     return;
 }
 
 
 /*!
- * \brief Sends a joint angle command to the Jaco arm.
+ * \brief Sends a joint angle command to the Kinova arm.
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
+void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -292,7 +292,7 @@ void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
         result = kinova_api_.eraseAllTrajectories();
         if (result != NO_ERROR_KINOVA)
         {
-            throw JacoCommException("Could not erase trajectories", result);
+            throw KinovaCommException("Could not erase trajectories", result);
         }
     }
 
@@ -301,7 +301,7 @@ void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
     result = kinova_api_.setAngularControl();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set angular control", result);
+        throw KinovaCommException("Could not set angular control", result);
     }
 
     jaco_position.Position.Delay = 0.0;
@@ -311,17 +311,17 @@ void JacoComm::setJointAngles(const JacoAngles &angles, int timeout, bool push)
     result = kinova_api_.sendAdvanceTrajectory(jaco_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send advanced joint angle trajectory", result);
+        throw KinovaCommException("Could not send advanced joint angle trajectory", result);
     }
 }
 
 
 /*!
- * \brief Sends a cartesian coordinate trajectory to the Jaco arm.
+ * \brief Sends a cartesian coordinate trajectory to the Kinova arm.
  *
  * Waits until the arm has stopped moving before releasing control of the API.
  */
-void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool push)
+void KinovaComm::setCartesianPosition(const KinovaPose &position, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -341,7 +341,7 @@ void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool 
         result = kinova_api_.eraseAllTrajectories();
         if (result != NO_ERROR_KINOVA)
         {
-            throw JacoCommException("Could not erase trajectories", result);
+            throw KinovaCommException("Could not erase trajectories", result);
         }
     }
 
@@ -350,7 +350,7 @@ void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool 
     result = kinova_api_.setCartesianControl();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set Cartesian control", result);
+        throw KinovaCommException("Could not set Cartesian control", result);
     }
 
     jaco_position.Position.Delay = 0.0;
@@ -370,7 +370,7 @@ void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool 
     result = kinova_api_.sendBasicTrajectory(jaco_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send basic trajectory", result);
+        throw KinovaCommException("Could not send basic trajectory", result);
     }
 }
 
@@ -378,7 +378,7 @@ void JacoComm::setCartesianPosition(const JacoPose &position, int timeout, bool 
 /*!
  * \brief Sets the finger positions
  */
-void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool push)
+void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -398,7 +398,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
         result = kinova_api_.eraseAllTrajectories();
         if (result != NO_ERROR_KINOVA)
         {
-            throw JacoCommException("Could not erase trajectories", result);
+            throw KinovaCommException("Could not erase trajectories", result);
         }
     }
 
@@ -407,7 +407,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
     result = kinova_api_.setAngularControl();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set Cartesian control", result);
+        throw KinovaCommException("Could not set Cartesian control", result);
     }
 
     // Initialize Cartesian control of the fingers
@@ -423,7 +423,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
     result = kinova_api_.getAngularPosition(jaco_angles);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the angular position", result);
+        throw KinovaCommException("Could not get the angular position", result);
     }
 
 
@@ -431,14 +431,14 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
 
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
-    JacoPose pose;
+    KinovaPose pose;
     getCartesianPosition(pose);
     jaco_position.Position.CartesianPosition = pose;
 
     result = kinova_api_.sendAdvanceTrajectory(jaco_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send advanced finger trajectory", result);
+        throw KinovaCommException("Could not send advanced finger trajectory", result);
     }
 }
 
@@ -446,7 +446,7 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
 /*!
  * \brief Set the angular velocity of the joints
  */
-void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
+void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -470,7 +470,7 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
     int result = kinova_api_.sendAdvanceTrajectory(jaco_velocity);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send advanced joint velocity trajectory", result);
+        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
     }
 }
 
@@ -478,7 +478,7 @@ void JacoComm::setJointVelocities(const AngularInfo &joint_vel)
 /*!
  * \brief Set the cartesian velocity of the tool tip
  */
-void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
+void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -503,7 +503,7 @@ void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
     int result = kinova_api_.sendAdvanceTrajectory(jaco_velocity);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not send advanced Cartesian velocity trajectory", result);
+        throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
     }
 }
 
@@ -514,13 +514,13 @@ void JacoComm::setCartesianVelocities(const CartesianInfo &velocities)
  * This is the configuration which are stored on the arm itself. Many of these
  * configurations may be set using the Windows interface.
  */
-void JacoComm::setConfig(const ClientConfigurations &config)
+void KinovaComm::setConfig(const ClientConfigurations &config)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.setClientConfigurations(config);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set the client configuration", result);
+        throw KinovaCommException("Could not set the client configuration", result);
     }
 }
 
@@ -528,7 +528,7 @@ void JacoComm::setConfig(const ClientConfigurations &config)
 /*!
  * \brief API call to obtain the current angular position of all the joints.
  */
-void JacoComm::getJointAngles(JacoAngles &angles)
+void KinovaComm::getJointAngles(KinovaAngles &angles)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     AngularPosition jaco_angles;
@@ -537,16 +537,16 @@ void JacoComm::getJointAngles(JacoAngles &angles)
     int result = kinova_api_.getAngularPosition(jaco_angles);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the angular position", result);
+        throw KinovaCommException("Could not get the angular position", result);
     }
 
-    angles = JacoAngles(jaco_angles.Actuators);
+    angles = KinovaAngles(jaco_angles.Actuators);
 }
 
 /*!
  * \brief API call to obtain the current angular velocities of all the joints.
  */
-void JacoComm::getJointVelocities(JacoAngles &vels)
+void KinovaComm::getJointVelocities(KinovaAngles &vels)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     AngularPosition jaco_vels;
@@ -555,16 +555,16 @@ void JacoComm::getJointVelocities(JacoAngles &vels)
     int result = kinova_api_.getAngularVelocity(jaco_vels);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the angular velocity", result);
+        throw KinovaCommException("Could not get the angular velocity", result);
     }
 
-    vels = JacoAngles(jaco_vels.Actuators);
+    vels = KinovaAngles(jaco_vels.Actuators);
 }
 
 /*!
  * \brief API call to obtain the current torque of all the joints.
  */
-void JacoComm::getJointTorques(JacoAngles &tqs)
+void KinovaComm::getJointTorques(KinovaAngles &tqs)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     AngularPosition jaco_tqs;
@@ -573,15 +573,15 @@ void JacoComm::getJointTorques(JacoAngles &tqs)
     int result = kinova_api_.getAngularForce(jaco_tqs);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the joint torques", result);
+        throw KinovaCommException("Could not get the joint torques", result);
     }
 
-    tqs = JacoAngles(jaco_tqs.Actuators);
+    tqs = KinovaAngles(jaco_tqs.Actuators);
 }
 /*!
  * \brief API call to obtain the current cartesian position of the arm.
  */
-void JacoComm::getCartesianPosition(JacoPose &position)
+void KinovaComm::getCartesianPosition(KinovaPose &position)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     CartesianPosition jaco_cartesian_position;
@@ -590,16 +590,16 @@ void JacoComm::getCartesianPosition(JacoPose &position)
     int result = kinova_api_.getCartesianPosition(jaco_cartesian_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the Cartesian position", result);
+        throw KinovaCommException("Could not get the Cartesian position", result);
     }
 
-    position = JacoPose(jaco_cartesian_position.Coordinates);
+    position = KinovaPose(jaco_cartesian_position.Coordinates);
 }
 
 /*!
  * \brief API call to obtain the current cartesian force of the arm.
  */
-void JacoComm::getCartesianForce(JacoPose &cart_force)
+void KinovaComm::getCartesianForce(KinovaPose &cart_force)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     CartesianPosition jaco_cartesian_force;
@@ -608,16 +608,16 @@ void JacoComm::getCartesianForce(JacoPose &cart_force)
     int result = kinova_api_.getCartesianForce(jaco_cartesian_force);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get the Cartesian force", result);
+        throw KinovaCommException("Could not get the Cartesian force", result);
     }
 
-    cart_force = JacoPose(jaco_cartesian_force.Coordinates);
+    cart_force = KinovaPose(jaco_cartesian_force.Coordinates);
 }
 
 /*!
  * \brief API call to obtain the current finger positions.
  */
-void JacoComm::getFingerPositions(FingerAngles &fingers)
+void KinovaComm::getFingerPositions(FingerAngles &fingers)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     CartesianPosition jaco_cartesian_position;
@@ -626,7 +626,7 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
     int result = kinova_api_.getCartesianPosition(jaco_cartesian_position);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get Cartesian finger position", result);
+        throw KinovaCommException("Could not get Cartesian finger position", result);
     }
 
     if (num_fingers_ == 2)
@@ -640,59 +640,59 @@ void JacoComm::getFingerPositions(FingerAngles &fingers)
 /*!
  * \brief Set the cartesian inertia and damping parameters for force control.
  */
-void JacoComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
+void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.setCartesianInertiaDamping(inertia, damping);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set cartesian inertia and damping", result);
+        throw KinovaCommException("Could not set cartesian inertia and damping", result);
     }
 }
 
 /*!
  * \brief Set the cartesian min and max force parameters for force control.
  */
-void JacoComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
+void KinovaComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.setCartesianForceMinMax(min, max);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set cartesian min/max force.", result);
+        throw KinovaCommException("Could not set cartesian min/max force.", result);
     }
 }
 
 /*!
  * \brief Start cartesian force control.
  */
-void JacoComm::startForceControl()
+void KinovaComm::startForceControl()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.startForceControl();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not start force control.", result);
+        throw KinovaCommException("Could not start force control.", result);
     }
 }
 
 /*!
  * \brief Stop cartesian force control.
  */
-void JacoComm::stopForceControl()
+void KinovaComm::stopForceControl()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int result = kinova_api_.stopForceControl();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not stop force control.", result);
+        throw KinovaCommException("Could not stop force control.", result);
     }
 }
 
 /*!
  * \brief Set the end effector offset
  */
-void JacoComm::setEndEffectorOffset(float x, float y, float z)
+void KinovaComm::setEndEffectorOffset(float x, float y, float z)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -702,20 +702,20 @@ void JacoComm::setEndEffectorOffset(float x, float y, float z)
     int result = kinova_api_.getEndEffectorOffset(status, tx, ty, tz);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get current end effector offset.", result);
+        throw KinovaCommException("Could not get current end effector offset.", result);
     }
 
     result = kinova_api_.setEndEffectorOffset(status, x, y, z);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not set end effector offset.", result);
+        throw KinovaCommException("Could not set end effector offset.", result);
     }
 }
 
 /*!
  * \brief API call to obtain the current client configuration.
  */
-void JacoComm::getConfig(ClientConfigurations &config)
+void KinovaComm::getConfig(ClientConfigurations &config)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     memset(&config, 0, sizeof(config));  // zero structure
@@ -723,7 +723,7 @@ void JacoComm::getConfig(ClientConfigurations &config)
     int result = kinova_api_.getClientConfigurations(config);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get client configuration", result);
+        throw KinovaCommException("Could not get client configuration", result);
     }
 }
 
@@ -731,19 +731,19 @@ void JacoComm::getConfig(ClientConfigurations &config)
 /*!
  * \brief API call to obtain the current "quick status".
  */
-void JacoComm::getQuickStatus(QuickStatus &quick_status)
+void KinovaComm::getQuickStatus(QuickStatus &quick_status)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     memset(&quick_status, 0, sizeof(quick_status));  // zero structure
     int result = kinova_api_.getQuickStatus(quick_status);
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not get quick status", result);
+        throw KinovaCommException("Could not get quick status", result);
     }
 }
 
 
-void JacoComm::stopAPI()
+void KinovaComm::stopAPI()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     is_software_stop_ = true;
@@ -751,18 +751,18 @@ void JacoComm::stopAPI()
     int result = kinova_api_.stopControlAPI();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not stop the control API", result);
+        throw KinovaCommException("Could not stop the control API", result);
     }
 
     result = kinova_api_.eraseAllTrajectories();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not erase all trajectories", result);
+        throw KinovaCommException("Could not erase all trajectories", result);
     }
 }
 
 
-void JacoComm::startAPI()
+void KinovaComm::startAPI()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     if (is_software_stop_)
@@ -775,17 +775,17 @@ void JacoComm::startAPI()
     int result = kinova_api_.startControlAPI();
     if (result != NO_ERROR_KINOVA)
     {
-        throw JacoCommException("Could not start the control API", result);
+        throw KinovaCommException("Could not start the control API", result);
     }
 }
 
 
-int JacoComm::numFingers() const
+int KinovaComm::numFingers() const
 {
     return num_fingers_;
 }
 
-int JacoComm::robotType() const
+int KinovaComm::robotType() const
 {
     return robot_type_;
 }
@@ -793,7 +793,7 @@ int JacoComm::robotType() const
 /*!
  * \brief Dumps the current joint angles onto the screen.
  */
-void JacoComm::printAngles(const JacoAngles &angles)
+void KinovaComm::printAngles(const KinovaAngles &angles)
 {
     ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
@@ -804,7 +804,7 @@ void JacoComm::printAngles(const JacoAngles &angles)
 /*!
  * \brief Dumps the current cartesian positions onto the screen.
  */
-void JacoComm::printPosition(const JacoPose &position)
+void KinovaComm::printPosition(const KinovaPose &position)
 {
     ROS_INFO("Arm position\n"
              "\tposition (m) -- x: %f, y: %f z: %f\n"
@@ -817,7 +817,7 @@ void JacoComm::printPosition(const JacoPose &position)
 /*!
  * \brief Dumps the current finger positions onto the screen.
  */
-void JacoComm::printFingers(const FingersPosition &fingers)
+void KinovaComm::printFingers(const FingersPosition &fingers)
 {
     ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
              fingers.Finger1, fingers.Finger2, fingers.Finger3);
@@ -827,7 +827,7 @@ void JacoComm::printFingers(const FingersPosition &fingers)
 /*!
  * \brief Dumps the client configuration onto the screen.
  */
-void JacoComm::printConfig(const ClientConfigurations &config)
+void KinovaComm::printConfig(const ClientConfigurations &config)
 {
     ROS_INFO_STREAM("Arm configuration:\n"
                     "\tClientID: " << config.ClientID <<
@@ -851,14 +851,14 @@ void JacoComm::printConfig(const ClientConfigurations &config)
 }
 
 
-bool JacoComm::isStopped()
+bool KinovaComm::isStopped()
 {
     return is_software_stop_;
 }
 
-double JacoComm::j6o() const
+double KinovaComm::j6o() const
 {
-    // J6 offset is 260 for Jaco R1 (type 0), and 270 for Mico and Jaco R2.
+    // J6 offset is 260 for Kinova R1 (type 0), and 270 for Mico and Kinova R2.
     return robotType() == 0 ? 260.0 : 270.0;
 }
 

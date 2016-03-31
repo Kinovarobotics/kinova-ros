@@ -58,14 +58,14 @@
 namespace kinova
 {
 
-class JacoException : public std::exception {};
+class KinovaException : public std::exception {};
 
 
-class JacoCommException : public JacoException
+class KinovaCommException : public KinovaException
 {
  public:
-    explicit JacoCommException(const std::string& message, const int error_code);
-    ~JacoCommException() throw() {}
+    explicit KinovaCommException(const std::string& message, const int error_code);
+    ~KinovaCommException() throw() {}
 
     const char* what() const throw();
  private:
@@ -73,29 +73,29 @@ class JacoCommException : public JacoException
 };
 
 
-class JacoPose : public CartesianInfo
+class KinovaPose : public CartesianInfo
 {
  public:
-    JacoPose() {}
-    explicit JacoPose(const geometry_msgs::Pose &pose);
-    explicit JacoPose(const CartesianInfo &pose);
+    KinovaPose() {}
+    explicit KinovaPose(const geometry_msgs::Pose &pose);
+    explicit KinovaPose(const CartesianInfo &pose);
 
     geometry_msgs::Pose   constructPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
 
-    bool isCloseToOther(const JacoPose &, float tolerance) const;
+    bool isCloseToOther(const KinovaPose &, float tolerance) const;
 };
 
 
-class JacoAngles : public AngularInfo
+class KinovaAngles : public AngularInfo
 {
  public:
-    JacoAngles() {}
-    explicit JacoAngles(const kinova_msgs::JointAngles &angles, double j6o);
-    explicit JacoAngles(const AngularInfo &angles);
+    KinovaAngles() {}
+    explicit KinovaAngles(const kinova_msgs::JointAngles &angles, double j6o);
+    explicit KinovaAngles(const AngularInfo &angles);
 
     kinova_msgs::JointAngles constructAnglesMsg(double j6o);
-    bool isCloseToOther(const JacoAngles &, float tolerance) const;
+    bool isCloseToOther(const KinovaAngles &, float tolerance) const;
 };
 
 

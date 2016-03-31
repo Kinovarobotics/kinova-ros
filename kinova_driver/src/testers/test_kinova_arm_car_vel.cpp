@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : Jaco.cpp
+// Name        : Kinova.cpp
 // Author      : 
 // Version     :
 // Copyright   : Your copyright notice

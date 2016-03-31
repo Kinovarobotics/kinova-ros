@@ -4,7 +4,7 @@
   <version>0.0.1</version>
   <description >
   This contains the messages, actions and services for interfacing with the Kinova
-  Jaco arm through ROS.
+  Kinovathrough ROS.
   </description>
 
   <author email="ibaranov@clearpathrobotics.com">Ilia Baranov (Clearpath)</author>

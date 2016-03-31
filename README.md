@@ -190,7 +190,7 @@ When called, parameters of the cartesian force control algorithm will be changed
 instantly.
 
     Topic:  /jaco_arm_driver/in/set_force_control_params
-    Result: Instantly change force control parameters. See the Jaco API
+    Result: Instantly change force control parameters. See the Kinova API
     documentation for details on the meaning of these parameters.
 
 ### Joint Velocity Subscriber

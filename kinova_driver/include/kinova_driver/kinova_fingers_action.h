@@ -57,17 +57,17 @@
 namespace kinova
 {
 
-class JacoFingersActionServer
+class KinovaFingersActionServer
 {
  public:
-    JacoFingersActionServer(JacoComm &, const ros::NodeHandle &n);
-    ~JacoFingersActionServer();
+    KinovaFingersActionServer(KinovaComm &, const ros::NodeHandle &n);
+    ~KinovaFingersActionServer();
 
     void actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
-    JacoComm &arm_comm_;
+    KinovaComm &arm_comm_;
     actionlib::SimpleActionServer<kinova_msgs::SetFingersPositionAction> action_server_;
 
     ros::Time last_nonstall_time_;

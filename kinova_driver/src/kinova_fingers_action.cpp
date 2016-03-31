@@ -51,11 +51,11 @@
 namespace kinova
 {
 
-JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
+KinovaFingersActionServer::KinovaFingersActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "fingers"),
       action_server_(node_handle_, "finger_positions",
-                     boost::bind(&JacoFingersActionServer::actionCallback, this, _1), false)
+                     boost::bind(&KinovaFingersActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
@@ -68,12 +68,12 @@ JacoFingersActionServer::JacoFingersActionServer(JacoComm &arm_comm, const ros::
 }
 
 
-JacoFingersActionServer::~JacoFingersActionServer()
+KinovaFingersActionServer::~KinovaFingersActionServer()
 {
 }
 
 
-void JacoFingersActionServer::actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &goal)
+void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &goal)
 {
     if ((arm_comm_.numFingers() < 3) && (goal->fingers.finger3 != 0.0))
     {

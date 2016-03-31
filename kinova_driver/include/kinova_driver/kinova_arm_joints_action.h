@@ -57,21 +57,21 @@
 namespace kinova
 {
 
-class JacoAnglesActionServer
+class KinovaAnglesActionServer
 {
  public:
-    JacoAnglesActionServer(JacoComm &, const ros::NodeHandle &n);
-    ~JacoAnglesActionServer();
+    KinovaAnglesActionServer(KinovaComm &, const ros::NodeHandle &n);
+    ~KinovaAnglesActionServer();
 
     void actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
-    JacoComm &arm_comm_;
+    KinovaComm &arm_comm_;
     actionlib::SimpleActionServer<kinova_msgs::ArmJointAnglesAction> action_server_;
 
     ros::Time last_nonstall_time_;
-    JacoAngles last_nonstall_angles_;
+    KinovaAngles last_nonstall_angles_;
 
     // Parameters
     double stall_interval_seconds_;

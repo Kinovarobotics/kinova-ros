@@ -12,11 +12,11 @@
 namespace kinova
 {
 
-JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
+KinovaTFTree::KinovaTFTree(ros::NodeHandle node_handle)
     : kinematics_(node_handle)
 {
     joint_angles_subscriber_ = node_handle.subscribe("in/joint_angles", 1,
-                                                     &JacoTFTree::jointAnglesMsgHandler, this);
+                                                     &KinovaTFTree::jointAnglesMsgHandler, this);
     current_angles_.joint1 = 0;
     current_angles_.joint2 = 0;
     current_angles_.joint3 = 0;
@@ -25,12 +25,12 @@ JacoTFTree::JacoTFTree(ros::NodeHandle node_handle)
     current_angles_.joint6 = 0;
     last_angle_update_ = ros::Time().now();
     tf_update_timer_ = node_handle.createTimer(ros::Duration(0.01),
-                                               &JacoTFTree::tfUpdateHandler, this);
+                                               &KinovaTFTree::tfUpdateHandler, this);
     tf_update_timer_.stop();
 }
 
 
-void JacoTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles)
+void KinovaTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles)
 {
     current_angles_.joint1 = joint_angles->joint1;
     current_angles_.joint2 = joint_angles->joint2;
@@ -43,7 +43,7 @@ void JacoTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& j
 }
 
 
-void JacoTFTree::calculatePostion(void)
+void KinovaTFTree::calculatePostion(void)
 {
     // Update the forward Kinematics
     kinematics_.updateForward(kinematics_.degToRad(current_angles_.joint1),
@@ -55,7 +55,7 @@ void JacoTFTree::calculatePostion(void)
 }
 
 
-void JacoTFTree::tfUpdateHandler(const ros::TimerEvent&)
+void KinovaTFTree::tfUpdateHandler(const ros::TimerEvent&)
 {
     this->calculatePostion();  // Update TF Tree
 
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "kinova_tf_updater");
     ros::NodeHandle nh("~");
 
-    kinova::JacoTFTree JacoTF(nh);
+    kinova::KinovaTFTree KinovaTF(nh);
     ros::spin();
 
     return 0;

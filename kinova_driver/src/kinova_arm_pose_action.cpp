@@ -52,11 +52,11 @@
 namespace kinova
 {
 
-JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
+KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "arm_pose"),
       action_server_(node_handle_, "arm_pose",
-                     boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
+                     boost::bind(&KinovaPoseActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
@@ -74,12 +74,12 @@ JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHa
 }
 
 
-JacoPoseActionServer::~JacoPoseActionServer()
+KinovaPoseActionServer::~KinovaPoseActionServer()
 {
 }
 
 
-void JacoPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &goal)
+void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &goal)
 {
     kinova_msgs::ArmPoseFeedback feedback;
     kinova_msgs::ArmPoseResult result;
@@ -87,7 +87,7 @@ void JacoPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr
     result.pose.header.frame_id = goal->pose.header.frame_id;
 
     ros::Time current_time = ros::Time::now();
-    JacoPose current_pose;
+    KinovaPose current_pose;
     geometry_msgs::PoseStamped local_pose;
     local_pose.header.frame_id = api_origin_frame_;
 
@@ -119,7 +119,7 @@ void JacoPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstPtr
         last_nonstall_time_ = current_time;
         last_nonstall_pose_ = current_pose;
 
-        JacoPose target(local_pose.pose);
+        KinovaPose target(local_pose.pose);
         arm_comm_.setCartesianPosition(target);
 
         while (true)

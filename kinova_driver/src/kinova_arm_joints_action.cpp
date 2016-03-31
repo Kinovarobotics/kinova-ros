@@ -54,11 +54,11 @@
 namespace kinova
 {
 
-JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
+KinovaAnglesActionServer::KinovaAnglesActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh)
     : arm_comm_(arm_comm),
       node_handle_(nh, "joint_angles"),
       action_server_(node_handle_, "arm_joint_angles",
-                     boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false)
+                     boost::bind(&KinovaAnglesActionServer::actionCallback, this, _1), false)
 {
     double tolerance;
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
@@ -71,16 +71,16 @@ JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::No
 }
 
 
-JacoAnglesActionServer::~JacoAnglesActionServer()
+KinovaAnglesActionServer::~KinovaAnglesActionServer()
 {
 }
 
 
-void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &goal)
+void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
     kinova_msgs::ArmJointAnglesFeedback feedback;
     kinova_msgs::ArmJointAnglesResult result;
-    JacoAngles current_joint_angles;
+    KinovaAngles current_joint_angles;
     ros::Time current_time = ros::Time::now();
 
     try
@@ -98,7 +98,7 @@ void JacoAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesGoa
         last_nonstall_time_ = current_time;
         last_nonstall_angles_ = current_joint_angles;
 
-        JacoAngles target(goal->angles, arm_comm_.j6o());
+        KinovaAngles target(goal->angles, arm_comm_.j6o());
         arm_comm_.setJointAngles(target);
 
         // Loop until the action completed, is preempted, or fails in some way.

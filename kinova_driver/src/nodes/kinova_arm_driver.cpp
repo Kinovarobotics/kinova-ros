@@ -3,7 +3,7 @@
 // Author      : WPI, Clearpath Robotics
 // Version     : 0.5
 // Copyright   : BSD
-// Description : A ROS driver for controlling the Kinova Jaco robotic manipulator arm
+// Description : A ROS driver for controlling the Kinova Kinova robotic manipulator arm
 //============================================================================
 
 #include "kinova_driver/kinova_api.h"
@@ -24,18 +24,18 @@ int main(int argc, char **argv)
     {
         try
         {
-            kinova::JacoComm comm(nh, api_mutex, is_first_init);
-            kinova::JacoArm jaco(comm, nh);
-            kinova::JacoPoseActionServer pose_server(comm, nh);
-            kinova::JacoAnglesActionServer angles_server(comm, nh);
-            kinova::JacoFingersActionServer fingers_server(comm, nh);
+            kinova::KinovaComm comm(nh, api_mutex, is_first_init);
+            kinova::KinovaArm jaco(comm, nh);
+            kinova::KinovaPoseActionServer pose_server(comm, nh);
+            kinova::KinovaAnglesActionServer angles_server(comm, nh);
+            kinova::KinovaFingersActionServer fingers_server(comm, nh);
 
             ros::spin();
         }
         catch(const std::exception& e)
         {
             ROS_ERROR_STREAM(e.what());
-            kinova::JacoAPI api;
+            kinova::KinovaAPI api;
             boost::recursive_mutex::scoped_lock lock(api_mutex);
             api.closeAPI();
             ros::Duration(1.0).sleep();

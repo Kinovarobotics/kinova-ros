@@ -57,28 +57,28 @@
 namespace kinova
 {
 
-class JacoComm
+class KinovaComm
 {
  public:
-    JacoComm(const ros::NodeHandle& node_handle,
+    KinovaComm(const ros::NodeHandle& node_handle,
              boost::recursive_mutex& api_mutex,
              const bool is_movement_on_start);
-    ~JacoComm();
+    ~KinovaComm();
 
     bool isHomed(void);
     void homeArm(void);
     void initFingers(void);
-    void setJointAngles(const JacoAngles &angles, int timeout = 0, bool push = true);
-    void setCartesianPosition(const JacoPose &position, int timeout = 0, bool push = true);
+    void setJointAngles(const KinovaAngles &angles, int timeout = 0, bool push = true);
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
     void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
     void setJointVelocities(const AngularInfo& joint_vel);
     void setCartesianVelocities(const CartesianInfo &velocities);
     void setConfig(const ClientConfigurations &config);
-    void getJointAngles(JacoAngles &angles);
-    void getJointVelocities(JacoAngles &vels);
-    void getJointTorques(JacoAngles &tqs);
-    void getCartesianPosition(JacoPose &position);
-    void getCartesianForce(JacoPose &position);
+    void getJointAngles(KinovaAngles &angles);
+    void getJointVelocities(KinovaAngles &vels);
+    void getJointTorques(KinovaAngles &tqs);
+    void getCartesianPosition(KinovaPose &position);
+    void getCartesianForce(KinovaPose &position);
     void getFingerPositions(FingerAngles &fingers);
     void setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping);
     void setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max);
@@ -86,8 +86,8 @@ class JacoComm
     void stopForceControl();
     void getQuickStatus(QuickStatus &quick_status);
     void getConfig(ClientConfigurations &config);
-    void printAngles(const JacoAngles &angles);
-    void printPosition(const JacoPose &position);
+    void printAngles(const KinovaAngles &angles);
+    void printPosition(const KinovaPose &position);
     void printFingers(const FingersPosition &fingers);
     void printConfig(const ClientConfigurations &config);
     void stopAPI();
@@ -102,7 +102,7 @@ class JacoComm
 
  private:
     boost::recursive_mutex& api_mutex_;
-    kinova::JacoAPI kinova_api_;
+    kinova::KinovaAPI kinova_api_;
     bool is_software_stop_;
     int num_fingers_;
     int robot_type_; 

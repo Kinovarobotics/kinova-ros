@@ -40,14 +40,14 @@
 namespace kinova
 {
 
-// Maximum number of joints on Jaco-like robots:
+// Maximum number of joints on Kinova-like robots:
 static const int     KINOVA_JOINTS_COUNT = 9;
 
-class JacoArm
+class KinovaArm
 {
  public:
-    JacoArm(JacoComm& arm, const ros::NodeHandle &node_handle);
-    ~JacoArm();
+    KinovaArm(KinovaComm& arm, const ros::NodeHandle &node_handle);
+    ~KinovaArm();
 
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
     void cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
@@ -79,7 +79,7 @@ class JacoArm
 
     tf::TransformListener tf_listener_;
     ros::NodeHandle node_handle_;
-    JacoComm &kinova_comm_;
+    KinovaComm &kinova_comm_;
 
     // Publishers, subscribers, services
     ros::Subscriber joint_velocity_subscriber_;

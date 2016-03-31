@@ -24,10 +24,10 @@ namespace kinova
 #define KINOVA_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
 #define KINOVA_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
 
-class JacoAPI
+class KinovaAPI
 {
  public:
-    JacoAPI(void);
+    KinovaAPI(void);
 
     int (*initAPI)(void);
     int (*closeAPI)(void);

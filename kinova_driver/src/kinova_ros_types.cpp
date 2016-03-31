@@ -83,15 +83,15 @@ bool areValuesClose(float first, float second, float tolerance)
 
 // Exceptions
 // ----------
-JacoCommException::JacoCommException(const std::string& message, const int error_code)
+KinovaCommException::KinovaCommException(const std::string& message, const int error_code)
 {
     std::stringstream ss;
-        ss << "JacoCommException: " << message << " (return code: " << error_code << ")" << std::endl;
+        ss << "KinovaCommException: " << message << " (return code: " << error_code << ")" << std::endl;
     desc_ = ss.str();
 }
 
 
-const char* JacoCommException::what() const throw()
+const char* KinovaCommException::what() const throw()
 {
     return desc_.c_str();
 }
@@ -100,7 +100,7 @@ const char* JacoCommException::what() const throw()
 // Class definitions
 // -----------------
 
-JacoPose::JacoPose(const geometry_msgs::Pose &pose)
+KinovaPose::KinovaPose(const geometry_msgs::Pose &pose)
 {
     double tx, ty, tz;
     tf::Quaternion q;
@@ -120,7 +120,7 @@ JacoPose::JacoPose(const geometry_msgs::Pose &pose)
 }
 
 
-JacoPose::JacoPose(const CartesianInfo &pose)
+KinovaPose::KinovaPose(const CartesianInfo &pose)
 {
     X = pose.X;
     Y = pose.Y;
@@ -132,7 +132,7 @@ JacoPose::JacoPose(const CartesianInfo &pose)
 }
 
 
-geometry_msgs::Pose JacoPose::constructPoseMsg()
+geometry_msgs::Pose KinovaPose::constructPoseMsg()
 {
     geometry_msgs::Pose pose;
     tf::Quaternion position_quaternion;
@@ -165,7 +165,7 @@ geometry_msgs::Pose JacoPose::constructPoseMsg()
     return pose;
 }
 
-geometry_msgs::Wrench JacoPose::constructWrenchMsg()
+geometry_msgs::Wrench KinovaPose::constructWrenchMsg()
 {
     geometry_msgs::Wrench wrench;
 
@@ -179,7 +179,7 @@ geometry_msgs::Wrench JacoPose::constructWrenchMsg()
     return wrench;
 }
 
-bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
+bool KinovaPose::isCloseToOther(const KinovaPose &other, float tolerance) const
 {
     bool status = true;
     status = status && areValuesClose(X, other.X, tolerance);
@@ -192,7 +192,7 @@ bool JacoPose::isCloseToOther(const JacoPose &other, float tolerance) const
 }
 
 
-JacoAngles::JacoAngles(const kinova_msgs::JointAngles &angles, double j6o)
+KinovaAngles::KinovaAngles(const kinova_msgs::JointAngles &angles, double j6o)
 {
     Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
     Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
@@ -203,7 +203,7 @@ JacoAngles::JacoAngles(const kinova_msgs::JointAngles &angles, double j6o)
 }
 
 
-JacoAngles::JacoAngles(const AngularInfo &angles)
+KinovaAngles::KinovaAngles(const AngularInfo &angles)
 {
     Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
     Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
@@ -214,7 +214,7 @@ JacoAngles::JacoAngles(const AngularInfo &angles)
 }
 
 
-kinova_msgs::JointAngles JacoAngles::constructAnglesMsg(double j6o)
+kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg(double j6o)
 {
     kinova_msgs::JointAngles angles;
     angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
@@ -227,7 +227,7 @@ kinova_msgs::JointAngles JacoAngles::constructAnglesMsg(double j6o)
 }
 
 
-bool JacoAngles::isCloseToOther(const JacoAngles &other, float tolerance) const
+bool KinovaAngles::isCloseToOther(const KinovaAngles &other, float tolerance) const
 {
     bool status = true;
     status = status && areValuesClose(Actuator1, other.Actuator1, tolerance);

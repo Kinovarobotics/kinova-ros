@@ -24,17 +24,17 @@
 namespace kinova
 {
 
-class JacoTFTree
+class KinovaTFTree
 {
  public:
-    explicit JacoTFTree(ros::NodeHandle nh);
+    explicit KinovaTFTree(ros::NodeHandle nh);
 
  private:
     void jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles);
     void calculatePostion(void);
     void tfUpdateHandler(const ros::TimerEvent&);
 
-    kinova::JacoKinematics kinematics_;
+    kinova::KinovaKinematics kinematics_;
     kinova_msgs::JointAngles current_angles_;
     ros::Time last_angle_update_;
     ros::Subscriber joint_angles_subscriber_;
