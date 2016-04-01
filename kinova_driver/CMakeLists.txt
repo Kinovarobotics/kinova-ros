@@ -53,11 +53,23 @@ add_executable(kinova_arm_driver
   src/kinova_joint_angles_action.cpp
   src/kinova_fingers_action.cpp
   src/kinova_ros_types.cpp
+  include/kinova_driver/kinova_joint_angles_action.h
+  include/kinova_driver/kinova_api.h
+  include/kinova_driver/kinova_arm.h
+  include/kinova_driver/kinova_comm.h
+  include/kinova_driver/kinova_fingers_action.h
+  include/kinova_driver/kinova_tool_pose_action.h
+  include/kinova_driver/kinova_ros_types.h
+  include/kinova/Kinova.API.CommLayerUbuntu.h
+  include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
+  include/kinova/KinovaTypes.h
 )
 
 add_executable(kinova_tf_updater
   src/nodes/kinova_tf_updater.cpp
   src/kinova_arm_kinematics.cpp
+  include/kinova_driver/kinova_tf_updater.h
+  include/kinova_driver/kinova_arm_kinematics.h
 )
 
 add_dependencies(kinova_arm_driver ${catkin_EXPORTED_TARGETS})
