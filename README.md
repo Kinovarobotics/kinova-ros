@@ -239,9 +239,9 @@ To make ros-kinova part of your workspace, follow these steps (assuming your wor
     cd ~/catkin
     catkin_make
 
-To access the arm via usb copy the udev rule file ``99-kinova-arm.rules`` from ``<your_workspace>/ros-kinova-arm/kinova_driver/udev`` to ``/etc/udev/rules.d/``:
+To access the arm via usb copy the udev rule file ``10-kinova-arm.rules`` from ``<your_workspace>/ros-kinova-arm/kinova_driver/udev`` to ``/etc/udev/rules.d/``:
 
-    sudo cp kinova_driver/udev/99-kinova-arm.rules /etc/udev/rules.d/
+    sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 
 If you would like the ``kinova_arm_driver`` and ``kinova_tf_updater nodes`` to launch automatically when ROS is started, copy the ``kinova_arm.launch`` file contained in the ``/launch`` folder into the relevant ``/core.d`` folder.
 
