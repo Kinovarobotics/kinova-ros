@@ -63,7 +63,7 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 0.01);
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "mico_");
 
     tolerance_ = static_cast<float>(tolerance);
     std::stringstream ss;

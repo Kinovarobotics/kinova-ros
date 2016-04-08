@@ -15,7 +15,7 @@ def pose_client():
 
     goal = kinova_msgs.msg.ArmPoseGoal()
 
-    goal.pose.header.frame_id = "/kinova_api_origin"
+    goal.pose.header.frame_id = "/mico_api_origin"
     pose = goal.pose.pose
 
     if len(sys.argv) < 8: # default pose

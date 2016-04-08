@@ -47,7 +47,7 @@
 #include "kinova_driver/kinova_comm.h"
 #include <string>
 #include <vector>
-
+#include <KinovaTypes.h>
 
 namespace kinova
 {
@@ -188,18 +188,21 @@ KinovaComm::~KinovaComm()
 }
 
 
-/*!
- * \brief Determines whether the arm has returned to its "Home" state.
+/**
+ * @brief Determines whether the arm has returned to its "Home" state.
  *
- * Checks the current joint angles, then compares them to the known "Home"
- * joint angles.
+ * Checks the current joint angles, then compares them to the known
+ *  "Home" joint angles.
+ *
+ * @return true is robot is already in predefined "Home"
+ *  configuration.
  */
 bool KinovaComm::isHomed(void)
 {
     QuickStatus quick_status;
     getQuickStatus(quick_status);
 
-    if (quick_status.RetractType == 1)
+    if (quick_status.RetractType == RETRACT_TYPE_READY_STANDBY)
     {
         return true;
     }
@@ -210,49 +213,73 @@ bool KinovaComm::isHomed(void)
 }
 
 
-/*!
- * \brief Send the arm to the "home" position.
+/**
+ * @brief Send the arm to the "home" position.
  *
- * The code replicates the function of the "home" button on the user controller
- * by "pressing" the home button long enough for the arm to return to the home
- * position.
- *
- * Fingers are homed by manually opening them fully, then returning them to a
- * half-open position.
+ * The code replicates the function of the "home" button on the user
+ *  controller by "pressing" the home button long enough for the arm
+ *  to return to the home position.
  */
+//void KinovaComm::homeArm(void)
+//{
+//    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+//    if (isStopped())
+//    {
+//        ROS_INFO("Arm is stopped, cannot home");
+//        return;
+//    }
+//    else if (isHomed())
+//    {
+//        ROS_INFO("Arm is already in \"home\" position");
+//        return;
+//    }
+
+//    stopAPI();
+//    ros::Duration(1.0).sleep();
+//    startAPI();
+
+//    ROS_INFO("Homing the arm");
+//    int result = kinova_api_.moveHome();
+//    if (result != NO_ERROR_KINOVA)
+//    {
+//        throw KinovaCommException("Move home failed", result);
+//    }
+//}
+
+// pure test using name homeArm to avoid writing more codes.
 void KinovaComm::homeArm(void)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
-    if (isStopped())
+    try
     {
-        ROS_INFO("Arm is stopped, cannot home");
-        return;
-    }
-    else if (isHomed())
-    {
-        ROS_INFO("Arm is already in \"home\" position");
-        return;
-    }
+        ROS_INFO("test apis in kinova_comm.cpp");
 
-    stopAPI();
-    ros::Duration(1.0).sleep();
-    startAPI();
+        KinovaPose terget_pose;
+terget_pose.X = 0.396;
+terget_pose.Y = -0.226;
+terget_pose.Z = 0.472;
+terget_pose.ThetaX = 1.503;
+terget_pose.ThetaY = 1.519;
+terget_pose.ThetaZ = 0.056;
 
-    ROS_INFO("Homing the arm");
-    int result = kinova_api_.moveHome();
-    if (result != NO_ERROR_KINOVA)
+        setCartesianPosition(terget_pose);
+
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: test warnings" << std::endl;);
+    }
+    catch (std::exception excep)
     {
-        throw KinovaCommException("Move home failed", result);
+        ROS_INFO_STREAM("IT is a TERRIBLE test! *** " << excep.what() << std::endl);
     }
 }
 
 
-/*!
- * \brief Initialize finger actuators.
+/**
+ * @brief Initialize finger actuators.
  *
  * Move fingers to the full-open position to initialize them for use.
- * Note, The this routine requires firmware version 5.05.x (or higher?).
+ * Note, The this routine requires firmware version 5.05.x (or higher).
  */
 void KinovaComm::initFingers(void)
 {
@@ -267,10 +294,15 @@ void KinovaComm::initFingers(void)
 }
 
 
-/*!
- * \brief Sends a joint angle command to the Kinova arm.
+/**
+ * @brief Sends a joint angle command to the Kinova arm.
  *
- * Waits until the arm has stopped moving before releasing control of the API.
+ * Waits until the arm has stopped moving before releasing control of
+ *  the API. sendAdvanceTrajectory() is called in api to complete the motion.
+ *
+ * @param angles target joint angle to set, type float, unit in degree
+ * @param timeout default value 0.0, not used.
+ * @param push default true, errase all trajectory after motion.
  */
 void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool push)
 {
@@ -278,14 +310,14 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
 
     if (isStopped())
     {
-        ROS_INFO("The angles could not be set because the arm is stopped");
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: The angles could not be set because the arm is stopped" << std::endl);
         return;
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint kinova_position;
-    kinova_position.InitStruct();
-    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
+    TrajectoryPoint kinova_joint;
+    kinova_joint.InitStruct();
+    memset(&kinova_joint, 0, sizeof(kinova_joint));  // zero structure
 
     if (push)
     {
@@ -304,11 +336,11 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
         throw KinovaCommException("Could not set angular control", result);
     }
 
-    kinova_position.Position.Delay = 0.0;
-    kinova_position.Position.Type = ANGULAR_POSITION;
-    kinova_position.Position.Actuators = angles;
+    kinova_joint.Position.Delay = 0.0;
+    kinova_joint.Position.Type = ANGULAR_POSITION;
+    kinova_joint.Position.Actuators = angles;
 
-    result = kinova_api_.sendAdvanceTrajectory(kinova_position);
+    result = kinova_api_.sendAdvanceTrajectory(kinova_joint);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced joint angle trajectory", result);
@@ -316,25 +348,30 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
 }
 
 
-/*!
- * \brief Sends a cartesian coordinate trajectory to the Kinova arm.
- *
- * Waits until the arm has stopped moving before releasing control of the API.
- */
-void KinovaComm::setCartesianPosition(const KinovaPose &position, int timeout, bool push)
+/**
+* @brief Sends a cartesian coordinate trajectory to the Kinova arm.
+*
+* Waits until the arm has stopped moving before releasing control of the API. sendBasicTrajectory() is called in api to complete the motion.
+*
+* @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
+* @param timeout default 0.0, not used.
+* @param push default true, errase all trajectory after motion.
+*/
+
+void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
     if (isStopped())
     {
-        ROS_INFO("The position could not be set because the arm is stopped");
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: The pose could not be set because the arm is stopped" << std::endl);
         return;
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint kinova_position;
-    kinova_position.InitStruct();
-    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
+    TrajectoryPoint kinova_pose;
+    kinova_pose.InitStruct();
+    memset(&kinova_pose, 0, sizeof(kinova_pose));  // zero structure
 
     if (push)
     {
@@ -353,21 +390,12 @@ void KinovaComm::setCartesianPosition(const KinovaPose &position, int timeout, b
         throw KinovaCommException("Could not set Cartesian control", result);
     }
 
-    kinova_position.Position.Delay = 0.0;
-    kinova_position.Position.Type = CARTESIAN_POSITION;
-    kinova_position.Position.HandMode = HAND_NOMOVEMENT;
+    kinova_pose.Position.Delay = 0.0;
+    kinova_pose.Position.Type = CARTESIAN_POSITION;
+//    kinova_pose.Position.HandMode = HAND_NOMOVEMENT;
+    kinova_pose.Position.CartesianPosition = pose;
 
-    // These values will not be used but are initialized anyway.
-    kinova_position.Position.Actuators.Actuator1 = 0.0f;
-    kinova_position.Position.Actuators.Actuator2 = 0.0f;
-    kinova_position.Position.Actuators.Actuator3 = 0.0f;
-    kinova_position.Position.Actuators.Actuator4 = 0.0f;
-    kinova_position.Position.Actuators.Actuator5 = 0.0f;
-    kinova_position.Position.Actuators.Actuator6 = 0.0f;
-
-    kinova_position.Position.CartesianPosition = position;
-
-    result = kinova_api_.sendBasicTrajectory(kinova_position);
+    result = kinova_api_.sendBasicTrajectory(kinova_pose);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send basic trajectory", result);
@@ -389,9 +417,9 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint kinova_position;
-    kinova_position.InitStruct();
-    memset(&kinova_position, 0, sizeof(kinova_position));  // zero structure
+    TrajectoryPoint kinova_pose;
+    kinova_pose.InitStruct();
+    memset(&kinova_pose, 0, sizeof(kinova_pose));  // zero structure
 
     if (push)
     {
@@ -411,11 +439,11 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     // Initialize Cartesian control of the fingers
-    kinova_position.Position.HandMode = POSITION_MODE;
-    kinova_position.Position.Type = ANGULAR_POSITION;
-    kinova_position.Position.Fingers = fingers;
-    kinova_position.Position.Delay = 0.0;
-    kinova_position.LimitationsActive = 0;
+    kinova_pose.Position.HandMode = POSITION_MODE;
+    kinova_pose.Position.Type = ANGULAR_POSITION;
+    kinova_pose.Position.Fingers = fingers;
+    kinova_pose.Position.Delay = 0.0;
+    kinova_pose.LimitationsActive = 0;
 
     AngularPosition kinova_angles;
     memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
@@ -427,15 +455,15 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
 
-    kinova_position.Position.Actuators = kinova_angles.Actuators;
+    kinova_pose.Position.Actuators = kinova_angles.Actuators;
 
     // When loading a cartesian position for the fingers, values are required for the arm joints
     // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
     KinovaPose pose;
     getCartesianPosition(pose);
-    kinova_position.Position.CartesianPosition = pose;
+    kinova_pose.Position.CartesianPosition = pose;
 
-    result = kinova_api_.sendAdvanceTrajectory(kinova_position);
+    result = kinova_api_.sendAdvanceTrajectory(kinova_pose);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
@@ -592,6 +620,13 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
     {
         throw KinovaCommException("Could not get the Cartesian position", result);
     }
+
+    ROS_INFO_STREAM_ONCE("Cartesian pose in [X,Y,Z, ThetaX, ThetaY, ThetaZ] is : " << kinova_cartesian_position.Coordinates.X << ", "
+                    << kinova_cartesian_position.Coordinates.Y << ", "
+                    << kinova_cartesian_position.Coordinates.Z << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaX << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaY << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaZ << std::endl);
 
     position = KinovaPose(kinova_cartesian_position.Coordinates);
 }
