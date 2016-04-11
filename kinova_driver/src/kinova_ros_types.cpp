@@ -197,15 +197,15 @@ geometry_msgs::Wrench KinovaPose::constructWrenchMsg()
     return wrench;
 }
 
-bool KinovaPose::isCloseToOther(const KinovaPose &other, float tolerance) const
+bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_tolerance, float EulerAngle_tolerance) const
 {
     bool status = true;
-    status = status && areValuesClose(X, other.X, tolerance);
-    status = status && areValuesClose(Y, other.Y, tolerance);
-    status = status && areValuesClose(Z, other.Z, tolerance);
-    status = status && areValuesClose(ThetaX, other.ThetaX, tolerance);
-    status = status && areValuesClose(ThetaY, other.ThetaY, tolerance);
-    status = status && areValuesClose(ThetaZ, other.ThetaZ, tolerance);
+    status = status && areValuesClose(X, other.X, position_tolerance);
+    status = status && areValuesClose(Y, other.Y, position_tolerance);
+    status = status && areValuesClose(Z, other.Z, position_tolerance);
+    status = status && areValuesClose(ThetaX, other.ThetaX, EulerAngle_tolerance);
+    status = status && areValuesClose(ThetaY, other.ThetaY, EulerAngle_tolerance);
+    status = status && areValuesClose(ThetaZ, other.ThetaZ, EulerAngle_tolerance);
     return status;
 }
 

@@ -83,7 +83,8 @@ class KinovaPoseActionServer
     double stall_interval_seconds_;
     double stall_threshold_;
     double rate_hz_;
-    float tolerance_;
+    float position_tolerance_;
+    float EulerAngle_tolerance_;
     std::string tf_prefix_;
 };
 

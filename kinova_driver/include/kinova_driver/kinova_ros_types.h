@@ -83,7 +83,7 @@ class KinovaPose : public CartesianInfo
     geometry_msgs::Pose   constructPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
 
-    bool isCloseToOther(const KinovaPose &, float tolerance) const;
+    bool isCloseToOther(const KinovaPose &, float position_tolerance, float EulerAngle_tolerance) const;
 };
 
 
