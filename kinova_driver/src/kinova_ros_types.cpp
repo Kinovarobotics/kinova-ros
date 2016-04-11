@@ -54,25 +54,34 @@
 namespace kinova
 {
 
-// A few helper functions
-// ----------------------
+// %Tag(converntion functions)%
 
-float normalizeInRads(float rads)
+
+// rads 0 to 2*M_PI
+float normalizePositiveInRads(float rads)
 {
     return static_cast<float>(angles::normalize_angle_positive(rads));
 }
 
+// rads -M_PI to M_PI
+float normalizeInRads(float rads)
+{
+    return static_cast<float>(angles::normalize_angle(rads));
+}
 
+// degrees 0 to 360
 float normalizePositiveInDegrees(float degrees)
 {
     return angles::to_degrees(angles::normalize_angle_positive(angles::from_degrees(degrees)));
 }
 
-
+// degrees -180 to 180
 float normalizeInDegrees(float degrees)
 {
     return angles::to_degrees(angles::normalize_angle(angles::from_degrees(degrees)));
 }
+
+// %EndTag(converntion functions)%
 
 
 bool areValuesClose(float first, float second, float tolerance)
@@ -114,9 +123,9 @@ KinovaPose::KinovaPose(const geometry_msgs::Pose &pose)
     Y = static_cast<float>(pose.position.y);
     Z = static_cast<float>(pose.position.z);
 
-    ThetaX = normalizeInRads(tx);
-    ThetaY = normalizeInRads(ty);
-    ThetaZ = normalizeInRads(tz);
+    ThetaX = normalizePositiveInRads(tx);
+    ThetaY = normalizePositiveInRads(ty);
+    ThetaZ = normalizePositiveInRads(tz);
 }
 
 
@@ -126,9 +135,9 @@ KinovaPose::KinovaPose(const CartesianInfo &pose)
     Y = pose.Y;
     Z = pose.Z;
 
-    ThetaX = normalizeInRads(pose.ThetaX);
-    ThetaY = normalizeInRads(pose.ThetaY);
-    ThetaZ = normalizeInRads(pose.ThetaZ);
+    ThetaX = normalizePositiveInRads(pose.ThetaX);
+    ThetaY = normalizePositiveInRads(pose.ThetaY);
+    ThetaZ = normalizePositiveInRads(pose.ThetaZ);
 }
 
 
