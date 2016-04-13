@@ -198,6 +198,15 @@ geometry_msgs::Wrench KinovaPose::constructWrenchMsg()
     return wrench;
 }
 
+
+/**
+ * @brief check all the position and orientation values, to determine if current KinovaPose reach "other"
+ *
+ * @param other the pose to be compared with, normally the motion goal. In meters and radians.
+ * @param position_tolerance  threshold to be considered as identical between two position values in the same axis.
+ * @param EulerAngle_tolerance threshold to be considered as identical between two EulerAngle values along the same axis.
+ * @return true if both position and orientation can be considerred identical.
+ */
 bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_tolerance, float EulerAngle_tolerance) const
 {
     bool status = true;
@@ -215,17 +224,17 @@ bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_toleranc
  *
  * KinovaAngles[Actuator1 ... Actuator6] can go beyond the range of [0 360]
  *
- * @param angles in radians
+ * @param angles in degrees
  */
 KinovaAngles::KinovaAngles(const kinova_msgs::JointAngles &angles)
 {
 
-    Actuator1 = angles.joint1 * (180.0 / M_PI);
-    Actuator2 = angles.joint2 * (180.0 / M_PI);
-    Actuator3 = angles.joint3 * (180.0 / M_PI);
-    Actuator4 = angles.joint4 * (180.0 / M_PI);
-    Actuator5 = angles.joint5 * (180.0 / M_PI);
-    Actuator6 = angles.joint6 * (180.0 / M_PI);
+    Actuator1 = angles.joint1;
+    Actuator2 = angles.joint2;
+    Actuator3 = angles.joint3;
+    Actuator4 = angles.joint4;
+    Actuator5 = angles.joint5;
+    Actuator6 = angles.joint6;
 }
 
 /**
@@ -242,20 +251,29 @@ KinovaAngles::KinovaAngles(const AngularInfo &angles)
     Actuator6 = angles.Actuator6;
 }
 
-
+/**
+ * @brief KinovaAngles::constructAnglesMsg
+ * @return kinova_msgs::JointAngles is used as messanges for topic in ROS, in degrees.
+ */
 kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg()
 {
     kinova_msgs::JointAngles angles;
-    angles.joint1 = Actuator1 / (180.0 / M_PI);
-    angles.joint2 = Actuator2 / (180.0 / M_PI);
-    angles.joint3 = Actuator3 / (180.0 / M_PI);
-    angles.joint4 = Actuator4 / (180.0 / M_PI);
-    angles.joint5 = Actuator5 / (180.0 / M_PI);
-    angles.joint6 = Actuator6 / (180.0 / M_PI);
+    angles.joint1 = Actuator1;
+    angles.joint2 = Actuator2;
+    angles.joint3 = Actuator3;
+    angles.joint4 = Actuator4;
+    angles.joint5 = Actuator5;
+    angles.joint6 = Actuator6;
     return angles;
 }
 
 
+/**
+ * @brief check all the joint values, to determine if current KinovaAngles reach "other"
+ * @param other joint angles to be compared with, in degrees.
+ * @param tolerance threshold to be considered as identical between two joints.
+ * @return true if all joint values can be considerred identical.
+ */
 bool KinovaAngles::isCloseToOther(const KinovaAngles &other, float tolerance) const
 {
     bool status = true;

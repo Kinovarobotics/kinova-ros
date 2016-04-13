@@ -10,8 +10,6 @@
 #include <string>
 #include <vector>
 
-#define PI 3.14159265359
-
 
 namespace 
 {
@@ -19,7 +17,7 @@ namespace
     ///        a more regular representation (0..180, -180..0).
     inline void convertKinDeg(double& qd)
     {
-        static const double PI_180 = (PI / 180.0);
+        static const double PI_180 = (M_PI / 180.0);
 
         // Angle velocities from the API are 0..180 for positive values,
         // and 360..181 for negative ones, in a kind of 2-complement setup.
@@ -328,13 +326,6 @@ void KinovaArm::publishJointAngles(void)
     kinova_comm_.getJointAngles(current_angles);
     kinova_msgs::JointAngles kinova_angles = current_angles.constructAnglesMsg();
 
-    kinova_angles.joint1 = current_angles.Actuator1;
-    kinova_angles.joint2 = current_angles.Actuator2;
-    kinova_angles.joint3 = current_angles.Actuator3;
-    kinova_angles.joint4 = current_angles.Actuator4;
-    kinova_angles.joint5 = current_angles.Actuator5;
-    kinova_angles.joint6 = current_angles.Actuator6;
-
     sensor_msgs::JointState joint_state;
     joint_state.name = joint_names_;
     joint_state.header.stamp = ros::Time::now();
@@ -342,12 +333,12 @@ void KinovaArm::publishJointAngles(void)
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
     joint_state.position.resize(9);
 
-    joint_state.position[0] = kinova_angles.joint1 * (PI / 180);
-    joint_state.position[1] = kinova_angles.joint2 * (PI / 180);
-    joint_state.position[2] = kinova_angles.joint3 * (PI / 180);
-    joint_state.position[3] = kinova_angles.joint4 * (PI / 180);
-    joint_state.position[4] = kinova_angles.joint5 * (PI / 180);
-    joint_state.position[5] = kinova_angles.joint6 * (PI / 180);
+    joint_state.position[0] = kinova_angles.joint1 * M_PI/180;
+    joint_state.position[1] = kinova_angles.joint2 * M_PI/180;
+    joint_state.position[2] = kinova_angles.joint3 * M_PI/180;
+    joint_state.position[3] = kinova_angles.joint4 * M_PI/180;
+    joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
+    joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
