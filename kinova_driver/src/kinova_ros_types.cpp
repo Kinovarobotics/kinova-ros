@@ -211,44 +211,47 @@ bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_toleranc
 }
 
 /**
- * @brief KinovaAngles::KinovaAngles
+ * @brief KinovaAngles[Actuator1 ... Actuator6] stores 6 joint values in degrees
  *
+ * KinovaAngles[Actuator1 ... Actuator6] can go beyond the range of [0 360]
  *
- *
- * @param angles in radians, input has no limit, but output KinovaAngles are limited to [0,360)
- * @param j6o is 270 for all the robot model, except the 1st generation of jaco robot (260)
+ * @param angles in radians
  */
-KinovaAngles::KinovaAngles(const kinova_msgs::JointAngles &angles, double j6o)
+KinovaAngles::KinovaAngles(const kinova_msgs::JointAngles &angles)
 {
-    Actuator1 = normalizePositiveInDegrees(180.0 - (angles.joint1 * (180.0 / M_PI)));
-    Actuator2 = normalizePositiveInDegrees((angles.joint2 * (180.0 / M_PI)) + 270.0);
-    Actuator3 = normalizePositiveInDegrees(90.0 - (angles.joint3 * (180.0 / M_PI)));
-    Actuator4 = normalizePositiveInDegrees(180.0 - (angles.joint4 * (180.0 / M_PI)));
-    Actuator5 = normalizePositiveInDegrees(180.0 - (angles.joint5 * (180.0 / M_PI)));
-    Actuator6 = normalizePositiveInDegrees(j6o   - (angles.joint6 * (180.0 / M_PI)));
+
+    Actuator1 = angles.joint1 * (180.0 / M_PI);
+    Actuator2 = angles.joint2 * (180.0 / M_PI);
+    Actuator3 = angles.joint3 * (180.0 / M_PI);
+    Actuator4 = angles.joint4 * (180.0 / M_PI);
+    Actuator5 = angles.joint5 * (180.0 / M_PI);
+    Actuator6 = angles.joint6 * (180.0 / M_PI);
 }
 
-
+/**
+ * @brief KinovaAngles[Actuator1 ... Actuator6] stores 6 joint values in degrees
+ * @param angles in degrees
+ */
 KinovaAngles::KinovaAngles(const AngularInfo &angles)
 {
-    Actuator1 = normalizePositiveInDegrees(angles.Actuator1);
-    Actuator2 = normalizePositiveInDegrees(angles.Actuator2);
-    Actuator3 = normalizePositiveInDegrees(angles.Actuator3);
-    Actuator4 = normalizePositiveInDegrees(angles.Actuator4);
-    Actuator5 = normalizePositiveInDegrees(angles.Actuator5);
-    Actuator6 = normalizePositiveInDegrees(angles.Actuator6);
+    Actuator1 = angles.Actuator1;
+    Actuator2 = angles.Actuator2;
+    Actuator3 = angles.Actuator3;
+    Actuator4 = angles.Actuator4;
+    Actuator5 = angles.Actuator5;
+    Actuator6 = angles.Actuator6;
 }
 
 
-kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg(double j6o)
+kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg()
 {
     kinova_msgs::JointAngles angles;
-    angles.joint1 = (180.0 - Actuator1) / (180.0 / M_PI);
-    angles.joint2 = (Actuator2 - 270.0) / (180.0 / M_PI);
-    angles.joint3 = (90.0 - Actuator3) / (180.0 / M_PI);
-    angles.joint4 = (180.0 - Actuator4) / (180.0 / M_PI);
-    angles.joint5 = (180.0 - Actuator5) / (180.0 / M_PI);
-    angles.joint6 = (j6o   - Actuator6) / (180.0 / M_PI);
+    angles.joint1 = Actuator1 / (180.0 / M_PI);
+    angles.joint2 = Actuator2 / (180.0 / M_PI);
+    angles.joint3 = Actuator3 / (180.0 / M_PI);
+    angles.joint4 = Actuator4 / (180.0 / M_PI);
+    angles.joint5 = Actuator5 / (180.0 / M_PI);
+    angles.joint6 = Actuator6 / (180.0 / M_PI);
     return angles;
 }
 

@@ -856,10 +856,10 @@ bool KinovaComm::isStopped()
     return is_software_stop_;
 }
 
-double KinovaComm::j6o() const
-{
-    // J6 offset is 260 for Kinova R1 (type 0), and 270 for Mico and Kinova R2.
-    return robotType() == 0 ? 260.0 : 270.0;
-}
+//double KinovaComm::j6o() const
+//{
+//    // J6 offset is 260 for Kinova R1 (type 0), and 270 for Mico and Kinova R2.
+//    return robotType() == 0 ? 260.0 : 270.0;
+//}
 
 }  // namespace kinova

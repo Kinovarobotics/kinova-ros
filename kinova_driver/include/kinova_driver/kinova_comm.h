@@ -96,7 +96,7 @@ class KinovaComm
     int numFingers() const;
     int robotType() const;
 
-    double j6o() const; // Joint 6 offset (second wrist part) that differs between models.
+//    double j6o() const; // Joint 6 offset (second wrist part) that differs between models.
 
     void setEndEffectorOffset(float x, float y, float z);
 

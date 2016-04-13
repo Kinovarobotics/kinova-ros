@@ -91,10 +91,10 @@ class KinovaAngles : public AngularInfo
 {
  public:
     KinovaAngles() {}
-    explicit KinovaAngles(const kinova_msgs::JointAngles &angles, double j6o);
+    explicit KinovaAngles(const kinova_msgs::JointAngles &angles);
     explicit KinovaAngles(const AngularInfo &angles);
 
-    kinova_msgs::JointAngles constructAnglesMsg(double j6o);
+    kinova_msgs::JointAngles constructAnglesMsg();
     bool isCloseToOther(const KinovaAngles &, float tolerance) const;
 };
 
