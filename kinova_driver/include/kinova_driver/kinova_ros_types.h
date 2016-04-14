@@ -83,7 +83,7 @@ class KinovaPose : public CartesianInfo
     geometry_msgs::Pose   constructPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
 
-    bool isCloseToOther(const KinovaPose &, float tolerance) const;
+    bool isCloseToOther(const KinovaPose &, float position_tolerance, float EulerAngle_tolerance) const;
 };
 
 
@@ -91,10 +91,10 @@ class KinovaAngles : public AngularInfo
 {
  public:
     KinovaAngles() {}
-    explicit KinovaAngles(const kinova_msgs::JointAngles &angles, double j6o);
+    explicit KinovaAngles(const kinova_msgs::JointAngles &angles);
     explicit KinovaAngles(const AngularInfo &angles);
 
-    kinova_msgs::JointAngles constructAnglesMsg(double j6o);
+    kinova_msgs::JointAngles constructAnglesMsg();
     bool isCloseToOther(const KinovaAngles &, float tolerance) const;
 };
 

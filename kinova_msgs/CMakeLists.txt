@@ -17,6 +17,7 @@ add_message_files(
   FingerPosition.msg
   JointAngles.msg
   JointVelocity.msg
+  KinovaPose.msg
 )
 
 add_service_files(
@@ -32,6 +33,7 @@ add_action_files(DIRECTORY action
   FILES
   ArmJointAngles.action
   ArmPose.action
+  Arm_KinovaPose.action
   SetFingersPosition.action
 )
 

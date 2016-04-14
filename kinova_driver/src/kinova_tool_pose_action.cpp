@@ -58,14 +58,17 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
       action_server_(node_handle_, "tool_pose",
                      boost::bind(&KinovaPoseActionServer::actionCallback, this, _1), false)
 {
-    double tolerance;
+    double position_tolerance;
+    double EulerAngle_tolerance;
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
-    node_handle_.param<double>("tolerance", tolerance, 0.01);
+    node_handle_.param<double>("position_tolerance", position_tolerance, 0.001);
+    node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 1.0*M_PI/180);
     node_handle_.param<std::string>("tf_prefix", tf_prefix_, "mico_");
 
-    tolerance_ = static_cast<float>(tolerance);
+    position_tolerance_ = static_cast<float>(position_tolerance);
+    EulerAngle_tolerance_ = static_cast<float>(EulerAngle_tolerance);
     std::stringstream ss;
     ss << tf_prefix_ << "api_origin";
     api_origin_frame_ = ss.str();
@@ -147,13 +150,13 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
             action_server_.publishFeedback(feedback);
 
-            if (target.isCloseToOther(current_pose, tolerance_))
+            if (target.isCloseToOther(current_pose, position_tolerance_, EulerAngle_tolerance_))
             {
                 result.pose = feedback.pose;
                 action_server_.setSucceeded(result);
                 return;
             }
-            else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_))
+            else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_, stall_threshold_))
             {
                 // Check if we are outside of a potential stall condition
                 last_nonstall_time_ = current_time;
