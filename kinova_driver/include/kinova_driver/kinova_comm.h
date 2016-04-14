@@ -106,6 +106,7 @@ class KinovaComm
     bool is_software_stop_;
     int num_fingers_;
     int robot_type_; 
+    TrajectoryFIFO bobo_;
 };
 
 }  // namespace kinova
