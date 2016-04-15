@@ -65,40 +65,42 @@ class KinovaComm
              const bool is_movement_on_start);
     ~KinovaComm();
 
-    bool isHomed(void);
-    void homeArm(void);
-    void initFingers(void);
-    void setJointAngles(const KinovaAngles &angles, int timeout = 0, bool push = true);
-    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
-    void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
-    void setJointVelocities(const AngularInfo& joint_vel);
-    void setCartesianVelocities(const CartesianInfo &velocities);
-    void setConfig(const ClientConfigurations &config);
-    void getJointAngles(KinovaAngles &angles);
-    void getJointVelocities(KinovaAngles &vels);
-    void getJointTorques(KinovaAngles &tqs);
-    void getCartesianPosition(KinovaPose &position);
-    void getCartesianForce(KinovaPose &position);
-    void getFingerPositions(FingerAngles &fingers);
-    void setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping);
-    void setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max);
-    void startForceControl();
-    void stopForceControl();
-    void getQuickStatus(QuickStatus &quick_status);
-    void getConfig(ClientConfigurations &config);
-    void printAngles(const KinovaAngles &angles);
-    void printPosition(const KinovaPose &position);
-    void printFingers(const FingersPosition &fingers);
-    void printConfig(const ClientConfigurations &config);
     void stopAPI();
     void startAPI();
     bool isStopped();
-    int numFingers() const;
+    void startForceControl();
+    void stopForceControl();
     int robotType() const;
+    void getQuickStatus(QuickStatus &quick_status);
+    void getConfig(ClientConfigurations &config);
+    void setConfig(const ClientConfigurations &config);
+    void printConfig(const ClientConfigurations &config);
 
-//    double j6o() const; // Joint 6 offset (second wrist part) that differs between models.
+    void getJointAngles(KinovaAngles &angles);
+    void setJointAngles(const KinovaAngles &angles, int timeout = 0, bool push = true);
+    void getJointVelocities(KinovaAngles &vels);
+    void setJointVelocities(const AngularInfo& joint_vel);
+    void getJointTorques(KinovaAngles &tqs);
+    void printAngles(const KinovaAngles &angles);
 
+    void getCartesianPosition(KinovaPose &position);
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
+    void setCartesianVelocities(const CartesianInfo &velocities);
+    void getCartesianForce(KinovaPose &position);
+    void setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping);
+    void setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max);
     void setEndEffectorOffset(float x, float y, float z);
+    void printPosition(const KinovaPose &position);
+
+    void getFingerPositions(FingerAngles &fingers);
+    void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
+    void printFingers(const FingersPosition &fingers);
+    int numFingers() const;
+
+    bool isHomed(void);
+    void homeArm(void);
+    void initFingers(void);
+
 
  private:
     boost::recursive_mutex& api_mutex_;
@@ -106,7 +108,6 @@ class KinovaComm
     bool is_software_stop_;
     int num_fingers_;
     int robot_type_; 
-    TrajectoryFIFO bobo_;
 };
 
 }  // namespace kinova

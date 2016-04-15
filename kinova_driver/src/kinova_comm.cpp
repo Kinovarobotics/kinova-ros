@@ -189,144 +189,202 @@ KinovaComm::~KinovaComm()
 
 
 /**
- * @brief Determines whether the arm has returned to its "Home" state.
- *
- * Checks the current joint angles, then compares them to the known
- *  "Home" joint angles.
- *
- * @return true is robot is already in predefined "Home"
- *  configuration.
+ * @brief KinovaComm::startAPI API gains the control of robot
  */
-bool KinovaComm::isHomed(void)
-{
-    QuickStatus quick_status;
-    getQuickStatus(quick_status);
-
-    if (quick_status.RetractType == RETRACT_TYPE_READY_STANDBY)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-
-/**
- * @brief Send the arm to the "home" position.
- *
- * The code replicates the function of the "home" button on the user
- *  controller by "pressing" the home button long enough for the arm
- *  to return to the home position.
- */
-//void KinovaComm::homeArm(void)
-//{
-//    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-//    if (isStopped())
-//    {
-//        ROS_INFO("Arm is stopped, cannot home");
-//        return;
-//    }
-//    else if (isHomed())
-//    {
-//        ROS_INFO("Arm is already in \"home\" position");
-//        return;
-//    }
-
-//    stopAPI();
-//    ros::Duration(1.0).sleep();
-//    startAPI();
-
-//    ROS_INFO("Homing the arm");
-//    int result = kinova_api_.moveHome();
-//    if (result != NO_ERROR_KINOVA)
-//    {
-//        throw KinovaCommException("Move home failed", result);
-//    }
-//}
-
-// pure test using name homeArm to avoid writing more codes.
-void KinovaComm::homeArm(void)
+void KinovaComm::startAPI()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-//    TrajectoryFIFO bobo;
-
-    try
+    if (is_software_stop_)
     {
-        ROS_INFO("test apis in kinova_comm.cpp");
-
-        KinovaPose target_pose;
-
-        getCartesianPosition(target_pose);
-        ROS_WARN_STREAM("target_pose, X: " << target_pose.X << ", ThetaX: " << target_pose.ThetaX << std::endl;);
-
-
-// NOT reach goal from home pose, threshold 0.01 0.01
-target_pose.X = 0.396;  //0.396373
-target_pose.Y = -0.226; //-0.226768
-target_pose.Z = 0.472;  // 0.465659
-target_pose.ThetaX = 1.503; //1.70618
-target_pose.ThetaY = 1.519; // 1.52039
-target_pose.ThetaZ = 0.056; // -0.139276
-
-
-// reach goal from home pose, threshold 0.01 0.01
-target_pose.X = 0.4476;  // 0.4487
-target_pose.Y = -0.2483; //-0.2469
-target_pose.Z = 0.5787;  //0.5746
-target_pose.ThetaX = 0.9731; // 0.9759
-target_pose.ThetaY = 0.0440; // 0.0507
-target_pose.ThetaZ = -2.2164; // -2.2227
-
-        setCartesianPosition(target_pose);
-
-        while(ros::ok())
-        {
-            KinovaPose currentPose;
-            getCartesianPosition(currentPose);
-            ROS_INFO_STREAM("currentPose, X: " << currentPose.X << ", Y: " << currentPose.Y << ", Z: " << currentPose.Z << ", ThetaX: " << currentPose.ThetaX << ", ThetaY: " << currentPose.ThetaY << ", ThetaZ: " << currentPose.ThetaZ << std::endl);
-
-            ROS_INFO_STREAM(" they are close? :  " << target_pose.isCloseToOther(currentPose, 0.01, 0.01) <<  std::endl);
-
-            // according to definition of setCartesianPosition, the following line may be not necessary, as it release control until stopped.
-            setCartesianPosition(target_pose);
-
-            if(target_pose.isCloseToOther(currentPose, 0.01, 0.01))
-            {
-               ROS_WARN_STREAM("ready to jump out of loop" << std::endl;);
-                break;
-            }
-            ros::Duration(0.1).sleep();
-        }
-
-        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: test warnings" << std::endl);
-
+        is_software_stop_ = false;
+        kinova_api_.stopControlAPI();
+        ros::Duration(0.05).sleep();
     }
-    catch (std::exception excep)
-    {
-        ROS_INFO_STREAM("IT is a TERRIBLE test! *** " << excep.what() << std::endl);
-    }
-}
 
-
-/**
- * @brief Initialize finger actuators.
- *
- * Move fingers to the full-open position to initialize them for use.
- * Note, The this routine requires firmware version 5.05.x (or higher).
- */
-void KinovaComm::initFingers(void)
-{
-    ROS_INFO("Initializing fingers...this will take a few seconds and the fingers should open completely");
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.initFingers();
+    int result = kinova_api_.startControlAPI();
     if (result != NO_ERROR_KINOVA)
     {
-        throw KinovaCommException("Could not init fingers", result);
+        throw KinovaCommException("Could not start the control API", result);
     }
-    return;
+}
+
+/**
+ * @brief KinovaComm::stopAPI API ceases the control of robot
+ */
+void KinovaComm::stopAPI()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    is_software_stop_ = true;
+
+    int result = kinova_api_.stopControlAPI();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not stop the control API", result);
+    }
+
+    result = kinova_api_.eraseAllTrajectories();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not erase all trajectories", result);
+    }
+}
+
+
+/**
+ * @brief KinovaComm::isStopped check if API ceases the control of robot.
+ * @return true if stopAPI() was called.
+ */
+bool KinovaComm::isStopped()
+{
+    return is_software_stop_;
+}
+
+
+
+/**
+ * @brief KinovaComm::startForceControl Start cartesian force control.
+ */
+void KinovaComm::startForceControl()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.startForceControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not start force control.", result);
+    }
+}
+
+
+/**
+ * @brief KinovaComm::stopForceControl Stop cartesian force control.
+ */
+void KinovaComm::stopForceControl()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.stopForceControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not stop force control.", result);
+    }
+}
+
+
+/**
+ * @brief KinovaComm::robotType get robotType
+ *
+ * Index for robot type:
+ *  JACOV1_ASSISTIVE = 0,
+ *  MICO_6DOF_SERVICE = 1,
+ *  MICO_4DOF_SERVICE = 2,
+ * 	JACOV2_6DOF_SERVICE = 3,
+ * 	JACOV2_4DOF_SERVICE = 4,
+ * 	MICO_6DOF_ASSISTIVE = 5,
+ * 	JACOV2_6DOF_ASSISTIVE = 6,
+ *
+ * @return index of robot type
+ */
+int KinovaComm::robotType() const
+{
+    return robot_type_;
+}
+
+
+/**
+ * @brief KinovaComm::getQuickStatus obtain the current "quick status".
+ * @param quick_status This structure holds various informations but mostly it is flag status, such as robotype, retractType, forceControlStatus,
+ */
+void KinovaComm::getQuickStatus(QuickStatus &quick_status)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    memset(&quick_status, 0, sizeof(quick_status));  // zero structure
+    int result = kinova_api_.getQuickStatus(quick_status);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get quick status", result);
+    }
+}
+
+
+/**
+ * @brief Obtains the current arm configuration.
+ *
+ * This is the configuration which are stored on the arm itself. Many of these configurations may be set using the Windows interface.
+ *
+ * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
+ */
+void KinovaComm::setConfig(const ClientConfigurations &config)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.setClientConfigurations(config);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the client configuration", result);
+    }
+}
+
+
+/**
+ * @brief KinovaComm::getConfig obtain the current client configuration.
+ * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
+ */
+void KinovaComm::getConfig(ClientConfigurations &config)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    memset(&config, 0, sizeof(config));  // zero structure
+
+    int result = kinova_api_.getClientConfigurations(config);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get client configuration", result);
+    }
+}
+
+/**
+ * @brief KinovaComm::printConfig Dumps the client configuration onto the screen.
+ * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
+ */
+void KinovaComm::printConfig(const ClientConfigurations &config)
+{
+    ROS_INFO_STREAM("Arm configuration:\n"
+                    "\tClientID: " << config.ClientID <<
+                    "\n\tClientName: " << config.ClientName <<
+                    "\n\tOrganization: " << config.Organization <<
+                    "\n\tSerial:" << config.Serial <<
+                    "\n\tModel: " << config.Model <<
+                    "\n\tMaxForce: " << config.MaxForce <<
+                    "\n\tSensibility: " <<  config.Sensibility <<
+                    "\n\tDrinkingHeight: " << config.DrinkingHeight <<
+                    "\n\tComplexRetractActive: " << config.ComplexRetractActive <<
+                    "\n\tRetractedPositionAngle: " << config.RetractedPositionAngle <<
+                    "\n\tRetractedPositionCount: " << config.RetractedPositionCount <<
+                    "\n\tDrinkingDistance: " << config.DrinkingDistance <<
+                    "\n\tFingers2and3Inverted: " << config.Fingers2and3Inverted <<
+                    "\n\tDrinkingLength: " << config.DrinkingLenght <<
+                    "\n\tDeletePreProgrammedPositionsAtRetract: " <<
+                    config.DeletePreProgrammedPositionsAtRetract <<
+                    "\n\tEnableFlashErrorLog: " << config.EnableFlashErrorLog <<
+                    "\n\tEnableFlashPositionLog: " << config.EnableFlashPositionLog);
+}
+
+
+
+/**
+ * @brief Obtain current joint angles
+ * @param angles in degrees
+ */
+void KinovaComm::getJointAngles(KinovaAngles &angles)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition kinova_angles;
+    memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
+
+    int result = kinova_api_.getAngularPosition(kinova_angles);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the angular position", result);
+    }
+
+    angles = KinovaAngles(kinova_angles.Actuators);
 }
 
 
@@ -383,6 +441,121 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
     }
 }
 
+/**
+ * @brief obtain the current angular velocities of all the joints.
+ * @param vels joint velocity in degrees/second
+ */
+void KinovaComm::getJointVelocities(KinovaAngles &vels)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition kinova_vels;
+    memset(&kinova_vels, 0, sizeof(kinova_vels));  // zero structure
+
+    int result = kinova_api_.getAngularVelocity(kinova_vels);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the angular velocity", result);
+    }
+
+    vels = KinovaAngles(kinova_vels.Actuators);
+}
+
+/**
+ * @brief joint velocity Control
+ *
+ * set TrajectoryPoint type as ANGULAR_VELOCITY, and send it with sendAdvanceTrajectory().
+ *
+ * @param joint_vel joint velocity in degree/second
+ */
+void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The velocities could not be set because the arm is stopped");
+        return;
+    }
+
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
+
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
+
+    //startAPI();
+    kinova_velocity.Position.Type = ANGULAR_VELOCITY;
+
+    // confusingly, velocity is passed in the position struct
+    kinova_velocity.Position.Actuators = joint_vel;
+
+    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
+    }
+}
+
+/**
+ * @brief obtain the current torque of all the joints.
+ * @param tqs joint torques in Nm
+ */
+void KinovaComm::getJointTorques(KinovaAngles &tqs)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition kinova_tqs;
+    memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
+
+    int result = kinova_api_.getAngularForce(kinova_tqs);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the joint torques", result);
+    }
+
+    tqs = KinovaAngles(kinova_tqs.Actuators);
+}
+
+/**
+ * @brief KinovaComm::printAngles Dumps the current joint angles onto the screen.
+ * @param angles in degrees
+ */
+void KinovaComm::printAngles(const KinovaAngles &angles)
+{
+    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
+             angles.Actuator1, angles.Actuator2, angles.Actuator3,
+             angles.Actuator4, angles.Actuator5, angles.Actuator6);
+}
+
+
+
+
+/**
+ * @brief obtain the current cartesian pose of the arm.
+ *
+ * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ *
+ * @param position pose in [X,Y,Z,ThetaX,ThetaY,ThetaZ]
+ */
+void KinovaComm::getCartesianPosition(KinovaPose &position)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    CartesianPosition kinova_cartesian_position;
+    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
+
+    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the Cartesian position", result);
+    }
+
+    ROS_INFO_STREAM_ONCE("Cartesian pose in [X,Y,Z, ThetaX, ThetaY, ThetaZ] is : " << kinova_cartesian_position.Coordinates.X << ", "
+                    << kinova_cartesian_position.Coordinates.Y << ", "
+                    << kinova_cartesian_position.Coordinates.Z << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaX << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaY << ", "
+                    << kinova_cartesian_position.Coordinates.ThetaZ << std::endl);
+
+    position = KinovaPose(kinova_cartesian_position.Coordinates);
+}
 
 /**
 * @brief Sends a cartesian coordinate trajectory to the Kinova arm.
@@ -393,7 +566,6 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
 * @param timeout default 0.0, not used.
 * @param push default true, errase all trajectory after motion.
 */
-
 void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
@@ -438,9 +610,167 @@ void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool 
     }
 }
 
+/**
+ * @brief Linear and anguler velocity control in Cartesian space
+ *
+ * Not tested, and may not function. Definition of anguler velocity is not clear. ???
+ *
+ * @param velocities unit are meter/second and radians/second.
+ */
+void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
-/*!
- * \brief Sets the finger positions
+    if (isStopped())
+    {
+        ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
+        kinova_api_.eraseAllTrajectories();
+        return;
+    }
+
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
+
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
+
+    //startAPI();
+    kinova_velocity.Position.Type = CARTESIAN_VELOCITY;
+
+    // confusingly, velocity is passed in the position struct
+    kinova_velocity.Position.CartesianPosition = velocities;
+
+    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
+    }
+}
+
+/**
+ * @brief Set the cartesian min and max force parameters for force control.
+ * @param min
+ * @param max
+ */
+void KinovaComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.setCartesianForceMinMax(min, max);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set cartesian min/max force.", result);
+    }
+}
+
+/**
+ * @brief obtain the current cartesian force of the arm.
+ * @param cart_force wrench in end-effector frame
+ */
+void KinovaComm::getCartesianForce(KinovaPose &cart_force)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    CartesianPosition kinova_cartesian_force;
+    memset(&kinova_cartesian_force, 0, sizeof(kinova_cartesian_force));  // zero structure
+
+    int result = kinova_api_.getCartesianForce(kinova_cartesian_force);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the Cartesian force", result);
+    }
+
+    cart_force = KinovaPose(kinova_cartesian_force.Coordinates);
+}
+
+/**
+ * @brief Set the cartesian inertia and damping parameters for force control.
+ *
+ * Do not use it unless you know well with force control. For admittance control???
+ *
+ * @param inertia
+ * @param damping
+ */
+void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.setCartesianInertiaDamping(inertia, damping);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set cartesian inertia and damping", result);
+    }
+}
+
+/**
+ * @brief KinovaComm::setEndEffectorOffset Set the end effector offset.
+ *
+ * Definition of EndEffectorOffset, Frame between Fingers w.r.t. last joint frame ???
+ *
+ * @param x in meter
+ * @param y in meter
+ * @param z in meter
+ */
+void KinovaComm::setEndEffectorOffset(float x, float y, float z)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    // Recopy the current status:
+    float tx, ty, tz;
+    unsigned int status;
+    int result = kinova_api_.getEndEffectorOffset(status, tx, ty, tz);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get current end effector offset.", result);
+    }
+
+    result = kinova_api_.setEndEffectorOffset(status, x, y, z);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set end effector offset.", result);
+    }
+}
+
+/**
+ * @brief KinovaComm::printPosition Dumps the current cartesian pose onto the screen.
+ * @param position in [X,Y,Z,ThetaX,ThetaY,ThetaZ], where orientation is using Euler-ZYX convention.
+ */
+void KinovaComm::printPosition(const KinovaPose &position)
+{
+    ROS_INFO("Arm position\n"
+             "\tposition (m) -- x: %f, y: %f z: %f\n"
+             "\trotation (rad) -- theta_x: %f, theta_y: %f, theta_z: %f",
+             position.X, position.Y, position.Z,
+             position.ThetaX, position.ThetaY, position.ThetaZ);
+}
+
+
+
+/**
+ * @brief obtain the current finger positions.
+ * @param fingers fingers in degrees, range from 0 to 6800
+ */
+void KinovaComm::getFingerPositions(FingerAngles &fingers)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    CartesianPosition kinova_cartesian_position;
+    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
+
+    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get Cartesian finger position", result);
+    }
+
+    if (num_fingers_ == 2)
+    {
+        kinova_cartesian_position.Fingers.Finger3 = 0.0;
+    }
+
+    fingers = FingerAngles(kinova_cartesian_position.Fingers);
+}
+
+/**
+ * @brief Sets the finger positions
+ * @param fingers in degrees from 0 to about 6800
+ * @param timeout timeout default 0.0, not used.
+ * @param push default true, errase all trajectory after
  */
 void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool push)
 {
@@ -506,387 +836,21 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 }
 
-
-/*!
- * \brief Set the angular velocity of the joints
- */
-void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    if (isStopped())
-    {
-        ROS_INFO("The velocities could not be set because the arm is stopped");
-        return;
-    }
-
-    TrajectoryPoint kinova_velocity;
-    kinova_velocity.InitStruct();
-
-    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
-
-    //startAPI();
-    kinova_velocity.Position.Type = ANGULAR_VELOCITY;
-
-    // confusingly, velocity is passed in the position struct
-    kinova_velocity.Position.Actuators = joint_vel;
-
-    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
-    }
-}
-
-
-/*!
- * \brief Set the cartesian velocity of the tool tip
- */
-void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    if (isStopped())
-    {
-        ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
-        kinova_api_.eraseAllTrajectories();
-        return;
-    }
-
-    TrajectoryPoint kinova_velocity;
-    kinova_velocity.InitStruct();
-
-    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
-
-    //startAPI();
-    kinova_velocity.Position.Type = CARTESIAN_VELOCITY;
-
-    // confusingly, velocity is passed in the position struct
-    kinova_velocity.Position.CartesianPosition = velocities;
-
-    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
-    }
-}
-
-
-/*!
- * \brief Obtains the current arm configuration.
+/**
+ * @brief KinovaComm::numFingers get number of fingers.
  *
- * This is the configuration which are stored on the arm itself. Many of these
- * configurations may be set using the Windows interface.
+ * number of fingers determined by robotType. 3 fingers for robotType(0,3,4,6) and 2 fingers for robotType(1,2,5)
+ *
+ * @return returns number of fingers.
  */
-void KinovaComm::setConfig(const ClientConfigurations &config)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.setClientConfigurations(config);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not set the client configuration", result);
-    }
-}
-
-
-/*!
- * \brief API call to obtain the current angular position of all the joints.
- */
-void KinovaComm::getJointAngles(KinovaAngles &angles)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition kinova_angles;
-    memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
-
-    int result = kinova_api_.getAngularPosition(kinova_angles);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get the angular position", result);
-    }
-
-    angles = KinovaAngles(kinova_angles.Actuators);
-}
-
-/*!
- * \brief API call to obtain the current angular velocities of all the joints.
- */
-void KinovaComm::getJointVelocities(KinovaAngles &vels)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition kinova_vels;
-    memset(&kinova_vels, 0, sizeof(kinova_vels));  // zero structure
-
-    int result = kinova_api_.getAngularVelocity(kinova_vels);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get the angular velocity", result);
-    }
-
-    vels = KinovaAngles(kinova_vels.Actuators);
-}
-
-/*!
- * \brief API call to obtain the current torque of all the joints.
- */
-void KinovaComm::getJointTorques(KinovaAngles &tqs)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    AngularPosition kinova_tqs;
-    memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
-
-    int result = kinova_api_.getAngularForce(kinova_tqs);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get the joint torques", result);
-    }
-
-    tqs = KinovaAngles(kinova_tqs.Actuators);
-}
-/*!
- * \brief API call to obtain the current cartesian position of the arm.
- */
-void KinovaComm::getCartesianPosition(KinovaPose &position)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition kinova_cartesian_position;
-    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
-
-    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get the Cartesian position", result);
-    }
-
-    ROS_INFO_STREAM_ONCE("Cartesian pose in [X,Y,Z, ThetaX, ThetaY, ThetaZ] is : " << kinova_cartesian_position.Coordinates.X << ", "
-                    << kinova_cartesian_position.Coordinates.Y << ", "
-                    << kinova_cartesian_position.Coordinates.Z << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaX << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaY << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaZ << std::endl);
-
-    position = KinovaPose(kinova_cartesian_position.Coordinates);
-}
-
-/*!
- * \brief API call to obtain the current cartesian force of the arm.
- */
-void KinovaComm::getCartesianForce(KinovaPose &cart_force)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition kinova_cartesian_force;
-    memset(&kinova_cartesian_force, 0, sizeof(kinova_cartesian_force));  // zero structure
-
-    int result = kinova_api_.getCartesianForce(kinova_cartesian_force);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get the Cartesian force", result);
-    }
-
-    cart_force = KinovaPose(kinova_cartesian_force.Coordinates);
-}
-
-/*!
- * \brief API call to obtain the current finger positions.
- */
-void KinovaComm::getFingerPositions(FingerAngles &fingers)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    CartesianPosition kinova_cartesian_position;
-    memset(&kinova_cartesian_position, 0, sizeof(kinova_cartesian_position));  // zero structure
-
-    int result = kinova_api_.getCartesianPosition(kinova_cartesian_position);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get Cartesian finger position", result);
-    }
-
-    if (num_fingers_ == 2)
-    {
-        kinova_cartesian_position.Fingers.Finger3 = 0.0;
-    }
-
-    fingers = FingerAngles(kinova_cartesian_position.Fingers);
-}
-
-/*!
- * \brief Set the cartesian inertia and damping parameters for force control.
- */
-void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.setCartesianInertiaDamping(inertia, damping);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not set cartesian inertia and damping", result);
-    }
-}
-
-/*!
- * \brief Set the cartesian min and max force parameters for force control.
- */
-void KinovaComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.setCartesianForceMinMax(min, max);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not set cartesian min/max force.", result);
-    }
-}
-
-/*!
- * \brief Start cartesian force control.
- */
-void KinovaComm::startForceControl()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.startForceControl();
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not start force control.", result);
-    }
-}
-
-/*!
- * \brief Stop cartesian force control.
- */
-void KinovaComm::stopForceControl()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    int result = kinova_api_.stopForceControl();
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not stop force control.", result);
-    }
-}
-
-/*!
- * \brief Set the end effector offset
- */
-void KinovaComm::setEndEffectorOffset(float x, float y, float z)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    // Recopy the current status:
-    float tx, ty, tz;
-    unsigned int status;
-    int result = kinova_api_.getEndEffectorOffset(status, tx, ty, tz);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get current end effector offset.", result);
-    }
-
-    result = kinova_api_.setEndEffectorOffset(status, x, y, z);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not set end effector offset.", result);
-    }
-}
-
-/*!
- * \brief API call to obtain the current client configuration.
- */
-void KinovaComm::getConfig(ClientConfigurations &config)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    memset(&config, 0, sizeof(config));  // zero structure
-
-    int result = kinova_api_.getClientConfigurations(config);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get client configuration", result);
-    }
-}
-
-
-/*!
- * \brief API call to obtain the current "quick status".
- */
-void KinovaComm::getQuickStatus(QuickStatus &quick_status)
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    memset(&quick_status, 0, sizeof(quick_status));  // zero structure
-    int result = kinova_api_.getQuickStatus(quick_status);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get quick status", result);
-    }
-}
-
-
-void KinovaComm::stopAPI()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    is_software_stop_ = true;
-
-    int result = kinova_api_.stopControlAPI();
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not stop the control API", result);
-    }
-
-    result = kinova_api_.eraseAllTrajectories();
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not erase all trajectories", result);
-    }
-}
-
-
-void KinovaComm::startAPI()
-{
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    if (is_software_stop_)
-    {
-        is_software_stop_ = false;
-        kinova_api_.stopControlAPI();
-        ros::Duration(0.05).sleep();
-    }
-
-    int result = kinova_api_.startControlAPI();
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not start the control API", result);
-    }
-}
-
-
 int KinovaComm::numFingers() const
 {
     return num_fingers_;
 }
 
-int KinovaComm::robotType() const
-{
-    return robot_type_;
-}
-
-/*!
- * \brief Dumps the current joint angles onto the screen.
- */
-void KinovaComm::printAngles(const KinovaAngles &angles)
-{
-    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
-             angles.Actuator1, angles.Actuator2, angles.Actuator3,
-             angles.Actuator4, angles.Actuator5, angles.Actuator6);
-}
-
-
-/*!
- * \brief Dumps the current cartesian positions onto the screen.
- */
-void KinovaComm::printPosition(const KinovaPose &position)
-{
-    ROS_INFO("Arm position\n"
-             "\tposition (m) -- x: %f, y: %f z: %f\n"
-             "\trotation (rad) -- theta_x: %f, theta_y: %f, theta_z: %f",
-             position.X, position.Y, position.Z,
-             position.ThetaX, position.ThetaY, position.ThetaZ);
-}
-
-
-/*!
- * \brief Dumps the current finger positions onto the screen.
+/**
+ * @brief KinovaComm::printFingers Dumps the current finger agnles onto the screen.
+ * @param fingers
  */
 void KinovaComm::printFingers(const FingersPosition &fingers)
 {
@@ -894,43 +858,145 @@ void KinovaComm::printFingers(const FingersPosition &fingers)
              fingers.Finger1, fingers.Finger2, fingers.Finger3);
 }
 
-
-/*!
- * \brief Dumps the client configuration onto the screen.
+/**
+ * @brief Send the arm to the "home" position.
+ *
+ * The code replicates the function of the "home" button on the user
+ *  controller by "pressing" the home button long enough for the arm
+ *  to return to the home position.
  */
-void KinovaComm::printConfig(const ClientConfigurations &config)
-{
-    ROS_INFO_STREAM("Arm configuration:\n"
-                    "\tClientID: " << config.ClientID <<
-                    "\n\tClientName: " << config.ClientName <<
-                    "\n\tOrganization: " << config.Organization <<
-                    "\n\tSerial:" << config.Serial <<
-                    "\n\tModel: " << config.Model <<
-                    "\n\tMaxForce: " << config.MaxForce <<
-                    "\n\tSensibility: " <<  config.Sensibility <<
-                    "\n\tDrinkingHeight: " << config.DrinkingHeight <<
-                    "\n\tComplexRetractActive: " << config.ComplexRetractActive <<
-                    "\n\tRetractedPositionAngle: " << config.RetractedPositionAngle <<
-                    "\n\tRetractedPositionCount: " << config.RetractedPositionCount <<
-                    "\n\tDrinkingDistance: " << config.DrinkingDistance <<
-                    "\n\tFingers2and3Inverted: " << config.Fingers2and3Inverted <<
-                    "\n\tDrinkingLength: " << config.DrinkingLenght <<
-                    "\n\tDeletePreProgrammedPositionsAtRetract: " <<
-                    config.DeletePreProgrammedPositionsAtRetract <<
-                    "\n\tEnableFlashErrorLog: " << config.EnableFlashErrorLog <<
-                    "\n\tEnableFlashPositionLog: " << config.EnableFlashPositionLog);
-}
-
-
-bool KinovaComm::isStopped()
-{
-    return is_software_stop_;
-}
-
-//double KinovaComm::j6o() const
+//void KinovaComm::homeArm(void)
 //{
-//    // J6 offset is 260 for Kinova R1 (type 0), and 270 for Mico and Kinova R2.
-//    return robotType() == 0 ? 260.0 : 270.0;
+//    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+//    if (isStopped())
+//    {
+//        ROS_INFO("Arm is stopped, cannot home");
+//        return;
+//    }
+//    else if (isHomed())
+//    {
+//        ROS_INFO("Arm is already in \"home\" position");
+//        return;
+//    }
+
+//    stopAPI();
+//    ros::Duration(1.0).sleep();
+//    startAPI();
+
+//    ROS_INFO("Homing the arm");
+//    int result = kinova_api_.moveHome();
+//    if (result != NO_ERROR_KINOVA)
+//    {
+//        throw KinovaCommException("Move home failed", result);
+//    }
 //}
+
+// pure test using name homeArm to avoid writing more codes.
+void KinovaComm::homeArm(void)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    try
+    {
+        ROS_INFO("test apis in kinova_comm.cpp");
+
+        KinovaPose target_pose;
+
+        getCartesianPosition(target_pose);
+        ROS_WARN_STREAM("target_pose, X: " << target_pose.X << ", ThetaX: " << target_pose.ThetaX << std::endl;);
+
+
+// NOT reach goal from home pose, threshold 0.01 0.01
+target_pose.X = 0.396;  //0.396373
+target_pose.Y = -0.226; //-0.226768
+target_pose.Z = 0.472;  // 0.465659
+target_pose.ThetaX = 1.503; //1.70618
+target_pose.ThetaY = 1.519; // 1.52039
+target_pose.ThetaZ = 0.056; // -0.139276
+
+
+// reach goal from home pose, threshold 0.01 0.01
+target_pose.X = 0.4476;  // 0.4487
+target_pose.Y = -0.2483; //-0.2469
+target_pose.Z = 0.5787;  //0.5746
+target_pose.ThetaX = 0.9731; // 0.9759
+target_pose.ThetaY = 0.0440; // 0.0507
+target_pose.ThetaZ = -2.2164; // -2.2227
+
+        setCartesianPosition(target_pose);
+
+        while(ros::ok())
+        {
+            KinovaPose currentPose;
+            getCartesianPosition(currentPose);
+            ROS_INFO_STREAM("currentPose, X: " << currentPose.X << ", Y: " << currentPose.Y << ", Z: " << currentPose.Z << ", ThetaX: " << currentPose.ThetaX << ", ThetaY: " << currentPose.ThetaY << ", ThetaZ: " << currentPose.ThetaZ << std::endl);
+
+            ROS_INFO_STREAM(" they are close? :  " << target_pose.isCloseToOther(currentPose, 0.01, 0.01) <<  std::endl);
+
+            // according to definition of setCartesianPosition, the following line may be not necessary, as it release control until stopped.
+            setCartesianPosition(target_pose);
+
+            if(target_pose.isCloseToOther(currentPose, 0.01, 0.01))
+            {
+               ROS_WARN_STREAM("ready to jump out of loop" << std::endl;);
+                break;
+            }
+            ros::Duration(0.1).sleep();
+        }
+
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: test warnings" << std::endl);
+
+    }
+    catch (std::exception excep)
+    {
+        ROS_INFO_STREAM("IT is a TERRIBLE test! *** " << excep.what() << std::endl);
+    }
+}
+
+
+/**
+ * @brief Determines whether the arm has returned to its "Home" state.
+ *
+ * Checks the current joint angles, then compares them to the known
+ *  "Home" joint angles.
+ *
+ * @return true is robot is already in predefined "Home"
+ *  configuration.
+ */
+bool KinovaComm::isHomed(void)
+{
+    QuickStatus quick_status;
+    getQuickStatus(quick_status);
+
+    if (quick_status.RetractType == RETRACT_TYPE_READY_STANDBY)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+/**
+ * @brief Initialize finger actuators.
+ *
+ * Move fingers to the full-open position to initialize them for use.
+ * Note, The this routine requires firmware version 5.05.x (or higher).
+ */
+void KinovaComm::initFingers(void)
+{
+    ROS_INFO("Initializing fingers...this will take a few seconds and the fingers should open completely");
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.initFingers();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not init fingers", result);
+    }
+    return;
+}
+
 
 }  // namespace kinova
