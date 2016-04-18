@@ -907,7 +907,7 @@ void KinovaComm::homeArm(void)
         ROS_WARN_STREAM("target_pose, X: " << target_pose.X << ", ThetaX: " << target_pose.ThetaX << std::endl;);
 
 
-// NOT reach goal from home pose, threshold 0.01 0.01
+// NOT reach goal if orientation threshold under 0.01meter, 5 degree
 target_pose.X = 0.396;  //0.396373
 target_pose.Y = -0.226; //-0.226768
 target_pose.Z = 0.472;  // 0.465659
@@ -916,13 +916,13 @@ target_pose.ThetaY = 1.519; // 1.52039
 target_pose.ThetaZ = 0.056; // -0.139276
 
 
-// reach goal from home pose, threshold 0.01 0.01
-target_pose.X = 0.4476;  // 0.4487
-target_pose.Y = -0.2483; //-0.2469
-target_pose.Z = 0.5787;  //0.5746
-target_pose.ThetaX = 0.9731; // 0.9759
-target_pose.ThetaY = 0.0440; // 0.0507
-target_pose.ThetaZ = -2.2164; // -2.2227
+//// can reach goal when threshold 0.01meter, 1.0degree
+//target_pose.X = 0.4476;  // 0.4487
+//target_pose.Y = -0.2483; //-0.2469
+//target_pose.Z = 0.5787;  //0.5746
+//target_pose.ThetaX = 0.9731; // 0.9759
+//target_pose.ThetaY = 0.0440; // 0.0507
+//target_pose.ThetaZ = -2.2164; // -2.2227
 
         setCartesianPosition(target_pose);
 
@@ -932,25 +932,18 @@ target_pose.ThetaZ = -2.2164; // -2.2227
             getCartesianPosition(currentPose);
             ROS_INFO_STREAM("currentPose, X: " << currentPose.X << ", Y: " << currentPose.Y << ", Z: " << currentPose.Z << ", ThetaX: " << currentPose.ThetaX << ", ThetaY: " << currentPose.ThetaY << ", ThetaZ: " << currentPose.ThetaZ << std::endl);
 
-            ROS_INFO_STREAM(" they are close? :  " << target_pose.isCloseToOther(currentPose, 0.01, 0.01) <<  std::endl);
-
-            // according to definition of setCartesianPosition, the following line may be not necessary, as it release control until stopped.
-            setCartesianPosition(target_pose);
-
-            if(target_pose.isCloseToOther(currentPose, 0.01, 0.01))
+            if(target_pose.isCloseToOther(currentPose, 0.01, 5*M_PI/180))
             {
                ROS_WARN_STREAM("ready to jump out of loop" << std::endl;);
                 break;
             }
             ros::Duration(0.1).sleep();
         }
-
-        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: test warnings" << std::endl);
-
     }
     catch (std::exception excep)
     {
-        ROS_INFO_STREAM("IT is a TERRIBLE test! *** " << excep.what() << std::endl);
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: test warnings" << std::endl);
+        ROS_ERROR_STREAM("ERROR in the test *** :" << excep.what() << std::endl);
     }
 }
 
