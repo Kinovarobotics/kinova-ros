@@ -189,7 +189,7 @@ KinovaComm::~KinovaComm()
 
 
 /**
- * @brief KinovaComm::startAPI API gains the control of robot
+ * @brief This function tells the robotical arm that from now on, the API will control the robotical arm. It must been call before sending trajectories or joystick command.
  */
 void KinovaComm::startAPI()
 {
@@ -210,7 +210,7 @@ void KinovaComm::startAPI()
 
 
 /**
- * @brief KinovaComm::stopAPI API ceases the control of robot
+ * @brief This function tells the robotical arm the from now on the API is not controlling the robotical arm.
  */
 void KinovaComm::stopAPI()
 {
@@ -232,7 +232,7 @@ void KinovaComm::stopAPI()
 
 
 /**
- * @brief KinovaComm::isStopped check if API ceases the control of robot.
+ * @brief check if API lost the control of robot.
  * @return true if stopAPI() was called.
  */
 bool KinovaComm::isStopped()
@@ -242,7 +242,8 @@ bool KinovaComm::isStopped()
 
 
 /**
- * @brief KinovaComm::startForceControl Start cartesian force control.
+ * @brief This function activates the reactive force control for admittance control. Admittance control may be applied to joint or Cartesian depending to the control mode.
+ * @warning You can only use this function if your robotic device has torque sensors on it. Also, the robotic device must be in a standard vertical position.
  */
 void KinovaComm::startForceControl()
 {
@@ -256,7 +257,7 @@ void KinovaComm::startForceControl()
 
 
 /**
- * @brief KinovaComm::stopForceControl Stop cartesian force control.
+ * @brief This function stops the admittance control. Admittance control may be applied to joint or Cartesian depending to the control mode.
  */
 void KinovaComm::stopForceControl()
 {
@@ -270,8 +271,7 @@ void KinovaComm::stopForceControl()
 
 
 /**
- * @brief KinovaComm::robotType get robotType
- *
+ * @brief get robotType
  * Index for robot type:
  *  JACOV1_ASSISTIVE = 0,
  *  MICO_6DOF_SERVICE = 1,
@@ -280,7 +280,6 @@ void KinovaComm::stopForceControl()
  * 	JACOV2_4DOF_SERVICE = 4,
  * 	MICO_6DOF_ASSISTIVE = 5,
  * 	JACOV2_6DOF_ASSISTIVE = 6,
- *
  * @return index of robot type
  */
 int KinovaComm::robotType() const
@@ -290,7 +289,7 @@ int KinovaComm::robotType() const
 
 
 /**
- * @brief KinovaComm::getQuickStatus obtain the current "quick status".
+ * @brief This function gets information regarding some status flag of the robotical arm.
  * @param quick_status This structure holds various informations but mostly it is flag status, such as robotype, retractType, forceControlStatus,
  */
 void KinovaComm::getQuickStatus(QuickStatus &quick_status)
@@ -306,11 +305,8 @@ void KinovaComm::getQuickStatus(QuickStatus &quick_status)
 
 
 /**
- * @brief Obtains the current arm configuration.
- *
- * This is the configuration which are stored on the arm itself. Many of these configurations may be set using the Windows interface.
- *
- * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
+ * @brief This function set the client configurations of the robotical arm. The configuration data is stored on the arm itself.
+ * @param config config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
  */
 void KinovaComm::setConfig(const ClientConfigurations &config)
 {
@@ -324,7 +320,7 @@ void KinovaComm::setConfig(const ClientConfigurations &config)
 
 
 /**
- * @brief KinovaComm::getConfig obtain the current client configuration.
+ * @brief obtain the current client configuration.
  * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
  */
 void KinovaComm::getConfig(ClientConfigurations &config)
@@ -341,7 +337,7 @@ void KinovaComm::getConfig(ClientConfigurations &config)
 
 
 /**
- * @brief KinovaComm::printConfig Dumps the client configuration onto the screen.
+ * @brief Dumps the client configuration onto the screen.
  * @param config This structure holds informations relative to the client, including serial number, robot model, limits for position, velocity, acceleration and force, etc.
  */
 void KinovaComm::printConfig(const ClientConfigurations &config)
@@ -369,7 +365,7 @@ void KinovaComm::printConfig(const ClientConfigurations &config)
 
 
 /**
- * @brief KinovaComm::getControlType get current control type
+ * @brief get current control type
  * The control in ROS is independent to Joystick control type. For example: even set robot in joint control though api in ROS, robot may still controlled in joint level by joystick.
  * @param controlType Cartesian control[0] or joint control[1]
  */
@@ -386,7 +382,7 @@ void KinovaComm::getControlType(int &controlType)
 
 
 /**
- * @brief KinovaComm::getGeneralInformations get almost all information of the robotical arm.
+ * @brief get almost all information of the robotical arm.
  * @param general_info includes: power statistics, sensor infos, robot position and command, etc.
  */
 void KinovaComm::getGeneralInformations(GeneralInformations &general_info)
@@ -402,8 +398,8 @@ void KinovaComm::getGeneralInformations(GeneralInformations &general_info)
 
 
 /**
- * @brief KinovaComm::getSensorsInfo get feedback from equipped sensors.
- * @param sensor_Info temperate and accelerometer info. voltage and current are included as well.
+ * @brief This function returns information about the robotical arm's sensors. (Voltage, Total current, Temperature, acceleration)
+ * @param The structure containing the sensor's informations
  */
 void KinovaComm::getSensorsInfo(SensorsInfo &sensor_Info)
 {
@@ -418,8 +414,8 @@ void KinovaComm::getSensorsInfo(SensorsInfo &sensor_Info)
 
 
 /**
- * @brief KinovaComm::getForcesInfo
- * @param force_Info joint torque and end-effector wrench in Nm and N.
+ * @brief This function gets information regarding all forces.
+ * @param force_Info A struct containing the information about the forces. Joint torque and end-effector wrench in Nm and N.
  */
 void KinovaComm::getForcesInfo(ForcesInfo &force_Info)
 {
@@ -434,8 +430,8 @@ void KinovaComm::getForcesInfo(ForcesInfo &force_Info)
 
 
 /**
- * @brief KinovaComm::getGripperStatus
- * @param gripper_status most complete information of each fingers, including model, motion, force, limits, etc.
+ * @brief This function gets informations about the robotical arm's gripper. Some information may be missing, it is still in development.
+ * @param gripper_status A struct containing the information of the gripper. Most information of each fingers, including model, motion, force, limits, etc.
  */
 void KinovaComm::getGripperStatus(Gripper &gripper_status)
 {
@@ -452,7 +448,7 @@ void KinovaComm::getGripperStatus(Gripper &gripper_status)
 
 
 /**
- * @brief KinovaComm::setAngularControl
+ * @brief This function sets the robotical arm in angular control mode.
  * If robot is not in motion, change control model to Angular control
  */
 void KinovaComm::setAngularControl()
@@ -475,8 +471,11 @@ void KinovaComm::setAngularControl()
 
 
 /**
- * @brief KinovaComm::getAngularCommand
- * @param angular_command {AngularInfo, FingersPosition}
+ * @brief This function get the angular command of all actuators.
+ * @param An AngularPosition struct containing the values. Units are degrees. angular_command {AngularInfo, FingersPosition}
+ * @return
+ *        - @ref NO_ERROR_KINOVA if operation is a success
+ *        - @ref ERROR_API_NOT_INITIALIZED if the API has not been initialized. To initialize it, call the InitAPI() function.
  */
 void KinovaComm::getAngularCommand(AngularPosition &angular_command)
 {
@@ -491,8 +490,8 @@ void KinovaComm::getAngularCommand(AngularPosition &angular_command)
 
 
 /**
- * @brief Obtain current joint angles
- * @param angles in degrees
+ * @brief This function returns the angular position of the robotical arm's end effector.
+ * @param angles A structure that contains the position of each actuator. Unit in degrees.
  */
 void KinovaComm::getJointAngles(KinovaAngles &angles)
 {
@@ -505,20 +504,16 @@ void KinovaComm::getJointAngles(KinovaAngles &angles)
     {
         throw KinovaCommException("Could not get the angular position", result);
     }
-
     angles = KinovaAngles(kinova_angles.Actuators);
 }
 
 
 /**
  * @brief Sends a joint angle command to the Kinova arm.
- *
- * Waits until the arm has stopped moving before releasing control of
- *  the API. sendAdvanceTrajectory() is called in api to complete the motion.
- *
+ * This function sends trajectory point(Angular) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
  * @param angles target joint angle to set, type float, unit in degree
  * @param timeout default value 0.0, not used.
- * @param push default true, errase all trajectory after motion.
+ * @param push default true, errase all trajectory before request motion..
  */
 void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool push)
 {
@@ -566,8 +561,8 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
 
 
 /**
- * @brief obtain the current angular velocities of all the joints.
- * @param vels joint velocity in degrees/second
+ * @brief This function get the velocity of each actuator.
+ * @param vels A kinovaAngles structure contains joint velocity of each actuator. Unit in degrees/second.
  */
 void KinovaComm::getJointVelocities(KinovaAngles &vels)
 {
@@ -586,10 +581,8 @@ void KinovaComm::getJointVelocities(KinovaAngles &vels)
 
 
 /**
- * @brief joint velocity Control
- *
- * set TrajectoryPoint type as ANGULAR_VELOCITY, and send it with sendAdvanceTrajectory().
- *
+ * @brief This function controls robot with joint velocity.
+ * This function sends trajectory point(ANGULAR_VELOCITY) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
  * @param joint_vel joint velocity in degree/second
  */
 void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
@@ -622,8 +615,8 @@ void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
 
 
 /**
- * @brief KinovaComm::getJointAccelerations get joint acceleration
- * @param joint_acc unit in degree per second^2
+ * @brief This function get the accelerometer values of each actuator. It does not directly refer to the angular acceleration.
+ * @param joint_acc An AngularAcceleration struct containing the values. Units are in G
  */
 void KinovaComm::getJointAccelerations(AngularAcceleration &joint_acc)
 {
@@ -638,8 +631,8 @@ void KinovaComm::getJointAccelerations(AngularAcceleration &joint_acc)
 
 
 /**
- * @brief obtain the current torque of all the joints.
- * @param tqs joint torques in Nm
+ * @brief This function returns the torque of each actuator.
+ * @param tqs A structure that contains the torque of each actuator. Unit is Newton * meter
  */
 void KinovaComm::getJointTorques(KinovaAngles &tqs)
 {
@@ -658,8 +651,8 @@ void KinovaComm::getJointTorques(KinovaAngles &tqs)
 
 
 /**
- * @brief KinovaComm::getJointCurrent
- * @param anguler_current current in joints, unit in A.
+ * @brief This function returns the current that each actuator consume on the main supply.
+ * @param anguler_current A structure that contains the current of each actuator and finger. Unit in A.
  */
 void KinovaComm::getJointCurrent(AngularPosition &anguler_current)
 {
@@ -674,9 +667,9 @@ void KinovaComm::getJointCurrent(AngularPosition &anguler_current)
 
 
 /**
- * @brief KinovaComm::setJointTorqueMinMax
- * @param min 6 actuators in Nm
- * @param max 6 actuators in Nm
+ * @brief This function set the angular torque's maximum and minimum values.
+ * @param min A struct that contains all angular minimum values. (Unit: N * m)
+ * @param max 6 A struct that contains all angular max values.     (Unit: N * m)
  */
 void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
 {
@@ -692,8 +685,8 @@ void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
 
 
 /**
- * @brief KinovaComm::printAngles Dumps the current joint angles onto the screen.
- * @param angles input in degrees
+ * @brief Dumps the current joint angles onto the screen.
+ * @param angles A structure contains six joint angles. Unit in degrees
  */
 void KinovaComm::printAngles(const KinovaAngles &angles)
 {
@@ -710,7 +703,7 @@ void KinovaComm::printAngles(const KinovaAngles &angles)
 
 
 /**
- * @brief KinovaComm::setCartesianControl
+ * @brief This function sets the robotical arm in cartesian control mode if this is possible.
  * If robot is not in motion, change control model to Angular control
  */
 void KinovaComm::setCartesianControl()
@@ -733,8 +726,28 @@ void KinovaComm::setCartesianControl()
 
 
 /**
- * @brief KinovaComm::getCartesianCommand
- * @param cartesian_command {CartesianInfo, FingersPosition}
+ * @brief This function get the cartesian command of the end effector. The Cartesian orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * @param cartesian_command An CartesianPosition struct containing the values of end-effector and fingers.
+ *
+ * @htmlonly
+ *
+ * <table border="0" cellspacing="10">
+ * <tr>
+ * <th>Member</th>
+ * <th>Unit</th>
+ * </tr>
+ * <tr><td width="50">X</td><td>meter</td></tr>
+ * <tr><td>Y</td><td>meter</td></tsr>
+ * <tr><td>Z</td><td>meter</td></tr>
+ * <tr><td>Theta X</td><td>RAD</td></tr>
+ * <tr><td>Theta Y</td><td>RAD</td></tr>
+ * <tr><td>Theta Z</td><td>RAD</td></tr>
+ * <tr><td>Finger 1</td><td>No unit</td></tr>
+ * <tr><td>Finger 2</td><td>No unit</td></tr>
+ * <tr><td>Finger 3</td><td>No unit</td></tr>
+ * </table>
+ *
+ * @endhtmlonly
  */
 void KinovaComm::getCartesianCommand(CartesianPosition &cartesian_command)
 {
@@ -749,11 +762,9 @@ void KinovaComm::getCartesianCommand(CartesianPosition &cartesian_command)
 
 
 /**
- * @brief obtain the current cartesian pose of the arm.
- *
+ * @brief This function returns the cartesian position of the robotical arm's end effector.
  * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
- *
- * @param position pose in [X,Y,Z,ThetaX,ThetaY,ThetaZ]
+ * @param position pose in [X,Y,Z,ThetaX,ThetaY,ThetaZ] form, Units in meters and radians.
  */
 void KinovaComm::getCartesianPosition(KinovaPose &position)
 {
@@ -779,14 +790,13 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
 
 
 /**
-* @brief Sends a cartesian coordinate trajectory to the Kinova arm.
-*
-* Waits until the arm has stopped moving before releasing control of the API. sendBasicTrajectory() is called in api to complete the motion.
-*
-* @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
-* @param timeout default 0.0, not used.
-* @param push default true, errase all trajectory after motion.
-*/
+ * @brief Sends a cartesian coordinate trajectory to the Kinova arm.
+ * This function sends trajectory point(Cartesian) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendBasicTrajectory() is called in api to complete the motion.
+ * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
+ * @param timeout default 0.0, not used.
+ * @param push default true, errase all trajectory before request motion..
+ */
 void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
@@ -834,6 +844,7 @@ void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool 
 
 /**
  * @brief Linear and angular velocity control in Cartesian space
+ * This function sends trajectory point(CARTESIAN_VELOCITY) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
  * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".
  * @param velocities unit are meter/second for linear velocity and radians/second for "Omega".
  */
@@ -868,11 +879,8 @@ void KinovaComm::setCartesianVelocities(const CartesianInfo &velocities)
 
 
 /**
- * @brief KinovaComm::getMaxTranslationVelocity
- *
- * max translation(X, Y and Z) velocity of the robot's end effector in ClientConfigurations
- *
- * @return MaxTranslationVelocity in meter per second
+ * @brief This function returns the max translation(X, Y and Z) velocity of the robot's end effector in ClientConfigurations
+ * @return MaxTranslationVelocity Unit in meter per second
  */
 float KinovaComm::getMaxTranslationVelocity()
 {
@@ -884,11 +892,8 @@ float KinovaComm::getMaxTranslationVelocity()
 
 
 /**
- * @brief KinovaComm::setMaxTranslationVelocity
- *
- * max translation(X, Y and Z) velocity of the robot's end effector in ClientConfigurations
- *
- * @param max_trans_vel in meter per second
+ * @brief This function set the max translation(X, Y and Z) velocity of the robot's end effector in ClientConfigurations
+ * @param max_trans_vel Unit in meter per second
  */
 void KinovaComm::setMaxTranslationVelocity(const float &max_trans_vel)
 {
@@ -902,9 +907,9 @@ void KinovaComm::setMaxTranslationVelocity(const float &max_trans_vel)
 
 
 /**
- * @brief KinovaComm::getMaxOrientationVelocity
- * max orientation(ThetaX, ThetaY and ThetaZ) velocity of the robot's end effector.
- * @return in
+ * @brief This function get max orientation(ThetaX, ThetaY and ThetaZ) velocity of the robot's end effector.
+ * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".
+ * @return Unit in rad/second
  */
 float KinovaComm::getMaxOrientationVelocity()
 {
@@ -916,9 +921,9 @@ float KinovaComm::getMaxOrientationVelocity()
 
 
 /**
- * @brief KinovaComm::setMaxOrientationVelocity
- * max orientation(ThetaX, ThetaY and ThetaZ) velocity of the robot's end effector.
- * @param max_orient_vel
+ * @brief This function set max orientation(ThetaX, ThetaY and ThetaZ) velocity of the robot's end effector.
+ * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".
+ * @param max_orient_vel Unit in rad/second
  */
 void KinovaComm::setMaxOrientationVelocity(const float &max_orient_vel)
 {
@@ -932,8 +937,8 @@ void KinovaComm::setMaxOrientationVelocity(const float &max_orient_vel)
 
 
 /**
- * @brief obtain the current cartesian force of the arm.
- * @param cart_force wrench in end-effector frame
+ * @brief This function returns the cartesian wrench at the robotical arm's end effector.
+ * @param cart_force A structure that contains the wrench vector at the end effector. Unit in N and N * m.
  */
 void KinovaComm::getCartesianForce(KinovaPose &cart_force)
 {
@@ -952,9 +957,9 @@ void KinovaComm::getCartesianForce(KinovaPose &cart_force)
 
 
 /**
- * @brief Set the cartesian min and max force parameters for force control.
- * @param min in Newton
- * @param max in Newton
+ * @brief This function set the Cartesian force's maximum and minimum values.
+ * @param min A struct that contains all Cartesian minimum values. (Translation unit: N     Orientation unit: N * m)
+ * @param max A struct that contains all Cartesian maximum values. (Translation unit: N     Orientation unit: N * m)
  */
 void KinovaComm::setCartesianForceMinMax(const CartesianInfo &min, const CartesianInfo& max)
 {
@@ -968,10 +973,9 @@ void KinovaComm::setCartesianForceMinMax(const CartesianInfo &min, const Cartesi
 
 
 /**
- * @brief Set the cartesian inertia and damping parameters for force control.
- * Do not use it unless you know well with force control.
- * @param inertia
- * @param damping
+ * @brief This function set the Cartesian inertia and damping value.
+ * @param inertia A struct that contains all Cartesian inertia values. (Translation unit: Kg,  Orientation unit: Kg * m^2)
+ * @param damping A struct that contains all Cartesian damping values. (Translation unit: (N * s) / m,   Orientation unit: (N * s) / RAD)
  */
 void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const CartesianInfo& damping)
 {
@@ -985,7 +989,8 @@ void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const 
 
 
 /**
- * @brief KinovaComm::printPosition Dumps the current cartesian pose onto the screen.
+ * @brief Dumps the current cartesian pose onto the screen.
+ * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param position in [X,Y,Z,ThetaX,ThetaY,ThetaZ], where orientation is using Euler-ZYX convention.
  */
 void KinovaComm::printPosition(const KinovaPose &position)
@@ -999,9 +1004,8 @@ void KinovaComm::printPosition(const KinovaPose &position)
 
 
 /**
- * @brief KinovaComm::getUserCommand
- * get UserPosition from trajectory.
- * @param user_position contains POSITION_TYPE(joint or cartesian position/velocity, etc), CartesianInfo and AngularInfo, finger positions etc.
+ * @brief This function extract the UserPosition from trajectory.
+ * @param user_position contains POSITION_TYPE(Angular/Cartesian position/velocity, etc), CartesianInfo and AngularInfo, finger positions etc.
  */
 void KinovaComm::getUserCommand(UserPosition &user_position)
 {
@@ -1018,9 +1022,8 @@ void KinovaComm::getUserCommand(UserPosition &user_position)
 
 
 /**
- * @brief KinovaComm::getGlobalTrajectoryInfo
- * provide information of number of trajecoty point which are still stored in robot. Detail of trajectory point is not stored in trajectoryFIFO.
- * @param trajectoryFIFO {TrajectoryCount; UsedPercentage; MaxSize} informations regarding the robot's trajectory's FIFO.
+ * @brief This function returns informations about the trajectories FIFO stored inside the robotical arm. Detail of trajectory point is not stored in trajectoryFIFO.
+ * @param trajectoryFIFO The structure containing the FIFO's informations: {TrajectoryCount; UsedPercentage; MaxSize}.
  */
 void KinovaComm::getGlobalTrajectoryInfo(TrajectoryFIFO &trajectoryFIFO)
 {
@@ -1035,8 +1038,7 @@ void KinovaComm::getGlobalTrajectoryInfo(TrajectoryFIFO &trajectoryFIFO)
 
 
 /**
- * @brief KinovaComm::eraseAllTrajectories
- * All trajectory will be cleared including angular, cartesian and fingers.
+ * @brief This function erases all the trajectories inside the robotical arm's FIFO. All trajectory will be cleared including angular, cartesian and fingers.
  */
 void KinovaComm::eraseAllTrajectories()
 {
@@ -1052,10 +1054,7 @@ void KinovaComm::eraseAllTrajectories()
 
 
 /**
- * @brief KinovaComm::numFingers get number of fingers.
- *
- * number of fingers determined by robotType. 3 fingers for robotType(0,3,4,6) and 2 fingers for robotType(1,2,5)
- *
+ * @brief This function get number of fingers. number of fingers determined by robotType. 3 fingers for robotType(0,3,4,6) and 2 fingers for robotType(1,2,5)
  * @return returns number of fingers.
  */
 int KinovaComm::numFingers() const
@@ -1065,8 +1064,8 @@ int KinovaComm::numFingers() const
 
 
 /**
- * @brief obtain the current finger positions.
- * @param fingers fingers in degrees, range from 0 to 6800
+ * @brief This function obtain the joint position of fingers.
+ * @param fingers in degrees, range from 0 to 6800
  */
 void KinovaComm::getFingerPositions(FingerAngles &fingers)
 {
@@ -1090,10 +1089,11 @@ void KinovaComm::getFingerPositions(FingerAngles &fingers)
 
 
 /**
- * @brief Sets the finger positions
+ * @brief This function sets the finger positions
+ * The new finger position, combined with current joint values are constructed as a trajectory point. sendAdvancedTrajectory() is called in api to complete the motion.
  * @param fingers in degrees from 0 to about 6800
  * @param timeout timeout default 0.0, not used.
- * @param push default true, errase all trajectory after
+ * @param push default true, errase all trajectory before request motion.
  */
 void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool push)
 {
@@ -1146,8 +1146,8 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
 
     kinova_pose.Position.Actuators = kinova_angles.Actuators;
 
-    // When loading a cartesian position for the fingers, values are required for the arm joints
-    // as well or the arm goes nuts.  Grab the current position and feed it back to the arm.
+    // When loading a cartesian position for the fingers, values are required for the arm joints as well
+    // or when the arm goes nuts.  Grab the current position and feed it back to the arm.
     KinovaPose pose;
     getCartesianPosition(pose);
     kinova_pose.Position.CartesianPosition = pose;
@@ -1161,22 +1161,20 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
 
 
 /**
- * @brief KinovaComm::printFingers Dumps the current finger agnles onto the screen.
- * @param fingers
+ * @brief Dumps the current finger agnles onto the screen.
+ * @param fingers Unit in degrees 0 to 6800
  */
 void KinovaComm::printFingers(const FingersPosition &fingers)
 {
-    ROS_INFO("Finger positions -- F1: %f, F2: %f, F3: %f",
+    ROS_INFO("Finger joint value -- F1: %f, F2: %f, F3: %f",
              fingers.Finger1, fingers.Finger2, fingers.Finger3);
 }
 
 
 /**
- * @brief Send the arm to the "home" position.
- *
- * The code replicates the function of the "home" button on the user
- *  controller by "pressing" the home button long enough for the arm
- *  to return to the home position.
+ * @brief This function move the arm to the "home" position.
+ * The code replicates the function of the "home" button on the user controller by "pressing" the home button long enough for the arm to return to the home position.
+ * @warning The home position is the default home, rather than user defined home.
  */
 void KinovaComm::homeArm(void)
 {
@@ -1207,13 +1205,9 @@ void KinovaComm::homeArm(void)
 
 
 /**
- * @brief Determines whether the arm has returned to its "Home" state.
- *
- * Checks the current joint angles, then compares them to the known
- *  "Home" joint angles.
- *
- * @return true is robot is already in predefined "Home"
- *  configuration.
+ * @brief Determines whether the arm has returned to its "Home" state. Checks the current joint angles, then compares them to the known "Home" joint angles.
+ * @return true is robot is already in predefined "Home"configuration.
+ * @warning The home position is the default home, rather than user defined home.
  */
 bool KinovaComm::isHomed(void)
 {
@@ -1232,10 +1226,9 @@ bool KinovaComm::isHomed(void)
 
 
 /**
- * @brief Initialize finger actuators.
- *
+ * @brief This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function setCartesianControl().
  * Move fingers to the full-open position to initialize them for use.
- * Note, The this routine requires firmware version 5.05.x (or higher).
+ * @warning This routine requires firmware version 5.05.x (or higher).
  */
 void KinovaComm::initFingers(void)
 {
@@ -1251,10 +1244,11 @@ void KinovaComm::initFingers(void)
 
 
 /**
- * @brief KinovaComm::setEndEffectorOffset Set the end effector offset.
- * @param x in meter
- * @param y in meter
- * @param z in meter
+ * @brief This function Set the end effector offset's parameters. The end effector's offset is a translation offset applied to the end effector of the robotic arm.
+ * @param status indicates if the offset is applied or not (0 = not applied, 1 = applied)
+ * @param x Unit in meter
+ * @param y Unit in meter
+ * @param z Unit in meter
  */
 void KinovaComm::setEndEffectorOffset(unsigned int status, float x, float y, float z)
 {
@@ -1269,10 +1263,11 @@ void KinovaComm::setEndEffectorOffset(unsigned int status, float x, float y, flo
 
 
 /**
- * @brief KinovaComm::getEndEffectorOffset
- * @param x in meter
- * @param y in meter
- * @param z in meter
+ * @brief This function get the end effector offset's parameters. The end effector's offset is a translation offset applied to the end effector of the robotic arm.
+ * @param status indicates if the offset is applied or not (0 = not applied, 1 = applied)
+ * @param x Unit in meter
+ * @param y Unit in meter
+ * @param z Unit in meter
  */
 void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z)
 {
