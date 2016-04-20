@@ -1,0 +1,4 @@
+<map id="DeserializeQuickStatus" name="DeserializeQuickStatus">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8409a1b8f9b50357b0301fe8529be80b" title="This function gets information regarding some status flag of the robotical arm. " alt="" coords="213,5,328,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3d86f5c1ec3706efbcb8b9fb83b8bbb0" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="376,5,459,32"/>
+</map>

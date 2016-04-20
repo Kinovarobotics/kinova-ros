@@ -1143,15 +1143,7 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
         throw KinovaCommException("Could not get the angular position", result);
     }
 
-
     kinova_pose.Position.Actuators = kinova_angles.Actuators;
-
-    // When loading a cartesian position for the fingers, values are required for the arm joints as well
-    // or when the arm goes nuts.  Grab the current position and feed it back to the arm.
-    KinovaPose pose;
-    getCartesianPosition(pose);
-    kinova_pose.Position.CartesianPosition = pose;
-
     result = kinova_api_.sendAdvanceTrajectory(kinova_pose);
     if (result != NO_ERROR_KINOVA)
     {

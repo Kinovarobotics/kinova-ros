@@ -1,0 +1,5 @@
+<map id="Zone" name="Zone">
+<area shape="rect" id="node2" href="$KinovaTypes_8h.html#structZoneLimitation" title="This represents a group of limitations that can be applied to a trajectory point. ..." alt="" coords="5,221,176,416"/>
+<area shape="rect" id="node3" href="$KinovaTypes_8h.html#structZoneShape" title="Represents the 3D shape of a protection zone. " alt="" coords="201,273,303,365"/>
+<area shape="rect" id="node4" href="$structCartesianInfo.html" title="This data structure holds values in an cartesian control context. " alt="" coords="202,6,301,157"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="UserPosition" name="UserPosition">
+<area shape="rect" id="node2" href="$structAngularInfo.html" title="This data structure holds values in an angular(joint by joint) control context. As an example struct ..." alt="" coords="5,6,99,157"/>
+<area shape="rect" id="node3" href="$structCartesianInfo.html" title="This data structure holds values in an cartesian control context. " alt="" coords="123,6,223,157"/>
+<area shape="rect" id="node4" href="$structFingersPosition.html" title="This data structure holds the values of the robot&#39;s fingers. " alt="" coords="264,28,375,135"/>
+</map>

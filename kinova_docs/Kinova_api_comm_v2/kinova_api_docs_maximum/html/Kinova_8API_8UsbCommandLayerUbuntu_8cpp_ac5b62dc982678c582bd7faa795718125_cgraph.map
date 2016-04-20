@@ -1,0 +1,7 @@
+<map id="GetEndEffectorOffset" name="GetEndEffectorOffset">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="232,5,365,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a68b4f118794ec412956a3ff2555abf93" title="DeserializeEndEffectorOffset" alt="" coords="203,56,395,83"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="484,5,543,32"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a16536171355d06661fe6c6e26bde4ca2" title="GetUIntFromVector" alt="" coords="445,56,581,83"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="443,107,583,133"/>
+</map>

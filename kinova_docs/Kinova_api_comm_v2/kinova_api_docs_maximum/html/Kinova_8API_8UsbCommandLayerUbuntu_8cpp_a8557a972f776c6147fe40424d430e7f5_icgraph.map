@@ -1,0 +1,5 @@
+<map id="DeserializeUserPosition" name="DeserializeUserPosition">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a245309adad61c254aca0d6a37da30ecb" title="This function returns information about the actual trajectory point. " alt="" coords="239,5,399,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a1fdd0be17702560f0e49c13f7515ec44" title="DeserializeGeneralInformations" alt="" coords="217,56,421,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2baa1a5600cb0072d547bb168e22d3d5" title="This function gets general informations about the robotical arm. " alt="" coords="469,56,629,83"/>
+</map>

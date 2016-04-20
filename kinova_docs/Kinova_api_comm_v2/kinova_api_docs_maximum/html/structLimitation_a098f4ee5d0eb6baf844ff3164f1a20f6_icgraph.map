@@ -1,0 +1,10 @@
+<map id="Limitation::InitStruct" name="Limitation::InitStruct">
+<area shape="rect" id="node2" href="$structTrajectoryPoint.html#a1a9f12ad88f5011c6a4644792fa67f99" title="TrajectoryPoint::InitStruct" alt="" coords="192,163,363,189"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3d86f5c1ec3706efbcb8b9fb83b8bbb0" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="451,5,533,32"/>
+<area shape="rect" id="node4" href="$classkinova_1_1KinovaComm.html#adb803410fd256db8808e175f159f9d26" title="Sends a joint angle command to the Kinova arm. This function sends trajectory point(Angular) that wil..." alt="" coords="419,57,565,98"/>
+<area shape="rect" id="node5" href="$classkinova_1_1KinovaComm.html#ae3416267240f582bf27792f87570aea9" title="This function controls robot with joint velocity. This function sends trajectory point(ANGULAR_VELOCI..." alt="" coords="419,122,565,163"/>
+<area shape="rect" id="node6" href="$classkinova_1_1KinovaComm.html#a33ba2e7bea81292a5b305dc64baf1b04" title="Sends a cartesian coordinate trajectory to the Kinova arm. This function sends trajectory point(Carte..." alt="" coords="417,187,567,229"/>
+<area shape="rect" id="node7" href="$classkinova_1_1KinovaComm.html#a346c9cd235ce3d55b7a6eb55eb9133ef" title="Linear and angular velocity control in Cartesian space This function sends trajectory point(CARTESIAN..." alt="" coords="411,253,573,294"/>
+<area shape="rect" id="node9" href="$classkinova_1_1KinovaComm.html#ab235b6800e8e8efaa458988a4e6f950a" title="This function sets the finger positions The new finger position, combined with current joint values a..." alt="" coords="419,318,565,359"/>
+<area shape="rect" id="node8" href="$classkinova_1_1KinovaComm.html#ad2053ca613caad670cd81d3bb246bd56" title="kinova::KinovaComm\l::KinovaComm" alt="" coords="621,253,768,294"/>
+</map>
