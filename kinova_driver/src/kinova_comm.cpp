@@ -1256,20 +1256,11 @@ void KinovaComm::initFingers(void)
  * @param y in meter
  * @param z in meter
  */
-void KinovaComm::setEndEffectorOffset(float x, float y, float z)
+void KinovaComm::setEndEffectorOffset(unsigned int status, float x, float y, float z)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
-    // Recopy the current status:
-    float tx, ty, tz;
-    unsigned int status;
-    int result = kinova_api_.getEndEffectorOffset(status, tx, ty, tz);
-    if (result != NO_ERROR_KINOVA)
-    {
-        throw KinovaCommException("Could not get current end effector offset.", result);
-    }
-
-    result = kinova_api_.setEndEffectorOffset(status, x, y, z);
+    int result = kinova_api_.setEndEffectorOffset(status, x, y, z);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set end effector offset.", result);
@@ -1283,14 +1274,14 @@ void KinovaComm::setEndEffectorOffset(float x, float y, float z)
  * @param y in meter
  * @param z in meter
  */
-void KinovaComm::getEndEffectorOffset(float &x, float &y, float &z)
+void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-
-    // Recopy the current status:
-    float tx, ty, tz;
-    unsigned int status;
-    int result = kinova_api_.getEndEffectorOffset(status, tx, ty, tz);
+    memset(&status, 0, sizeof(status));
+    memset(&x, 0, sizeof(x));
+    memset(&y, 0, sizeof(y));
+    memset(&z, 0, sizeof(z));
+    int result = kinova_api_.getEndEffectorOffset(status, x, y, z);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get current end effector offset.", result);

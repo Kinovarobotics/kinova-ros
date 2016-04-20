@@ -239,7 +239,7 @@ bool KinovaArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova
 
 bool KinovaArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request &req, kinova_msgs::SetEndEffectorOffset::Response &res)
 {
-    kinova_comm_.setEndEffectorOffset(req.offset.x, req.offset.y, req.offset.z);
+    kinova_comm_.setEndEffectorOffset(req.status, req.offset.x, req.offset.y, req.offset.z);
 
     return true;
 }

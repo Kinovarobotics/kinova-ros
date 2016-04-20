@@ -119,8 +119,8 @@ class KinovaComm
     void homeArm(void);
     bool isHomed(void);
     void initFingers(void);
-    void setEndEffectorOffset(float x, float y, float z);
-    void getEndEffectorOffset(float &x, float &y, float &z);
+    void setEndEffectorOffset(unsigned int status, float x, float y, float z);
+    void getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
 
  private:
     boost::recursive_mutex& api_mutex_;
