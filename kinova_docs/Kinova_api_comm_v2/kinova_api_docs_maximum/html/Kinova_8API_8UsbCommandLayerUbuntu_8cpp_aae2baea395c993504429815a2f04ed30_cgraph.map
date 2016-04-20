@@ -1,0 +1,8 @@
+<map id="GetControlMapping" name="GetControlMapping">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="214,5,343,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="212,56,345,83"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a0d3ebbbf76dce1dcd63b583a96b25c8e" title="DeserializeControlMapping\lCharts" alt="" coords="189,107,368,149"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="476,56,535,83"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="643,136,770,163"/>
+<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a0e2c75e91b54efd9d1f8b545ec69b699" title="DeserializeControlMapping" alt="" coords="416,161,595,188"/>
+</map>

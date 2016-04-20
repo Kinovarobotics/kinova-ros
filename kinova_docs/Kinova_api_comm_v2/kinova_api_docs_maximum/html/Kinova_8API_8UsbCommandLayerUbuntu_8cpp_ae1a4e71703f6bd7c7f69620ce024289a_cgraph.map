@@ -1,0 +1,5 @@
+<map id="SetEndEffectorOffset" name="SetEndEffectorOffset">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a6d73b9f06267c3f72e2f776bbbb7e944" title="SerializeEndEffectorOffset" alt="" coords="201,5,378,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="224,56,355,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="223,107,355,133"/>
+</map>

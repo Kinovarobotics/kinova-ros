@@ -1,0 +1,5 @@
+<map id="kinova::areValuesClose" name="kinova::areValuesClose">
+<area shape="rect" id="node2" href="$classkinova_1_1KinovaPose.html#a6d1209a7e6d85b4f6aa5cfc913fa016b" title="check all the position and orientation values, to determine if current KinovaPose reach &quot;other&quot; ..." alt="" coords="219,5,357,46"/>
+<area shape="rect" id="node3" href="$classkinova_1_1KinovaAngles.html#a628b0b9aa2de4b965c651a6824766c60" title="check all the joint values, to determine if current KinovaAngles reach &quot;other&quot; " alt="" coords="214,70,362,111"/>
+<area shape="rect" id="node4" href="$classkinova_1_1FingerAngles.html#a38833af3b2f76bd5351c302ce79a1dd5" title="kinova::FingerAngles\l::isCloseToOther" alt="" coords="216,135,360,177"/>
+</map>

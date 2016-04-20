@@ -1,0 +1,6 @@
+<map id="SetControlMapping" name="SetControlMapping">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a17cf394dc5f55b6075acd7e4f1f7a4ad" title="SerializeControlMappingCharts" alt="" coords="187,5,389,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="223,56,353,83"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="222,107,354,133"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a02df96834798c7f0f62d98b1f2e2e394" title="SerializeControlMapping" alt="" coords="437,5,600,32"/>
+</map>

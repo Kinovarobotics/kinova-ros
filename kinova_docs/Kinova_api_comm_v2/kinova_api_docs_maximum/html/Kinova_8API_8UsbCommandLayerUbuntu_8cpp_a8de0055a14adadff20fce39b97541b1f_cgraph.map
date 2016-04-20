@@ -1,0 +1,5 @@
+<map id="SetModel" name="SetModel">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a49a3bdc529eb307270e01c9748829049" title="SerializeString" alt="" coords="144,5,251,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="132,56,263,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="131,107,263,133"/>
+</map>

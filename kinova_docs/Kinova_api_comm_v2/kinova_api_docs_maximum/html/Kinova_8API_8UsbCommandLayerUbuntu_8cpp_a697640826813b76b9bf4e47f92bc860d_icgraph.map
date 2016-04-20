@@ -1,0 +1,9 @@
+<map id="GetUShortFromVector" name="GetUShortFromVector">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2cb0129b0dcc7eee3cea94b2db8cf956" title="DeserializeJoystickCommand" alt="" coords="221,5,417,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a1fdd0be17702560f0e49c13f7515ec44" title="DeserializeGeneralInformations" alt="" coords="217,56,421,83"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ab9b604613df8c4d45ed1c5f24d6288c2" title="Custom_GetStandardActuatorsInfo" alt="" coords="205,107,432,133"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a0f5cd3ea7c7915148793af9eb33911ea" title="GetJoystickValue" alt="" coords="517,5,643,32"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2baa1a5600cb0072d547bb168e22d3d5" title="This function gets general informations about the robotical arm. " alt="" coords="500,56,660,83"/>
+<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a78cca78dfad74ba48fa6af2a817554ab" title="Custom_GetActuatorsPosition" alt="" coords="481,107,679,133"/>
+<area shape="rect" id="node8" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a54ea7928d3abfeeb0c1997a84d410f69" title="Custom_GetActuatorsVelocity" alt="" coords="481,157,679,184"/>
+</map>

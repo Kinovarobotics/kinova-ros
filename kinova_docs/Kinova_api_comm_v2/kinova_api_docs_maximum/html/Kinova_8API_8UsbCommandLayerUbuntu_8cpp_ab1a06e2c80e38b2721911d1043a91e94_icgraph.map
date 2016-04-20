@@ -1,0 +1,7 @@
+<map id="GetShortFromVector" name="GetShortFromVector">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a32332358af61d177b6b855856b333271" title="DeserializeFinger" alt="" coords="239,5,361,32"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a1fdd0be17702560f0e49c13f7515ec44" title="DeserializeGeneralInformations" alt="" coords="198,56,402,83"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae344ee66a3d7a0e4971240586ebb4d14" title="DeserializeGripper" alt="" coords="466,5,595,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2c24d8285fb5118b570085b23ac3830c" title="BETA version &#45; This function gets informations about the robotical arm&#39;s gripper. Some information ma..." alt="" coords="659,5,781,32"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2baa1a5600cb0072d547bb168e22d3d5" title="This function gets general informations about the robotical arm. " alt="" coords="451,56,611,83"/>
+</map>

@@ -1,0 +1,26 @@
+<map id="RunGravityZEstimationSequence" name="RunGravityZEstimationSequence">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a00ecf5ff05b686b829a58cbf9536aa0c" title="This Moce the robot to the HOME position also known as READY position. " alt="" coords="306,132,395,159"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a12ec85c0559d8fc2375def0ffd4177c2" title="This function returns informations about the trajectories FIFO stored inside the robotical arm..." alt="" coords="480,259,640,285"/>
+<area shape="rect" id="node13" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#af4ef3569d1edc6216d9df5306fd54d38" title="This function sends trajectory point(With limitation) that will be added in the robotical arm&#39;s FIFO..." alt="" coords="270,309,431,336"/>
+<area shape="rect" id="node16" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3b6c8850655d7adc7d4eb25de08cdf7b" title="This function get the angular command of all actuators. " alt="" coords="487,461,633,488"/>
+<area shape="rect" id="node19" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a9701db9002aec051488d4f85f11782f5" title="This function returns the torque of each actuator. Unit is Newton * meter. " alt="" coords="500,411,620,437"/>
+<area shape="rect" id="node20" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae16949e6355d91c206a6759fe2be6c35" title="GetPhi" alt="" coords="319,461,382,488"/>
+<area shape="rect" id="node21" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8fd2693a0e3c0aac3409edaa92cdfb41" title="Gamma" alt="" coords="317,512,385,539"/>
+<area shape="rect" id="node22" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2539794df47457c0a349f75202d44924" title="Inverse6x6" alt="" coords="307,563,394,589"/>
+<area shape="rect" id="node23" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a48c05b32efd6f81b4c223994e17ba3a7" title="GetK" alt="" coords="325,613,377,640"/>
+<area shape="rect" id="node24" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a9d35683448a46573adc31cafb35bbf5a" title="GetP" alt="" coords="325,664,377,691"/>
+<area shape="rect" id="node25" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac637f430757978af93b933236436a4d4" title="GetNewParam" alt="" coords="297,715,405,741"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8c1f786df1ff396063caa8ae8a0e6d24" title="PrepareSetPacket" alt="" coords="496,5,624,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="714,132,846,159"/>
+<area shape="rect" id="node11" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aacd8167b43e5ca91a5ce142227ad78ad" title="This function sets the robotical arm in angular control mode. " alt="" coords="496,56,624,83"/>
+<area shape="rect" id="node12" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a41a115d0726d3db94e7c4e614e2d8a7b" title="This function sets the robotical arm in cartesian control mode if this is possible. " alt="" coords="490,107,630,133"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="713,360,847,387"/>
+<area shape="rect" id="node8" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a51fab087b364b320638099a9d5fec68f" title="DeserializeGlobalTrajectory" alt="" coords="689,284,871,311"/>
+<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="961,360,1020,387"/>
+<area shape="rect" id="node9" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="927,284,1054,311"/>
+<area shape="rect" id="node10" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="921,411,1061,437"/>
+<area shape="rect" id="node14" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#acfde0bccd4cf373d8ac893f4f1f2bf26" title="SerializeTrajectoryPoint" alt="" coords="480,360,640,387"/>
+<area shape="rect" id="node15" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="495,309,625,336"/>
+<area shape="rect" id="node17" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="715,461,845,488"/>
+<area shape="rect" id="node18" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a24f08977e091702d5f919ee2b592c128" title="DeserializeAngularPosition" alt="" coords="691,411,869,437"/>
+</map>

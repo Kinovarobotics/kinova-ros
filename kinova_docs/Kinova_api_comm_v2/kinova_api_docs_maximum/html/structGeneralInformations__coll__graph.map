@@ -1,0 +1,9 @@
+<map id="GeneralInformations" name="GeneralInformations">
+<area shape="rect" id="node2" href="$KinovaTypes_8h.html#structZoneLimitation" title="This represents a group of limitations that can be applied to a trajectory point. ..." alt="" coords="5,236,176,431"/>
+<area shape="rect" id="node3" href="$KinovaTypes_8h.html#structSystemStatus" title="This structure holds system status flags. " alt="" coords="200,221,392,445"/>
+<area shape="rect" id="node4" href="$structJoystickCommand.html" title="This is a virtual representation of a 6&#45;axis joystick. " alt="" coords="417,251,593,416"/>
+<area shape="rect" id="node5" href="$structUserPosition.html" title="This data structure represents an abstract position built by a user. Depending on the control type th..." alt="" coords="631,280,728,387"/>
+<area shape="rect" id="node6" href="$structAngularInfo.html" title="This data structure holds values in an angular(joint by joint) control context. As an example struct ..." alt="" coords="511,6,605,157"/>
+<area shape="rect" id="node7" href="$structCartesianInfo.html" title="This data structure holds values in an cartesian control context. " alt="" coords="630,6,729,157"/>
+<area shape="rect" id="node8" href="$structFingersPosition.html" title="This data structure holds the values of the robot&#39;s fingers. " alt="" coords="771,28,881,135"/>
+</map>

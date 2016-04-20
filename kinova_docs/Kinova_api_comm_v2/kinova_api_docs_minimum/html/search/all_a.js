@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['setangularcontrol',['setAngularControl',['../classkinova_1_1_kinova_comm.html#add02cfb95e2e604493e8245db9a104d7',1,'kinova::KinovaComm']]],
+  ['setcartesiancontrol',['setCartesianControl',['../classkinova_1_1_kinova_comm.html#a6d65a4fc17e587508c48d003995ff9f6',1,'kinova::KinovaComm']]],
+  ['setcartesianforceminmax',['setCartesianForceMinMax',['../classkinova_1_1_kinova_comm.html#ad7216609b2e8686ba90c3fa147e0daa5',1,'kinova::KinovaComm']]],
+  ['setcartesianinertiadamping',['setCartesianInertiaDamping',['../classkinova_1_1_kinova_comm.html#ab06ebf57cd94631d15467412e0b72c80',1,'kinova::KinovaComm']]],
+  ['setcartesianposition',['setCartesianPosition',['../classkinova_1_1_kinova_comm.html#a33ba2e7bea81292a5b305dc64baf1b04',1,'kinova::KinovaComm']]],
+  ['setcartesianvelocities',['setCartesianVelocities',['../classkinova_1_1_kinova_comm.html#a346c9cd235ce3d55b7a6eb55eb9133ef',1,'kinova::KinovaComm']]],
+  ['setconfig',['setConfig',['../classkinova_1_1_kinova_comm.html#abe6e19c315ba59ebbe4267ee3a55d79b',1,'kinova::KinovaComm']]],
+  ['setendeffectoroffset',['setEndEffectorOffset',['../classkinova_1_1_kinova_comm.html#a026578ded7ab226a2c393c5d3cf3ac4b',1,'kinova::KinovaComm']]],
+  ['setfingerpositions',['setFingerPositions',['../classkinova_1_1_kinova_comm.html#ab235b6800e8e8efaa458988a4e6f950a',1,'kinova::KinovaComm']]],
+  ['setjointangles',['setJointAngles',['../classkinova_1_1_kinova_comm.html#adb803410fd256db8808e175f159f9d26',1,'kinova::KinovaComm']]],
+  ['setjointtorqueminmax',['setJointTorqueMinMax',['../classkinova_1_1_kinova_comm.html#aba0b79eaa95462aa18cdf862d57f39d2',1,'kinova::KinovaComm']]],
+  ['setjointvelocities',['setJointVelocities',['../classkinova_1_1_kinova_comm.html#ae3416267240f582bf27792f87570aea9',1,'kinova::KinovaComm']]],
+  ['setmaxorientationvelocity',['setMaxOrientationVelocity',['../classkinova_1_1_kinova_comm.html#a3658e21c6e3c499a9c1f22e32ebb3772',1,'kinova::KinovaComm']]],
+  ['setmaxtranslationvelocity',['setMaxTranslationVelocity',['../classkinova_1_1_kinova_comm.html#a40b0ab5609b7736893bed91dd3f922c6',1,'kinova::KinovaComm']]],
+  ['startapi',['startAPI',['../classkinova_1_1_kinova_comm.html#abcff84d63a2257337d85bf117a630bd3',1,'kinova::KinovaComm']]],
+  ['startforcecontrol',['startForceControl',['../classkinova_1_1_kinova_comm.html#a0ce3f14fd19836cdd81a23b801f7580d',1,'kinova::KinovaComm']]],
+  ['stopapi',['stopAPI',['../classkinova_1_1_kinova_comm.html#a57d037030b86f8137a87aeeb1a2d7392',1,'kinova::KinovaComm']]],
+  ['stopforcecontrol',['stopForceControl',['../classkinova_1_1_kinova_comm.html#a14b6ac4689679861b1d49c1ec7618a3d',1,'kinova::KinovaComm']]]
+];

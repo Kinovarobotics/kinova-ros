@@ -1,0 +1,6 @@
+<map id="GetControlType" name="GetControlType">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="170,5,299,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="168,56,301,83"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="171,107,298,133"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="349,56,408,83"/>
+</map>

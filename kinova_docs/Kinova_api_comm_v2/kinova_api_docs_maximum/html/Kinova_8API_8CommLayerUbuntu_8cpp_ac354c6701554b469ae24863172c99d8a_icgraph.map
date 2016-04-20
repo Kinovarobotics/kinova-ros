@@ -1,0 +1,8 @@
+<map id="SendPacketInternal" name="SendPacketInternal">
+<area shape="rect" id="node2" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a9cc50290e25608ca7d6a2878fc6dfbad" title="GetDeviceInfo" alt="" coords="195,31,301,57"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#ab22087c6d8294abbea26128b28f272bd" title="SendPacket" alt="" coords="201,81,295,108"/>
+<area shape="rect" id="node7" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a1223de92986bd530d282a2658508ae8f" title="This function activate the RS&#45;485 communication via USB.By activating this feature, you won&#39;t be able to get back to normal USB communication until you reboot. From now on, you can only use RS485_Write, RS485_Read and RS485_Activate. " alt="" coords="189,132,307,159"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a80c77aee9f2745b91afd2b7c8bbe1265" title="ScanDevices" alt="" coords="355,31,455,57"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a55f98b283eaff08374c81ee210dfecdc" title="This function initialize the USB communication. You need to call it before using any functions from t..." alt="" coords="508,5,639,32"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a655fb59bffa4388a726902617a19e42c" title="ScanForNewDevice" alt="" coords="504,56,643,83"/>
+</map>
