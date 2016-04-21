@@ -21,6 +21,9 @@
 #include <ros/ros.h>
 #include <kinova_driver/KinovaPositionConfig.h>
 #include <dynamic_reconfigure/server.h>
+
+#include <kinova/KinovaTypes.h>
+#include <kinova_driver/kinova_ros_types.h>
 using namespace std;
 
 
@@ -59,9 +62,13 @@ void TimerCallback(const ros::TimerEvent&)
 			test_msg.pose.position.y = y_pose;
 			test_msg.pose.position.z = z_pose;
 
-			tf::Quaternion q;
+            KinovaPose kinova_pose;
+            kinova_pose.ThetaX = rx_pose;
+            kinova_pose.ThetaY = ry_pose;
+            kinova_pose.ThetaZ = rz_pose;
 
-			q.setRPY(rx_pose,ry_pose,rz_pose);
+			tf::Quaternion q;
+            q = kinova::EulerXYZ2Quaternion(rx_pose, ry_pose, rz_pose);
 
 			tf::quaternionTFToMsg(q,test_msg.pose.orientation);
 			test_msg.header.frame_id = "/arm_base";

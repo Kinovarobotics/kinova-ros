@@ -66,8 +66,10 @@ add_executable(kinova_arm_driver
 )
 
 add_executable(kinova_tf_updater
+  src/kinova_ros_types.cpp
   src/nodes/kinova_tf_updater.cpp
   src/kinova_arm_kinematics.cpp
+  include/kinova_driver/kinova_ros_types.h
   include/kinova_driver/kinova_tf_updater.h
   include/kinova_driver/kinova_arm_kinematics.h
 )

@@ -48,6 +48,9 @@
 #include <string>
 #include <vector>
 #include <KinovaTypes.h>
+#include <kinova_driver/kinova_ros_types.h>
+
+#include <tf/tf.h>
 
 namespace kinova
 {
@@ -726,7 +729,7 @@ void KinovaComm::setCartesianControl()
 
 
 /**
- * @brief This function get the cartesian command of the end effector. The Cartesian orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * @brief This function get the cartesian command of the end effector. The Cartesian orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param cartesian_command An CartesianPosition struct containing the values of end-effector and fingers.
  *
  * @htmlonly
@@ -763,7 +766,7 @@ void KinovaComm::getCartesianCommand(CartesianPosition &cartesian_command)
 
 /**
  * @brief This function returns the cartesian position of the robotical arm's end effector.
- * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * In KinovaPose, orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param position pose in [X,Y,Z,ThetaX,ThetaY,ThetaZ] form, Units in meters and radians.
  */
 void KinovaComm::getCartesianPosition(KinovaPose &position)
@@ -792,7 +795,7 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
 /**
  * @brief Sends a cartesian coordinate trajectory to the Kinova arm.
  * This function sends trajectory point(Cartesian) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendBasicTrajectory() is called in api to complete the motion.
- * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * In KinovaPose, orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
  * @param timeout default 0.0, not used.
  * @param push default true, errase all trajectory before request motion..
@@ -990,7 +993,7 @@ void KinovaComm::setCartesianInertiaDamping(const CartesianInfo &inertia, const 
 
 /**
  * @brief Dumps the current cartesian pose onto the screen.
- * In KinovaPose, orientation is expressed in Euler-ZYX convention, so that tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
+ * In KinovaPose, orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param position in [X,Y,Z,ThetaX,ThetaY,ThetaZ], where orientation is using Euler-ZYX convention.
  */
 void KinovaComm::printPosition(const KinovaPose &position)

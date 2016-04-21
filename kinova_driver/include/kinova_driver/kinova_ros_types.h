@@ -51,12 +51,21 @@
 #include <geometry_msgs/Wrench.h>
 #include <kinova_msgs/JointAngles.h>
 #include <kinova_msgs/FingerPosition.h>
+#include <tf/tf.h>
 
 #include <string>
 
 
 namespace kinova
 {
+
+tf::Quaternion EulerXYZ2Quaternion(float tx, float ty, float tz);
+
+tf::Matrix3x3 EulerXYZ2Matrix3x3(float tx, float ty, float tz);
+
+void getEulerXYZ(tf::Matrix3x3 &Rot_matrix, float &tx, float &ty, float &tz);
+
+void getEulerXYZ(tf::Quaternion &q, float &tx, float &ty, float &tz);
 
 class KinovaException : public std::exception {};
 
@@ -82,6 +91,7 @@ class KinovaPose : public CartesianInfo
 
     geometry_msgs::Pose   constructPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
+    tf::Quaternion getQuaternion(tf::Quaternion &q);
 
     bool isCloseToOther(const KinovaPose &, float position_tolerance, float EulerAngle_tolerance) const;
 };
