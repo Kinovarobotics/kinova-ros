@@ -1106,9 +1106,9 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     int result = NO_ERROR_KINOVA;
-    TrajectoryPoint kinova_pose;
-    kinova_pose.InitStruct();
-    memset(&kinova_pose, 0, sizeof(kinova_pose));  // zero structure
+    TrajectoryPoint kinova_angular;
+    kinova_angular.InitStruct();
+    memset(&kinova_angular, 0, sizeof(kinova_angular));  // zero structure
 
     if (push)
     {
@@ -1128,31 +1128,25 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     }
 
     // Initialize Cartesian control of the fingers
-    kinova_pose.Position.HandMode = POSITION_MODE;
-    kinova_pose.Position.Type = ANGULAR_POSITION;
-    kinova_pose.Position.Fingers = fingers;
-    kinova_pose.Position.Delay = 0.0;
-    kinova_pose.LimitationsActive = 0;
+    kinova_angular.Position.HandMode = POSITION_MODE;
+    kinova_angular.Position.Type = ANGULAR_POSITION;
+    kinova_angular.Position.Fingers = fingers;
+    kinova_angular.Position.Delay = 0.0;
+    kinova_angular.LimitationsActive = 0;
 
-    AngularPosition kinova_angles;
-    memset(&kinova_angles, 0, sizeof(kinova_angles));  // zero structure
+    AngularPosition joint_angles;
+    memset(&joint_angles, 0, sizeof(joint_angles));  // zero structure
 
-    result = kinova_api_.getAngularPosition(kinova_angles);
+    result = kinova_api_.getAngularPosition(joint_angles);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the angular position", result);
     }
 
 
-    kinova_pose.Position.Actuators = kinova_angles.Actuators;
+    kinova_angular.Position.Actuators = joint_angles.Actuators;
 
-    // When loading a cartesian position for the fingers, values are required for the arm joints as well
-    // or when the arm goes nuts.  Grab the current position and feed it back to the arm.
-    KinovaPose pose;
-    getCartesianPosition(pose);
-    kinova_pose.Position.CartesianPosition = pose;
-
-    result = kinova_api_.sendAdvanceTrajectory(kinova_pose);
+    result = kinova_api_.sendAdvanceTrajectory(kinova_angular);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
