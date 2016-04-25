@@ -6,6 +6,7 @@
  */
 
 #include <kinova_driver/kinova_arm_kinematics.h>
+#include <kinova_driver/kinova_ros_types.h>
 #include <string>
 
 
@@ -308,7 +309,7 @@ void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, flo
 
 
     /**********************finger_1**********************/
-    rot_matrix.setRPY(-1.7983, 1.117, 3.1416);
+    rot_matrix = EulerXYZ2Matrix3x3(-1.7983, 1.117, 3.1416);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
@@ -321,7 +322,7 @@ void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, flo
 
 
     /**********************finger_2**********************/
-    rot_matrix.setRPY(-1.6222, 1.117, -0.23615);
+    rot_matrix = EulerXYZ2Matrix3x3(-1.6222, 1.117, -0.23615);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
@@ -334,7 +335,7 @@ void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, flo
 
 
     /**********************finger_3**********************/
-    rot_matrix.setRPY(-1.5161, 1.1459, 0.23978);
+    rot_matrix = EulerXYZ2Matrix3x3(-1.5161, 1.1459, 0.23978);
     rot_matrix.getRotation(rotation_q);
     transform.setRotation(rotation_q);
 
