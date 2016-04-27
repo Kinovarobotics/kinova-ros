@@ -436,6 +436,36 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
     }
 }
 
+void JacoComm::setFingerVelocities(const FingerAngles &fingers)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The finger velocities could not be set because the arm is stopped");
+        return;
+    }
+
+    TrajectoryPoint jaco_finger;
+    jaco_finger.InitStruct();
+    memset(&jaco_finger, 0, sizeof(jaco_finger));  // zero structure
+
+    //startAPI();
+    // Initialize Cartesian control of the fingers
+    jaco_finger.Position.Type = CARTESIAN_VELOCITY;
+    jaco_finger.Position.HandMode = VELOCITY_MODE;
+    jaco_finger.Position.Fingers = fingers;
+    jaco_finger.Position.Delay = 0.0;
+    jaco_finger.LimitationsActive = 0;
+
+    int result = jaco_api_.sendAdvanceTrajectory(jaco_finger);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set Finger control", result);
+    }
+
+}
+
 
 /*!
  * \brief Set the angular velocity of the joints

@@ -2,14 +2,15 @@
 
 #include <urdf/model.h>
 #include <ros/ros.h>
+#include <Eigen/Dense>
 
 #include <kdl_parser/kdl_parser.hpp>
-
 #include <kdl/tree.hpp>
 #include <tf_conversions/tf_kdl.h>
 
 #define DTR 0.0174532925
 #define RTD 57.295779513
+
 
 namespace jaco
 {
@@ -100,6 +101,7 @@ bool JacoIKSolver::initFromURDF(const std::string urdf, const std::string root_n
             ++j;
         }
     }
+;
     
     fk_solver_.reset(new KDL::ChainFkSolverPos_recursive(chain_)); 
     ik_vel_solver_.reset(new KDL::ChainIkSolverVel_pinv(chain_));
@@ -135,20 +137,35 @@ geometry_msgs::Pose JacoIKSolver::jointsToCartesian(JacoAngles JAngle)
 
  //----------------------------------------------------------------------------------------------------
 
-bool JacoIKSolver::cartesianToJoints(const KDL::Frame& f_in, KDL::JntArray& q_out)
+JacoAngles JacoIKSolver::cartesianToJoints(geometry_msgs::Pose p_in, JacoAngles JAngle)
 {
-    return cartesianToJoints(f_in, q_out, q_seed_);
+	JacoAngles JAngle_out;
+	
+	KDL::JntArray q_out, joint_in;
+	KDL::Frame f_in;
+	tf::PoseMsgToKDL(p_in,f_in);  
+	
+	joint_in.resize(6);
+	joint_in(0) = ( JAngle.Actuator1 - 180.0 ) * DTR;
+	joint_in(1) = ( JAngle.Actuator2 - 270.0 ) * DTR;
+	joint_in(2) = ( JAngle.Actuator3 - 90.0  ) * DTR;
+	joint_in(3) = ( JAngle.Actuator4 - 180.0 ) * DTR;
+	joint_in(4) = ( JAngle.Actuator5 - 180.0 ) * DTR;
+	joint_in(5) = ( JAngle.Actuator6 - 270.0 ) * DTR;
+	
+    ik_solver_->CartToJnt(joint_in, f_in, q_out);
+    
+    JAngle_out.Actuator1 = q_out(0) * RTD + 180;
+    JAngle_out.Actuator2 = q_out(1) * RTD + 270;
+    JAngle_out.Actuator3 = q_out(2) * RTD + 90;
+    JAngle_out.Actuator4 = q_out(3) * RTD + 180;
+    JAngle_out.Actuator5 = q_out(4) * RTD + 180;
+    JAngle_out.Actuator6 = q_out(5) * RTD + 270;
+    
+    return JAngle_out;
+    
 }
-
 // ----------------------------------------------------------------------------------------------------
-
-bool JacoIKSolver::cartesianToJoints(const KDL::Frame& f_in, KDL::JntArray& q_out, const KDL::JntArray& q_seed)
-{
-    int status = ik_solver_->CartToJnt(q_seed, f_in, q_out);
-    return (status == 0);
-}
-//----------------------------------------------------------------------------------------------------------
-
 
 KDL::Jacobian JacoIKSolver::jointToJacobian(JacoAngles JAngle)
 {
@@ -156,7 +173,7 @@ KDL::Jacobian JacoIKSolver::jointToJacobian(JacoAngles JAngle)
 	KDL::Jacobian jac;
 	joint_in.resize(6);
 	jac.resize(chain_.getNrOfJoints());
-			
+
 	joint_in(0) = ( JAngle.Actuator1 - 180.0 ) * DTR;
 	joint_in(1) = ( JAngle.Actuator2 - 270.0 ) * DTR;
 	joint_in(2) = ( JAngle.Actuator3 - 90.0  ) * DTR;
@@ -167,5 +184,58 @@ KDL::Jacobian JacoIKSolver::jointToJacobian(JacoAngles JAngle)
 	jnt_to_jac_solver_->JntToJac(joint_in, jac);
 	
 	return jac;
+}
+// ----------------------------------------------------------------------------------------------
+Eigen::MatrixXd JacoIKSolver::desiredAngles(geometry_msgs::Pose p_in, JacoAngles JAngle)
+{
+	Eigen::MatrixXd JAngle_out = Eigen::MatrixXd::Zero(1,6);
+	
+	KDL::JntArray q_out, joint_in;
+	KDL::Frame f_in;
+	tf::PoseMsgToKDL(p_in,f_in);  
+	
+	joint_in.resize(6);
+	joint_in(0) = ( JAngle.Actuator1 - 180.0 ) * DTR;
+	joint_in(1) = ( JAngle.Actuator2 - 270.0 ) * DTR;
+	joint_in(2) = ( JAngle.Actuator3 - 90.0  ) * DTR;
+	joint_in(3) = ( JAngle.Actuator4 - 180.0 ) * DTR;
+	joint_in(4) = ( JAngle.Actuator5 - 180.0 ) * DTR;
+	joint_in(5) = ( JAngle.Actuator6 - 270.0 ) * DTR;
+	
+    ik_solver_->CartToJnt(joint_in, f_in, q_out);
+    
+    for (int i = 0; i < 6; i++){
+		JAngle_out(0,i)= saturate(q_out(i) * RTD) ;
+	}
+    
+    return JAngle_out;
+    
+}
+// -------------------------------------------------------------------------------------
+KDL::Jacobian JacoIKSolver::desiredJacobian(Eigen::MatrixXd qd)
+{
+	KDL::JntArray joint_in;
+	KDL::Jacobian jac;
+	joint_in.resize(6);
+	jac.resize(chain_.getNrOfJoints());
+	
+	qd = DTR*qd;
+	
+	for (int i = 0; i < 6; i++){
+		joint_in(i) = qd(0,i);
+	}
+	
+	jnt_to_jac_solver_->JntToJac(joint_in, jac);
+	
+	return jac;
+}
+
+double JacoIKSolver::saturate(double input)
+{
+	while (input > 180 || input < -180){
+		if (input > 180) input -=180;
+		else if (input < -180) input+=180;
+	}
+	return input;
 };
 }

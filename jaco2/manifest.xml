@@ -1,7 +1,0 @@
-<package>
-  <description brief="jaco2">jaco2</description>
-  <depend package="kdl_parser" />
-  <depend package="rviz" />
-  <author>me</author>
-  <license>BSD</license>
-</package>

@@ -7,7 +7,8 @@
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/>
-    <param name="urdf" value="$(find jaco2)/urdf/jaco2.urdf" />
+    <param name="urdf" value="$(find jaco2_model)/robots/jaco2_model.urdf" />
+    <param name="use_kinematic_controller" value="true" />
   </node>
     
   <group unless="$(arg use_urdf)">

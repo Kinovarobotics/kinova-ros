@@ -72,6 +72,7 @@ class JacoComm
     void setJointAngles(const JacoAngles &angles, int timeout = 0, bool push = true);
     void setCartesianPosition(const JacoPose &position, int timeout = 0, bool push = true);
     void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
+    void setFingerVelocities(const FingerAngles &fingers);
     void setJointVelocities(const AngularInfo& joint_vel);
     void setCartesianVelocities(const CartesianInfo &velocities);
     void setConfig(const ClientConfigurations &config);

@@ -30,8 +30,10 @@ int main(int argc, char **argv)
         {
             jaco::JacoComm comm(nh, api_mutex, is_first_init, api_lib);
             jaco::JacoIKSolver ik;
-            jaco::JacoKinematicController controller(comm, ik, nh);
-            jaco::JacoArm jaco(comm, nh, controller);
+            //jaco::JacoQPSolver qp;
+            //jaco::JacoMPCController mpc_controller(comm, ik, qp, nh);
+            jaco::JacoKinematicController kinematic_controller(comm, ik, nh);
+            jaco::JacoArm jaco(comm, nh, kinematic_controller);
             jaco::JacoPoseActionServer pose_server(comm, nh);
             jaco::JacoAnglesActionServer angles_server(comm, nh);
             jaco::JacoFingersActionServer fingers_server(comm, nh);

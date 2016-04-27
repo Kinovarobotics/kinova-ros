@@ -10,6 +10,8 @@
     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/>
     <remap from="/jaco_arm_driver/vrep/twistCommand" to="/vrep/twistCommand"/>
+    <param name="urdf" value="$(find jaco2_model)/robots/jaco2_model.urdf" />
+    <param name="use_kinematic_controller" value="true" />
   </node>
     
   <group unless="$(arg use_urdf)">

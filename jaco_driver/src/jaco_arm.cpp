@@ -50,6 +50,7 @@ namespace jaco
 {
 
 JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematicController &jaco_controller)
+//JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoMPCController &jaco_controller)
     :  node_handle_(nodeHandle), jaco_comm_(arm), jaco_controller_(jaco_controller)
 {
     /* Set up Services */
@@ -74,6 +75,8 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
                                                       &JacoArm::jointVelocityCallback, this);
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
                                                           &JacoArm::cartesianVelocityCallback, this);       
+    finger_velocity_subscriber_ = node_handle_.subscribe("in/finger_velocity", 1,
+                                                          &JacoArm::fingerVelocityCallback, this);       
     joint_position_subscriber_ = node_handle_.subscribe("in/joint_position", 1,
                                                       &JacoArm::jointPositionCallback, this);
     cartesian_position_subscriber_ = node_handle_.subscribe("in/cartesian_position", 1,
@@ -82,11 +85,13 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
     node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_timeout_seconds_, 0.3);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 0.25);
+    node_handle_.param<double>("finger_vel_timeout", finger_vel_timeout_seconds_, 0.25);
     node_handle_.param<double>("joint_angular_pos_timeout", joint_pos_timeout_seconds_, 0.25);
     node_handle_.param<double>("cartesian_pos_timeout", cartesian_pos_timeout_seconds_, 0.25);
     
     node_handle_.param<double>("joint_angular_vel_interval", joint_vel_interval_seconds_, 0.01);
     node_handle_.param<double>("cartesian_vel_interval", cartesian_vel_interval_seconds_, 0.01);
+    node_handle_.param<double>("finger_vel_interval", finger_vel_interval_seconds_, 0.01);
     node_handle_.param<double>("joint_angular_pos_interval", joint_pos_interval_seconds_, 0.01);
     node_handle_.param<double>("cartesian_pos_interval", cartesian_pos_interval_seconds_, 0.01);
 	
@@ -103,7 +108,7 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
     // updating the joint_state topic.
     node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
     
-    node_handle_.param("use_kinematic_controller", use_kinematic_controller_, false);
+    node_handle_.param("use_kinematic_controller", use_kinematic_controller_, true);
     node_handle_.param("null_space_controller", null_space_controller_, false);
 
     joint_names_.resize(JACO_JOINTS_COUNT);
@@ -140,6 +145,13 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
     cartesian_vel_timer_.stop();
     cartesian_vel_timer_flag_ = false;
 
+    ROS_INFO("Finger Velocity: %.3f interval %.3f timeout", finger_vel_interval_seconds_, finger_vel_timeout_seconds_);
+    finger_vel_timer_ = node_handle_.createTimer(ros::Duration(finger_vel_interval_seconds_),
+                                                  &JacoArm::fingerVelocityTimer, this);
+    finger_vel_timer_.stop();
+    finger_vel_timer_flag_ = false;
+
+
 	ROS_INFO("Angular Position: %.3f interval %.3f timeout", joint_pos_interval_seconds_, joint_pos_timeout_seconds_);
     joint_pos_timer_ = node_handle_.createTimer(ros::Duration(joint_pos_interval_seconds_),
                                               &JacoArm::jointPositionTimer, this);
@@ -153,8 +165,6 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
     cartesian_pos_timer_flag_ = false;
 
     ROS_INFO("The arm is ready to use.");
-
-
 }
 
 
@@ -287,7 +297,7 @@ void JacoArm::jointVelocityTimer(const ros::TimerEvent&)
     }
     else if (null_space_controller_)
     {
-		jaco_controller_.callBothNullSpace(joint_velocities_);
+		//jaco_controller_.callBothNullSpace(joint_velocities_);
 	}
 	else
     {
@@ -333,9 +343,7 @@ void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
     }
     else if (use_kinematic_controller_)
     {
-        jaco_controller_.callBoth(cartesian_velocities_);
- //       jaco_controller_.callForceManip(cartesian_velocities_);
-        //jaco_controller_.callMotionManip(cartesian_velocities_);
+        jaco_controller_.call(cartesian_velocities_);
     }
     else
     {
@@ -344,6 +352,42 @@ void JacoArm::cartesianVelocityTimer(const ros::TimerEvent&)
                   cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
         jaco_comm_.setCartesianVelocities(cartesian_velocities_);
         
+    }
+}
+
+void JacoArm::fingerVelocityCallback(const jaco_msgs::FingerPositionConstPtr& finger_vel)
+{
+    if (!jaco_comm_.isStopped())
+    {
+        finger_velocities_.Finger1 = finger_vel->finger1;
+        finger_velocities_.Finger2 = finger_vel->finger2;
+        finger_velocities_.Finger3 = finger_vel->finger3;
+        last_finger_vel_cmd_time_ = ros::Time().now();
+        
+        if (finger_vel_timer_flag_ == false)
+        {
+            finger_vel_timer_.start();
+            finger_vel_timer_flag_ = true;
+        }
+    } else {
+        ROS_WARN("Velocity command received but comm is stopped");
+    }
+}
+
+void JacoArm::fingerVelocityTimer(const ros::TimerEvent&)
+{
+    double elapsed_time_seconds = ros::Time().now().toSec() - last_finger_vel_cmd_time_.toSec();
+
+    if (elapsed_time_seconds > finger_vel_timeout_seconds_)
+    {
+        ROS_WARN("Finger vel timed out: %f", elapsed_time_seconds);
+        finger_vel_timer_.stop();
+        finger_vel_timer_flag_ = false;
+    }
+	else
+    {
+        //jaco_comm_.setFingerVelocities(finger_velocities_);
+
     }
 }
 
