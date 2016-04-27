@@ -305,9 +305,15 @@ bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_toleranc
     status = status && areValuesClose(X, other.X, position_tolerance);
     status = status && areValuesClose(Y, other.Y, position_tolerance);
     status = status && areValuesClose(Z, other.Z, position_tolerance);
-    status = status && areValuesClose(ThetaX, other.ThetaX, EulerAngle_tolerance);
-    status = status && areValuesClose(ThetaY, other.ThetaY, EulerAngle_tolerance);
-    status = status && areValuesClose(ThetaZ, other.ThetaZ, EulerAngle_tolerance);
+    status = status && (areValuesClose(fmod(ThetaX, 2*M_PI), fmod(other.ThetaX, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaX, 2*M_PI) + 2*M_PI, fmod(other.ThetaX, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaX, 2*M_PI), fmod(other.ThetaX, 2*M_PI) + 2*M_PI, EulerAngle_tolerance));
+    status = status && (areValuesClose(fmod(ThetaY, 2*M_PI), fmod(other.ThetaY, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaY, 2*M_PI) + 2*M_PI, fmod(other.ThetaY, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaY, 2*M_PI), fmod(other.ThetaY, 2*M_PI) + 2*M_PI, EulerAngle_tolerance));
+    status = status && (areValuesClose(fmod(ThetaZ, 2*M_PI), fmod(other.ThetaZ, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaZ, 2*M_PI) + 2*M_PI, fmod(other.ThetaZ, 2*M_PI), EulerAngle_tolerance) ||
+                        areValuesClose(fmod(ThetaZ, 2*M_PI), fmod(other.ThetaZ, 2*M_PI) + 2*M_PI, EulerAngle_tolerance));
     return status;
 }
 
@@ -369,12 +375,26 @@ kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg()
 bool KinovaAngles::isCloseToOther(const KinovaAngles &other, float tolerance) const
 {
     bool status = true;
-    status = status && areValuesClose(Actuator1, other.Actuator1, tolerance);
-    status = status && areValuesClose(Actuator2, other.Actuator2, tolerance);
-    status = status && areValuesClose(Actuator3, other.Actuator3, tolerance);
-    status = status && areValuesClose(Actuator4, other.Actuator4, tolerance);
-    status = status && areValuesClose(Actuator5, other.Actuator5, tolerance);
-    status = status && areValuesClose(Actuator6, other.Actuator6, tolerance);
+
+    status = status && (areValuesClose(fmod(Actuator1, 360.0), fmod(other.Actuator1, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator1, 360.0) + 360, fmod(other.Actuator1, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator1, 360.0), fmod(other.Actuator1, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator2, 360.0), fmod(other.Actuator2, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator2, 360.0) + 360, fmod(other.Actuator2, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator2, 360.0), fmod(other.Actuator2, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator3, 360.0), fmod(other.Actuator3, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator3, 360.0) + 360, fmod(other.Actuator3, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator3, 360.0), fmod(other.Actuator3, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator4, 360.0), fmod(other.Actuator4, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator4, 360.0) + 360, fmod(other.Actuator4, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator4, 360.0), fmod(other.Actuator4, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator5, 360.0), fmod(other.Actuator5, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator5, 360.0) + 360, fmod(other.Actuator5, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator5, 360.0), fmod(other.Actuator5, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator6, 360.0), fmod(other.Actuator6, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator6, 360.0) + 360, fmod(other.Actuator6, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator6, 360.0), fmod(other.Actuator6, 360.0) + 360, tolerance));
+
     return status;
 }
 
