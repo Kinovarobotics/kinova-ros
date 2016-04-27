@@ -103,8 +103,8 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
     // updating the joint_state topic.
     node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
     
-    node_handle_.param("use_kinematic_controller", use_kinematic_controller_, true);
-    node_handle_.param("null_space_controller", null_space_controller_, true);
+    node_handle_.param("use_kinematic_controller", use_kinematic_controller_, false);
+    node_handle_.param("null_space_controller", null_space_controller_, false);
 
     joint_names_.resize(JACO_JOINTS_COUNT);
     joint_names_[0] = tf_prefix_ + "joint_1";
@@ -151,9 +151,6 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle, JacoKinematic
                                                   &JacoArm::cartesianPositionTimer, this);
     cartesian_pos_timer_.stop();
     cartesian_pos_timer_flag_ = false;
-    
-    use_kinematic_controller_ = true;
-    null_space_controller_ = true;
 
     ROS_INFO("The arm is ready to use.");
 

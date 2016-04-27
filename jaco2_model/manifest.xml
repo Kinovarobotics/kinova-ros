@@ -1,0 +1,6 @@
+<package>
+  <description brief="jaco">jaco</description>
+  <depend package="gazebo" />
+  <author>me</author>
+  <license>BSD</license>
+</package>

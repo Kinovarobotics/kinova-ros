@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="use_urdf" default="false"/>
+  <arg name="use_urdf" default="true"/>
 
   <node name="jaco_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
     <!-- Set this parameter to use a specific arm on your system    --> 
@@ -8,9 +8,6 @@
     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/>
     <param name="urdf" value="$(find jaco2)/urdf/jaco2.urdf" />
-    <param name="use_joint_limit_avoid" value="true" />
-    <param name="use_motion_manipulator_index" value="false" />
-    <param name="use_force__manipulator_index" value="false" />
   </node>
     
   <group unless="$(arg use_urdf)">
