@@ -27,7 +27,7 @@ namespace jaco
 class JacoAPI
 {
  public:
-    JacoAPI(void);
+    JacoAPI(const std::string & lib = JACO_USB_LIBRARY);
 
     int (*initAPI)(void);
     int (*closeAPI)(void);

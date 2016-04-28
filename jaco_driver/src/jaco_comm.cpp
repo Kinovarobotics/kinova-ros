@@ -54,8 +54,9 @@ namespace jaco
 
 JacoComm::JacoComm(const ros::NodeHandle& node_handle,
                    boost::recursive_mutex &api_mutex,
-                   const bool is_movement_on_start)
-    : is_software_stop_(false), api_mutex_(api_mutex)
+                   const bool is_movement_on_start,
+                   const std::string & api_lib)
+    : api_mutex_(api_mutex), jaco_api_(api_lib), is_software_stop_(false)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -88,7 +89,7 @@ JacoComm::JacoComm(const ros::NodeHandle& node_handle,
     }
 
     bool found_arm = false;
-    for (int device_i = 0; device_i < devices_list.size(); device_i++)
+    for (unsigned int device_i = 0; device_i < devices_list.size(); device_i++)
     {
         // If no device is specified, just use the first available device
         if ((serial_number == "")
@@ -433,6 +434,36 @@ void JacoComm::setFingerPositions(const FingerAngles &fingers, int timeout, bool
     {
         throw JacoCommException("Could not send advanced finger trajectory", result);
     }
+}
+
+void JacoComm::setFingerVelocities(const FingerAngles &fingers)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The finger velocities could not be set because the arm is stopped");
+        return;
+    }
+
+    TrajectoryPoint jaco_finger;
+    jaco_finger.InitStruct();
+    memset(&jaco_finger, 0, sizeof(jaco_finger));  // zero structure
+
+    //startAPI();
+    // Initialize Cartesian control of the fingers
+    jaco_finger.Position.Type = CARTESIAN_VELOCITY;
+    jaco_finger.Position.HandMode = VELOCITY_MODE;
+    jaco_finger.Position.Fingers = fingers;
+    jaco_finger.Position.Delay = 0.0;
+    jaco_finger.LimitationsActive = 0;
+
+    int result = jaco_api_.sendAdvanceTrajectory(jaco_finger);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set Finger control", result);
+    }
+
 }
 
 

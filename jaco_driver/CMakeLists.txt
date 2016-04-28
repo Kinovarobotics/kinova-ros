@@ -11,7 +11,18 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  tf_conversions
+  trajectory_msgs
+  control_msgs
+  industrial_msgs
+  kdl_parser
+  urdf
+  qp_oases
 )
+
+find_package(cmake_modules REQUIRED)
+find_package(Eigen REQUIRED)
+
 generate_dynamic_reconfigure_options(
   #cfg/JacoPositionConfig.cfg
 )
@@ -21,17 +32,20 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES jaco_driver
-  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs jaco_msgs roscpp rospy sensor_msgs std_msgs tf
-#  DEPENDS system_lib
+  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs jaco_msgs roscpp rospy sensor_msgs std_msgs tf tf_conversions trajectory_msgs control_msgs industrial_msgs kdl_parser urdf qp_oases
+  DEPENDS Eigen
 )
 
 ###########
 ## Build ##
 ###########
 
+add_definitions(-g -ggdb -Wall ${EIGEN_DEFINITIONS})
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${Eigen_INCLUDE_DIRS}
 )
 
 #Testers
@@ -53,6 +67,8 @@ add_executable(jaco_arm_driver
   src/jaco_angles_action.cpp
   src/jaco_fingers_action.cpp
   src/jaco_types.cpp
+  src/jaco_kinematic_controller.cpp
+  src/jaco_ik_solver.cpp
   include/jaco_driver/jaco_angles_action.h
   include/jaco_driver/jaco_api.h
   include/jaco_driver/jaco_arm.h
@@ -60,6 +76,8 @@ add_executable(jaco_arm_driver
   include/jaco_driver/jaco_fingers_action.h
   include/jaco_driver/jaco_pose_action.h
   include/jaco_driver/jaco_types.h
+  include/jaco_driver/jaco_kinematic_controller.h
+  include/jaco_driver/jaco_ik_solver.h
   include/kinova/Kinova.API.CommLayerUbuntu.h
   include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
   include/kinova/KinovaTypes.h
@@ -72,11 +90,27 @@ add_executable(jaco_tf_updater
   include/jaco_driver/jaco_arm_kinematics.h
 )
 
+# add_executable(trajectory_client
+#   src/nodes/jaco_trajectory_interface.cpp
+#   include/jaco_driver/jaco_trajectory_interface.h
+# )
+
+
+add_executable(armJointAngles_client src/nodes/joint_action_client.cpp)
+add_executable(armPose_client src/nodes/cartesian_action_client.cpp)
+
+
 add_dependencies(jaco_arm_driver ${catkin_EXPORTED_TARGETS})
 add_dependencies(jaco_tf_updater ${catkin_EXPORTED_TARGETS})
+add_dependencies(armJointAngles_client ${catkin_EXPORTED_TARGETS})
+add_dependencies(armPose_client ${catkin_EXPORTED_TARGETS})
+# add_dependencies(trajectory_client ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(jaco_arm_driver ${catkin_LIBRARIES} dl)
 target_link_libraries(jaco_tf_updater ${catkin_LIBRARIES})
+target_link_libraries(armJointAngles_client ${catkin_LIBRARIES})
+target_link_libraries(armPose_client ${catkin_LIBRARIES})
+# target_link_libraries(trajectory_client ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -103,7 +137,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 
 ## Mark executables and/or libraries for installation
-install(TARGETS jaco_arm_driver jaco_tf_updater
+install(TARGETS jaco_arm_driver jaco_tf_updater armJointAngles_client armPose_client # trajectory_client
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

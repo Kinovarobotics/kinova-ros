@@ -55,8 +55,8 @@ namespace jaco
 {
 
 JacoAnglesActionServer::JacoAnglesActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
-    : arm_comm_(arm_comm),
-      node_handle_(nh, "joint_angles"),
+    : node_handle_(nh, "joint_angles"),
+      arm_comm_(arm_comm),
       action_server_(node_handle_, "arm_joint_angles",
                      boost::bind(&JacoAnglesActionServer::actionCallback, this, _1), false)
 {

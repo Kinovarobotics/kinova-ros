@@ -53,8 +53,8 @@ namespace jaco
 {
 
 JacoPoseActionServer::JacoPoseActionServer(JacoComm &arm_comm, const ros::NodeHandle &nh)
-    : arm_comm_(arm_comm),
-      node_handle_(nh, "arm_pose"),
+    : node_handle_(nh, "arm_pose"),
+      arm_comm_(arm_comm),
       action_server_(node_handle_, "arm_pose",
                      boost::bind(&JacoPoseActionServer::actionCallback, this, _1), false)
 {

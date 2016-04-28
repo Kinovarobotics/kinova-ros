@@ -1,0 +1,12 @@
+<launch>
+    <param name="robot_description" textfile="$(find jaco2_model)/robots/jaco2_model.urdf" />
+    <!--<param name="robot_description" command="$(find xacro)/xacro.py '$(find jaco2)/urdf/jaco2_model.urdf.xacro'"/>-->
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" > 
+    <rosparam param="source_list">["jaco_arm_driver/out/joint_position_state"]</rosparam>
+    </node>
+
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find jaco2_model)/launch/moveit.rviz" />
+
+</launch>

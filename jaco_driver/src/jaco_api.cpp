@@ -21,9 +21,16 @@ void* checkApiInit(void * usbLib, const char* name)
 }
 
 
-JacoAPI::JacoAPI(void)
+JacoAPI::JacoAPI(const std::string & lib)
 {
-    void *usbLib = dlopen(JACO_USB_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
+    void *usbLib = NULL;
+    if (lib.empty()) {
+        ROS_INFO("JacoAPI: Loading command library: %s",JACO_USB_LIBRARY);
+        usbLib = dlopen(JACO_USB_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
+    } else {
+        ROS_INFO("JacoAPI: Loading command library: %s",lib.c_str());
+        usbLib = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    }
     if (usbLib == NULL)
     {
         ROS_WARN("%s", dlerror());
