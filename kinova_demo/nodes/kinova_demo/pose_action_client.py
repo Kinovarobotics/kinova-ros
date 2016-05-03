@@ -196,11 +196,11 @@ def verboseParser(verbose, pose_mq_):
         orientation_deg = list(map(math.degrees, orientation_rad))
         print('Cartesian position is: {}'.format(position_))
         print('Cartesian orientation in Quaternion is: ')
-        print('qx, qy, qz, qw: {:0.3f}'.format(orientation_q))
+        print('qx {:0.3f}, qy {:0.3f}, qz {:0.3f}, qw {:0.3f}'.format(orientation_q[0], orientation_q[1], orientation_q[2], orientation_q[3]))
         print('Cartesian orientation in Euler-XYZ(radian) is: ')
-        print('tx, ty, tz: {:0.3f}'.format(orientation_rad))
+        print('tx {:0.3f}, ty {:0.3f}, tz {:0.3f}'.format(orientation_rad[0], orientation_rad[1], orientation_rad[2]))
         print('Cartesian orientation in Euler-XYZ(degree) is: ')
-        print('tx, ty, tz: {:3.1f}'.format(orientation_deg))
+        print('tx {:3.1f}, ty {:3.1f}, tz {:3.1f}'.format(orientation_deg[0], orientation_deg[1], orientation_deg[2]))
 
 
 if __name__ == '__main__':
@@ -238,4 +238,4 @@ if __name__ == '__main__':
         print "program interrupted before completion"
 
 
-    verboseParser(args.verbose, pose_mq)
+    verboseParser(args.verbose, poses)
