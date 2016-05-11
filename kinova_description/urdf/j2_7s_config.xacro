@@ -26,7 +26,7 @@
     <property name="link_5" value="${prefix}_link_5" />
     <property name="link_6" value="${prefix}_link_6" />
     <property name="link_7" value="${prefix}_link_7" />  
-    <property name="link_end_effector"   value="${prefix}_end_effector" />
+    <property name="link_end_effector" value="${prefix}_end_effector" />
 
 
     <property name="joint_base" value="${prefix}_joint_base" />
@@ -76,12 +76,12 @@
     <property name="joint_6_lower_limit" value="${-2*J_PI}" />
     <property name="joint_6_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_6" value="${prefix}_joint_6" />
-    <property name="joint_6_axis_xyz" value="0 0 1" />
-    <property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
-    <property name="joint_6_origin_rpy" value="${-J_PI/3} 0 0" />
-    <property name="joint_6_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_6_upper_limit" value="${2*J_PI}" />
+    <property name="joint_7" value="${prefix}_joint_7" />
+    <property name="joint_7_axis_xyz" value="0 0 1" />
+    <property name="joint_7_origin_xyz" value="0 -0.03703 -0.06414" />
+    <property name="joint_7_origin_rpy" value="${-J_PI/3} 0 0" />
+    <property name="joint_7_lower_limit" value="${-2*J_PI}" />
+    <property name="joint_7_upper_limit" value="${2*J_PI}" />
 
     <property name="joint_end_effector" value="${prefix}_end_effector_offset" />
     <property name="joint_end_effector_axis_xyz" value="0 0 0" />

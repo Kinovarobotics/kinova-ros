@@ -18,9 +18,12 @@
 
 
   <xacro:include filename="$(find kinova_description)/urdf/kinova_common.xacro" />
+  <xacro:include filename="$(find kinova_description)/urdf/j2_7s_config.xacro" />
 
+  <xacro:j2_7s_config prefix="prefix"/>
 
-  <xacro:macro name="j2_7s_structure" params="base_parent">
+  <xacro:macro name="j2_7s_structure" params="prefix base_parent">
+
 
     <xacro:kinova_armlink link_name="${link_base}"/>
     <xacro:kinova_armjoint joint_name="${joint_base}" type="fixed" parent="${base_parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>

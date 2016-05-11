@@ -20,79 +20,80 @@
 
 
 
-    <property name="link_base" value="j2_7s_3_link_base" />
-    <property name="link_1" value="j2_7s_3_link_1" />
-    <property name="link_2" value="j2_7s_3_link_2" />
-    <property name="link_3" value="j2_7s_3_link_3" />
-    <property name="link_4" value="j2_7s_3_link_4" />
-    <property name="link_5" value="j2_7s_3_link_5" />
-    <property name="link_6" value="j2_7s_3_link_6" />
-    <property name="link_7" value="j2_7s_3_link_7" />  
-    <property name="link_end_effector" value="j2_7s_3_end_effector" />
+        <property name="link_base" value="j2_7s_3_link_base" />
+        <property name="link_1" value="j2_7s_3_link_1" />
+        <property name="link_2" value="j2_7s_3_link_2" />
+        <property name="link_3" value="j2_7s_3_link_3" />
+        <property name="link_4" value="j2_7s_3_link_4" />
+        <property name="link_5" value="j2_7s_3_link_5" />
+        <property name="link_6" value="j2_7s_3_link_6" />
+        <property name="link_7" value="j2_7s_3_link_7" />  
+        <property name="link_end_effector" value="j2_7s_3_end_effector" />
 
 
-    <property name="joint_base" value="j2_7s_3_joint_base" />
-    <property name="joint_base_axis_xyz" value="0 0 0" />
-    <property name="joint_base_origin_xyz" value="0 0 0" />
-    <property name="joint_base_origin_rpy" value="0 0 0" />
+        <property name="joint_base" value="j2_7s_3_joint_base" />
+        <property name="joint_base_axis_xyz" value="0 0 0" />
+        <property name="joint_base_origin_xyz" value="0 0 0" />
+        <property name="joint_base_origin_rpy" value="0 0 0" />
 
-    <property name="joint_1" value="j2_7s_3_joint_1" />
-    <property name="joint_1_axis_xyz" value="0 0 1" />
-    <property name="joint_1_origin_xyz" value="0 0 0.15675" />
-    <property name="joint_1_origin_rpy" value="0 0 0" />
-    <property name="joint_1_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_1_upper_limit" value="${2*J_PI}" />
+        <property name="joint_1" value="j2_7s_3_joint_1" />
+        <property name="joint_1_axis_xyz" value="0 0 1" />
+        <property name="joint_1_origin_xyz" value="0 0 0.15675" />
+        <property name="joint_1_origin_rpy" value="0 0 0" />
+        <property name="joint_1_lower_limit" value="${-2*J_PI}" />
+        <property name="joint_1_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_2" value="j2_7s_3_joint_2" />
-    <property name="joint_2_axis_xyz" value="0 0 1" />
-    <property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
-    <property name="joint_2_origin_rpy" value="${-J_PI/2} 0 ${J_PI}" />
-    <property name="joint_2_lower_limit" value="${-J_PI}" />
-    <property name="joint_2_upper_limit" value="${0}" />
+        <property name="joint_2" value="j2_7s_3_joint_2" />
+        <property name="joint_2_axis_xyz" value="0 0 1" />
+        <property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
+        <property name="joint_2_origin_rpy" value="${-J_PI/2} 0 ${J_PI}" />
+        <property name="joint_2_lower_limit" value="${-J_PI}" />
+        <property name="joint_2_upper_limit" value="${0}" />
 
-    <property name="joint_3" value="j2_7s_3_joint_3" />
-    <property name="joint_3_axis_xyz" value="0 0 1" />
-    <property name="joint_3_origin_xyz" value="0 -0.205 0" />
-    <property name="joint_3_origin_rpy" value="${J_PI} 0 ${J_PI}" />
-    <property name="joint_3_lower_limit" value="${-5*J_PI/4}" />
-    <property name="joint_3_upper_limit" value="${1*J_PI/4}" />
+        <property name="joint_3" value="j2_7s_3_joint_3" />
+        <property name="joint_3_axis_xyz" value="0 0 1" />
+        <property name="joint_3_origin_xyz" value="0 -0.205 0" />
+        <property name="joint_3_origin_rpy" value="${J_PI} 0 ${J_PI}" />
+        <property name="joint_3_lower_limit" value="${-5*J_PI/4}" />
+        <property name="joint_3_upper_limit" value="${1*J_PI/4}" />
 
-    <property name="joint_4" value="j2_7s_3_joint_4" />
-    <property name="joint_4_axis_xyz" value="0 0 1" />
-    <property name="joint_4_origin_xyz" value="0 0 -0.205" />
-    <property name="joint_4_origin_rpy" value="${J_PI/2} ${J_PI/2} 0" />
-    <property name="joint_4_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_4_upper_limit" value="${2*J_PI}" />
+        <property name="joint_4" value="j2_7s_3_joint_4" />
+        <property name="joint_4_axis_xyz" value="0 0 1" />
+        <property name="joint_4_origin_xyz" value="0 0 -0.205" />
+        <property name="joint_4_origin_rpy" value="${J_PI/2} ${J_PI/2} 0" />
+        <property name="joint_4_lower_limit" value="${-2*J_PI}" />
+        <property name="joint_4_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_5" value="j2_7s_3_joint_5" />
-    <property name="joint_5_axis_xyz" value="0 0 1" />
-    <property name="joint_5_origin_xyz" value="0 0.2073 -0.0114" />
-    <property name="joint_5_origin_rpy" value="${-J_PI/3} 0 0" />
-    <property name="joint_5_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_5_upper_limit" value="${2*J_PI}" />
+        <property name="joint_5" value="j2_7s_3_joint_5" />
+        <property name="joint_5_axis_xyz" value="0 0 1" />
+        <property name="joint_5_origin_xyz" value="0 0.2073 -0.0114" />
+        <property name="joint_5_origin_rpy" value="${-J_PI/3} 0 0" />
+        <property name="joint_5_lower_limit" value="${-2*J_PI}" />
+        <property name="joint_5_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_6" value="j2_7s_3_joint_6" />
-    <property name="joint_6_axis_xyz" value="0 0 1" />
-    <property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
-    <property name="joint_6_origin_rpy" value="${-J_PI/3} 0 0" />
-    <property name="joint_6_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_6_upper_limit" value="${2*J_PI}" />
+        <property name="joint_6" value="j2_7s_3_joint_6" />
+        <property name="joint_6_axis_xyz" value="0 0 1" />
+        <property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
+        <property name="joint_6_origin_rpy" value="${-J_PI/3} 0 0" />
+        <property name="joint_6_lower_limit" value="${-2*J_PI}" />
+        <property name="joint_6_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_7" value="j2_7s_3_joint_7" />
-    <property name="joint_7_axis_xyz" value="0 0 1" />
-    <property name="joint_7_origin_xyz" value="0 -0.03703 -0.06414" />
-    <property name="joint_7_origin_rpy" value="${-J_PI/3} 0 0" />
-    <property name="joint_7_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_7_upper_limit" value="${2*J_PI}" />
+        <property name="joint_7" value="j2_7s_3_joint_7" />
+        <property name="joint_7_axis_xyz" value="0 0 1" />
+        <property name="joint_7_origin_xyz" value="0 -0.03703 -0.06414" />
+        <property name="joint_7_origin_rpy" value="${-J_PI/3} 0 0" />
+        <property name="joint_7_lower_limit" value="${-2*J_PI}" />
+        <property name="joint_7_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_end_effector" value="j2_7s_3_end_effector_offset" />
-    <property name="joint_end_effector_axis_xyz" value="0 0 0" />
-    <property name="joint_end_effector_origin_xyz" value="0 0 -0.1600" />
-    <property name="joint_end_effector_origin_rpy" value="0 0 0" />
+        <property name="joint_end_effector" value="j2_7s_3_end_effector_offset" />
+        <property name="joint_end_effector_axis_xyz" value="0 0 0" />
+        <property name="joint_end_effector_origin_xyz" value="0 0 -0.1600" />
+        <property name="joint_end_effector_origin_rpy" value="0 0 0" />
 
 
 
-    <xacro:macro name="j2_7s_3" params="base_parent">
+
+    <xacro:macro name="j2_7s_3_all" params="base_parent">
     
         <xacro:kinova_armlink link_name="${link_base}"/>
         <xacro:kinova_armjoint joint_name="${joint_base}" type="fixed" parent="${base_parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
