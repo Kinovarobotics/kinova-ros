@@ -18,12 +18,12 @@
 
     <property name="J_PI" value="3.1415926535897931" />
 
-    <xacro:macro name="kinova_armlink" params="link_name">
+    <xacro:macro name="kinova_armlink" params="link_name link_mesh">
         <link name="${link_name}">
             <visual>
                 <geometry>
                     <mesh
-                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                        filename="package://kinova_description/meshes/${link_mesh}.dae"/>
                 </geometry>
                 <material name="carbon_fiber">
                     <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
@@ -32,7 +32,7 @@
             <collision>
                 <geometry>
                     <mesh
-                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                        filename="package://kinova_description/meshes/${link_mesh}.dae"/>
                 </geometry>
             </collision>
         </link>
