@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+
+<root xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+    <property name="J_PI" value="3.1415926535897931" />
+
+    <xacro:macro name="kinova_armlink" params="link_name">
+        <link name="${link_name}">
+            <visual>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
+                <material name="carbon_fiber">
+                    <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+                </material>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${link_name}.dae"/>
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit">
+    <joint name="${joint_name}" type="${type}">
+        <parent link="${parent}"/>
+        <child link="${child}"/>
+        <axis xyz="${joint_axis_xyz}"/>
+        <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+     </joint>
+    </xacro:macro>
+
+    <xacro:macro name="kinova_fingerjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit">
+    <joint name="${joint_name}" type="${type}">
+        <parent link="${parent}"/>
+        <child link="${child}"/>
+        <axis xyz="${joint_axis_xyz}"/>
+        <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
+     </joint>
+    </xacro:macro>
+
+   <xacro:macro name="kinova_fingertipjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit mimic_joint mimic_multiplier mimic_offset">
+    <joint name="${joint_name}" type="${type}">
+        <parent link="${parent}"/>
+        <child link="${child}"/>
+        <axis xyz="${joint_axis_xyz}"/>
+        <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
+        <mimic joint="${mimic_joint}" multiplier="${mimic_multiplier}" offset="${mimic_offset}"/>
+     </joint>
+    </xacro:macro>
+    
+</root>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+
+<root xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <xacro:macro name="kinova_3fingers" params="link_hand">
+
+    <xacro:kinova_armlink link_name="${link_finger_1}"/>
+    <xacro:kinova_fingerjoint joint_name="${joint_finger_1}" type="revolute" parent="${link_hand}" child="${link_finger_1}" joint_axis_xyz="${joint_finger_1_axis_xyz}" joint_origin_xyz="${joint_finger_1_origin_xyz}" joint_origin_rpy="${joint_finger_1_origin_rpy}" lower_limit="${joint_finger_1_lower_limit}" upper_limit="${joint_finger_1_upper_limit}"/>
+
+    <xacro:kinova_armlink link_name="${link_finger_tip_1}"/>
+    <xacro:kinova_fingertipjoint joint_name="${joint_finger_tip_1}" type="revolute" parent="${link_finger_1}" child="${link_finger_tip_1}" joint_axis_xyz="${joint_finger_tip_1_axis_xyz}" joint_origin_xyz="${joint_finger_tip_1_origin_xyz}" joint_origin_rpy="${joint_finger_tip_1_origin_rpy}" lower_limit="${joint_finger_tip_1_lower_limit}" upper_limit="${joint_finger_tip_1_upper_limit}" mimic_joint="${joint_finger_1}" mimic_multiplier="${joint_finger_tip_1_mimic_multiplier}" mimic_offset="${joint_finger_tip_1_mimc_offset}"/>
+
+
+    <xacro:kinova_armlink link_name="${link_finger_2}"/>
+    <xacro:kinova_fingerjoint joint_name="${joint_finger_2}" type="revolute" parent="${link_hand}" child="${link_finger_2}" joint_axis_xyz="${joint_finger_2_axis_xyz}" joint_origin_xyz="${joint_finger_2_origin_xyz}" joint_origin_rpy="${joint_finger_2_origin_rpy}" lower_limit="${joint_finger_2_lower_limit}" upper_limit="${joint_finger_2_upper_limit}"/>
+
+    <xacro:kinova_armlink link_name="${link_finger_tip_2}"/>
+    <xacro:kinova_fingertipjoint joint_name="${joint_finger_tip_2}" type="revolute" parent="${link_finger_2}" child="${link_finger_tip_2}" joint_axis_xyz="${joint_finger_tip_2_axis_xyz}" joint_origin_xyz="${joint_finger_tip_2_origin_xyz}" joint_origin_rpy="${joint_finger_tip_2_origin_rpy}" lower_limit="${joint_finger_tip_2_lower_limit}" upper_limit="${joint_finger_tip_2_upper_limit}" mimic_joint="${joint_finger_2}" mimic_multiplier="${joint_finger_tip_2_mimic_multiplier}" mimic_offset="${joint_finger_tip_2_mimc_offset}"/>
+
+    <xacro:kinova_armlink link_name="${link_finger_3}"/>
+    <xacro:kinova_fingerjoint joint_name="${joint_finger_3}" type="revolute" parent="${link_hand}" child="${link_finger_3}" joint_axis_xyz="${joint_finger_3_axis_xyz}" joint_origin_xyz="${joint_finger_3_origin_xyz}" joint_origin_rpy="${joint_finger_3_origin_rpy}" lower_limit="${joint_finger_3_lower_limit}" upper_limit="${joint_finger_3_upper_limit}"/>
+
+    <xacro:kinova_armlink link_name="${link_finger_tip_3}"/>
+    <xacro:kinova_fingertipjoint joint_name="${joint_finger_tip_3}" type="revolute" parent="${link_finger_3}" child="${link_finger_tip_3}" joint_axis_xyz="${joint_finger_tip_3_axis_xyz}" joint_origin_xyz="${joint_finger_tip_3_origin_xyz}" joint_origin_rpy="${joint_finger_tip_3_origin_rpy}" lower_limit="${joint_finger_tip_3_lower_limit}" upper_limit="${joint_finger_tip_3_upper_limit}" mimic_joint="${joint_finger_3}" mimic_multiplier="${joint_finger_tip_3_mimic_multiplier}" mimic_offset="${joint_finger_tip_3_mimc_offset}"/>
+
+
+  </xacro:macro>
+
+
+</root>
