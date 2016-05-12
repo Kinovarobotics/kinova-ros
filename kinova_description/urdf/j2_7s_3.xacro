@@ -17,7 +17,9 @@
     xmlns:xacro="http://ros.org/wiki/xacro">
 
     <xacro:include filename="$(find kinova_description)/urdf/kinova_common.xacro" />
+    <xacro:include filename="$(find kinova_description)/urdf/kinova_3fingers.xacro" />
 
+    <property name="prefix" value="j2_7s_3" />
 
     <property name="link_base" value="j2_7s_3_link_base" />
     <property name="link_1" value="j2_7s_3_link_1" />
@@ -140,5 +142,8 @@
 
 
     </xacro:macro>
+
+    <xacro:kinova_3fingers link_hand="${link_7}" />
+
 
 </root>
