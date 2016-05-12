@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- j2_7s_3 refers to jaco v2 7DOF spherical 3fingers -->
+<!-- j2_6n_3 refers to jaco v2 6DOF non-spherical 3fingers -->
 
 
 <robot xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14,10 +14,10 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="j2_7s_3">
+	xmlns:xacro="http://ros.org/wiki/xacro" name="j2_6n_3">
 
 
-  <xacro:include filename="$(find kinova_description)/urdf/j2_7s_3.xacro"/>
+  <xacro:include filename="$(find kinova_description)/urdf/j2_6n_3.xacro"/>
 
   <link name="root">
     <visual>
@@ -38,6 +38,6 @@
 
   <property name="robot_root" value="root" />
 
-  <xacro:j2_7s_3  base_parent="${robot_root}"/>
+  <xacro:j2_6n_3  base_parent="${robot_root}"/>
 
 </robot>
