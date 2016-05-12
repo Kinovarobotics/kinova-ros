@@ -17,7 +17,7 @@
     xmlns:xacro="http://ros.org/wiki/xacro">
 
     <xacro:include filename="$(find kinova_description)/urdf/kinova_common.xacro" />
-    <xacro:include filename="$(find kinova_description)/urdf/kinova_3fingers.xacro" />
+    <xacro:include filename="$(find kinova_description)/urdf/kinova_finger_set.xacro" />
 
     <property name="prefix" value="m1_6n_2" />
 

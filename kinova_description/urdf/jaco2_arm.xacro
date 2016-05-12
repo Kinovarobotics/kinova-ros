@@ -16,7 +16,7 @@
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:include filename="$(find kinova_description)/urdf/kinova_6DOF.xacro" />
-  <xacro:include filename="$(find kinova_description)/urdf/kinova_3fingers.xacro"/>
+  <xacro:include filename="$(find kinova_description)/urdf/kinova_finger.xacro"/>
 
   <property name="link_base" value="jaco2_link_base" />
   <property name="link_1" value="jaco2_link_1" />

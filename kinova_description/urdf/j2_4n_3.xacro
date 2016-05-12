@@ -17,7 +17,9 @@
     xmlns:xacro="http://ros.org/wiki/xacro">
 
     <xacro:include filename="$(find kinova_description)/urdf/kinova_common.xacro" />
+    <xacro:include filename="$(find kinova_description)/urdf/kinova_finger_set.xacro" />
 
+    <property name="prefix" value="j2_4n_3" />
 
     <property name="link_base" value="j2_4n_3_link_base" />
     <property name="link_1" value="j2_4n_3_link_1" />
@@ -29,7 +31,7 @@
 
     <property name="link_base_mesh" value="base" />
     <property name="link_1_mesh" value="shoulder" />
-    <property name="link_2_mesh" value="arm_mico" />
+    <property name="link_2_mesh" value="arm" />
     <property name="link_3_mesh" value="forearm" />
     <property name="link_4_mesh" value="hand_3finger" />
 
@@ -102,5 +104,7 @@
         <xacro:kinova_virtual_joint joint_name="${joint_end_effector}" type="${joint_end_effector_type}" parent="${link_4}" child="${link_end_effector}" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>    
 
     </xacro:macro>
+
+    <xacro:kinova_3fingers link_hand="${link_4}" prefix="${prefix}"/>
 
 </root>
