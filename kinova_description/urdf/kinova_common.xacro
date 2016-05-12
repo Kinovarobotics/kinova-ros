@@ -75,28 +75,25 @@
     </xacro:macro>
 
 
+    <xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">
 
-    <xacro:macro name="kinova_finger" params="joint_name type parent joint_axis_xyz joint_origin_xyz joint_origin_rpy lower_limit upper_limit lower_limit_tip upper_limit_tip mimic_joint mimic_multiplier mimic_offset">
-
-        <LINK />
-
-        <joint name="${joint_name}" type="${type}">
-            <parent link="${parent}"/>
-            <child link="${child}"/>
-            <axis xyz="${joint_axis_xyz}"/>
-            <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-            <limit lower="${lower_limit}" upper="${upper_limit}" effort="30" velocity="5"/>
+        <xacro:kinova_armlink link_name="${prefix}_finger_link_${finger_number}" link_mesh="finger_proximal"/>
+        <joint name="${prefix}_finger_joint_${finger_number}" type="revolute">
+            <parent link="${hand}"/>
+            <child link="${prefix}_finger_link_${finger_number}"/>
+            <axis xyz="0 0 1"/>
+            <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
+            <limit lower="0" upper="2" effort="30" velocity="5"/>
         </joint>
 
-        <LINK />
-
-        <joint name="${joint_name}" type="${type}">
-            <parent link="${parent}"/>
-            <child link="${child}"/>
-            <axis xyz="${joint_axis_xyz}"/>
-            <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-            <limit lower="${lower_limit_tip}" upper="${upper_limit_tip}" effort="30" velocity="5"/>
-            <mimic joint="${mimic_joint}" multiplier="${mimic_multiplier}" offset="${mimic_offset}"/>
+        <xacro:kinova_armlink link_name="${prefix}_finger_tip_link_${finger_number}" link_mesh="finger_distal"/>
+        <joint name="${prefix}_finger_tip_joint_${finger_number}" type="revolute">
+            <parent link="${prefix}_finger_link_${finger_number}"/>
+            <child link="${prefix}_finger_tip_link_${finger_number}"/>
+            <axis xyz="0 0 1"/>
+            <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
+            <limit lower="0" upper="2" effort="30" velocity="5"/>
+            <!-- <mimic joint="${J_PI/180*40}" multiplier="1.0" offset="0.0"/> -->
         </joint>
 
     </xacro:macro>
