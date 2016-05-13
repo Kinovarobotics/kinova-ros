@@ -1193,11 +1193,31 @@ void KinovaComm::homeArm(void)
     startAPI();
 
     ROS_INFO("Homing the arm");
-    int result = kinova_api_.moveHome();
-    if (result != NO_ERROR_KINOVA)
+
+    JoystickCommand mycommand;
+    mycommand.InitStruct();
+    // In api mapping(observing with Jacosoft), home button is ButtonValue[2].
+    mycommand.ButtonValue[2] = 1;
+    for(int i = 0; i<2000; i++)
     {
-        throw KinovaCommException("Move home failed", result);
+        kinova_api_.sendJoystickCommand(mycommand);
+        usleep(5000);
+
+        // if (myhome.isCloseToOther(KinovaAngles(currentAngles.Actuators), angle_tolerance))
+        if(isHomed())
+        {
+            ROS_INFO(" haha Arm is in \"home\" position");
+            // release home button.
+            mycommand.ButtonValue[2] = 0;
+            kinova_api_.sendJoystickCommand(mycommand);
+            return;
+        }
     }
+
+    mycommand.ButtonValue[2] = 0;
+    kinova_api_.sendJoystickCommand(mycommand);
+    ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");
+
 }
 
 
