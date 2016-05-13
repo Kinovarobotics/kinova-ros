@@ -81,7 +81,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle)
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.01);
 
 //    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "mico_");
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
 
 
     // Approximative conversion ratio from finger position (0..6000) to joint angle 

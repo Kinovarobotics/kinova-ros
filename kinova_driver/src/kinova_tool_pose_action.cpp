@@ -65,7 +65,7 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("position_tolerance", position_tolerance, 0.001);
     node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 1.0*M_PI/180);
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "mico_");
+    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "jaco_");
 
     position_tolerance_ = static_cast<float>(position_tolerance);
     EulerAngle_tolerance_ = static_cast<float>(EulerAngle_tolerance);
