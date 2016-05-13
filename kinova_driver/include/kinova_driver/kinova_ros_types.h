@@ -67,6 +67,8 @@ void getEulerXYZ(tf::Matrix3x3 &Rot_matrix, float &tx, float &ty, float &tz);
 
 void getEulerXYZ(tf::Quaternion &q, float &tx, float &ty, float &tz);
 
+bool valid_kinovaRobotType(const std::string &robotType);
+
 class KinovaException : public std::exception {};
 
 

@@ -82,6 +82,7 @@ float normalizeInDegrees(float degrees)
 
 // %EndTag(converntion functions)%
 
+
 bool areValuesClose(float first, float second, float tolerance)
 {
     return ((first <= second + tolerance) && (first >= second - tolerance));
@@ -186,6 +187,61 @@ void getEulerXYZ(tf::Quaternion &q, float &tx, float &ty, float &tz)
     tx = atan2((2*qw*qx-2*qy*qz),(qw*qw-qx*qx-qy*qy+qz*qz));
     ty = asin(2*qw*qy+2*qx*qz);
     tz = atan2((2*qw*qz-2*qx*qy),(qw*qw+qx*qx-qy*qy-qz*qz));
+}
+
+bool valid_kinovaRobotType(const std::string &kinova_RobotType)
+{
+    if(kinova_RobotType.size()!=8)
+    {
+        ROS_ERROR("The kinova_RobotType should be 8 characters, but get %lu instead.", (unsigned long)(kinova_RobotType.size()));
+        return false;
+    }
+
+    // kinova_RobotType = [robot_categary, robot_version, wrist, dof, model, fingerNum, res7, res8];
+
+    // check categary
+    if (kinova_RobotType[0]=='j')
+    {
+        // check version
+        if ((kinova_RobotType[1]!='1') && (kinova_RobotType[1]!='2')) return false;
+        // check wrist
+        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[3]!='n')) return false;
+        // check dof
+        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[2]!='6') && (kinova_RobotType[2]!='7')) return false;
+        // check model
+        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[3]!='a')) return false;
+        // check number of fingers
+        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[3]!='3')) return false;
+    }
+    else if (kinova_RobotType[0]=='m')
+    {
+        // check version
+        if ((kinova_RobotType[1]!='1')) return false;
+        // check wrist
+        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[3]!='n')) return false;
+        // check dof
+        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[2]!='6')) return false;
+        // check model
+        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[3]!='a')) return false;
+        // check number of fingers
+        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[3]!='3')) return false;
+    }
+    else if (kinova_RobotType[0]=='r')
+    {
+        // roco property check
+    }
+    else if (kinova_RobotType[0]=='c')
+    {
+        // customized robot property check
+    }
+    else
+    {
+        ROS_ERROR("The categary(first charactor of kinova_RobotType) should be one of the set [0, j, m, r, c], but obtained %c", kinova_RobotType[0]);
+        return false;
+    }
+
+    return true;
+
 }
 
 
