@@ -1146,7 +1146,6 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
         throw KinovaCommException("Could not get the angular position", result);
     }
 
-
     kinova_angular.Position.Actuators = joint_angles.Actuators;
 
     result = kinova_api_.sendAdvanceTrajectory(kinova_angular);
