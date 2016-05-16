@@ -203,15 +203,39 @@ bool valid_kinovaRobotType(const std::string &kinova_RobotType)
     if (kinova_RobotType[0]=='j')
     {
         // check version
-        if ((kinova_RobotType[1]!='1') && (kinova_RobotType[1]!='2')) return false;
+        if ((kinova_RobotType[1]!='1') && (kinova_RobotType[1]!='2'))
+        {
+            ROS_ERROR("version error.");
+            return false;
+        }
+
         // check wrist
-        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[2]!='n')) return false;
+        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[2]!='n'))
+        {
+            ROS_ERROR("wrist type error.");
+            return false;
+        }
+
         // check dof
-        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[3]!='6') && (kinova_RobotType[2]!='7')) return false;
+        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[3]!='6') && (kinova_RobotType[3]!='7'))
+        {
+            ROS_ERROR("degree of freedom error.");
+            return false;
+        }
+
         // check model
-        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[4]!='a')) return false;
+        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[4]!='a'))
+        {
+            ROS_ERROR("model type error.");
+            return false;
+        }
+
         // check number of fingers
-        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[5]!='3')) return false;
+        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[5]!='3'))
+        {
+            ROS_ERROR("finger number error.");
+            return false;
+        }
     }
     else if (kinova_RobotType[0]=='m')
     {
