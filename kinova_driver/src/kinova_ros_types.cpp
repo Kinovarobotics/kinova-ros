@@ -193,7 +193,7 @@ bool valid_kinovaRobotType(const std::string &kinova_RobotType)
 {
     if(kinova_RobotType.size()!=8)
     {
-        ROS_ERROR("The kinova_RobotType should be 8 characters, but get %lu instead.", (unsigned long)(kinova_RobotType.size()));
+        ROS_ERROR("The kinova_RobotType should be 8 characters, but get %lu instead. kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2s7a300 refers to jaco v2 7DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.", (unsigned long)(kinova_RobotType.size()));
         return false;
     }
 
@@ -205,26 +205,26 @@ bool valid_kinovaRobotType(const std::string &kinova_RobotType)
         // check version
         if ((kinova_RobotType[1]!='1') && (kinova_RobotType[1]!='2')) return false;
         // check wrist
-        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[3]!='n')) return false;
+        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[2]!='n')) return false;
         // check dof
-        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[2]!='6') && (kinova_RobotType[2]!='7')) return false;
+        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[3]!='6') && (kinova_RobotType[2]!='7')) return false;
         // check model
-        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[3]!='a')) return false;
+        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[4]!='a')) return false;
         // check number of fingers
-        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[3]!='3')) return false;
+        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[5]!='3')) return false;
     }
     else if (kinova_RobotType[0]=='m')
     {
         // check version
         if ((kinova_RobotType[1]!='1')) return false;
         // check wrist
-        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[3]!='n')) return false;
+        if ((kinova_RobotType[2]!='s') && (kinova_RobotType[2]!='n')) return false;
         // check dof
-        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[2]!='6')) return false;
+        if ((kinova_RobotType[3]!='4') && (kinova_RobotType[3]!='6')) return false;
         // check model
-        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[3]!='a')) return false;
+        if ((kinova_RobotType[4]!='s') && (kinova_RobotType[4]!='a')) return false;
         // check number of fingers
-        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[3]!='3')) return false;
+        if ((kinova_RobotType[5]!='2') && (kinova_RobotType[5]!='3')) return false;
     }
     else if (kinova_RobotType[0]=='r')
     {
