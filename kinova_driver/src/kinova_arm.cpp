@@ -52,7 +52,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType)
 {
     /* Set up parameters for different robot type */
-    // example for a kinova_robotType: j2s7s300
+    // example for a kinova_robotType: j2n6s300
 
     if (valid_kinovaRobotType(kinova_robotType_) == false)
     {
