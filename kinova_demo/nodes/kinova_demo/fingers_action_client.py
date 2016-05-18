@@ -23,27 +23,20 @@ finger_maxTurn = 6800  # max thread rotation for one finger
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
     action_address = '/' + prefix + 'driver/fingers_action/finger_positions'
-    print('action_address is ', action_address)
 
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.SetFingersPositionAction)
-    print('wait_for_server is 1')
     client.wait_for_server()
-
-    print('wait_for_server is 2')
 
     goal = kinova_msgs.msg.SetFingersPositionGoal()
     goal.fingers.finger1 = float(finger_positions[0])
     goal.fingers.finger2 = float(finger_positions[1])
-    print('goal is ', goal)
     # The MICO arm has only two fingers, but the same action definition is used
     if len(finger_positions) < 3:
         goal.fingers.finger3 = 0.0
     else:
         goal.fingers.finger3 = float(finger_positions[2])
-    print('send_goal is 1')
     client.send_goal(goal)
-    print('send_goal is 2')
     if client.wait_for_result(rospy.Duration(5.0)):
         return client.get_result()
     else:
