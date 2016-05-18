@@ -18,7 +18,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-
+currentFingerPosition = [0.0, 0.0, 0.0]
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
@@ -45,15 +45,33 @@ def gripper_client(finger_positions):
         return None
 
 
+def getCurrentFingerPosition(prefix_):
+    # wait to get current position
+    topic_address = '/' + prefix_ + 'driver/out/finger_position'
+    rospy.Subscriber(topic_address, kinova_msgs.msg.FingerPosition, setCurrentFingerPosition)
+    rospy.wait_for_message(topic_address, kinova_msgs.msg.FingerPosition)
+    print 'obtained current finger position '
+
+
+def setCurrentFingerPosition(feedback):
+    global currentFingerPosition
+    currentFingerPosition[0] = feedback.finger1
+    currentFingerPosition[1] = feedback.finger2
+    currentFingerPosition[2] = feedback.finger3
+
+
 def argumentParser(argument_):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive fingers to command position')
     parser.add_argument('kinova_robotType', metavar='kinova_robotType', type=str, default='j2n6a300',
                         help='kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2n6a300 refers to jaco v2 6DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.')
-    parser.add_argument('unit', metavar='unit', type=str, nargs='?', default='turn',
+    parser.add_argument('unit', metavar='unit', type=str, default='turn',
                         choices={'turn', 'mm', 'percent'},
                         help='Unit of finger motion command, in turn[0, 6800], mm[0, 9.45], percent[0,100]')
     parser.add_argument('finger_value', nargs='*', type=float, help='finger values, length equals to number of fingers.')
+
+    parser.add_argument('-r', '--relative', action='store_true',
+                        help='the input values are relative values to current position.')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='display finger values in alternative convention(turn, mm or percent)')
     # parser.add_argument('-f', action='store_true', help='assign finger values from a file')
@@ -76,20 +94,45 @@ def kinova_robotTypeParser(kinova_robotType_):
     finger_maxTurn = 6800  # max thread turn for one finger
 
 
-def unitParser(unit_, finger_value_):
+def unitParser(unit_, finger_value_, relative_):
     """ Argument unit """
+    global currentFingerPosition
+
+    # transform between units
     if unit_ == 'turn':
-        finger_turn_ = finger_value_
-        finger_meter_ = [x * finger_maxDist / finger_maxTurn for x in finger_value_]
-        finger_percent_ = [x / finger_maxTurn * 100.0 for x in finger_value_]
+        # get absolute value
+        if relative_:
+            finger_turn_absolute_ = [finger_value_[i] + currentFingerPosition[i] for i in range(0, len(finger_value_))]
+        else:
+            finger_turn_absolute_ = finger_value_
+
+        finger_turn_ = finger_turn_absolute_
+        finger_meter_ = [x * finger_maxDist / finger_maxTurn for x in finger_turn_]
+        finger_percent_ = [x / finger_maxTurn * 100.0 for x in finger_turn_]
+
     elif unit_ == 'mm':
-        finger_turn_ = [x/1000 * finger_maxTurn / finger_maxDist for x in finger_value_]
-        finger_meter_ = finger_value_
-        finger_percent_ = [x / finger_maxTurn * 100.0 for x in finger_turn]
+        # get absolute value
+        finger_turn_command = [x/1000 * finger_maxTurn / finger_maxDist for x in finger_value_]
+        if relative_:
+            finger_turn_absolute_ = [finger_turn_command[i] + currentFingerPosition[i] for i in range(0, len(finger_value_))]
+        else:
+            finger_turn_absolute_ = finger_turn_command
+
+        finger_turn_ = finger_turn_absolute_
+        finger_meter_ = [x * finger_maxDist / finger_maxTurn for x in finger_turn_]
+        finger_percent_ = [x / finger_maxTurn * 100.0 for x in finger_turn_]
     elif unit_ == 'percent':
-        finger_turn_ = [x * finger_maxTurn / 100.0 for x in finger_value_]
-        finger_meter_ = [x * finger_maxDist / finger_maxTurn for x in finger_turn]
-        finger_percent_ = finger_value_
+        # get absolute value
+        finger_turn_command = [x/100.0 * finger_maxTurn for x in finger_value_]
+        if relative_:
+            finger_turn_absolute_ = [finger_turn_command[i] + currentFingerPosition[i] for i in
+                                     range(0, len(finger_value_))]
+        else:
+            finger_turn_absolute_ = finger_turn_command
+
+        finger_turn_ = finger_turn_absolute_
+        finger_meter_ = [x * finger_maxDist / finger_maxTurn for x in finger_turn_]
+        finger_percent_ = [x / finger_maxTurn * 100.0 for x in finger_turn_]
     else:
         raise Exception("Finger value have to be in turn, mm or percent")
 
@@ -111,20 +154,23 @@ def verboseParser(verbose_, finger_turn_):
 
 if __name__ == '__main__':
 
+
     args = argumentParser(None)
 
-
     kinova_robotTypeParser(args.kinova_robotType)
-
+    rospy.init_node(prefix + 'gripper_workout')
 
     if len(args.finger_value) != finger_number:
         print('Number of input values {} is not equal to number of fingers {}. Please run help to check number of fingers with different robot type.'.format(len(args.finger_value), finger_number))
         sys.exit(0)
 
-    finger_turn, finger_meter, finger_percent = unitParser(args.unit, args.finger_value)
+    # get Current finger position if relative position
+    getCurrentFingerPosition(prefix)
+
+    finger_turn, finger_meter, finger_percent = unitParser(args.unit, args.finger_value, args.relative)
 
     try:
-        rospy.init_node(prefix + 'gripper_workout')
+
 
         if finger_number == 0:
             print('Finger number is 0, check with "-h" to see how to use this node.')
@@ -138,7 +184,6 @@ if __name__ == '__main__':
         print('Sending finger position ...')
         result = gripper_client(positions)
         print('Finger position sent!')
-
 
     except rospy.ROSInterruptException:
         print('program interrupted before completion')
