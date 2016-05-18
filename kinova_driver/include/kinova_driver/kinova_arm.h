@@ -40,13 +40,11 @@
 namespace kinova
 {
 
-// Maximum number of joints on Kinova-like robots:
-static const int     KINOVA_JOINTS_COUNT = 9;
 
 class KinovaArm
 {
  public:
-    KinovaArm(KinovaComm& arm, const ros::NodeHandle &node_handle);
+    KinovaArm(KinovaComm& arm, const ros::NodeHandle &node_handle, const std::string &kinova_robotType);
     ~KinovaArm();
 
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
@@ -107,12 +105,23 @@ class KinovaArm
     ros::Timer joint_vel_timer_;
 
     // Parameters
+    std::string kinova_robotType_;
+    std::string tf_prefix_;
+
+    char robot_category_;
+    int robot_category_version_;
+    char wrist_type_;
+    int arm_joint_number_;
+    char robot_mode_;
+    int finger_number_;
+    int joint_total_number_;
+
+
     double status_interval_seconds_;
     double joint_vel_timeout_seconds_;
     double cartesian_vel_timeout_seconds_;
     double joint_vel_interval_seconds_;
     double cartesian_vel_interval_seconds_;
-    std::string tf_prefix_;
     double finger_conv_ratio_;
     bool convert_joint_velocities_;
 
@@ -128,6 +137,7 @@ class KinovaArm
 
     std::vector< std::string > joint_names_;
 };
+
 
 }  // namespace kinova
 #endif  // KINOVA_DRIVER_KINOVA_ARM_H

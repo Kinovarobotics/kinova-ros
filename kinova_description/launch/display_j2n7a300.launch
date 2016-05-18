@@ -1,6 +1,6 @@
 <launch>
 	<arg name="gui" default="False" />
-	<param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/j2_6n_3_standalone.xacro'" />
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/j2n7_3_standalone.xacro'" />
 	<param name="use_gui" value="$(arg gui)"/>
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"></node>
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />

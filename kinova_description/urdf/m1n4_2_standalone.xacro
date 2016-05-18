@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- m1_4n_2 refers to mico v1 6DOF non-spherical 2fingers -->
+<!-- m1n4_2 refers to mico v1 6DOF non-spherical 2fingers -->
 
 
 <robot xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14,10 +14,10 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="m1_4n_2">
+	xmlns:xacro="http://ros.org/wiki/xacro" name="m1n4_2">
 
 
-  <xacro:include filename="$(find kinova_description)/urdf/m1_4n_2.xacro"/>
+  <xacro:include filename="$(find kinova_description)/urdf/m1n4_2.xacro"/>
 
   <link name="root">
     <visual>
@@ -38,6 +38,6 @@
 
   <property name="robot_root" value="root" />
 
-  <xacro:m1_4n_2  base_parent="${robot_root}"/>
+  <xacro:m1n4_2  base_parent="${robot_root}"/>
 
 </robot>

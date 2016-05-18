@@ -20,13 +20,28 @@ int main(int argc, char **argv)
     boost::recursive_mutex api_mutex;
 
     bool is_first_init = true;
+    std::string kinova_robotType = "";
+
+    // Retrieve the (non-option) argument:
+    if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
+    {
+        std::cerr << "No kinova_robotType provided in the argument!" << std::endl;
+        return -1;
+    }
+    else // there is an input...
+    {
+        kinova_robotType = argv[argc-1];
+        ROS_INFO("kinova_robotType is %s.", kinova_robotType.c_str());
+    }
+
+
     while (ros::ok())
     {
         try
         {
             kinova::KinovaComm comm(nh, api_mutex, is_first_init);
-            kinova::KinovaArm kinova(comm, nh);
-            kinova::KinovaPoseActionServer pose_server(comm, nh);
+            kinova::KinovaArm kinova_arm(comm, nh, kinova_robotType);
+            kinova::KinovaPoseActionServer pose_server(comm, nh, kinova_robotType);
             kinova::KinovaAnglesActionServer angles_server(comm, nh);
             kinova::KinovaFingersActionServer fingers_server(comm, nh);
 

@@ -9,6 +9,8 @@
 #include "kinova_driver/kinova_arm.h"
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
+#include <kinova_driver/kinova_ros_types.h>
 
 
 namespace 
@@ -46,9 +48,65 @@ namespace
 namespace kinova
 {
 
-KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle)
-    : kinova_comm_(arm), node_handle_(nodeHandle)
+KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const std::string &kinova_robotType)
+    : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType)
 {
+    /* Set up parameters for different robot type */
+    // example for a kinova_robotType: j2n6s300
+
+    if (valid_kinovaRobotType(kinova_robotType_) == false)
+    {
+        ROS_WARN("Invalid kinova_robotType error! Obtained: %s.", kinova_robotType_.c_str());
+        return;
+    }
+
+//    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
+    tf_prefix_ = kinova_robotType_ + "_";
+
+    // Maximum number of joints on Kinova-like robots:
+    robot_category_ = kinova_robotType_[0];
+    robot_category_version_ = kinova_robotType_[1]-'0';
+    wrist_type_ = kinova_robotType_[2];
+    arm_joint_number_ = kinova_robotType_[3]-'0';
+    robot_mode_ = kinova_robotType_[4];
+    finger_number_ = kinova_robotType_[5]-'0';
+    int joint_total_number_ = arm_joint_number_ + finger_number_;
+
+    if (robot_category_=='j') // jaco robot
+    {
+        // special parameters for jaco
+    }
+    else if (robot_category_ == 'm') // mico robot
+    {
+        // special parameters for mico
+    }
+    else if (robot_category_ == 'r') // roco robot
+    {
+        // special parameters for roco
+    }
+    else
+    {
+        // special parameters for custom robot or other cases
+    }
+
+    for (int i = 0; i<arm_joint_number_; i++)
+    {
+        joint_names_.resize(joint_total_number_);
+        joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i);
+    }
+    for (int i = 0; i<finger_number_; i++)
+    {
+        joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i);
+    }
+
+
+
+    // Approximative conversion ratio from finger position (0..6000) to joint angle
+    // in radians (0..0.7).
+    node_handle_.param("finger_angle_conv_ratio", finger_conv_ratio_, 0.7 / 5000.0);
+
+
+
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
@@ -80,30 +138,12 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle)
     node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.1);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.01);
 
-//    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
-    node_handle_.param<std::string>("tf_prefix", tf_prefix_, "mico_");
-
-
-    // Approximative conversion ratio from finger position (0..6000) to joint angle 
-    // in radians (0..0.7).
-    node_handle_.param("finger_angle_conv_ratio", finger_conv_ratio_, 0.7 / 5000.0);
 
     // Depending on the API version, the arm might return velocities in the
     // 0..360 range (0..180 for positive values, 181..360 for negative ones).
     // This indicates that the ROS node should convert them first before
     // updating the joint_state topic.
     node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
-
-    joint_names_.resize(KINOVA_JOINTS_COUNT);
-    joint_names_[0] = tf_prefix_ + "joint_1";
-    joint_names_[1] = tf_prefix_ + "joint_2";
-    joint_names_[2] = tf_prefix_ + "joint_3";
-    joint_names_[3] = tf_prefix_ + "joint_4";
-    joint_names_[4] = tf_prefix_ + "joint_5";
-    joint_names_[5] = tf_prefix_ + "joint_6";
-    joint_names_[6] = tf_prefix_ + "joint_finger_1";
-    joint_names_[7] = tf_prefix_ + "joint_finger_2";
-    joint_names_[8] = tf_prefix_ + "joint_finger_3";
 
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &KinovaArm::statusTimer, this);

@@ -63,13 +63,14 @@ namespace kinova
 class KinovaPoseActionServer
 {
  public:
-    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n);
+    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n, const std::string &kinova_robotType);
     ~KinovaPoseActionServer();
 
     void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
 
  private:
     ros::NodeHandle node_handle_;
+    std::string kinova_robotType_;
     KinovaComm &arm_comm_;
     actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
     tf::TransformListener listener;

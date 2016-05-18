@@ -1,0 +1,29 @@
+<launch>
+
+  <arg name="use_urdf" default="false"/>
+  <arg name="kinova_robotType" default="j2n6a300" />
+
+  <node name="$(arg kinova_robotType)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
+    <!-- Set this parameter to use a specific arm on your system    --> 
+    <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
+<!--     <param name="tf_prefix" value="jaco_"/>
+    <param name="finger_angle_conv_ratio" value="0.012"/> -->
+  </node>
+    
+  <group unless="$(arg use_urdf)">
+    <node name="$(arg kinova_robotType)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node">
+      <!-- <param name="tf_prefix" value="jaco_" /> -->
+      <remap from="/$(arg kinova_robotType)_tf_updater/in/joint_angles" to="/$(arg kinova_robotType)_arm_driver/out/joint_angles"/>
+    </node>
+  </group>
+
+  <group if="$(arg use_urdf)">
+    <include file="$(find kinova_description)/launch/display_$(arg kinova_robotType).launch"/>
+    <node name="$(arg kinova_robotType)_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher">
+      <remap from="joint_states" to="/$(arg kinova_robotType)_driver/out/joint_state"/>
+    </node>
+  </group>
+
+</launch>

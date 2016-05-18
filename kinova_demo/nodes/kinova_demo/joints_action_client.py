@@ -15,16 +15,16 @@ import argparse
 
 
 """ Global variable """
-numJoint = 0
-numFinger = 0
-prefix = 'NO_ROBOT_TYPE_DEFINED'
+arm_joint_number = 0
+finger_number = 0
+prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
 
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
-    action_address = '/' + prefix + '_arm_driver/joints_action/joint_angles'
+    action_address = '/' + prefix + 'driver/joints_action/joint_angles'
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.ArmJointAnglesAction)
     client.wait_for_server()
@@ -50,8 +50,8 @@ def joint_angle_client(angle_set):
 def argumentParser(argument):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive robot joint to command position')
-    parser.add_argument('robotType', metavar='robotType', type=int, choices=range(7),
-                        help='Index for robotType: JACOV1_ASSISTIVE_3FINGERS = 0, MICO_6DOF_SERVICE_2FINGERS = 1, MICO_4DOF_SERVICE_2FINGERS = 2, JACOV2_6DOF_SERVICE_3FINGERS = 3, JACOV2_4DOF_SERVICE_3FINGERS = 4, MICO_6DOF_ASSISTIVE_2FINGER2 = 5, JACOV2_6DOF_ASSISTIVE_3FINGERS = 6')
+    parser.add_argument('kinova_robotType', metavar='kinova_robotType', type=str, default='j2n6a300',
+                        help='kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2n6a300 refers to jaco v2 6DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.')
     parser.add_argument('unit', metavar='unit', type=str, nargs='?', default='degree',
                         choices={'degree', 'radian'},
                         help='Unit of joiint motion command, in degree, radian')
@@ -64,48 +64,18 @@ def argumentParser(argument):
     return args_
 
 
-def robotTypeParser(robotType):
-    """ Argument robotType """
-    global numJoint, numFinger, prefix, finger_maxDist, finger_maxTurn
-    if robotType == 0:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j16a3'
-        prefix = 'jaco'
-    elif robotType == 1:
-        numJoint = 6
-        numFinger = 2
-        # prefix = 'm16s2'
-        prefix = 'mico'
-    elif robotType == 2:
-        numJoint = 4
-        numFinger = 2
-        # prefix = 'm14s2'
-        prefix = 'mico'
-    elif robotType == 3:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26s3'
-        prefix = 'jaco'
-    elif robotType == 4:
-        numJoint = 4
-        numFinger = 3
-        # prefix = 'j24s3'
-        prefix = 'jaco'
-    elif robotType == 5:
-        numJoint = 6
-        numFinger = 2
-        finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
-        finger_maxTurn = 6800  # max thread turn for one finger
-        # prefix = 'm16a2' # refefine robotType m6a2-->mico-6DOF-assistive-2Fingers
-        prefix = 'mico'
-    elif robotType == 6:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26a3'
-        prefix = 'jaco'
-    else:
-        raise Exception('Undefined robotType: {}'.format(robotType))
+def kinova_robotTypeParser(kinova_robotType_):
+    """ Argument kinova_robotType """
+    global robot_category, robot_category_version, wrist_type, arm_joint_number, robot_mode, finger_number, prefix, finger_maxDist, finger_maxTurn 
+    robot_category = kinova_robotType_[0]
+    robot_category_version = int(kinova_robotType_[1])
+    wrist_type = kinova_robotType_[2]
+    arm_joint_number = int(kinova_robotType_[3])
+    robot_mode = kinova_robotType_[4]
+    finger_number = int(kinova_robotType_[5])
+    prefix = kinova_robotType_ + "_"
+    finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
+    finger_maxTurn = 6800  # max thread turn for one finger
 
 
 def unitParser(unit, joint_value):
@@ -136,18 +106,18 @@ if __name__ == '__main__':
 
     args = argumentParser(None)
 
-    robotTypeParser(args.robotType)
+    kinova_robotTypeParser(args.kinova_robotType)
 
-    if len(args.joint_value) != numJoint:
-        print('Number of input values {} is not equal to number of joints {}. Please run help to check number of joints with different robot type.'.format(len(args.joint_value), numJoint))
+    if len(args.joint_value) != arm_joint_number:
+        print('Number of input values {} is not equal to number of joints {}. Please run help to check number of joints with different robot type.'.format(len(args.joint_value), arm_joint_number))
         sys.exit(0)
 
     joint_degree, joint_radian = unitParser(args.unit, args.joint_value)
 
     try:
-        rospy.init_node(prefix + '_gripper_workout')
+        rospy.init_node(prefix + 'gripper_workout')
 
-        if numJoint == 0:
+        if arm_joint_number == 0:
             print('Joint number is 0, check with "-h" to see how to use this node.')
             positions = []  # Get rid of static analysis warning that doesn't see the exit()
             sys.exit()
