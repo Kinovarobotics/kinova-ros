@@ -13,31 +13,37 @@ import argparse
 
 
 """ Global variable """
-numJoint = 0
-numFinger = 0
-prefix = 'NO_ROBOT_TYPE_DEFINED'
+arm_joint_number = 0
+finger_number = 0
+prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
 
 
 def gripper_client(finger_positions):
     """Send a gripper goal to the action server."""
-    action_address = '/' + prefix + '_arm_driver/fingers_action/finger_positions'
+    action_address = '/' + prefix + 'driver/fingers_action/finger_positions'
+    print('action_address is ', action_address)
+
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.SetFingersPositionAction)
+    print('wait_for_server is 1')
     client.wait_for_server()
+
+    print('wait_for_server is 2')
 
     goal = kinova_msgs.msg.SetFingersPositionGoal()
     goal.fingers.finger1 = float(finger_positions[0])
     goal.fingers.finger2 = float(finger_positions[1])
-
+    print('goal is ', goal)
     # The MICO arm has only two fingers, but the same action definition is used
     if len(finger_positions) < 3:
         goal.fingers.finger3 = 0.0
     else:
         goal.fingers.finger3 = float(finger_positions[2])
-
+    print('send_goal is 1')
     client.send_goal(goal)
+    print('send_goal is 2')
     if client.wait_for_result(rospy.Duration(5.0)):
         return client.get_result()
     else:
@@ -49,8 +55,8 @@ def gripper_client(finger_positions):
 def argumentParser(argument_):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive fingers to command position')
-    parser.add_argument('robotType', metavar='robotType', type=int, choices=range(7),
-                        help='Index for robotType: JACOV1_ASSISTIVE_3FINGERS = 0, MICO_6DOF_SERVICE_2FINGERS = 1, MICO_4DOF_SERVICE_2FINGERS = 2, JACOV2_6DOF_SERVICE_3FINGERS = 3, JACOV2_4DOF_SERVICE_3FINGERS = 4, MICO_6DOF_ASSISTIVE_2FINGER2 = 5, JACOV2_6DOF_ASSISTIVE_3FINGERS = 6')
+    parser.add_argument('kinova_robotType', metavar='kinova_robotType', type=str, default='j2n6a300',
+                        help='kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2s7a300 refers to jaco v2 7DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.')
     parser.add_argument('unit', metavar='unit', type=str, nargs='?', default='turn',
                         choices={'turn', 'mm', 'percent'},
                         help='Unit of finger motion command, in turn[0, 6800], mm[0, 9.45], percent[0,100]')
@@ -63,48 +69,18 @@ def argumentParser(argument_):
     return args_
 
 
-def robotTypeParser(robotType_):
-    """ Argument robotType """
-    global numJoint, numFinger, prefix, finger_maxDist, finger_maxTurn
-    if robotType_ == 0:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j16a3'
-        prefix = 'jaco'
-    elif robotType_ == 1:
-        numJoint = 6
-        numFinger = 2
-        # prefix = 'm16s2'
-        prefix = 'mico'
-    elif robotType_ == 2:
-        numJoint = 4
-        numFinger = 2
-        # prefix = 'm14s2'
-        prefix = 'mico'
-    elif robotType_ == 3:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26s3'
-        prefix = 'jaco'
-    elif robotType_ == 4:
-        numJoint = 4
-        numFinger = 3
-        # prefix = 'j24s3'
-        prefix = 'jaco'
-    elif robotType_ == 5:
-        numJoint = 6
-        numFinger = 2
-        finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
-        finger_maxTurn = 6800  # max thread turn for one finger
-        # prefix = 'm16a2' # refefine robotType m6a2-->mico-6DOF-assistive-2Fingers
-        prefix = 'mico'
-    elif robotType_ == 6:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26a3'
-        prefix = 'jaco'
-    else:
-        raise Exception('Undefined robotType: {}'.format(robotType_))
+def kinova_robotTypeParser(kinova_robotType_):
+    """ Argument kinova_robotType """
+    global robot_category, robot_category_version, wrist_type, arm_joint_number, robot_mode, finger_number, prefix, finger_maxDist, finger_maxTurn 
+    robot_category = kinova_robotType_[0]
+    robot_category_version = int(kinova_robotType_[1])
+    wrist_type = kinova_robotType_[2]
+    arm_joint_number = int(kinova_robotType_[3])
+    robot_mode = kinova_robotType_[4]
+    finger_number = int(kinova_robotType_[5])
+    prefix = kinova_robotType_ + "_"
+    finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
+    finger_maxTurn = 6800  # max thread turn for one finger
 
 
 def unitParser(unit_, finger_value_):
@@ -144,18 +120,20 @@ if __name__ == '__main__':
 
     args = argumentParser(None)
 
-    robotTypeParser(args.robotType)
 
-    if len(args.finger_value) != numFinger:
-        print('Number of input values {} is not equal to number of fingers {}. Please run help to check number of fingers with different robot type.'.format(len(args.finger_value), numFinger))
+    kinova_robotTypeParser(args.kinova_robotType)
+
+
+    if len(args.finger_value) != finger_number:
+        print('Number of input values {} is not equal to number of fingers {}. Please run help to check number of fingers with different robot type.'.format(len(args.finger_value), finger_number))
         sys.exit(0)
 
     finger_turn, finger_meter, finger_percent = unitParser(args.unit, args.finger_value)
 
     try:
-        rospy.init_node(prefix + '_gripper_workout')
+        rospy.init_node(prefix + 'gripper_workout')
 
-        if numFinger == 0:
+        if finger_number == 0:
             print('Finger number is 0, check with "-h" to see how to use this node.')
             positions = []  # Get rid of static analysis warning that doesn't see the exit()
             exit()
@@ -164,9 +142,10 @@ if __name__ == '__main__':
             positions_temp2 = [min(n, finger_maxTurn) for n in positions_temp1]
             positions = [float(n) for n in positions_temp2]
 
+        print('Sending finger position ...')
         result = gripper_client(positions)
-
         print('Finger position sent!')
+
 
     except rospy.ROSInterruptException:
         print('program interrupted before completion')
