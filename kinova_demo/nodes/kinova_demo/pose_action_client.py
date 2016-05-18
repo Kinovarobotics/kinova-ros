@@ -19,21 +19,21 @@ import math
 import argparse
 
 """ Global variable """
-numJoint = 0
-numFinger = 0
-prefix = 'NO_ROBOT_TYPE_DEFINED'
+arm_joint_number = 0
+finger_number = 0
+prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
 
 
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
-    action_address = '/' + prefix + '_arm_driver/pose_action/tool_pose'
+    action_address = '/' + prefix + 'driver/pose_action/tool_pose'
     client = actionlib.SimpleActionClient(action_address, kinova_msgs.msg.ArmPoseAction)
     client.wait_for_server()
 
     goal = kinova_msgs.msg.ArmPoseGoal()
-    goal.pose.header = std_msgs.msg.Header(frame_id=(prefix + '_api_origin'))
+    goal.pose.header = std_msgs.msg.Header(frame_id=(prefix + 'api_origin'))
     goal.pose.pose.position = geometry_msgs.msg.Point(
         x=position[0], y=position[1], z=position[2])
     goal.pose.pose.orientation = geometry_msgs.msg.Quaternion(
@@ -97,8 +97,8 @@ def EulerXYZ2Quaternion(EulerXYZ_):
 def argumentParser(argument_):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive robot end-effector to command Cartesian pose')
-    parser.add_argument('robotType', metavar='robotType', type=int, choices=range(7),
-                        help='Index for robotType: JACOV1_ASSISTIVE_3FINGERS = 0, MICO_6DOF_SERVICE_2FINGERS = 1, MICO_4DOF_SERVICE_2FINGERS = 2, JACOV2_6DOF_SERVICE_3FINGERS = 3, JACOV2_4DOF_SERVICE_3FINGERS = 4, MICO_6DOF_ASSISTIVE_2FINGER2 = 5, JACOV2_6DOF_ASSISTIVE_3FINGERS = 6')
+    parser.add_argument('kinova_robotType', metavar='kinova_robotType', type=str, default='j2n6a300',
+                        help='kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2n6a300 refers to jaco v2 6DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.')
     parser.add_argument('unit', metavar='unit', type=str, nargs='?', default='mq',
                         choices={'mq', 'mdeg', 'mrad'},
                         help='Unit of Cartesian pose command, in mq(Position meter, Orientation Quaternion),  mdeg(Position meter, Orientation Euler-XYZ in degree), mrad(Position meter, Orientation Euler-XYZ in radian)]')
@@ -112,48 +112,18 @@ def argumentParser(argument_):
     return args_
 
 
-def robotTypeParser(robotType_):
-    """ Argument robotType """
-    global numJoint, numFinger, prefix, finger_maxDist, finger_maxTurn
-    if robotType_ == 0:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j16a3'
-        prefix = 'jaco'
-    elif robotType_ == 1:
-        numJoint = 6
-        numFinger = 2
-        # prefix = 'm16s2'
-        prefix = 'mico'
-    elif robotType_ == 2:
-        numJoint = 4
-        numFinger = 2
-        # prefix = 'm14s2'
-        prefix = 'mico'
-    elif robotType_ == 3:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26s3'
-        prefix = 'jaco'
-    elif robotType_ == 4:
-        numJoint = 4
-        numFinger = 3
-        # prefix = 'j24s3'
-        prefix = 'jaco'
-    elif robotType_ == 5:
-        numJoint = 6
-        numFinger = 2
-        finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
-        finger_maxTurn = 6800  # max thread turn for one finger
-        # prefix = 'm16a2' # refefine robotType m6a2-->mico-6DOF-assistive-2Fingers
-        prefix = 'mico'
-    elif robotType_ == 6:
-        numJoint = 6
-        numFinger = 3
-        # prefix = 'j26a3'
-        prefix = 'jaco'
-    else:
-        raise Exception('Undefined robotType: {}'.format(robotType_))
+def kinova_robotTypeParser(kinova_robotType_):
+    """ Argument kinova_robotType """
+    global robot_category, robot_category_version, wrist_type, arm_joint_number, robot_mode, finger_number, prefix, finger_maxDist, finger_maxTurn 
+    robot_category = kinova_robotType_[0]
+    robot_category_version = int(kinova_robotType_[1])
+    wrist_type = kinova_robotType_[2]
+    arm_joint_number = int(kinova_robotType_[3])
+    robot_mode = kinova_robotType_[4]
+    finger_number = int(kinova_robotType_[5])
+    prefix = kinova_robotType_ + "_"
+    finger_maxDist = 18.9/2/1000  # max distance for one finger in meter
+    finger_maxTurn = 6800  # max thread turn for one finger
 
 
 def unitParser(unit_, pose_value_):
@@ -207,7 +177,7 @@ if __name__ == '__main__':
 
     args = argumentParser(None)
 
-    robotTypeParser(args.robotType)
+    kinova_robotTypeParser(args.kinova_robotType)
 
     if args.unit == 'mq':
         if len(args.pose_value) != 7:
@@ -226,7 +196,7 @@ if __name__ == '__main__':
     print('pose_mq in main 1: {}'.format(pose_mq)) # debug
 
     try:
-        rospy.init_node(prefix + '_pose_action_client')
+        rospy.init_node(prefix + 'pose_action_client')
 
         poses = [float(n) for n in pose_mq]
 
