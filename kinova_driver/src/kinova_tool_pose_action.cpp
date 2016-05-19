@@ -73,8 +73,8 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     position_tolerance_ = static_cast<float>(position_tolerance);
     EulerAngle_tolerance_ = static_cast<float>(EulerAngle_tolerance);
     std::stringstream ss;
-    ss << tf_prefix_ << "api_origin";
-    api_origin_frame_ = ss.str();
+    ss << tf_prefix_ << "link_base";
+    link_base_frame_ = ss.str();
 
     action_server_.start();
 }
@@ -95,17 +95,17 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
     ros::Time current_time = ros::Time::now();
     KinovaPose current_pose;
     geometry_msgs::PoseStamped local_pose;
-    local_pose.header.frame_id = api_origin_frame_;
+    local_pose.header.frame_id = link_base_frame_;
 
     try
     {
         // Put the goal pose into the frame used by the arm
         if (ros::ok()
-                && !listener.canTransform(api_origin_frame_, goal->pose.header.frame_id,
+                && !listener.canTransform(link_base_frame_, goal->pose.header.frame_id,
                                           goal->pose.header.stamp))
         {
             ROS_ERROR("Could not get transfrom from %s to %s, aborting cartesian movement",
-                      api_origin_frame_.c_str(), goal->pose.header.frame_id.c_str());
+                      link_base_frame_.c_str(), goal->pose.header.frame_id.c_str());
             action_server_.setAborted(result);
             return;
         }

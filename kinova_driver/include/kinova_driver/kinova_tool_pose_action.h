@@ -78,7 +78,7 @@ class KinovaPoseActionServer
     ros::Time last_nonstall_time_;
     kinova::KinovaPose last_nonstall_pose_;
 
-    std::string api_origin_frame_;
+    std::string link_base_frame_;
 
     // Parameters
     double stall_interval_seconds_;

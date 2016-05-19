@@ -34,7 +34,7 @@ def cartesian_pose_client(position, orientation):
     client.wait_for_server()
 
     goal = kinova_msgs.msg.ArmPoseGoal()
-    goal.pose.header = std_msgs.msg.Header(frame_id=(prefix + 'api_origin'))
+    goal.pose.header = std_msgs.msg.Header(frame_id=(prefix + 'link_base'))
     goal.pose.pose.position = geometry_msgs.msg.Point(
         x=position[0], y=position[1], z=position[2])
     goal.pose.pose.orientation = geometry_msgs.msg.Quaternion(

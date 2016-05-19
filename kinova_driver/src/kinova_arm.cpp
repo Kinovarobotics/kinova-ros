@@ -473,7 +473,7 @@ void KinovaArm::publishToolWrench(void)
     current_wrench.header.stamp    = ros::Time::now();
     // TODO: Rotate wrench to fit the end effector frame.
     // Right now, the orientation of the wrench is in the API's (base) frame.
-    current_wrench.header.frame_id = tf_prefix_ + "api_origin";
+    current_wrench.header.frame_id = tf_prefix_ + "link_base";
 
 
     // Same conversion issue as with velocities:

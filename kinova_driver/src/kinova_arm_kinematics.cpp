@@ -86,7 +86,7 @@ void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, flo
 
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
                                                     concatTfName(tf_prefix_, "base"),
-                                                    concatTfName(tf_prefix_, "api_origin")));
+                                                    concatTfName(tf_prefix_, "link_base")));
 
 #ifdef PRINT_DEBUG_INFO
     ROS_INFO("API Translation: X = %f, Y = %f, Z = %f",
