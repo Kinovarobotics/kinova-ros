@@ -133,9 +133,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
                                                           &KinovaArm::cartesianVelocityCallback, this);
 
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
-    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_timeout_seconds_, 0.25);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 0.25);
-    node_handle_.param<double>("joint_angular_vel_timeout", joint_vel_interval_seconds_, 0.1);
     node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.01);
 
 
@@ -147,11 +145,6 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
 
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &KinovaArm::statusTimer, this);
-
-    joint_vel_timer_ = node_handle_.createTimer(ros::Duration(joint_vel_interval_seconds_),
-                                              &KinovaArm::jointVelocityTimer, this);
-    joint_vel_timer_.stop();
-    joint_vel_timer_flag_ = false;
 
     cartesian_vel_timer_ = node_handle_.createTimer(ros::Duration(cartesian_vel_interval_seconds_),
                                                   &KinovaArm::cartesianVelocityTimer, this);
@@ -190,11 +183,8 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
         joint_velocities_.Actuator6 = joint_vel->joint6;
         last_joint_vel_cmd_time_ = ros::Time().now();
 
-        if (joint_vel_timer_flag_ == false)
-        {
-            joint_vel_timer_.start();
-            joint_vel_timer_flag_ = true;
-        }
+        kinova_comm_.setJointVelocities(joint_velocities_);
+
     }
 }
 
@@ -305,7 +295,6 @@ void KinovaArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConst
     }
 }
 
-
 void KinovaArm::cartesianVelocityTimer(const ros::TimerEvent&)
 {
     double elapsed_time_seconds = ros::Time().now().toSec() - last_cartesian_vel_cmd_time_.toSec();
@@ -322,26 +311,6 @@ void KinovaArm::cartesianVelocityTimer(const ros::TimerEvent&)
                   cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
                   cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
         kinova_comm_.setCartesianVelocities(cartesian_velocities_);
-    }
-}
-
-
-void KinovaArm::jointVelocityTimer(const ros::TimerEvent&)
-{
-    double elapsed_time_seconds = ros::Time().now().toSec() - last_joint_vel_cmd_time_.toSec();
-
-    if (elapsed_time_seconds > joint_vel_timeout_seconds_)
-    {
-        ROS_DEBUG("Joint vel timed out: %f", elapsed_time_seconds);
-        joint_vel_timer_.stop();
-        joint_vel_timer_flag_ = false;
-    }
-    else
-    {
-        ROS_DEBUG("Joint vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
-                  joint_velocities_.Actuator1, joint_velocities_.Actuator2, joint_velocities_.Actuator3,
-                  joint_velocities_.Actuator4, joint_velocities_.Actuator5, joint_velocities_.Actuator6);
-        kinova_comm_.setJointVelocities(joint_velocities_);
     }
 }
 
