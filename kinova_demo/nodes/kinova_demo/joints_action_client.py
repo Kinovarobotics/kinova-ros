@@ -20,7 +20,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-
+currentJointPosition = [] # number of joints depends on robotType
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
@@ -47,6 +47,26 @@ def joint_angle_client(angle_set):
         return None
 
 
+def getCurrentJointPosition(prefix_):
+    # wait to get current position
+    topic_address = '/' + prefix_ + 'driver/out/joint_angles'
+    rospy.Subscriber(topic_address, kinova_msgs.msg.JointAngles, setCurrentJointPosition)
+    rospy.wait_for_message(topic_address, kinova_msgs.msg.JointAngles)
+    print 'position listener obtained message for joint position. '
+
+
+def setCurrentJointPosition(feedback):
+    global currentJointPosition
+
+    currentJointPosition_str_list = str(feedback).split("\n")
+    for index in range(0,len(currentJointPosition_str_list)):
+        temp_str=currentJointPosition_str_list[index].split(": ")
+        currentJointPosition[index] = float(temp_str[1])
+
+    # print 'currentJointPosition is: '
+    # print currentJointPosition
+
+
 def argumentParser(argument):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive robot joint to command position')
@@ -56,6 +76,8 @@ def argumentParser(argument):
                         choices={'degree', 'radian'},
                         help='Unit of joiint motion command, in degree, radian')
     parser.add_argument('joint_value', nargs='*', type=float, help='joint values, length equals to number of joints.')
+    parser.add_argument('-r', '--relative', action='store_true',
+                        help='the input values are relative values to current position.')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='display joint values in alternative convention(degree or radian)')
     # parser.add_argument('-f', action='store_true', help='assign finger values from a file')
@@ -78,14 +100,28 @@ def kinova_robotTypeParser(kinova_robotType_):
     finger_maxTurn = 6800  # max thread turn for one finger
 
 
-def unitParser(unit, joint_value):
+def unitParser(unit, joint_value, relative_):
     """ Argument unit """
+    global currentJointPosition
+
     if unit == 'degree':
-        joint_degree = joint_value
-        joint_radian = list(map(math.radians, joint_degree))
+        joint_degree_command = joint_value
+        # get absolute value
+        if relative_:
+            joint_degree_absolute_ = [joint_degree_command[i] + currentJointPosition[i] for i in range(0, len(joint_value))]
+        else:
+            joint_degree_absolute_ = joint_degree_command
+        joint_degree = joint_degree_absolute_
+        joint_radian = list(map(math.radians, joint_degree_absolute_))
     elif unit == 'radian':
-        joint_radian = joint_value
-        joint_degree = list(map(math.degrees, joint_radian))
+        joint_degree_command = list(map(math.degrees, joint_value))
+        # get absolute value
+        if relative_:
+            joint_degree_absolute_ = [joint_degree_command[i] + currentJointPosition[i] for i in range(0, len(joint_value))]
+        else:
+            joint_degree_absolute_ = joint_degree_command
+        joint_degree = joint_degree_absolute_
+        joint_radian = list(map(math.radians, joint_degree_absolute_))
     else:
         raise Exception("Joint value have to be in degree, or radian")
 
@@ -96,9 +132,9 @@ def verboseParser(verbose, joint_degree):
     """ Argument verbose """
     if verbose:
         joint_radian = list(map(math.radians, joint_degree))
-        print('Joint values in degree are: ')
+        print('Joint values sent in degree are: ')
         print(', '.join('joint{:1.0f} {:3.1f}'.format(k[0] + 1, k[1]) for k in enumerate(joint_degree)))
-        print('Joint values in radian are: ')
+        print('Joint values sent in radian are: ')
         print(', '.join('joint{:1.0f} {:1.3f}'.format(k[0]+1, k[1]) for k in enumerate(joint_radian)))
 
 
@@ -107,15 +143,19 @@ if __name__ == '__main__':
     args = argumentParser(None)
 
     kinova_robotTypeParser(args.kinova_robotType)
+    rospy.init_node(prefix + 'gripper_workout')
+
+    currentJointPosition = [0]*arm_joint_number
 
     if len(args.joint_value) != arm_joint_number:
         print('Number of input values {} is not equal to number of joints {}. Please run help to check number of joints with different robot type.'.format(len(args.joint_value), arm_joint_number))
         sys.exit(0)
 
-    joint_degree, joint_radian = unitParser(args.unit, args.joint_value)
+    # get Current finger position if relative position
+    getCurrentJointPosition(prefix)
+    joint_degree, joint_radian = unitParser(args.unit, args.joint_value, args.relative)
 
     try:
-        rospy.init_node(prefix + 'gripper_workout')
 
         if arm_joint_number == 0:
             print('Joint number is 0, check with "-h" to see how to use this node.')
@@ -125,8 +165,6 @@ if __name__ == '__main__':
             positions = [float(n) for n in joint_degree]
 
         result = joint_angle_client(positions)
-
-        print('Joint angular position sent!')
 
     except rospy.ROSInterruptException:
         print('program interrupted before completion')
