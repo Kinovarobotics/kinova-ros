@@ -23,6 +23,7 @@
 #include <kinova_msgs/Start.h>
 #include <kinova_msgs/HomeArm.h>
 #include <kinova_msgs/JointVelocity.h>
+#include <kinova_msgs/PoseVelocity.h>
 #include <kinova_msgs/FingerPosition.h>
 #include <kinova_msgs/JointAngles.h>
 #include <kinova_msgs/SetForceControlParams.h>
@@ -48,7 +49,7 @@ class KinovaArm
     ~KinovaArm();
 
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
-    void cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel);
+    void cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel);
 
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);

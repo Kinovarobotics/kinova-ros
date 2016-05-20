@@ -133,9 +133,6 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
                                                           &KinovaArm::cartesianVelocityCallback, this);
 
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
-    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_timeout_seconds_, 0.25);
-    node_handle_.param<double>("cartesian_vel_timeout", cartesian_vel_interval_seconds_, 0.01);
-
 
     // Depending on the API version, the arm might return velocities in the
     // 0..360 range (0..180 for positive values, 181..360 for negative ones).
@@ -146,14 +143,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &KinovaArm::statusTimer, this);
 
-    cartesian_vel_timer_ = node_handle_.createTimer(ros::Duration(cartesian_vel_interval_seconds_),
-                                                  &KinovaArm::cartesianVelocityTimer, this);
-    cartesian_vel_timer_.stop();
-    cartesian_vel_timer_flag_ = false;
-
     ROS_INFO("The arm is ready to use.");
-
-
 }
 
 
@@ -274,46 +264,22 @@ bool KinovaArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::
     return true;
 }
 
-void KinovaArm::cartesianVelocityCallback(const geometry_msgs::TwistStampedConstPtr& cartesian_vel)
+void KinovaArm::cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel)
 {
     if (!kinova_comm_.isStopped())
     {
-        cartesian_velocities_.X = cartesian_vel->twist.linear.x;
-        cartesian_velocities_.Y = cartesian_vel->twist.linear.y;
-        cartesian_velocities_.Z = cartesian_vel->twist.linear.z;
-        cartesian_velocities_.ThetaX = cartesian_vel->twist.angular.x;
-        cartesian_velocities_.ThetaY = cartesian_vel->twist.angular.y;
-        cartesian_velocities_.ThetaZ = cartesian_vel->twist.angular.z;
+        cartesian_velocities_.X = cartesian_vel->twist_linear_x;
+        cartesian_velocities_.Y = cartesian_vel->twist_linear_y;
+        cartesian_velocities_.Z = cartesian_vel->twist_linear_z;
+        cartesian_velocities_.ThetaX = cartesian_vel->twist_angular_x;
+        cartesian_velocities_.ThetaY = cartesian_vel->twist_angular_y;
+        cartesian_velocities_.ThetaZ = cartesian_vel->twist_angular_z;
 
         last_cartesian_vel_cmd_time_ = ros::Time().now();
-
-        if (cartesian_vel_timer_flag_ == false)
-        {
-            cartesian_vel_timer_.start();
-            cartesian_vel_timer_flag_ = true;
-        }
-    }
-}
-
-void KinovaArm::cartesianVelocityTimer(const ros::TimerEvent&)
-{
-    double elapsed_time_seconds = ros::Time().now().toSec() - last_cartesian_vel_cmd_time_.toSec();
-
-    if (elapsed_time_seconds > cartesian_vel_timeout_seconds_)
-    {
-        ROS_DEBUG("Cartesian vel timed out: %f", elapsed_time_seconds);
-        cartesian_vel_timer_.stop();
-        cartesian_vel_timer_flag_ = false;
-    }
-    else
-    {
-        ROS_DEBUG("Cart vel timer (%f): %f, %f, %f, %f, %f, %f", elapsed_time_seconds,
-                  cartesian_velocities_.X, cartesian_velocities_.Y, cartesian_velocities_.Z,
-                  cartesian_velocities_.ThetaX, cartesian_velocities_.ThetaY, cartesian_velocities_.ThetaZ);
+        // orientation velocity of cartesian_velocities_ is based on twist.angular
         kinova_comm_.setCartesianVelocities(cartesian_velocities_);
     }
 }
-
 
 /*!
  * \brief Publishes the current joint angles.
@@ -429,7 +395,7 @@ void KinovaArm::publishToolPosition(void)
 }
 
 /*!
- * \brief Publishes the current cartesian forces at the end effector. 
+ * \brief Publishes the current cartesian forces at the end effector.
  */
 void KinovaArm::publishToolWrench(void)
 {
