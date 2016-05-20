@@ -102,8 +102,6 @@ class KinovaArm
 
     // Timers for control loops
     ros::Timer status_timer_;
-    ros::Timer cartesian_vel_timer_;
-    ros::Timer joint_vel_timer_;
 
     // Parameters
     std::string kinova_robotType_;
@@ -119,22 +117,12 @@ class KinovaArm
 
 
     double status_interval_seconds_;
-    double joint_vel_timeout_seconds_;
-    double cartesian_vel_timeout_seconds_;
-    double joint_vel_interval_seconds_;
-    double cartesian_vel_interval_seconds_;
     double finger_conv_ratio_;
     bool convert_joint_velocities_;
 
     // State tracking or utility members
-    bool cartesian_vel_timer_flag_;
-    bool joint_vel_timer_flag_;
-
     AngularInfo joint_velocities_;
     CartesianInfo cartesian_velocities_;
-
-    ros::Time last_joint_vel_cmd_time_;
-    ros::Time last_cartesian_vel_cmd_time_;
 
     std::vector< std::string > joint_names_;
 };

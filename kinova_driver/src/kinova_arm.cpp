@@ -171,7 +171,6 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
         joint_velocities_.Actuator4 = joint_vel->joint4;
         joint_velocities_.Actuator5 = joint_vel->joint5;
         joint_velocities_.Actuator6 = joint_vel->joint6;
-        last_joint_vel_cmd_time_ = ros::Time().now();
 
         kinova_comm_.setJointVelocities(joint_velocities_);
 
@@ -275,7 +274,6 @@ void KinovaArm::cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPt
         cartesian_velocities_.ThetaY = cartesian_vel->twist_angular_y;
         cartesian_velocities_.ThetaZ = cartesian_vel->twist_angular_z;
 
-        last_cartesian_vel_cmd_time_ = ros::Time().now();
         // orientation velocity of cartesian_velocities_ is based on twist.angular
         kinova_comm_.setCartesianVelocities(cartesian_velocities_);
     }
