@@ -6,12 +6,10 @@
   <node name="$(arg kinova_robotType)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
     <!-- Set this parameter to use a specific arm on your system    --> 
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
-    <param name="finger_angle_conv_ratio" value="0.012"/> -->
   </node>
     
   <group unless="$(arg use_urdf)">
     <node name="$(arg kinova_robotType)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node">
-      <!-- <param name="tf_prefix" value="jaco_" /> -->
       <remap from="/$(arg kinova_robotType)_tf_updater/in/joint_angles" to="/$(arg kinova_robotType)_arm_driver/out/joint_angles"/>
     </node>
   </group>
