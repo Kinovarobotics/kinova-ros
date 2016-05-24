@@ -14,10 +14,10 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="j2s6a300">
+	xmlns:xacro="http://ros.org/wiki/xacro" name="j2s6s300">
 
 
-  <xacro:include filename="$(find kinova_description)/urdf/j2s6a300.xacro"/>
+  <xacro:include filename="$(find kinova_description)/urdf/j2s6s300.xacro"/>
 
   <link name="root">
     <visual>
@@ -38,6 +38,6 @@
 
   <property name="robot_root" value="root" />
 
-  <xacro:j2s6a300  base_parent="${robot_root}"/>
+  <xacro:j2s6s300  base_parent="${robot_root}"/>
 
 </robot>
