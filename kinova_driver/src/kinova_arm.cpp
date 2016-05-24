@@ -92,11 +92,11 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     for (int i = 0; i<arm_joint_number_; i++)
     {
         joint_names_.resize(joint_total_number_);
-        joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i);
+        joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i+1);
     }
     for (int i = 0; i<finger_number_; i++)
     {
-        joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i);
+        joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i+1);
     }
 
 

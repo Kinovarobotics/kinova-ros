@@ -6,7 +6,6 @@
   <node name="$(arg kinova_robotType)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
     <!-- Set this parameter to use a specific arm on your system    --> 
     <!-- <param name="serial_number" value="PJ00000001030703130" /> -->
-<!--     <param name="tf_prefix" value="jaco_"/>
     <param name="finger_angle_conv_ratio" value="0.012"/> -->
   </node>
     
@@ -18,7 +17,7 @@
   </group>
 
   <group if="$(arg use_urdf)">
-    <include file="$(find kinova_description)/launch/display_$(arg kinova_robotType).launch"/>
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
     <node name="$(arg kinova_robotType)_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">
