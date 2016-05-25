@@ -89,23 +89,33 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
         // special parameters for custom robot or other cases
     }
 
+
+    if (finger_number_==3)
+    {
+        // finger_angle_conv_ratio used to display finger position properly in Rviz
+        // Approximative conversion ratio from finger position (0..6400) to joint angle
+        // in radians (0.. 1.4) for 3 finger hand
+        finger_conv_ratio_= 1.4 / 6400.0;
+    }
+    else if(finger_number_==2)
+    {
+        // the two finger hand may different
+        finger_conv_ratio_= 1.4 / 6400.0;
+    }
+    else
+    {
+        // no fingers
+    }
+
     for (int i = 0; i<arm_joint_number_; i++)
     {
         joint_names_.resize(joint_total_number_);
-        joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i);
+        joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i+1);
     }
     for (int i = 0; i<finger_number_; i++)
     {
-        joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i);
+        joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i+1);
     }
-
-
-
-    // Approximative conversion ratio from finger position (0..6000) to joint angle
-    // in radians (0..0.7).
-    node_handle_.param("finger_angle_conv_ratio", finger_conv_ratio_, 0.7 / 5000.0);
-
-
 
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
