@@ -36,7 +36,7 @@ namespace kinova
 class KinovaKinematics
 {
  public:
-    explicit KinovaKinematics(const ros::NodeHandle& node_handle);
+    explicit KinovaKinematics(const ros::NodeHandle& node_handle, std::string& kinova_robotType);
 
     void updateForward(float q1, float q2, float q3, float q4, float q5, float q6);
 
@@ -47,7 +47,19 @@ class KinovaKinematics
 
  private:
     tf::TransformBroadcaster broadcaster_;
+
+    // Parameters
+    std::string kinova_robotType_;
     std::string tf_prefix_;
+
+    char robot_category_;
+    int robot_category_version_;
+    char wrist_type_;
+    int arm_joint_number_;
+    char robot_mode_;
+    int finger_number_;
+    int joint_total_number_;
+
 
     /* Robot Length Values (Meters) */
     double base_to_api_;
@@ -61,6 +73,9 @@ class KinovaKinematics
     double j6_to_end_;        // Wrist to Center of Hand(Meters)
     double j5_bend_degrees_;  //
     double j6_bend_degrees_;
+
+
+
 };
 
 }  // namespace kinova

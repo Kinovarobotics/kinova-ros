@@ -21,8 +21,44 @@ std::string concatTfName(const std::string& prefix, const std::string name)
 }
 
 
-KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle)
+KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::string& kinova_robotType)
+    : kinova_robotType_(kinova_robotType)
 {
+    if (valid_kinovaRobotType(kinova_robotType_) == false)
+    {
+        ROS_WARN("Invalid kinova_robotType error! Obtained: %s.", kinova_robotType_.c_str());
+        return;
+    }
+
+//    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
+    tf_prefix_ = kinova_robotType_ + "_";
+
+    // Maximum number of joints on Kinova-like robots:
+    robot_category_ = kinova_robotType_[0];
+    robot_category_version_ = kinova_robotType_[1]-'0';
+    wrist_type_ = kinova_robotType_[2];
+    arm_joint_number_ = kinova_robotType_[3]-'0';
+    robot_mode_ = kinova_robotType_[4];
+    finger_number_ = kinova_robotType_[5]-'0';
+    int joint_total_number_ = arm_joint_number_ + finger_number_;
+
+    if (robot_category_=='j') // jaco robot
+    {
+        // special parameters for jaco
+    }
+    else if (robot_category_ == 'm') // mico robot
+    {
+        // special parameters for mico
+    }
+    else if (robot_category_ == 'r') // roco robot
+    {
+        // special parameters for roco
+    }
+    else
+    {
+        // special parameters for custom robot or other cases
+    }
+
     node_handle.param<std::string>("tf_prefix", tf_prefix_, "kinova_");
 
     node_handle.param<double>("base_to_api", base_to_api_, 0.028);

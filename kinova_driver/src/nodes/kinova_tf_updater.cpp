@@ -7,13 +7,13 @@
  */
 
 #include <kinova_driver/kinova_tf_updater.h>
-
+#include <kinova_driver/kinova_ros_types.h>
 
 namespace kinova
 {
 
-KinovaTFTree::KinovaTFTree(ros::NodeHandle node_handle)
-    : kinematics_(node_handle)
+KinovaTFTree::KinovaTFTree(ros::NodeHandle node_handle, std::string& kinova_robotType)
+    : kinematics_(node_handle, kinova_robotType)
 {
     joint_angles_subscriber_ = node_handle.subscribe("in/joint_angles", 1,
                                                      &KinovaTFTree::jointAnglesMsgHandler, this);
@@ -74,7 +74,21 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "kinova_tf_updater");
     ros::NodeHandle nh("~");
 
-    kinova::KinovaTFTree KinovaTF(nh);
+    std::string kinova_robotType = "";
+
+    // Retrieve the (non-option) argument:
+    if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
+    {
+        std::cerr << "No kinova_robotType provided in the argument!" << std::endl;
+        return -1;
+    }
+    else // there is an input...
+    {
+        kinova_robotType = argv[argc-1];
+        ROS_INFO("kinova_robotType is %s.", kinova_robotType.c_str());
+    }
+
+    kinova::KinovaTFTree KinovaTF(nh, kinova_robotType);
     ros::spin();
 
     return 0;
