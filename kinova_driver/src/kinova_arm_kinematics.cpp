@@ -65,13 +65,13 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
             if(robot_category_ == 'j') {
                 node_handle.param<double>("D2", D2_, 0.41);
                 node_handle.param<double>("D3", D3_, 0.2073);
-                node_handle.param<double>("e2", e2_, -0.0098);
+                node_handle.param<double>("e2", e2_, 0.0098);
             }
             else
             {
                 node_handle.param<double>("D2", D2_, 0.29);
                 node_handle.param<double>("D3", D3_, 0.1233);
-                node_handle.param<double>("e2", e2_, -0.0070);
+                node_handle.param<double>("e2", e2_, 0.0070);
             }
             node_handle.param<double>("D4", D4_, 0.160);
             node_handle.param<double>("wrist_deg", wrist_deg_, 60.0);
@@ -80,7 +80,7 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
 
             // avoid use dynamic array DH_a[arm_joint_number_], but vector for DH parameters.
             double DH_a[4] = {0,  D2_, 0, 0};
-            double DH_d[4] = {D1_, 0, e2_, -(D3_ + D4_)};
+            double DH_d[4] = {D1_, 0, -e2_, -(D3_ + D4_)};
             double DH_alpha[4] = {M_PI/2, M_PI, M_PI/2, M_PI};
             // DH_theta = DH_theta_sign*Q + DH_theta_offset
             double DH_theta_sign[4] = {-1, 1, 1, 1};
@@ -100,13 +100,13 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         if(robot_category_ == 'j') {
             node_handle.param<double>("D2", D2_, 0.41);
             node_handle.param<double>("D3", D3_, 0.2073);
-            node_handle.param<double>("e2", e2_, -0.0098);
+            node_handle.param<double>("e2", e2_, 0.0098);
         }
         else
         {
             node_handle.param<double>("D2", D2_, 0.29);
             node_handle.param<double>("D3", D3_, 0.1233);
-            node_handle.param<double>("e2", e2_, -0.0070);
+            node_handle.param<double>("e2", e2_, 0.0070);
         }
         node_handle.param<double>("D4", D4_, 0.0741);
         node_handle.param<double>("D5", D5_, 0.0741);
@@ -117,7 +117,7 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
 
         // avoid use dynamic array DH_a[arm_joint_number_], but vector for DH parameters.
         double DH_a[6] = {0,  D2_, 0, 0, 0, 0};
-        double DH_d[6] = {D1_, 0, e2_, -(D3_ + sa/s2a * D4_), -(sa/s2a * D4_ + sa/s2a * D5_), -(sa/s2a * D5_ + D6_)};
+        double DH_d[6] = {D1_, 0, -e2_, -(D3_ + sa/s2a * D4_), -(sa/s2a * D4_ + sa/s2a * D5_), -(sa/s2a * D5_ + D6_)};
         double DH_alpha[6] = {M_PI/2, M_PI, M_PI/2, 2*aa, 2*aa, M_PI};
         // DH_theta = DH_theta_sign*Q + DH_theta_offset
         double DH_theta_sign[6] = {-1, 1, 1, 1, 1, 1};
@@ -136,14 +136,14 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         node_handle.param<double>("D1", D1_, 0.2755);
         node_handle.param<double>("D2", D2_, 0.41);
         node_handle.param<double>("D3", D3_, 0.2073);
-        node_handle.param<double>("e2", e2_, -0.0098);
+        node_handle.param<double>("e2", e2_, 0.0098);
         node_handle.param<double>("D4", D4_, 0.1038);
         node_handle.param<double>("D5", D5_, 0.1038);
         node_handle.param<double>("D6", D6_, 0.160);
 
         // avoid use dynamic array DH_a[arm_joint_number_], but vector for DH parameters.
         double DH_a[6] = {0,  D2_, 0, 0, 0, 0};
-        double DH_d[6] = {-D1_, 0, e2_, -(D3_ + D4_), 0, -(D5_ + D6_)};
+        double DH_d[6] = {-D1_, 0, -e2_, -(D3_ + D4_), 0, -(D5_ + D6_)};
         double DH_alpha[6] = {M_PI/2, M_PI, M_PI/2, M_PI/2, M_PI/2, M_PI};
         // DH_theta = DH_theta_sign*Q + DH_theta_offset
         double DH_theta_sign[6] = {1, 1, 1, 1, 1, 1};
@@ -200,7 +200,7 @@ void KinovaKinematics::updateForward(float* Q)
         transform = DHParam2Transform(0, 0, 0, 0);
     }
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    concatTfName(tf_prefix_, "root"),
+                                                    "root",
                                                     concatTfName(tf_prefix_, "link_base")));
     double DH_theta_i;
     for (int i = 0; i<arm_joint_number_; i++)
