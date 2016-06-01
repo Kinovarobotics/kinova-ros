@@ -15,7 +15,7 @@
 #include <tf/transform_broadcaster.h>
 
 #include <string>
-
+#include <vector>
 
 /******************************************/
 /**************DH Parameters***************/
@@ -72,7 +72,12 @@ class KinovaKinematics
     double e2_;         // offset of joint
     double wrist_deg_;  // wrist bend degree
 
-
+    /* classic DH table parameters */
+    std::vector<double> DH_a_;
+    std::vector<double> DH_d_;
+    std::vector<double> DH_alpha_;
+    std::vector<double> DH_theta_sign_;
+    std::vector<double> DH_theta_offset_;
 
 };
 
