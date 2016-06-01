@@ -58,17 +58,25 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
     finger_number_ = kinova_robotType_[5]-'0';
     int joint_total_number_ = arm_joint_number_ + finger_number_;
 
-    if (kinova_robotType.substr(0,4) == "j2n6") // jaco robot
+    if (kinova_robotType.substr(0,4) == "j2n6" || kinova_robotType.substr(0,4) == "m1n6" ) // jaco robot
     {
         // special parameters for jaco v2 non-spherical 6DOF robot
             // parameters stored in DSP chip
         node_handle.param<double>("D1", D1_, 0.2755);
-        node_handle.param<double>("D2", D2_, 0.41);
-        node_handle.param<double>("D3", D3_, 0.2073);
+        if(robot_category_ == 'j') {
+            node_handle.param<double>("D2", D2_, 0.41);
+            node_handle.param<double>("D3", D3_, 0.2073);
+            node_handle.param<double>("e2", e2_, -0.0098);
+        }
+        else
+        {
+            node_handle.param<double>("D2", D2_, 0.29);
+            node_handle.param<double>("D3", D3_, 0.1233);
+            node_handle.param<double>("e2", e2_, -0.0070);
+        }
         node_handle.param<double>("D4", D4_, 0.0741);
         node_handle.param<double>("D5", D5_, 0.0741);
         node_handle.param<double>("D6", D6_, 0.160);
-        node_handle.param<double>("e2", e2_, -0.0098);
         node_handle.param<double>("wrist_deg", wrist_deg_, 60.0);
 
         double aa = wrist_deg_/2 * M_PI/180.0, sa = sin(aa), s2a = sin(2*aa); // temp parameters
