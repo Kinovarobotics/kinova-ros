@@ -38,7 +38,7 @@ class KinovaKinematics
  public:
     explicit KinovaKinematics(const ros::NodeHandle& node_handle, std::string& kinova_robotType);
 
-    void updateForward(float q1, float q2, float q3, float q4, float q5, float q6);
+    void updateForward(float* Q);
 
     inline float degToRad(float degrees)
     {

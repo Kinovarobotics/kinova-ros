@@ -46,12 +46,14 @@ void KinovaTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr&
 void KinovaTFTree::calculatePostion(void)
 {
     // Update the forward Kinematics
-    kinematics_.updateForward(kinematics_.degToRad(current_angles_.joint1),
-                              kinematics_.degToRad(current_angles_.joint2),
-                              kinematics_.degToRad(current_angles_.joint3),
-                              kinematics_.degToRad(current_angles_.joint4),
-                              kinematics_.degToRad(current_angles_.joint5),
-                              kinematics_.degToRad(current_angles_.joint6));
+    float Q[6] = {kinematics_.degToRad(current_angles_.joint1),
+                 kinematics_.degToRad(current_angles_.joint2),
+                 kinematics_.degToRad(current_angles_.joint3),
+                 kinematics_.degToRad(current_angles_.joint4),
+                 kinematics_.degToRad(current_angles_.joint5),
+                 kinematics_.degToRad(current_angles_.joint6)};
+
+    kinematics_.updateForward(Q);
 }
 
 

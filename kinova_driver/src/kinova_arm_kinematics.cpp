@@ -58,10 +58,44 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
     finger_number_ = kinova_robotType_[5]-'0';
     int joint_total_number_ = arm_joint_number_ + finger_number_;
 
-    if (kinova_robotType.substr(0,4) == "j2n6" || kinova_robotType.substr(0,4) == "m1n6" ) // jaco robot
-    {
-        // special parameters for jaco v2 non-spherical 6DOF robot
+    if (kinova_robotType.substr(0,4) == "j2n4" || kinova_robotType.substr(0,4) == "m1n4")
+        {
             // parameters stored in DSP chip
+            node_handle.param<double>("D1", D1_, 0.2755);
+            if(robot_category_ == 'j') {
+                node_handle.param<double>("D2", D2_, 0.41);
+                node_handle.param<double>("D3", D3_, 0.2073);
+                node_handle.param<double>("e2", e2_, -0.0098);
+            }
+            else
+            {
+                node_handle.param<double>("D2", D2_, 0.29);
+                node_handle.param<double>("D3", D3_, 0.1233);
+                node_handle.param<double>("e2", e2_, -0.0070);
+            }
+            node_handle.param<double>("D4", D4_, 0.160);
+            node_handle.param<double>("wrist_deg", wrist_deg_, 60.0);
+
+            double aa = wrist_deg_/2 * M_PI/180.0, sa = sin(aa), s2a = sin(2*aa); // temp parameters
+
+            // avoid use dynamic array DH_a[arm_joint_number_], but vector for DH parameters.
+            double DH_a[4] = {0,  D2_, 0, 0};
+            double DH_d[4] = {D1_, 0, e2_, -(D3_ + D4_)};
+            double DH_alpha[4] = {M_PI/2, M_PI, M_PI/2, M_PI};
+            // DH_theta = DH_theta_sign*Q + DH_theta_offset
+            double DH_theta_sign[4] = {-1, 1, 1, 1};
+            double DH_theta_offset[4] = {0, -M_PI/2, M_PI/2, 3/2*M_PI};
+
+            // copy local array values to class-scope vector.
+            DH_a_ = array2vector(DH_a, arm_joint_number_);
+            DH_d_ = array2vector(DH_d, arm_joint_number_);
+            DH_alpha_ = array2vector(DH_alpha, arm_joint_number_);
+            DH_theta_sign_ = array2vector(DH_theta_sign, arm_joint_number_);
+            DH_theta_offset_ = array2vector(DH_theta_offset, arm_joint_number_);
+        }
+    else if (kinova_robotType.substr(0,4) == "j2n6" || kinova_robotType.substr(0,4) == "m1n6" )
+    {
+        // parameters stored in DSP chip
         node_handle.param<double>("D1", D1_, 0.2755);
         if(robot_category_ == 'j') {
             node_handle.param<double>("D2", D2_, 0.41);
@@ -90,23 +124,17 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         double DH_theta_offset[6] = {0, -M_PI/2, +M_PI/2, 0, -M_PI, +M_PI/2};
 
         // copy local array values to class-scope vector.
-        DH_a_ = array2vector(DH_a, 6);
-        DH_d_ = array2vector(DH_d, 6);
-        DH_alpha_ = array2vector(DH_alpha, 6);
-        DH_theta_sign_ = array2vector(DH_theta_sign, 6);
-        DH_theta_offset_ = array2vector(DH_theta_offset, 6);
-
-    }
-    else if (robot_category_ == 'm') // mico robot
-    {
-        // special parameters for mico
+        DH_a_ = array2vector(DH_a, arm_joint_number_);
+        DH_d_ = array2vector(DH_d, arm_joint_number_);
+        DH_alpha_ = array2vector(DH_alpha, arm_joint_number_);
+        DH_theta_sign_ = array2vector(DH_theta_sign, arm_joint_number_);
+        DH_theta_offset_ = array2vector(DH_theta_offset, arm_joint_number_);
     }
     else
     {
         // special parameters for custom robot or other cases
         printf("Please specify the kinematic of robots other than jaco and mico!\n");
     }
-
 }
 
 tf::Transform KinovaKinematics::DHParam2Transform(float d, float theta, float a, float alpha)
@@ -133,7 +161,7 @@ tf::Transform KinovaKinematics::DHParam2Transform(float d, float theta, float a,
 /*                                    */
 /**************************************/
 // IMPORTANT!!! In the robot DSP chip, the classical D-H parameters are used to define the robot. Therefore, the frame definition is different comparing with the frames in URDF model.
-void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, float q5, float q6)
+void KinovaKinematics::updateForward(float* Q)
 {
     tf::Transform transform;
     transform = DHParam2Transform(0, 0, 0, 0);
@@ -141,7 +169,6 @@ void KinovaKinematics::updateForward(float q1, float q2, float q3, float q4, flo
                                                     concatTfName(tf_prefix_, "root"),
                                                     concatTfName(tf_prefix_, "link_base")));
     double DH_theta_i;
-    double Q[] = {q1, q2, q3, q4, q5, q6};
     for (int i = 0; i<arm_joint_number_; i++)
     {
         DH_theta_i = DH_theta_sign_[i]*Q[i] + DH_theta_offset_[i];
