@@ -10,7 +10,7 @@
     
   <group unless="$(arg use_urdf)">
     <node name="$(arg kinova_robotType)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node" args="$(arg kinova_robotType)">
-      <remap from="/$(arg kinova_robotType)_tf_updater/in/joint_angles" to="/$(arg kinova_robotType)_arm_driver/out/joint_angles"/>
+      <remap from="/$(arg kinova_robotType)_tf_updater/in/joint_angles" to="/$(arg kinova_robotType)_driver/out/joint_angles"/>
     </node>
   </group>
 
