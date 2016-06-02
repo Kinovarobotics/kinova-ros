@@ -19,7 +19,7 @@
     <xacro:include filename="$(find kinova_description)/urdf/kinova_common.xacro" />
     <xacro:include filename="$(find kinova_description)/urdf/kinova_finger_set.xacro" />
 
-    <property name="prefix" value="j2s6a300" />
+    <property name="prefix" value="j2s6s300" />
 
     <property name="link_base" value="${prefix}_link_base" />
     <property name="link_1" value="${prefix}_link_1" />
@@ -102,7 +102,7 @@
 
 
 
-    <xacro:macro name="j2s6a300" params="base_parent">
+    <xacro:macro name="j2s6s300" params="base_parent">
     
         <xacro:kinova_armlink link_name="${link_base}" link_mesh="${link_base_mesh}"/>
         <xacro:kinova_armjoint joint_name="${joint_base}" type="${joint_base_type}" parent="${base_parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
