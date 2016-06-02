@@ -130,6 +130,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                 case 3:
                 case 4:
                 case 6:
+                case 7:
                     num_fingers_ = 3;
                     break;
                 case 1:
