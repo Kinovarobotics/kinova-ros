@@ -136,10 +136,10 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         node_handle.param<double>("D1", D1_, 0.2755);
         node_handle.param<double>("D2", D2_, 0.41);
         node_handle.param<double>("D3", D3_, 0.2073);
-        node_handle.param<double>("e2", e2_, 0.0098);
         node_handle.param<double>("D4", D4_, 0.1038);
         node_handle.param<double>("D5", D5_, 0.1038);
         node_handle.param<double>("D6", D6_, 0.160);
+        node_handle.param<double>("e2", e2_, 0.0098);
 
         // avoid use dynamic array DH_a[arm_joint_number_], but vector for DH parameters.
         double DH_a[6] = {0,  D2_, 0, 0, 0, 0};
@@ -147,7 +147,7 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         double DH_alpha[6] = {M_PI/2, M_PI, M_PI/2, M_PI/2, M_PI/2, M_PI};
         // DH_theta = DH_theta_sign*Q + DH_theta_offset
         double DH_theta_sign[6] = {1, 1, 1, 1, 1, 1};
-        double DH_theta_offset[6] = {M_PI, -M_PI/2, -M_PI/2, 0, 0, M_PI/2};
+        double DH_theta_offset[6] = {-M_PI, M_PI/2, M_PI/2, 0, 0, -M_PI/2};
 
         // copy local array values to class-scope vector.
         DH_a_ = array2vector(DH_a, arm_joint_number_);
