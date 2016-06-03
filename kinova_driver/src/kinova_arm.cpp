@@ -70,7 +70,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     arm_joint_number_ = kinova_robotType_[3]-'0';
     robot_mode_ = kinova_robotType_[4];
     finger_number_ = kinova_robotType_[5]-'0';
-    int joint_total_number_ = arm_joint_number_ + finger_number_;
+    joint_total_number_ = arm_joint_number_ + finger_number_;
 
     if (robot_category_=='j') // jaco robot
     {
@@ -306,6 +306,11 @@ void KinovaArm::publishJointAngles(void)
     FingerAngles fingers;
     kinova_comm_.getFingerPositions(fingers);
 
+    if (arm_joint_number_ != 4 && arm_joint_number_ != 6)
+    {
+         ROS_WARN_ONCE("The joint_state publisher only supports 4DOF and 6DOF for now.: %d", arm_joint_number_);
+    }
+
     // Query arm for current joint angles
     KinovaAngles current_angles;
     kinova_comm_.getJointAngles(current_angles);
@@ -316,69 +321,70 @@ void KinovaArm::publishJointAngles(void)
     joint_state.header.stamp = ros::Time::now();
 
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-    joint_state.position.resize(9);
-
+    joint_state.position.resize(joint_total_number_);
     joint_state.position[0] = kinova_angles.joint1 * M_PI/180;
     joint_state.position[1] = kinova_angles.joint2 * M_PI/180;
     joint_state.position[2] = kinova_angles.joint3 * M_PI/180;
     joint_state.position[3] = kinova_angles.joint4 * M_PI/180;
-    joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
-    joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
-    joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
-    joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
-    joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
+    joint_state.position[joint_total_number_-3] = finger_conv_ratio_ * fingers.Finger1;
+    joint_state.position[joint_total_number_-2] = finger_conv_ratio_ * fingers.Finger2;
+    joint_state.position[joint_total_number_-1] = finger_conv_ratio_ * fingers.Finger3;
+    if (arm_joint_number_ == 6)
+    {
+        joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
+        joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
+    }
+
 
     // Joint velocities
     KinovaAngles current_vels;
     kinova_comm_.getJointVelocities(current_vels);
-    joint_state.velocity.resize(9);
+    joint_state.velocity.resize(joint_total_number_);
     joint_state.velocity[0] = current_vels.Actuator1;
     joint_state.velocity[1] = current_vels.Actuator2;
     joint_state.velocity[2] = current_vels.Actuator3;
     joint_state.velocity[3] = current_vels.Actuator4;
-    joint_state.velocity[4] = current_vels.Actuator5;
-    joint_state.velocity[5] = current_vels.Actuator6;
+    // no velocity info for fingers
+    joint_state.velocity[joint_total_number_-3] = 0;
+    joint_state.velocity[joint_total_number_-2] = 0;
+    joint_state.velocity[joint_total_number_-1] = 0;
+    if (arm_joint_number_ == 6)
+    {
+        joint_state.velocity[4] = current_vels.Actuator5;
+        joint_state.velocity[5] = current_vels.Actuator6;
+    }
 
     ROS_DEBUG_THROTTLE(0.1,
                        "Raw joint velocities: %f %f %f %f %f %f",
-                       joint_state.velocity[0],
-                       joint_state.velocity[1],
-                       joint_state.velocity[2],
-                       joint_state.velocity[3],
-                       joint_state.velocity[4],
-                       joint_state.velocity[5]);
+                       current_vels.Actuator1,
+                       current_vels.Actuator2,
+                       current_vels.Actuator3,
+                       current_vels.Actuator4,
+                       current_vels.Actuator5,
+                       current_vels.Actuator6);
 
     if (convert_joint_velocities_) {
         convertKinDeg(joint_state.velocity);
     }
 
-    // No velocity for the fingers:
-    joint_state.velocity[6] = 0.0;
-    joint_state.velocity[7] = 0.0;
-    joint_state.velocity[8] = 0.0;
 
     // Joint torques (effort)
     // NOTE: Currently invalid.
     KinovaAngles joint_tqs;
-    joint_state.effort.resize(9);
+    joint_state.effort.resize(joint_total_number_);
     joint_state.effort[0] = joint_tqs.Actuator1;
     joint_state.effort[1] = joint_tqs.Actuator2;
     joint_state.effort[2] = joint_tqs.Actuator3;
     joint_state.effort[3] = joint_tqs.Actuator4;
-    joint_state.effort[4] = joint_tqs.Actuator5;
-    joint_state.effort[5] = joint_tqs.Actuator6;
-    joint_state.effort[6] = 0.0;
-    joint_state.effort[7] = 0.0;
-    joint_state.effort[8] = 0.0;
-
-    ROS_DEBUG_THROTTLE(0.1,
-                       "Raw joint torques: %f %f %f %f %f %f",
-                       joint_state.effort[0],
-                       joint_state.effort[1],
-                       joint_state.effort[2],
-                       joint_state.effort[3],
-                       joint_state.effort[4],
-                       joint_state.effort[5]);
+    // no effort info for fingers
+    joint_state.effort[joint_total_number_-3] = 0;
+    joint_state.effort[joint_total_number_-2] = 0;
+    joint_state.effort[joint_total_number_-1] = 0;
+    if (arm_joint_number_ == 6)
+    {
+        joint_state.effort[4] = joint_tqs.Actuator5;
+        joint_state.effort[5] = joint_tqs.Actuator6;
+    }
 
     joint_angles_publisher_.publish(kinova_angles);
     joint_state_publisher_.publish(joint_state);
