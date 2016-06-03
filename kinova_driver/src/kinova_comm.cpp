@@ -136,7 +136,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                 case 1:
                 case 2:
                 case 5:
-                    num_fingers_ = 2;
+                    num_fingers_ = 3; // Mico (case 1,2,5) may equipped with 3-finger gripper as well.
                     break;
                 default:
                     ROS_ERROR("Unknown robot type: %d", quick_status.RobotType);
