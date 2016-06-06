@@ -27,7 +27,7 @@ namespace kinova
 class KinovaTFTree
 {
  public:
-    explicit KinovaTFTree(ros::NodeHandle nh);
+    explicit KinovaTFTree(ros::NodeHandle nh, std::string& kinova_robotType);
 
  private:
     void jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr& joint_angles);

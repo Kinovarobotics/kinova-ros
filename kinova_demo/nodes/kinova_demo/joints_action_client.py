@@ -20,7 +20,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-currentJointPosition = [] # number of joints depends on robotType
+currentJointPosition = [] # number of joints is defined in __main__
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
@@ -145,7 +145,9 @@ if __name__ == '__main__':
     kinova_robotTypeParser(args.kinova_robotType)
     rospy.init_node(prefix + 'gripper_workout')
 
-    currentJointPosition = [0]*arm_joint_number
+    # currentJointPosition = [0]*arm_joint_number
+    # KinovaType defines AngularInfo has 6DOF, so for published topics on joints.
+    currentJointPosition = [0]*6
 
     if len(args.joint_value) != arm_joint_number:
         print('Number of input values {} is not equal to number of joints {}. Please run help to check number of joints with different robot type.'.format(len(args.joint_value), arm_joint_number))
@@ -161,12 +163,18 @@ if __name__ == '__main__':
             print('Joint number is 0, check with "-h" to see how to use this node.')
             positions = []  # Get rid of static analysis warning that doesn't see the exit()
             sys.exit()
-        else:
+        elif arm_joint_number == 4:
             positions = [float(n) for n in joint_degree]
+            positions.extend([0,0])
+        elif arm_joint_number == 6:
+            positions = [float(n) for n in joint_degree]
+        else:
+            print('Joint_action_client supports to set angles to 4DOF and 6DOF for now.');
+            sys.exit()
 
         result = joint_angle_client(positions)
 
     except rospy.ROSInterruptException:
         print('program interrupted before completion')
 
-    verboseParser(args.verbose, positions)
+    verboseParser(args.verbose, joint_degree)
