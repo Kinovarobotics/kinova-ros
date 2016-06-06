@@ -1,355 +1,144 @@
-# JACO-ROS
+# KINOVA-ROS
 
-The ``kinova-ros`` module provides a ROS interface for the Kinova Robotics JACO, JACO2 (see limitations) and MICO robotic manipulator arms. This module exposes the Kinova C++ hardware API through ROS. This documentation will usually refer to the JACO arm, but the instructions work with both the JACO and the MICO unless otherwise noted.
+The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. The stack mainly contains the following packages:
 
-## January 2015 Release - What's new
-    - New URDF model of the MICO, and various fixes to the JACO.
-    - Optional URDF-based TF publication (see documentation on launch files).
-    - Publication of joint velocities, see note in limitations section if the
-    values seem wrong.
-    - Access to force control of arms with torque sensors (start, stop and
-      parameters).
+## file system
+ - kinova_bringup: launch file to start kinova_driver and apply some configurations
+ - kinova_driver: most essential files to run kinova-ros stack. Under the include folder, Kinova C++ API headers are defined in ../indlude/kinova, and ROS package header files are in kinova_driver folder. kinova_api source file is a wrap of Kinova C++ API, and kinova_comm builds up the fundamental functions. Some advanced accesses regarding to force/torque control are only provided in kinova_api.  Most parameters and topics are created in kinova_arm. A generous archeteture from low level up could be: 
+    DSP --communicate--> Kinova C++ API --wrapped--> kinova_api --> kinova_comm 
+    --> {kinova_arm; kinova_fingers_action; kinova_joint_angles_action; ...} --> kinova_arm_driver. **It is not recommaned to modify kinova_comm and any level below.** 
 
-## Overview
-The JACO API is exposed to ROS using a combination of actionlib (for sending trajectory commands to the arm), services (for instant control such as homing the arm or e-stop) and published topics (joint feedback).  The Arm may be commanded using either angular commands or Cartesian co-ordinates.
-
-In addition, two techniques are available to visualize the model in your ROS
-environment.
-The custom transform publisher of previous releases is still available, along
-with a URDF-based approach using the JointStates output and robot_state_publisher.
-
-There are three actionlib modules available: ``pose_actitool_poseose``, ``joints_action/arm_joint_angles``, and ``fingers_action/finger_position``.  These server modules accept coordinates which are passed on to the Kinova JACO API for controlling the arm.
-
-The services available are: ``in/home_arm``, ``in/stop``, and ``in/start``.  These services require no input goals, and are intended for quick control of basic arm functions.  When called, home_arm will halt all other movement and return the arm to its "home" position.  The stop service is a software e-stop, which instantly stops the arm and prevents any further movement until the start service is called.
-
-Published topics are: ``out/cartesian_velocity, out/joint_velocity, out/finger_position, out/joint_angles, out/joint_state``, ``out/tool_position``, and ``out/tool_wrench`` for robots with torque sensors.  The ``cartesian_velocity`` and ``joint_velocity`` are both subscribers which may be used to set the joint velocity of the arm.  The ``finger_position`` and ``joint_angles`` topics publish the raw angular position of the fingers and joints, respectively, in degrees.  The ``joint_state`` topic publishes via ``sensor_msgs`` the transformed joint angles in radians.  The ``tool_position`` topic publishes the Cartesian co-ordinates of the arm and end effector via ``geometry_msgs``.
-
-## JACO-ROS Module Architecture
-The ``kinova_arm_driver`` node acts as an interface between the Kinova JACO C++ API and the various actionservers, message services and topics used to interface with the arm.
-
-The ``kinova_tf_updater`` node subscribes to the kinova_arm_driver node to obtain current joint angle information from the node.  It then publishes a transform which may be used in visualization programs such as rviz.
-This node is now optional and kept for compatibility issues. The URDF-based
-approach is now preferred.
-
-### Cartesian Control 
-Cartesian control is accomplished via actionserver.  The Cartesian co-ordinates are published as a separate topic. The arm has a maximum reach of about 0.9m (90cm), so the "position" range is about +/-0.9 for all three dimensions.  The three wrist joints are capable of continuous rotation, and therefore capable of being commanded up to +/-174.5 rad. You may want to limit to +/-6.28 rad in software to prevent the joints from rotating excessively.
-
-#### Cartesian Control Actionserver Topic, Command, and Parameters
-
-    /kinova_arm_driver/pose_actitool_poseose
-
-    Message format:
-    float64 position.x – end effector distance from the base in meters (left-right relative to base)
-    float64 position.y – end effector distance from the base in meters (forward-back relative to base) 
-    float64 position.z – end effector distance from the base in meters (up-down relative to base) 
-    float64 orientation.x – end effector quaternion orientation 
-    float64 orientation.y – end effector quaternion orientation
-    float64 orientation.z – end effector quaternion orientation
-    float64 orientation.w – end effector quaternion orientation
-
-    Parameters on the parameter server (can be set in the launch file):
-    /kinova_arm_driver/tool_pose/tf_prefix – prefix for the tf tree (needed for distinct tf
-        trees with multiple arms)
-    /kinova_arm_driver/tool_pose/stall_interval_seconds – duration over which the stall condition is tested
-    /kinova_arm_driver/tool_pose/stall_threshold – threshold over which the stall condition is tested
-        (e.g., if there is less than stall_threshold change in measurement over stall_interval_seconds, 
-        the action will aborted due to a stall condition)
-    /kinova_arm_driver/tool_pose/rate_hz – rate at which the action is tested for completion, stall, or
-        other termination condition
-    /kinova_arm_driver/tool_pose/tolerance – tolerance between the measured position and the goal position
-        to complete the action
-
-#### Published Topic for Cartesian Position
-
-    /kinova_arm_driver/out/tool_position
-
-    Message format:
-    float64 position.x – end effector distance from the base in meters (left-right relative to base) 
-    float64 position.y – end effector distance from the base in meters (forward-back relative to base) 
-    float64 position.z – end effector distance from the base in meters (up-down relative to base) 
-    float64 orientation.x – end effector quaternion orientation
-    float64 orientation.y – end effector quaternion orientation 
-    float64 orientation.z – end effector quaternion orientation
-    float64 orientation.w – end effector quaternion orientation
-
-### Angular Control 
-Angular control is accomplished via actionserver.  The joint angles are published as two separate topics.
-
-All the joints have a range limit.  Joints 1, 4, 5 and 6 have a range of -10,000 to +10,000 degrees.  Joint 2 has a range of +42 to +318 degrees.  Joint 3 has a range of +17 to +343 degrees.  Sending a command past these limits will cause the arm to move to its hard-wired limit, then stop.
-
-#### Angular Control Actionserver Topic, Command, and Parameters
-
-    /kinova_arm_driver/joints_action/arm_joint_angles
-
-    Message format:
-    float32 joint1 – “base” joint angle in radians 
-    float32 joint2 – “shoulder” joint angle in radians 
-    float32 joint3 – “elbow” joint angle in radians 
-    float32 joint4 – first “wrist” joint angle in radians 
-    float32 joint5 – second “wrist” joint angle in radians 
-    float32 joint6 – “hand” joint angle in radians 
-
-    Parameters on the parameter server (can be set in the launch file):
-    /kinova_arm_driver/joint_angles/stall_interval_seconds – duration over which the stall condition is tested
-    /kinova_arm_driver/joint_angles/stall_threshold – threshold over which the stall condition is tested
-        (e.g., if there is less than stall_threshold change in measurement over stall_interval_seconds, 
-        the action will aborted due to a stall condition)
-    /kinova_arm_driver/joint_angles/rate_hz – rate at which the action is tested for completion, stall, or
-        other termination condition
-    /kinova_arm_driver/joint_angles/tolerance – tolerance between the measured position and the goal position
-        to complete the action
-
-#### Published Topics for Angular Position in Degrees
-
-    /kinova_arm_driver/out/joint_angles
-
-    Message format:
-    float32 joint1 – “base” joint angle in degrees 
-    float32 joint2 – “shoulder” joint angle in degrees
-    float32 joint3 – “elbow” joint angle in degrees 
-    float32 joint4 – first “wrist” joint angle in degrees
-    float32 joint5 – second “wrist” joint angle in degrees
-    float32 joint6 – “hand” joint angle in degrees 
-
-#### Published Topics for Angular Position in Radians
-
-    /kinova_arm_driver/out/joint_state
-
-    Message format:
-    string name – array containing the names of the joints 
-    float64[] position – array containing joint positions, in transformed radians, of the joints 
-    float64[] velocity – array containing the joint velocities (placeholder, contains no data) 
-    float64[] effort – array containing the joint forces in newtons (placeholder, contains no data) 
-
-### Finger Control
-Finger control is accomplished via actionserver.  The finger angles are published as a separate topic. The range of input for all three fingers on the JACO is approximately 0 (fully open) to 60 (fully closed). The two fingers on the MICO have a range of approximately 0 to 6400.
-
-#### Finger Control Actionserver Topic, Command, and Parameters
-
-    /kinova_arm_driver/fingers_action/finger_positions
-
-    Message format:
-    float32 finger1 – position of finger 1 in degrees 
-    float32 finger2 – position of finger 2 in degrees 
-    float32 finger3 – position of finger 3 in degrees 
-
-    Parameters on the parameter server (can be set in the launch file):
-    /kinova_arm_driver/fingers/stall_interval_seconds – duration over which the stall condition is tested
-    /kinova_arm_driver/fingers/stall_threshold – threshold over which the stall condition is tested
-        (e.g., if there is less than stall_threshold change in measurement over stall_interval_seconds, 
-        the action will aborted due to a stall condition). This value typically needs to be changed between
-        a MICO and a JACO arm.
-    /kinova_arm_driver/fingers/rate_hz – rate at which the action is tested for completion, stall, or
-        other termination condition
-    /kinova_arm_driver/fingers/tolerance – tolerance between the measured position and the goal position
-        to complete the action. This value typically needs to be changed between
-        a MICO and a JACO arm (see the example launch files).
-
-#### Published Topic for Finger Position
-
-    /kinova_arm_driver/out/finger_position
-
-    Message format:
-    float32 finger1 – position of finger 1 in degrees
-    float32 finger2 – position of finger 2 in degrees
-    float32 finger3 – position of finger 3 in degrees (0 when using the two-fingered MICO)
-
-    The position state of the fingers is also available in the out/joint_state
-    topic.
-
-### Services 
-These services may be called at any time to enact basic functions on the arm.  They will override any other actions being carried out by the arm.
-
-#### Homing the Arm 
-When called, this service will return the arm to its pre-programmed “home” position.  It is the equivalent of holding down the “home” button on the pendant controller. The service requires no input parameters, and simply reports when the arm has returned home.
-
-    Service Topic:  /kinova_arm_driver/in/home_arm
-    Result:  string homearm_result – a string containing the results of the home_arm service
-
-#### Emergency Stop 
-When called, this service will immediately stop the arm if it is moving, erase any trajectories still residing in the JACO arm’s FIFO, and enable a software e-stop flag.  This flag will prevent any further movement of the arm, including homing.  Joint angle feedback will continue to function.  The service requires no input parameters.
-
-    Topic:  /kinova_arm_driver/in/stop
-    Result:  string stop_result – a string containing the results of the stop service 
-
-#### Start 
-When called, this service will disable the software e-stop flag, and restore control of the arm.  The service requires no input parameters.
-
-    Topic:  /kinova_arm_driver/in/start
-    Result:  string start_result – a string containing the results of the start service 
-
-#### Start and Stop Force Control
-When called, these services will enable/disable cartesian force control of arms
-with torque sensors.
-
-    Topics: /kinova_arm_driver/in/start_force_control
-    Result: Enable (or disable) force control for robots with torque sensors.
-
-#### Setting Force Control Parameters
-When called, parameters of the cartesian force control algorithm will be changed
-instantly.
-
-    Topic:  /kinova_arm_driver/in/set_force_control_params
-    Result: Instantly change force control parameters. See the Jaco API
-    documentation for details on the meaning of these parameters.
-
-### Joint Velocity Subscriber
-Publishing messages to this topic allows for the arm to be controlled using joint velocity commands. For example, the following command will cause the arm to spin the sixth joint:
-
-    rostopic pub -r 10 /kinova_arm_driver/in/joint_velocity kinova_msgs/JointVelocity
-    "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 0.0, joint5: 0.0, joint6: 10.0}" 
-
-Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.
-
-### Cartesian Velocity Subscriber
-Publishing messages to this topic allows for the arm to be controlled using Cartesian velocity commands. For example, the following command will cause the arm to move in the positive z-direction (up).
-
-    rostopic pub -r 10 /kinova_arm_driver/in/cartesian_velocity geometry_msgs/TwistStamped
-    "{header: {seq: 0, stamp: {secs: 0, nsecs: 0}, frame_id: ''}, 
-    twist: {linear: {x: 0.0, y: 0.0, z: 0.1}, angular: {x: 0.0, y: 0.0, z: 0.0}}}" 
-
-Note, using tab-completion to create this message will make sure that the command follows the correct syntax and format. If you just copy-and-paste this command into a terminal, it may not work.
-
-## Launch files
-The kinova_bringup package provides default launch files for each arm type.
-The kinova_arm.launch and mico_arm.launch files should be run prior to using the JACO (or MICO) arm.  It launches the main driver node, ``kinova_arm_driver``, and ``kinova_tf_updater`` in classic, non-URDF mode (see next section).  These nodes then perform a number of operations that prepare the arm for use.
-Note that the name of the binary driver has ``kinova`` in it, but the node name
-will have the correct type of the robot once launched.
-
-On launch, the ``kinova_arm_driver`` announces all of the configurations stored in the arm’s permanent memory.  These are settings that, currently, are most easily set using the Windows-only Kinova GUI.  The fingers may move during initialization, but the arm is not automatically homed. If the arm does not respond after initialization, it may need to be homed.
-
-## URDF mode
-To enable URDF-based transform publication, set the "use_urdf" launch file
-parameter to 'true'.
-This can be done from the command line:
-
-    roslaunch kinova_bringup [kinova|mico]_arm.launch use_urdf:=true
-
-NOTE: The URDF model for the JACO2 arm will be available soon.
-
-## Custom transform publisher (classic and default) mode
-The ``kinova_tf_updater`` begins publishing transform data as soon as it becomes available from the ``kinova_arm_driver node``.
-
+ - kinova_demo: python scripts for actionlibs in joint space and cartesian space.
+ - kinova_msgs: all the messages, servers and actionlib format are defined here.
+ - kinova_description: robot urdf models and meshes are stored here. display_kinova_robot.launch can run without having a robot.
+ - kinova_docs: kinova_comm reference html files generated by doxygen. The comments are based on the reference of Kinova C++ API, and some additional information is provided.
 
 ## Installation
-To make ros-kinova part of your workspace, follow these steps (assuming your workspace is setup following the standard conventions):
+To make kinova-ros part of your workspace, follow these steps (assuming your workspace is setup following the standard conventions):
 
     cd ~/catkin_ws/src
     git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
     cd ~/catkin
     catkin_make
 
-To access the arm via usb copy the udev rule file ``10-kinova-arm.rules`` from ``<your_workspace>/ros-kinova-arm/kinova_driver/udev`` to ``/etc/udev/rules.d/``:
+To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
 
     sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 
-If you would like the ``kinova_arm_driver`` and ``kinova_tf_updater nodes`` to launch automatically when ROS is started, copy the ``kinova_arm.launch`` file contained in the ``/launch`` folder into the relevant ``/core.d`` folder.
+## How to use the stack
 
+### launch driver
+`kinova_robot.launch` in kinova_bringup folder launches the essential drivers and configurations for kinova robots. kinova_robot.launch has two arguments:
 
-### Using Multiple Arms
-This version of ``kinova-ros`` supports multiple arms. In order to use multiple arms you must set the the ``serial_number`` parameter for that arm and a ``tf_prefix`` for both the ``arm_driver`` node and the ``tf_updater`` node. For example, include the following lines in the launch file between ``<node pkg="kinova_driver" type="kinova_arm_driver" ...>`` and ``</node>``:
+**kinova_robotType** specifies which robot type is used. For better supporting wider range of robot configurations,  *robot type* is defined by a `char[8]`, in the format of: `[{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]`. *Robot category* `{j|m|r|c}` refers to *jaco*, *mico*, *roco* and *customized*, *version* is `{1|2}` for now, *wrist type* `{s|n}` can be spherical or *non-spherical*, *Degree of Freedom* is possible to be `{4|6|7}`, *robot mode* `{s|a}` can be in *service* or *assistive*, *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. Last two positions are *undifined* and *reserved* for further features.
 
-    <param name="serial_number" value="PJ00123456789012345" />
-    <param name="tool_pose/tf_prefix" value="kinova_" />
+*eg*: `j2n6a300` (default value) refers to *jaco v2 6DOF assistive 3 fingers*. Please be aware that not all options are valided for different robot types.
 
-And the following line in the launch file between ``<node pkg="kinova_driver" type="kinova_tf_updater" ...>`` and ``</node>``:
+**use_urdf** specifies whether the kinematic solution is provided by the URDF model. 
 
-    <param name="tf_prefix" value="kinova_" />
+When `use_urdf:=true` (default value), the kinematic solution is automatically solved by URDF model. 
+The robot can be virtually presented in the Rviz and the frames in Rviz are located at each joints. 
+To visulize the robot in Rviz, run `$ rosrun rviz rviz`, and select *root* as the world frame. 
+The robot model will synchronize the motion with the real robot.
 
-If no serial number parameter is set, the node will simply try to connect to the JACO or MICO arm that is present. In some cases the serial number may not be set in the arm; simply set the serial number parameter to "0."
+If `use_urdf:=false`, the kinematic solution is as ame as the DSP code inside robot. 
+Node `kinova_tf_updater` will be activated to publish frames, and the frames are defined 
+according the classic D-H converntion(frame may not locat at joints). Even you are not able to visulize
+the robot properly in Rviz, you are able to observe the D-H frames in Rviz.
 
+*eg*: `roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200 use_urdf:=true`
 
-## Execution 
-This package has been tested in Ubuntu 12.04 LTS with ROS Hydro. The 5.01.01 driver/API is included in the package; however, you should ensure that the firmware on the arm is up-to-date. Using old versions of the firmware may result in unexpected behavior.
+If the robot is not able to move after boot, please try to home the arm by either pressing *home* button on the joystick or calling rosservice in the **ROS service commands** below.
 
-### Basics
-To “home” the arm
+### Joint position control
+Joint position control can be realized by calling KinovaComm::setJointAngles() in customized node, or you may simply call the node `joints_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The joint position can be commanded by `{degree | radian}`, relative or absolute value by option `-r`. The following code will drive the 4th joint of a 4DOF mico robot rotate +10 degree (not to 10 degree), and print additional information about the joint position.
 
-    rosservice call /kinova_arm_driver/in/home_arm
+*eg*: `rosrun kinova_demo joints_action_client.py -v -r m1n4a200 degree -- 0 0 0 10`
 
-To activate the e-stop (emergency stop) function
+Joint position can be observed by echoing two topics:
+`/'${kinova_robotType}_driver'/out/joint_angles` (in degree) and 
+`/'${kinova_robotType}_driver'/out/state/position` (in radians including finger information)
 
-    rosservice call /kinova_arm_driver/in/stop
+ *eg*: `rostopic echo -c /m1n4a200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
 
-To restore control of the arm
+### Cartesian position control
+Cartesian position control can be realized by calling KinovaComm::setCartesianPosition() in customized node, or you may simply call the node `pose_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of position command can be by `{mq | mdeg | mrad}`, which refers to meter&Quaternion, meter&degree and meter&radian. The unit of position is always meter, and the unit of orientation is different. Degree and radian are regarding to Euler Angles in XYZ order. Please be aware that the length of parameters are different when use Quaternion and Euler Angles. With the option `-v` on, positions in other unit format are printed for convenience. The following code will drive a mico robot to move along +x axis for 1cm and rotate hand for +10 degree along hand axis. The last second *10* will be ignored since 4DOF robot cannot rotate along y axis.
 
-    rosservice call /kinova_arm_driver/in/start
+*eg*: `rosrun kinova_demo pose_action_client.py -v -r m1n4a200 mdeg -- 0.01 0 0 0 10 10`
 
+The Cartesian coordinate of robot root frame is defined by the following rules:
+- origin is the intersection point of the bottom plane of the base and cylinder center line.    
+- +x axis is directing to the left when facing the base panel (where power switch and cable socket locate).
+- +y axis is towards to user when facing the base panel.
+- +z axis is upwards when robot is standing on a flat surface.
 
-### Joint Sensors 
-To obtain the raw joint angles in degrees
+The current Cartesian position is published via topic: `/'${kinova_robotType}_driver'/out/tool_pose`
+In addition, the wrench of end-effector is published via topic: `/'${kinova_robotType}_driver'/out/tool_wrench`
 
-    rostopic echo kinova/joint_angles
+### Finger position control
+Cartesian position control can be realized by calling KinovaComm::setFingerPositions() in customized node, or you may simply call the node `fingers_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of finger command can be by `{turn | mm | percent}`, which refers to turn of motor, milimeter and percentage. The finger is essentially controlled by `turn`, and the rest units are propotional to `turn` for convenience. The value 0 indicates fully open, while *finger_maxTurn* represents a fully close. The value of *finger_maxTurn* may vary due to many factors. A proper reference value for finger turn will be 0 (fully-open) to 6400 (fully-close)  If necessary, please modify this variable in the code. With the option `-v` on, positions in other unit format are printed for convenience. The following code fully close the fingers.
 
-To obtain the “transformed” joint angles in radians in a standard ``sensor_msgs`` format
+*eg*: `rosrun kinova_demo fingers_action_client.py m1n4a200 percent -- 100 100 `
 
-    rostopic echo kinova/joint_state
+The finger position is published via topic: `/'${kinova_robotType}_driver'/out/finger_position`
 
-To obtain the finger angles in degrees
+### Velocity Control (joint space and Cartesian space)
+The user have access to both joint velocity and Cartesian velocity (linear velocity and angular velocity). The joint velocity control can be realized by publishing to topic  `/'${kinova_robotType}_driver'/in/joint_velocity`. The following command can move the 4th joint of a mico robot at a rate of approximate 10 degree/second. Please be aware that the publishing rate **dose** effect the motion speed much.
 
-    rostopic echo kinova/finger_position
+*eg*: `rostopic pub -r 100 /m1n4a200_driver/in/joint_velocity kinova_msgs/JointVelocity "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 10.0}" ` 
 
-To obtain the arm’s position in Cartesian units in a standard ``geometry_msgs`` format
+For Cartesian linear velocity, the unit is meter/second. Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]". The unit is radian/second.  An example is given below:
 
-    rostopic echo kinova/tool_position
+*eg*: `rostopic pub -r 100 /m1n4a200_driver/in/cartesian_velocity kinova_msgs/PoseVelocity "{twist_linear_x: 0.0, twist_linear_y: 0.0, twist_linear_z: 0.0, twist_angular_x: 0.0, twist_angular_y: 0.0, twist_angular_z: 10.0}" `
 
+The motion will stop once the publish on the topic is finished. Please be caution when use velocity control as it is a continuous motion unless you stopped it.
 
-### Arm Control
-Several sample python script action clients are available for manually controlling the arm. These scripts are located in the ``kinova_demo`` package.
+### ROS service commands
+User can home the robot by the command below. It takes no argument and bring robot to pre-defined home position. The command support customized home position that user defined by SDK or JacoSoft as well.
+`/'${kinova_robotType}_driver'/in/home_arm`
 
-To set the joint angles using DH “transformed” angles in radians, use ``joints_action_client.py``
+User can also enable and disable the ROS motion command via rosservice 
+`/'${kinova_robotType}_driver'/in/start`
+and `/'${kinova_robotType}_driver'/in/stop`. When `stop` is called, robot command from ROS will not able to drive robot until `start` is called. However, joystick still has the control during this phase.
 
-    rosrun kinova_demo joints_action_client.py node_name random num        - randomly generate num joint angle sets
-    rosrun kinova_demo joints_action_client.py node_name file_path         - use poses from file
-    rosrun kinova_demo joints_action_client.py node_name j1 j2 j3 j4 j5 j6 - use these specific angles
-    e.g., rosrun kinova_demo joints_action_client.py kinova random 10
+### Force control 
+The admittance force control can be actived by command 
+`rosservice call /'${kinova_robotType}_driver'/in/start_force_control` and disabled by `rosservice call /'${kinova_robotType}_driver'/in/stop_force_control`. The user is able to move the robot by appling force/torque to the end-effector/joints. When there is a Cartesian/joint position command, the result motion will be a combination of both force and position command.
 
+However, it is **very important** to regulate the force sensor before using force/torque control. The regulation can be achieved by set 180 degree to all the joints (robot will stand straight up for most of its links). Then, send zero torques to all by SDK, JacoSoft or API functions. SDK may not function well in certain cases. Therefore, it is better to use other two ways.
 
-To set the arm position using Cartesian co-ordinates, use ``pose_action_client.py``
+## What's new comparison to JACO-ROS
 
-    rosrun kinova_demo pose_action_client.py node_name random num          - randomly generate num poses
-    rosrun kinova_demo pose_action_client.py node_name file_path           - use poses from file
-    rosrun kinova_demo pose_action_client.py node_name x y z qx qy qz qw   - use that specific pose
-    e.g., rosrun kinova_demo pose_action_client.py kinova -0.314 -0.339 0.600 -0.591 -0.519 0.324 0.525
+- migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
+- apply kinova_RobotType for widely support
+- Re-define JointAngles for consistence
+- updated API version with new features
+- Create transform between different Euler Angle definitions in DSP and ROS
+- Criteron check when if reach the goal
+- URDF models for all robotTypes
+- InteractiveMarker ??? !!!
+- New message for KinovaPose
+- More options for actionlibs arguments, etc.
+- Relative motion control
+- Kinematic solution to be consistant with robot base code.
+- Fix joint offset bug for joint2 and joint6
+- Fix joint velocity control and position velocity control
 
-To set the finger positions, use ``fingers_action_client.py``
-
-    rosrun kinova_demo fingers_action_client.py node_name random num   - randomly generate num poses
-    rosrun kinova_demo fingers_action_client.py kinova f1 f2 f3          - use that specific pose
-    rosrun kinova_demo fingers_action_client.py mico f1 f2             - use that specific pose
-    e.g., rosrun kinova_demo fingers_action_client.py kinova random 10
-
-
-## Known Limitations
-1. Partial support of the JACO2 arm. Control and raw state is available, but the
-will be available later this month.
-For now, the default "kinova_arm.launch" file can be used, but the visualization
-or arm (or forward kinematics in URDF mode) will not be valid.
+## Notes and Limitations
+1. Force/torque control is only for advanced users. Please be caution when using force/torque control api functions.
 
 2. The ``joint_state`` topic currently reports only the arm position and
 velocity. Effort is a placeholder for future compatibility. Depending on your
-firmware version velocity values can be wrong. The behavior of the angle
-velocity conversion can be changed with the "convert_joint_velocities" parameter
-of kinova_arm_driver.
+firmware version velocity values can be wrong. 
 
 3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
-4. After using angular control, the arm may not respond to Cartesian commands (e.g., tool_pose or figer_position) until the arm has been homed.
+4. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
 
-5. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
+5. Previously, files under ``kinova-ros/kinova_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
 
-6. With the latest firmware, the JACO arm will sag slightly when gripper commands are sent. This behavior has not been observed with the MICO arm.
-
-7. Previously, files under ``kinova-ros/kinova_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
-
-8. In certain cases, while commanding the MICO arm using angular commands, the force limits may be exceeded and the arm will stop.  If this occurs, consider increasing the force limits of your arm using JacoSoft, or use shorter movements that put less stress on the arm joints.
-
-## Additional Resources
-The transformation equations used to convert from the “DH Parameters” to physical angles are listed in the kinova_kinematics.pdf document, included as part of this package.
-
-The Kinova JACO website: http://kinovarobotics.com/products/kinova-research-edition/
 
 ## Report a Bug
-Any bugs, issues or suggestions may be sent to ros@kinovarobotics.com.
+Any bugs, issues or suggestions may be sent to support@kinovarobotics.com.
 
 
