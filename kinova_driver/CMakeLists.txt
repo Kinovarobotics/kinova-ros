@@ -11,6 +11,8 @@ find_package(catkin REQUIRED dynamic_reconfigure COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  interactive_markers
+  visualization_msgs
 )
 generate_dynamic_reconfigure_options(
   #cfg/KinovaPositionConfig.cfg
@@ -21,7 +23,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES kinova_driver
-  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs kinova_msgs roscpp rospy sensor_msgs std_msgs tf
+  CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs kinova_msgs roscpp rospy sensor_msgs std_msgs tf interactive_markers visualization_msgs
 #  DEPENDS system_lib
 )
 
@@ -80,6 +82,10 @@ add_dependencies(kinova_tf_updater ${catkin_EXPORTED_TARGETS})
 target_link_libraries(kinova_arm_driver ${catkin_LIBRARIES} dl)
 target_link_libraries(kinova_tf_updater ${catkin_LIBRARIES})
 
+
+add_executable(kinova_interactive_control src/nodes/kinova_interactive_control.cpp)
+target_link_libraries(kinova_interactive_control ${catkin_LIBRARIES})
+
 #############
 ## Install ##
 #############
@@ -106,6 +112,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 ## Mark executables and/or libraries for installation
 install(TARGETS kinova_arm_driver kinova_tf_updater
+kinova_interactive_control
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
