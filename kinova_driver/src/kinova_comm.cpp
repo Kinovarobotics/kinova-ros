@@ -782,12 +782,12 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
         throw KinovaCommException("Could not get the Cartesian position", result);
     }
 
-    ROS_INFO_STREAM_ONCE("Cartesian pose in [X,Y,Z, ThetaX, ThetaY, ThetaZ] is : " << kinova_cartesian_position.Coordinates.X << ", "
-                    << kinova_cartesian_position.Coordinates.Y << ", "
-                    << kinova_cartesian_position.Coordinates.Z << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaX << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaY << ", "
-                    << kinova_cartesian_position.Coordinates.ThetaZ << std::endl);
+//    ROS_INFO_STREAM_ONCE("Cartesian pose in [X,Y,Z, ThetaX, ThetaY, ThetaZ] is : " << kinova_cartesian_position.Coordinates.X << ", "
+//                    << kinova_cartesian_position.Coordinates.Y << ", "
+//                    << kinova_cartesian_position.Coordinates.Z << ", "
+//                    << kinova_cartesian_position.Coordinates.ThetaX << ", "
+//                    << kinova_cartesian_position.Coordinates.ThetaY << ", "
+//                    << kinova_cartesian_position.Coordinates.ThetaZ << std::endl);
 
     position = KinovaPose(kinova_cartesian_position.Coordinates);
 }
