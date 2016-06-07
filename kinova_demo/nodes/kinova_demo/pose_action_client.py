@@ -13,8 +13,6 @@ import std_msgs.msg
 import geometry_msgs.msg
 
 
-import goal_generators
-
 import math
 import argparse
 
