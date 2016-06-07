@@ -143,14 +143,19 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
     ArmJoint_actionlibClient client("/"+tf_prefix_+"_driver/joints_action/joint_angles", true);
     kinova_msgs::ArmJointAnglesGoal goal;
 
-    goal.angles.joint1 = current_joint_state.position[0];
-    goal.angles.joint2 = current_joint_state.position[1];
-    goal.angles.joint3 = current_joint_state.position[2];
-    goal.angles.joint4 = current_joint_state.position[3];
-    if(arm_joint_number_==6)
+    goal.angles.joint1 = current_joint_state.position[0]*180/M_PI;
+    goal.angles.joint2 = current_joint_state.position[1]*180/M_PI;
+    goal.angles.joint3 = current_joint_state.position[2]*180/M_PI;
+    goal.angles.joint4 = current_joint_state.position[3]*180/M_PI;
+    if(arm_joint_number_==4)
     {
-        goal.angles.joint5 = current_joint_state.position[4];
-        goal.angles.joint6 = current_joint_state.position[5];
+        goal.angles.joint5 = 0.0;
+        goal.angles.joint6 = 0.0;
+    }
+    else if(arm_joint_number_==6)
+    {
+        goal.angles.joint5 = current_joint_state.position[4]*180/M_PI;
+        goal.angles.joint6 = current_joint_state.position[5]*180/M_PI;
     }
 
     client.waitForServer();
@@ -171,35 +176,30 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
         goal.angles.joint4 += joint_offset;
         break;
     case 5:
-        goal.angles.joint5 += joint_offset;
+        if(arm_joint_number_==6)
+        {
+            goal.angles.joint5 += joint_offset;
+        }
         break;
     case 6:
-        goal.angles.joint6 += joint_offset;
+        if(arm_joint_number_==6)
+        {
+            goal.angles.joint6 += joint_offset;
+        }
         break;
     }
 
-    if (arm_joint_number_==4)
+    if (arm_joint_number_==6)
     {
-        ROS_INFO( " current joint state is as : %f, %f, %f, %f, %f, %f\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3], current_joint_state.position[4], current_joint_state.position[5]);
-
-        ROS_INFO( " joint goal is set as : %f, %f, %f, %f, %f, %f\n",  goal.angles.joint1, goal.angles.joint2, goal.angles.joint3, goal.angles.joint4, goal.angles.joint5, goal.angles.joint6);
+        ROS_INFO( " current joint is as : %f, %f, %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3], current_joint_state.position[4], current_joint_state.position[5]);
     }
-    else if(arm_joint_number_==6)
+    else if(arm_joint_number_==4)
     {
-        ROS_INFO( " current joint state is as : %f, %f, %f, %f\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3]);
-
-        ROS_INFO( " joint goal is set as : %f, %f, %f, %f\n",  goal.angles.joint1, goal.angles.joint2, goal.angles.joint3, goal.angles.joint4);
+        ROS_INFO( " current joint is as : %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3]);
     }
+    ROS_INFO( " joint goal is set as : %f, %f, %f, %f, %f, %f (degree)\n",  goal.angles.joint1, goal.angles.joint2, goal.angles.joint3, goal.angles.joint4, goal.angles.joint5, goal.angles.joint6);
 
-
-    goal.angles.joint1 = 4.797089;
-    goal.angles.joint2 = 3.052979;
-    goal.angles.joint3 = 1.825366;
-    goal.angles.joint4 = 0;
-    goal.angles.joint5 = 0;
-    goal.angles.joint6 = 0;
-    ROS_WARN_STREAM("GOAL IS: " << goal);
-//    client.sendGoal(goal);
+    client.sendGoal(goal);
 
 }
 
@@ -223,7 +223,6 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
     switch ( feedback->event_type )
     {
     case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK:
-        ROS_WARN_STREAM("mouse click now...");
         break;
 
     case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
@@ -235,7 +234,6 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
         {
             tf::quaternionMsgToTF(feedback->pose.orientation, quaternion_mousedown);
             tf::Matrix3x3(quaternion_mousedown).getRPY(roll_mousedown, pitch_mousedown, yaw_mousedown);
-            ROS_WARN_STREAM("processfeedback mouse down");
             if (feedback->marker_name == "cartesian_6dof")
             {
                 ROS_INFO_STREAM("cartesian_6dof control mode.");
@@ -275,7 +273,6 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
     case visualization_msgs::InteractiveMarkerFeedback::MOUSE_UP:
         tf::quaternionMsgToTF(feedback->pose.orientation, quaternion_mouseup);
         tf::Matrix3x3(quaternion_mouseup).getRPY(roll_mouseup, pitch_mouseup, yaw_mouseup);
-        ROS_WARN_STREAM("processfeedback mouse up");
         if (feedback->marker_name == "cartesian_6dof")
         {
             tf::TransformListener transform_listener;
@@ -317,21 +314,19 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
                              << " time: " << feedback->header.stamp.sec << "sec, "
                              << feedback->header.stamp.nsec << " nsec" );
 
-            ROS_WARN_STREAM("processfeedback print if");
             ROS_INFO_STREAM("POSE_endeffector parent frame is : " << pose_endeffector.header.frame_id);
 //            sendArmPoseGoal(pose_endeffector);
             // armPose_interMark_server->applyChanges();
         }
         else
         {
-            ROS_WARN_STREAM("processfeedback print else");
             ROS_INFO_STREAM( s.str() << ": mouse UP (refers to command): "
                              << feedback->marker_name
                              << ": " << yaw_mouseup
                              << "\nframe: " << feedback->header.frame_id
                              << " time: " << feedback->header.stamp.sec << "sec, "
                              << feedback->header.stamp.nsec << " nsec");
-            sendArmJointGoal(feedback->marker_name, yaw_mouseup-yaw_mousedown);
+            sendArmJointGoal(feedback->marker_name, (yaw_mouseup-yaw_mousedown)*180/M_PI);
             //   armJoint_interMark_server->applyChanges();
         }
         //reset flag for MOUSE_DOWN
@@ -427,7 +422,6 @@ int main(int argc, char** argv)
     ros::init(argc, argv, tf_prefix_+"_interactive_control");
     ros::NodeHandle nh("~");
 
-    ROS_WARN_STREAM("armJoint_sub addressis: /" << kinova_robotType_ << "_driver/out/joint_state");
     ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_state", 1, &currentJointsFeedback);
 
     armJoint_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Joint","",false) );
@@ -441,7 +435,6 @@ int main(int argc, char** argv)
 //    make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, position, true );
 
     position = tf::Vector3(0, 0, 0);
-    ROS_WARN_STREAM("MAKER1 NAME: " << tf_prefix_<<"_link_1");
     make1DofMarker(tf_prefix_+"_link_1", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "1st Axis", "marker_joint1");
     position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_2", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "2nd Axis", "marker_joint2");
