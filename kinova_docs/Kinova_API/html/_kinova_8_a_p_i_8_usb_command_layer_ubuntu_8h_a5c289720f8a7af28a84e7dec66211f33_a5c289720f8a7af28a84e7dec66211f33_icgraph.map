@@ -1,0 +1,3 @@
+<map id="GetAngularCommand" name="GetAngularCommand">
+<area shape="rect" id="node2" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a9898b3a0c07aa2844ab9d2dee7e21f18.html#a9898b3a0c07aa2844ab9d2dee7e21f18" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="200,5,283,32"/>
+</map>

@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['easy_5frider',['EASY_RIDER',['../_kinova_types_8h_a6ca93caffa508f4eabf18585d3710d0f.html#a6ca93caffa508f4eabf18585d3710d0fa9c4acb850ef34087a26f7cbb674ed736',1,'KinovaTypes.h']]],
+  ['error_5fnotinitialized',['ERROR_NOTINITIALIZED',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aade292e8dfffdeb5113666d65a97c0533',1,'KinovaTypes.h']]],
+  ['errorlog_5factuator_5ftemperature',['errorlog_Actuator_Temperature',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa1c16ffef5b569df1a14d7e3cf7fb8e20',1,'KinovaTypes.h']]],
+  ['errorlog_5factuator_5ftemperatureok',['errorlog_Actuator_TemperatureOK',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aad6dfeb5abc2bdf7d55158b77e90df651',1,'KinovaTypes.h']]],
+  ['errorlog_5fcurrent_5factuators',['errorlog_current_Actuators',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aaae9e1cadd6529c93716869d7420607c3',1,'KinovaTypes.h']]],
+  ['errorlog_5fcurrent_5factuatorsok',['errorlog_current_ActuatorsOK',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa26ce37703ae3ba17355eedd7d77e2352',1,'KinovaTypes.h']]],
+  ['errorlog_5fcurrent_5ffingersclosing',['errorlog_current_FingersClosing',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa34ba4d395695c88f62793f33e5a0860c',1,'KinovaTypes.h']]],
+  ['errorlog_5fcurrent_5ffingersok',['errorlog_current_FingersOK',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aaddca0bef1a2448180e92dfed18087886',1,'KinovaTypes.h']]],
+  ['errorlog_5fcurrent_5ffingersopening',['errorlog_current_FingersOpening',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aaaf16f55aaa3df79cf22a0bea670f5912',1,'KinovaTypes.h']]],
+  ['errorlog_5ffinger_5ftemperature',['errorlog_Finger_Temperature',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa75fac65cdfd232098b4a977c4bdfee6b',1,'KinovaTypes.h']]],
+  ['errorlog_5ffinger_5ftemperatureok',['errorlog_Finger_TemperatureOK',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aacb68aea52e5099354b6c6f7c180e6592',1,'KinovaTypes.h']]],
+  ['errorlog_5frobotstatus_5fbuild_5fincomplete',['errorLog_RobotStatus_Build_Incomplete',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aac83898875555f0b37bf6418aed00c7c8',1,'KinovaTypes.h']]],
+  ['errorlog_5fvoltage',['errorlog_voltage',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aae3d73fb30f61f18f2b698500dbc0d59d',1,'KinovaTypes.h']]],
+  ['errorlog_5fvoltageok',['errorlog_voltageOK',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa93683e8c381b08bd6182a2affe74f5bd',1,'KinovaTypes.h']]],
+  ['errorlogger_5fend',['errorLogger_END',['../_kinova_types_8h_a45d0343c3d465533f72cb2db67fc0b8a.html#a45d0343c3d465533f72cb2db67fc0b8aa1f896b7d3be32f1a6c4e5ded10ba4015',1,'KinovaTypes.h']]],
+  ['external_5fcustominterface',['EXTERNAL_CUSTOMINTERFACE',['../_kinova_types_8h_a6ca93caffa508f4eabf18585d3710d0f.html#a6ca93caffa508f4eabf18585d3710d0fac0e594eea8dee49ca60246c88617114b',1,'KinovaTypes.h']]]
+];

@@ -1,0 +1,6 @@
+<map id="InitFingers" name="InitFingers">
+<area shape="rect" id="node2" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_af7bd69e27ac64fe2b6117442a285cd53.html#af7bd69e27ac64fe2b6117442a285cd53" title="This function gets information regarding some status flag of the robotical arm. " alt="" coords="152,5,267,32"/>
+<area shape="rect" id="node3" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a5c289720f8a7af28a84e7dec66211f33.html#a5c289720f8a7af28a84e7dec66211f33" title="This function get the angular command of all actuators. " alt="" coords="136,56,283,83"/>
+<area shape="rect" id="node4" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a9f21d4375c78210dea0d33316e23fcb8.html#a9f21d4375c78210dea0d33316e23fcb8" title="This function sends trajectory point(Without limitation) that will be added in the robotical arm&#39;s FI..." alt="" coords="138,107,281,133"/>
+<area shape="rect" id="node5" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a408913e7a3a1ba879f4575320bfeda14.html#a408913e7a3a1ba879f4575320bfeda14" title="This function erases all the trajectories inside the robotical arm&#39;s FIFO. " alt="" coords="140,157,279,184"/>
+</map>

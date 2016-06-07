@@ -1,0 +1,27 @@
+var classtinyxml2_1_1_x_m_l_printer =
+[
+    [ "XMLPrinter", "classtinyxml2_1_1_x_m_l_printer_af5eb2e876cd777822d79ea8db7efed34.html#af5eb2e876cd777822d79ea8db7efed34", null ],
+    [ "ClearBuffer", "classtinyxml2_1_1_x_m_l_printer_af28fe6832f4dd3f13033e5c666525f07.html#af28fe6832f4dd3f13033e5c666525f07", null ],
+    [ "CloseElement", "classtinyxml2_1_1_x_m_l_printer_afe335dd8180f223703309e85e311c873.html#afe335dd8180f223703309e85e311c873", null ],
+    [ "CStr", "classtinyxml2_1_1_x_m_l_printer_a14bbf3864a7f75200848c42edcce75b3.html#a14bbf3864a7f75200848c42edcce75b3", null ],
+    [ "CStrSize", "classtinyxml2_1_1_x_m_l_printer_a7c5e961d48b07c83a3b1387e73ad5b86.html#a7c5e961d48b07c83a3b1387e73ad5b86", null ],
+    [ "OpenElement", "classtinyxml2_1_1_x_m_l_printer_ad9e805f937fb2f7e6efda7d4b7d7c17e.html#ad9e805f937fb2f7e6efda7d4b7d7c17e", null ],
+    [ "PrintSpace", "classtinyxml2_1_1_x_m_l_printer_aa78409d4afecc7462b4971aca6ca878c.html#aa78409d4afecc7462b4971aca6ca878c", null ],
+    [ "PushAttribute", "classtinyxml2_1_1_x_m_l_printer_a98073ed372b5272b2d22e3862ac1c330.html#a98073ed372b5272b2d22e3862ac1c330", null ],
+    [ "PushComment", "classtinyxml2_1_1_x_m_l_printer_a81ecae2990489f01fc7dafd725c2f1de.html#a81ecae2990489f01fc7dafd725c2f1de", null ],
+    [ "PushHeader", "classtinyxml2_1_1_x_m_l_printer_a050a49e22a5a6aa7b9a496d5ba5fbaaa.html#a050a49e22a5a6aa7b9a496d5ba5fbaaa", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_a461b074400643b9d5020f5041a861846.html#a461b074400643b9d5020f5041a861846", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_aa1d1522a2b97368f94a7067bf5c6b54c.html#aa1d1522a2b97368f94a7067bf5c6b54c", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_a083ad17fe740084d9b292926ce15579b.html#a083ad17fe740084d9b292926ce15579b", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_a8a6be941bd2dc79a1958926d312e7a54.html#a8a6be941bd2dc79a1958926d312e7a54", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_a0c80c790d47ebed394b7c001013b39ce.html#a0c80c790d47ebed394b7c001013b39ce", null ],
+    [ "PushText", "classtinyxml2_1_1_x_m_l_printer_a07c9db97204f372b5c51ecc45da17ef7.html#a07c9db97204f372b5c51ecc45da17ef7", null ],
+    [ "Visit", "classtinyxml2_1_1_x_m_l_printer_a433574d36f484ca0bf29210969033193.html#a433574d36f484ca0bf29210969033193", null ],
+    [ "Visit", "classtinyxml2_1_1_x_m_l_printer_a89e78d273bcd44088e26457b52ff55d6.html#a89e78d273bcd44088e26457b52ff55d6", null ],
+    [ "Visit", "classtinyxml2_1_1_x_m_l_printer_af7a3eae73d0a1265252f3c82e0b5b407.html#af7a3eae73d0a1265252f3c82e0b5b407", null ],
+    [ "Visit", "classtinyxml2_1_1_x_m_l_printer_a99fa7fe3d0aa79c9c20bf2832c7a48fd.html#a99fa7fe3d0aa79c9c20bf2832c7a48fd", null ],
+    [ "VisitEnter", "classtinyxml2_1_1_x_m_l_printer_a5fd7b84ddc361aa4512352a8be9cbc35.html#a5fd7b84ddc361aa4512352a8be9cbc35", null ],
+    [ "VisitEnter", "classtinyxml2_1_1_x_m_l_printer_a29372a07b5a0ac5e7b2e21baff946b17.html#a29372a07b5a0ac5e7b2e21baff946b17", null ],
+    [ "VisitExit", "classtinyxml2_1_1_x_m_l_printer_aacbd61d4f7d629a11c8d7acb3f928a8c.html#aacbd61d4f7d629a11c8d7acb3f928a8c", null ],
+    [ "VisitExit", "classtinyxml2_1_1_x_m_l_printer_a6a32e6194a3f9ce1ea3a66b2f32f48d2.html#a6a32e6194a3f9ce1ea3a66b2f32f48d2", null ]
+];

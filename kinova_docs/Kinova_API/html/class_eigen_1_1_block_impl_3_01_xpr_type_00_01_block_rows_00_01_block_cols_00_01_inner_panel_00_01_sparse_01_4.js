@@ -1,0 +1,6 @@
+var class_eigen_1_1_block_impl_3_01_xpr_type_00_01_block_rows_00_01_block_cols_00_01_inner_panel_00_01_sparse_01_4 =
+[
+    [ "IsRowMajor", "class_eigen_1_1_block_impl_3_01_xpr_type_00_01_block_rows_00_01_block_cols_00_01_inner_panel_00_01_sparse_01_4_a985075ca8553f6d9fefdfd3bd3d57b3e.html#a985075ca8553f6d9fefdfd3bd3d57b3ea247b0f8b0eb0bfd5e253eb1e4b61436b", null ],
+    [ "BlockImpl", "class_eigen_1_1_block_impl_3_01_xpr_type_00_01_block_rows_00_01_block_cols_00_01_inner_panel_00_01_sparse_01_4_ac965517d0ed273e3f276e0520fabcafd.html#ac965517d0ed273e3f276e0520fabcafd", null ],
+    [ "BlockImpl", "class_eigen_1_1_block_impl_3_01_xpr_type_00_01_block_rows_00_01_block_cols_00_01_inner_panel_00_01_sparse_01_4_ac7ddc1c596ed1b16486149b770b3e920.html#ac7ddc1c596ed1b16486149b770b3e920", null ]
+];

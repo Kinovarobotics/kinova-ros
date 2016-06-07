@@ -1,0 +1,5 @@
+<map id="Zone" name="Zone">
+<area shape="rect" id="node2" href="$struct_zone_limitation.html" title="This represents a group of limitations that can be applied to a trajectory point. ..." alt="" coords="5,96,112,123"/>
+<area shape="rect" id="node3" href="$struct_zone_shape.html" title="Represents the 3D shape of a protection zone. " alt="" coords="136,96,224,123"/>
+<area shape="rect" id="node4" href="$struct_cartesian_info.html" title="This data structure holds values in an cartesian control context. " alt="" coords="130,5,229,32"/>
+</map>

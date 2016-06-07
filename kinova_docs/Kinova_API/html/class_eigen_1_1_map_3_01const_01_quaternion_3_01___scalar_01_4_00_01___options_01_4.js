@@ -1,0 +1,4 @@
+var class_eigen_1_1_map_3_01const_01_quaternion_3_01___scalar_01_4_00_01___options_01_4 =
+[
+    [ "Map", "class_eigen_1_1_map_3_01const_01_quaternion_3_01___scalar_01_4_00_01___options_01_4_a0badafce78271053de9ab36211a64618.html#a0badafce78271053de9ab36211a64618", null ]
+];

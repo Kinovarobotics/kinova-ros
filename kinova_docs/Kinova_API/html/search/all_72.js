@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['restorefactorydefault',['RestoreFactoryDefault',['../_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a316a307f9da5315ea0af6bf9ea153eb5.html#a316a307f9da5315ea0af6bf9ea153eb5',1,'Kinova.API.UsbCommandLayerUbuntu.cpp']]],
+  ['retract_5ftype',['RETRACT_TYPE',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fnormal_5fstandby',['RETRACT_TYPE_NORMAL_STANDBY',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585afc4b75d4bc88b12090ccb4a53f6efc85',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fnormal_5fto_5fready',['RETRACT_TYPE_NORMAL_TO_READY',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585accc110bce8f65af56b2d20ece8ea95fb',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fnot_5finitialized',['RETRACT_TYPE_NOT_INITIALIZED',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585a157843fabe8e5d136d70f2d07b132bde',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fready_5fstandby',['RETRACT_TYPE_READY_STANDBY',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585a928c6a16f7150684fbddb45a8041aebe',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fready_5fto_5fretract',['RETRACT_TYPE_READY_TO_RETRACT',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585a29b4f9b2d67a3120feb3ea05d1f0d5de',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fretract_5fstandby',['RETRACT_TYPE_RETRACT_STANDBY',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585a789ad5fbe3e8212bab4d9f0fa36d9eca',1,'KinovaTypes.h']]],
+  ['retract_5ftype_5fretract_5fto_5fready',['RETRACT_TYPE_RETRACT_TO_READY',['../_kinova_types_8h_a21ba32b640271b1573a56f79eb5a4585.html#a21ba32b640271b1573a56f79eb5a4585a85fe8d7217cf1096255402f7e1bc239d',1,'KinovaTypes.h']]],
+  ['retractcomplexity',['RetractComplexity',['../struct_quick_status_ab905987dc81a754d7966b71e6c6b31a0.html#ab905987dc81a754d7966b71e6c6b31a0',1,'QuickStatus']]],
+  ['retractedpositionangle',['RetractedPositionAngle',['../struct_client_configurations_ad7d6245d4683b6e31d0438466ea6bb80.html#ad7d6245d4683b6e31d0438466ea6bb80',1,'ClientConfigurations']]],
+  ['retractedpositioncount',['RetractedPositionCount',['../struct_client_configurations_a4058c290c5bac0504e511f0f50e5914b.html#a4058c290c5bac0504e511f0f50e5914b',1,'ClientConfigurations']]],
+  ['retractstatus',['RetractStatus',['../struct_system_status_abae94c0687a083017956476f140ad34d.html#abae94c0687a083017956476f140ad34d',1,'SystemStatus']]],
+  ['retracttype',['RetractType',['../struct_quick_status_a720df4ba846103ada466a72dd8d28142.html#a720df4ba846103ada466a72dd8d28142',1,'QuickStatus']]],
+  ['righthand',['RIGHTHAND',['../_kinova_types_8h_a3b88714e308595eb42f64c56259a1ccf.html#a3b88714e308595eb42f64c56259a1ccfa4d25ca7d263c7f9cfba750640da0a350',1,'KinovaTypes.h']]],
+  ['robotedition',['RobotEdition',['../struct_quick_status_a966ce09dd5f19aaeea7edf9aff76d6d8.html#a966ce09dd5f19aaeea7edf9aff76d6d8',1,'QuickStatus']]],
+  ['robottype',['RobotType',['../struct_quick_status_a74b2c900b935a07df18fbea12c3f4d68.html#a74b2c900b935a07df18fbea12c3f4d68',1,'QuickStatus']]],
+  ['rotate',['Rotate',['../struct_joystick_command_a02fece0bcf6cfc2135f294a3dbe9db4e.html#a02fece0bcf6cfc2135f294a3dbe9db4e',1,'JoystickCommand']]],
+  ['rotationactive',['RotationActive',['../struct_system_status_a4f743187089a28cd66438e804c3dc8cb.html#a4f743187089a28cd66438e804c3dc8cb',1,'SystemStatus']]],
+  ['runtime',['RunTime',['../struct_finger_a28ad3ba61112ad6b05532edb89427684.html#a28ad3ba61112ad6b05532edb89427684',1,'Finger']]]
+];
