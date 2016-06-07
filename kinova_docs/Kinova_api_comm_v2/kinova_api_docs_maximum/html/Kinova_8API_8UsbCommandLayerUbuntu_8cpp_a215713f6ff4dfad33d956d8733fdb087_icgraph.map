@@ -1,5 +1,0 @@
-<map id="DeserializeCartesianPosition" name="DeserializeCartesianPosition">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a657668454d8cb3331681ab82315d18a7" title="This function get the cartesian command of the end effector. The orientation is defined by Euler angl..." alt="" coords="246,5,405,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a73daaf6f586501c985367ffc96661433" title="This function returns the cartesian position of the robotical arm&#39;s end effector. The orientation is ..." alt="" coords="252,56,399,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac4bc0359ea179215245688013efb0af9" title="This function returns the cartesian force at the robotical arm&#39;s end effector. Translation unit is N ..." alt="" coords="259,107,391,133"/>
-</map>

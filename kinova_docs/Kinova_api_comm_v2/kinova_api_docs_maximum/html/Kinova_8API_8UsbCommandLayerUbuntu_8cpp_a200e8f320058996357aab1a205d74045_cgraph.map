@@ -1,5 +1,0 @@
-<map id="SetTorqueZero" name="SetTorqueZero">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#afb8cc1dbd4571c20a0fe6be42586bca9" title="SerializeActuatorAddress" alt="" coords="163,5,333,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="183,56,313,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="182,107,314,133"/>
-</map>

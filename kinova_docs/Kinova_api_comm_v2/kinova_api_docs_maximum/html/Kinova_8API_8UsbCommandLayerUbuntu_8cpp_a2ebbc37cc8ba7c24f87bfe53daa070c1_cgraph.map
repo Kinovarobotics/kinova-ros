@@ -1,6 +1,0 @@
-<map id="GetDevValue" name="GetDevValue">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="160,5,293,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a07de32415cad86dced5f26debb9297a8" title="DeserializeDevValue" alt="" coords="155,56,299,83"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="388,5,447,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="347,56,487,83"/>
-</map>

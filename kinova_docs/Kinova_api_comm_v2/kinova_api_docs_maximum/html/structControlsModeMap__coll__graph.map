@@ -1,4 +1,0 @@
-<map id="ControlsModeMap" name="ControlsModeMap">
-<area shape="rect" id="node2" href="$KinovaTypes_8h.html#structButtonEvents" title="This is an event from a controller&#39;s button. Each variable of the struct can be mapped with a Control..." alt="" coords="4,5,120,171"/>
-<area shape="rect" id="node3" href="$KinovaTypes_8h.html#structStickEvents" title="This is an event from a controller&#39;s stick. Each variable of the struct can be mapped with a ControlF..." alt="" coords="147,42,240,134"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="GetPositionCurrentActuators" name="GetPositionCurrentActuators">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="265,5,399,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ad92a396fca2855ea9bb144b404aac755" title="DeserializePositionCurrent\lActuators" alt="" coords="243,57,421,98"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="511,5,569,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="470,64,610,91"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="SetClientConfigurations" name="SetClientConfigurations">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#afb19efd727b3a49839e477584105fde0" title="SerializeClientConfiguration" alt="" coords="214,5,397,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="240,56,371,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="239,107,371,133"/>
-</map>

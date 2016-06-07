@@ -1,4 +1,0 @@
-<map id="DeserializePeripheralInventory" name="DeserializePeripheralInventory">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aeea8b94c14f5bbaa85a26acf0524ace6" title="GetPeripheralInventory" alt="" coords="253,5,408,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3d86f5c1ec3706efbcb8b9fb83b8bbb0" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="456,5,539,32"/>
-</map>

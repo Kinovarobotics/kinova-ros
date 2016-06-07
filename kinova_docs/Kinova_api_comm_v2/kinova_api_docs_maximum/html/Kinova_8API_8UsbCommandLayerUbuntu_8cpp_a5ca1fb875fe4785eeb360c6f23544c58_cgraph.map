@@ -1,5 +1,0 @@
-<map id="SetCartesianForceMinMax" name="SetCartesianForceMinMax">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ad50a8e2cb2ca1757b585b90ed33ca326" title="SerializeCartesianInfo" alt="" coords="233,5,383,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="243,56,373,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="242,107,374,133"/>
-</map>
