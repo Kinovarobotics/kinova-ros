@@ -112,6 +112,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
         joint_names_.resize(joint_total_number_);
         joint_names_[i] = tf_prefix_ + "joint_" + boost::lexical_cast<std::string>(i+1);
     }
+    ROS_WARN_STREAM("arm_joint_number_ is"<<arm_joint_number_);
+    ROS_WARN_STREAM("finger_number_ is"<<finger_number_);
     for (int i = 0; i<finger_number_; i++)
     {
         joint_names_[arm_joint_number_+i] = tf_prefix_ + "joint_finger_" + boost::lexical_cast<std::string>(i+1);
@@ -326,13 +328,22 @@ void KinovaArm::publishJointAngles(void)
     joint_state.position[1] = kinova_angles.joint2 * M_PI/180;
     joint_state.position[2] = kinova_angles.joint3 * M_PI/180;
     joint_state.position[3] = kinova_angles.joint4 * M_PI/180;
-    joint_state.position[joint_total_number_-3] = finger_conv_ratio_ * fingers.Finger1;
-    joint_state.position[joint_total_number_-2] = finger_conv_ratio_ * fingers.Finger2;
-    joint_state.position[joint_total_number_-1] = finger_conv_ratio_ * fingers.Finger3;
     if (arm_joint_number_ == 6)
     {
         joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
         joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
+    }
+
+    if(finger_number_==4)
+    {
+        joint_state.position[joint_total_number_-2] = 0;
+        joint_state.position[joint_total_number_-1] = 0;
+    }
+    else if(finger_number_==6)
+    {
+        joint_state.position[joint_total_number_-3] = 0;
+        joint_state.position[joint_total_number_-2] = 0;
+        joint_state.position[joint_total_number_-1] = 0;
     }
 
 
@@ -345,9 +356,18 @@ void KinovaArm::publishJointAngles(void)
     joint_state.velocity[2] = current_vels.Actuator3;
     joint_state.velocity[3] = current_vels.Actuator4;
     // no velocity info for fingers
-    joint_state.velocity[joint_total_number_-3] = 0;
-    joint_state.velocity[joint_total_number_-2] = 0;
-    joint_state.velocity[joint_total_number_-1] = 0;
+    if(finger_number_==4)
+    {
+        joint_state.velocity[joint_total_number_-2] = 0;
+        joint_state.velocity[joint_total_number_-1] = 0;
+    }
+    else if(finger_number_==6)
+    {
+        joint_state.velocity[joint_total_number_-3] = 0;
+        joint_state.velocity[joint_total_number_-2] = 0;
+        joint_state.velocity[joint_total_number_-1] = 0;
+    }
+
     if (arm_joint_number_ == 6)
     {
         joint_state.velocity[4] = current_vels.Actuator5;
@@ -377,9 +397,17 @@ void KinovaArm::publishJointAngles(void)
     joint_state.effort[2] = joint_tqs.Actuator3;
     joint_state.effort[3] = joint_tqs.Actuator4;
     // no effort info for fingers
-    joint_state.effort[joint_total_number_-3] = 0;
-    joint_state.effort[joint_total_number_-2] = 0;
-    joint_state.effort[joint_total_number_-1] = 0;
+    if(finger_number_==4)
+    {
+        joint_state.effort[joint_total_number_-2] = 0;
+        joint_state.effort[joint_total_number_-1] = 0;
+    }
+    else if(finger_number_==6)
+    {
+        joint_state.effort[joint_total_number_-3] = 0;
+        joint_state.effort[joint_total_number_-2] = 0;
+        joint_state.effort[joint_total_number_-1] = 0;
+    }
     if (arm_joint_number_ == 6)
     {
         joint_state.effort[4] = joint_tqs.Actuator5;
