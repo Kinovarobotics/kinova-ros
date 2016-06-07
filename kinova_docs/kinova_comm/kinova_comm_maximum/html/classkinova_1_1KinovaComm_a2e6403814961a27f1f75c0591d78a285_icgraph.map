@@ -1,0 +1,4 @@
+<map id="kinova::KinovaComm::getGlobalTrajectoryInfo" name="kinova::KinovaComm::getGlobalTrajectoryInfo">
+<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#add02cfb95e2e604493e8245db9a104d7" title="This function sets the robotical arm in angular control mode. If robot is not in motion, change control model to Angular control. " alt="" coords="219,5,365,46"/>
+<area shape="rect" id="node3" href="$classkinova_1_1KinovaComm.html#a6d65a4fc17e587508c48d003995ff9f6" title="This function sets the robotical arm in cartesian control mode if this is possible. If robot is not in motion, change control model to Angular control. " alt="" coords="219,70,365,111"/>
+</map>

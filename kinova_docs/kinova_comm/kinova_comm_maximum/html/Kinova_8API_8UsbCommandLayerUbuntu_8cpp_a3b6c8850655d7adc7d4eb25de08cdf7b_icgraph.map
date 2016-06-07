@@ -1,0 +1,4 @@
+<map id="GetAngularCommand" name="GetAngularCommand">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3d86f5c1ec3706efbcb8b9fb83b8bbb0" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="267,5,349,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a4b3390109ed7e40ecfa412e1eff72331" title="This function is used to run a sequence to estimate the optimal gravity parameters when the robot is ..." alt="" coords="200,56,416,83"/>
+</map>

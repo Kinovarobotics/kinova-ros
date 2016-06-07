@@ -1,0 +1,6 @@
+<map id="SetProtectionZone" name="SetProtectionZone">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a36d41ca626b6612d22f272ffa5628d42" title="SerializeZoneList" alt="" coords="189,5,312,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="185,56,316,83"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="185,107,317,133"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ad2295178036f3d1f2c52fbf7a650882b" title="SerializeZone" alt="" coords="365,5,467,32"/>
+</map>

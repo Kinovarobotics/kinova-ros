@@ -1,0 +1,5 @@
+<map id="GetDeviceInfo" name="GetDeviceInfo">
+<area shape="rect" id="node2" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a80c77aee9f2745b91afd2b7c8bbe1265" title="ScanDevices" alt="" coords="161,31,261,57"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a55f98b283eaff08374c81ee210dfecdc" title="This function initialize the USB communication. You need to call it before using any functions from t..." alt="" coords="313,5,444,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a655fb59bffa4388a726902617a19e42c" title="ScanForNewDevice" alt="" coords="309,56,448,83"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="DeserializeGripper" name="DeserializeGripper">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a32332358af61d177b6b855856b333271" title="DeserializeFinger" alt="" coords="184,81,307,108"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="357,5,497,32"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="363,56,490,83"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a16536171355d06661fe6c6e26bde4ca2" title="GetUIntFromVector" alt="" coords="359,107,495,133"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ab1a06e2c80e38b2721911d1043a91e94" title="GetShortFromVector" alt="" coords="355,157,498,184"/>
+</map>

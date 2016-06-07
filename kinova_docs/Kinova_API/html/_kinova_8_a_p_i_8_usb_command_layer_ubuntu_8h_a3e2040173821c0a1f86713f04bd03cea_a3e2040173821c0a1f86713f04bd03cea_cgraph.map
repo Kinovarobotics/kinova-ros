@@ -1,0 +1,5 @@
+<map id="MoveHome" name="MoveHome">
+<area shape="rect" id="node2" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a28d5f53daeda2497dbceeb5e8ed635eb.html#a28d5f53daeda2497dbceeb5e8ed635eb" title="This function returns informations about the trajectories FIFO stored inside the robotical arm..." alt="" coords="144,5,304,32"/>
+<area shape="rect" id="node3" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a2a3d8fbff1add975bfff283ac3b8a3c6.html#a2a3d8fbff1add975bfff283ac3b8a3c6" title="This function sets the robotical arm in angular control mode. " alt="" coords="160,56,288,83"/>
+<area shape="rect" id="node4" href="$_kinova_8_a_p_i_8_usb_command_layer_ubuntu_8h_a9396131c243aa476db3e7a26b797e076.html#a9396131c243aa476db3e7a26b797e076" title="This function sets the robotical arm in cartesian control mode if this is possible. " alt="" coords="154,107,294,133"/>
+</map>

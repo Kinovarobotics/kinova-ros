@@ -1,0 +1,24 @@
+<map id="InitFingers" name="InitFingers">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8409a1b8f9b50357b0301fe8529be80b" title="This function gets information regarding some status flag of the robotical arm. " alt="" coords="164,132,279,159"/>
+<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aeea8b94c14f5bbaa85a26acf0524ace6" title="GetPeripheralInventory" alt="" coords="144,208,299,235"/>
+<area shape="rect" id="node10" href="$structTrajectoryPoint.html#a1a9f12ad88f5011c6a4644792fa67f99" title="TrajectoryPoint::InitStruct" alt="" coords="136,259,307,285"/>
+<area shape="rect" id="node16" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3b6c8850655d7adc7d4eb25de08cdf7b" title="This function get the angular command of all actuators. " alt="" coords="148,69,295,96"/>
+<area shape="rect" id="node19" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aba1488a6d1845bd84d9fb776ed64e9a9" title="This function sends trajectory point(Without limitation) that will be added in the robotical arm&#39;s FI..." alt="" coords="150,397,293,424"/>
+<area shape="rect" id="node23" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8c75f8d8ccf11cb4c728955075efa7d7" title="This function erases all the trajectories inside the robotical arm&#39;s FIFO. " alt="" coords="152,463,291,489"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="390,56,519,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="388,157,521,184"/>
+<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a82dfb961f42402ed31121b0a910228b7" title="DeserializeQuickStatus" alt="" coords="375,107,534,133"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="660,157,719,184"/>
+<area shape="rect" id="node8" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abb08842ed661a1c98ecbd7516b04a30d" title="DeserializePeripheralInventory" alt="" coords="355,208,554,235"/>
+<area shape="rect" id="node9" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a16536171355d06661fe6c6e26bde4ca2" title="GetUIntFromVector" alt="" coords="621,208,757,235"/>
+<area shape="rect" id="node11" href="$structUserPosition.html#ad682f9be07fa2307028f86624ded2958" title="UserPosition::InitStruct" alt="" coords="375,259,534,285"/>
+<area shape="rect" id="node15" href="$structLimitation.html#a098f4ee5d0eb6baf844ff3164f1a20f6" title="Limitation::InitStruct" alt="" coords="385,309,524,336"/>
+<area shape="rect" id="node12" href="$structCartesianInfo.html#a6d47623939d86124525ab4c8f7a2b8e9" title="CartesianInfo::InitStruct" alt="" coords="609,259,770,285"/>
+<area shape="rect" id="node13" href="$structAngularInfo.html#a092156b3e0e6cb657ed4bb2f6b15a9f0" title="AngularInfo::InitStruct" alt="" coords="615,309,764,336"/>
+<area shape="rect" id="node14" href="$structFingersPosition.html#a2d958923675995d54d56e59f8549495d" title="FingersPosition::InitStruct" alt="" coords="603,360,776,387"/>
+<area shape="rect" id="node17" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a24f08977e091702d5f919ee2b592c128" title="DeserializeAngularPosition" alt="" coords="365,5,544,32"/>
+<area shape="rect" id="node18" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="619,5,759,32"/>
+<area shape="rect" id="node20" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#af0f5161b5561b31d84d8038035d01ee2" title="SerializeBasicTrajectory\lPoint" alt="" coords="373,361,536,402"/>
+<area shape="rect" id="node21" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="389,427,520,453"/>
+<area shape="rect" id="node22" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="389,477,521,504"/>
+</map>

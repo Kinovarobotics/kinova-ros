@@ -1,0 +1,4 @@
+<map id="SerializeBasicTrajectoryPoint" name="SerializeBasicTrajectoryPoint">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aba1488a6d1845bd84d9fb776ed64e9a9" title="This function sends trajectory point(Without limitation) that will be added in the robotical arm&#39;s FI..." alt="" coords="217,12,359,39"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a3d86f5c1ec3706efbcb8b9fb83b8bbb0" title="This function initializes the fingers of the robotical arm. After the initialization, the robotical arm is in angular control mode. If you want to use the cartesian control mode, use the function SetCartesianControl(). " alt="" coords="408,12,491,39"/>
+</map>

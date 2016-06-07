@@ -1,0 +1,5 @@
+<map id="SetJointZero" name="SetJointZero">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#afb8cc1dbd4571c20a0fe6be42586bca9" title="SerializeActuatorAddress" alt="" coords="150,5,319,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="169,56,300,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="169,107,301,133"/>
+</map>

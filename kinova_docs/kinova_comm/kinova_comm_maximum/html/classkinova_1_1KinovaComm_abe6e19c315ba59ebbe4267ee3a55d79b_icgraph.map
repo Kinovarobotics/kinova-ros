@@ -1,0 +1,4 @@
+<map id="kinova::KinovaComm::setConfig" name="kinova::KinovaComm::setConfig">
+<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#a40b0ab5609b7736893bed91dd3f922c6" title="This function set the max translation(X, Y and Z) velocity of the robot&#39;s end effector in ClientConfi..." alt="" coords="200,5,384,46"/>
+<area shape="rect" id="node3" href="$classkinova_1_1KinovaComm.html#a3658e21c6e3c499a9c1f22e32ebb3772" title="This function set max orientation(ThetaX, ThetaY and ThetaZ) velocity of the robot&#39;s end effector..." alt="" coords="201,70,383,111"/>
+</map>

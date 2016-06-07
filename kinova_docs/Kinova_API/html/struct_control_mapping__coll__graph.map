@@ -1,0 +1,5 @@
+<map id="ControlMapping" name="ControlMapping">
+<area shape="rect" id="node2" href="$struct_controls_mode_map.html" title="Represents one mode map of a control mapping. Each control mapping has 2 list of mode map..." alt="" coords="53,96,181,123"/>
+<area shape="rect" id="node3" href="$struct_button_events.html" title="This is an event from a controller&#39;s button. Each variable of the struct can be mapped with a Control..." alt="" coords="5,5,107,32"/>
+<area shape="rect" id="node4" href="$struct_stick_events.html" title="This is an event from a controller&#39;s stick. Each variable of the struct can be mapped with a ControlF..." alt="" coords="132,5,225,32"/>
+</map>

@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['cartesianfaultstate',['CartesianFaultState',['../struct_quick_status_a738566489a176b3dbe45c5628239c6d1.html#a738566489a176b3dbe45c5628239c6d1',1,'QuickStatus']]],
+  ['cartesianposition',['CartesianPosition',['../struct_user_position_ab363c40971853637f728978e604c438f.html#ab363c40971853637f728978e604c438f',1,'UserPosition']]],
+  ['clientid',['ClientID',['../struct_client_configurations_a2adccda7d27c7731ab0fe1160005e6ac.html#a2adccda7d27c7731ab0fe1160005e6ac',1,'ClientConfigurations']]],
+  ['clientname',['ClientName',['../struct_client_configurations_a6ec42489c6a1e74a654809f5f39ca6f8.html#a6ec42489c6a1e74a654809f5f39ca6f8',1,'ClientConfigurations']]],
+  ['coderevision',['CodeRevision',['../struct_general_informations_a56f6f5dc8067f0ea4deb4b0c5cc3f971.html#a56f6f5dc8067f0ea4deb4b0c5cc3f971',1,'GeneralInformations']]],
+  ['codeversion',['CodeVersion',['../struct_finger_a39f1fa57fc87fe6bcb09bc43d16a6389.html#a39f1fa57fc87fe6bcb09bc43d16a6389',1,'Finger::CodeVersion()'],['../struct_general_informations_ac71288477c2e447e7dd298ca707bcec3.html#ac71288477c2e447e7dd298ca707bcec3',1,'GeneralInformations::CodeVersion()']]],
+  ['command',['Command',['../struct_general_informations_aff852c9c84a0b313f311e1e222508cf7.html#aff852c9c84a0b313f311e1e222508cf7',1,'GeneralInformations']]],
+  ['communicationerrors',['CommunicationErrors',['../struct_finger_a688ac73326f0d7e071bb3755ff3f6a02.html#a688ac73326f0d7e071bb3755ff3f6a02',1,'Finger']]],
+  ['complexretractactive',['ComplexRetractActive',['../struct_client_configurations_aa41bf35ba1a1dd92f54a30814d42f795.html#aa41bf35ba1a1dd92f54a30814d42f795',1,'ClientConfigurations']]],
+  ['connectedactuatorcount',['ConnectedActuatorCount',['../struct_general_informations_ac8f106acda69fb0d0dc7088216854fb0.html#ac8f106acda69fb0d0dc7088216854fb0',1,'GeneralInformations']]],
+  ['controlactivemodule',['ControlActiveModule',['../struct_quick_status_ab707e183f53af1789d2122a76ebb1786.html#ab707e183f53af1789d2122a76ebb1786',1,'QuickStatus']]],
+  ['controlbuttons',['ControlButtons',['../struct_controls_mode_map_a3b54c773477b561b1fbc505556251717.html#a3b54c773477b561b1fbc505556251717',1,'ControlsModeMap']]],
+  ['controlenablestatus',['ControlEnableStatus',['../struct_quick_status_ab83f9950c5baaae77754d2fd9c42b3f8.html#ab83f9950c5baaae77754d2fd9c42b3f8',1,'QuickStatus']]],
+  ['controlframetype',['ControlFrameType',['../struct_quick_status_a2a5b8e7585c34a53436e8bcc1650ea18.html#a2a5b8e7585c34a53436e8bcc1650ea18',1,'QuickStatus']]],
+  ['controlincrement',['ControlIncrement',['../struct_general_informations_a361a511d14fdf377e15ce86d6ef3e3c7.html#a361a511d14fdf377e15ce86d6ef3e3c7',1,'GeneralInformations']]],
+  ['controller',['Controller',['../struct_general_informations_a3cd5d14a57c053719db5c02cc471005b.html#a3cd5d14a57c053719db5c02cc471005b',1,'GeneralInformations']]],
+  ['controlmode',['ControlMode',['../struct_general_informations_aaac67e7cb72de84d904bf96285ce97ef.html#aaac67e7cb72de84d904bf96285ce97ef',1,'GeneralInformations']]],
+  ['controlsticks',['ControlSticks',['../struct_controls_mode_map_a022bc6ccf4b8c655b152d134c4738b1c.html#a022bc6ccf4b8c655b152d134c4738b1c',1,'ControlsModeMap']]],
+  ['controltimeabsolute',['ControlTimeAbsolute',['../struct_general_informations_a8f91e2c0ca1565c5f3478923b9885389.html#a8f91e2c0ca1565c5f3478923b9885389',1,'GeneralInformations']]],
+  ['controltimefromstartup',['ControlTimeFromStartup',['../struct_general_informations_aa38f3afead9da07799c45bca401037eb.html#aa38f3afead9da07799c45bca401037eb',1,'GeneralInformations']]],
+  ['coordinates',['Coordinates',['../struct_cartesian_position_aa1e120e383c650f4c4bf88ba8c780ab1.html#aa1e120e383c650f4c4bf88ba8c780ab1',1,'CartesianPosition']]],
+  ['current',['Current',['../struct_sensors_info_a2be7e431dce5a2093e6f61a7333b574c.html#a2be7e431dce5a2093e6f61a7333b574c',1,'SensorsInfo::Current()'],['../struct_general_informations_adecf04bc979eae4013a1dc4c5d2e43db.html#adecf04bc979eae4013a1dc4c5d2e43db',1,'GeneralInformations::Current()']]],
+  ['currentlimitationstatus',['CurrentLimitationStatus',['../struct_quick_status_a8177e27c2aeab753c3fa87fd2c7342c3.html#a8177e27c2aeab753c3fa87fd2c7342c3',1,'QuickStatus']]],
+  ['cyclecount',['CycleCount',['../struct_finger_a52eadd12c593a5fd5cc554a11619bc5d.html#a52eadd12c593a5fd5cc554a11619bc5d',1,'Finger']]]
+];

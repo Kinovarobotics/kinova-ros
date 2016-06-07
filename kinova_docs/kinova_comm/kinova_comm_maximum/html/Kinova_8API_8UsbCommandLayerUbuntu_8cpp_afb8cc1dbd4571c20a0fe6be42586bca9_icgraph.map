@@ -1,0 +1,6 @@
+<map id="SerializeActuatorAddress" name="SerializeActuatorAddress">
+<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a988fc4a89b58a15e1ca3f326a779325e" title="This function sets the current position of a specific actuator as a zero. Mainly used for calibration..." alt="" coords="245,5,341,32"/>
+<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae2f119417f3f470dbe50c6cc4a9f3fb3" title="This function sets the frame type of the robotical arm. " alt="" coords="239,56,347,83"/>
+<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a200e8f320058996357aab1a205d74045" title="This function sets the current position of a specific actuator as a torque zero. Mainly used for cali..." alt="" coords="239,107,347,133"/>
+<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ad4f4a366a729a87f94fc7e60d456294c" title="This function sets a new address to a specific actuator. " alt="" coords="224,157,363,184"/>
+</map>
