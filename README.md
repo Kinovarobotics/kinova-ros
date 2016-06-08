@@ -61,6 +61,15 @@ Joint position can be observed by echoing two topics:
 
  *eg*: `rostopic echo -c /m1n4a200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
 
+
+ Another way to control joint position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
+  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200
+  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4a200
+  - open Rviz: rosrun rviz rviz
+  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Joint/update*
+  - Now a ring should appear at each joint location, and you can move the robot by drag the rings.
+
+
 ### Cartesian position control
 Cartesian position control can be realized by calling KinovaComm::setCartesianPosition() in customized node, or you may simply call the node `pose_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of position command can be by `{mq | mdeg | mrad}`, which refers to meter&Quaternion, meter&degree and meter&radian. The unit of position is always meter, and the unit of orientation is different. Degree and radian are regarding to Euler Angles in XYZ order. Please be aware that the length of parameters are different when use Quaternion and Euler Angles. With the option `-v` on, positions in other unit format are printed for convenience. The following code will drive a mico robot to move along +x axis for 1cm and rotate hand for +10 degree along hand axis. The last second *10* will be ignored since 4DOF robot cannot rotate along y axis.
 
@@ -116,7 +125,7 @@ However, it is **very important** to regulate the force sensor before using forc
 - Create transform between different Euler Angle definitions in DSP and ROS
 - Criteron check when if reach the goal
 - URDF models for all robotTypes
-- InteractiveMarker ??? !!!
+- Interactive for joint control
 - New message for KinovaPose
 - More options for actionlibs arguments, etc.
 - Relative motion control
