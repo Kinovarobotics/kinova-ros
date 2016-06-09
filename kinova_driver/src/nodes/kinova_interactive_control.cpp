@@ -446,7 +446,7 @@ int main(int argc, char** argv)
     {
         position = tf::Vector3(0, 0, 0);
         make1DofMarker(tf_prefix_+"_link_5", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "5th Axis", "marker_joint5");    position = tf::Vector3(0, 0, 0);
-        make1DofMarker(tf_prefix_+"_link_hand", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "6th Axis", "marker_joint6");
+        make1DofMarker(tf_prefix_+"_link_6", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "6th Axis", "marker_joint6");
     }
     // %EndTag(CreatInteractiveMarkers)%
 
