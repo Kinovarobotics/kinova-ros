@@ -46,8 +46,8 @@ include_directories(
 # Nodes
 # Note, the headers are shown here so they show up in the project view when using
 # Qt Creator. There must be a better way...
-add_executable(kinova_arm_driver
-  src/nodes/kinova_arm_driver.cpp
+
+add_library(kinova_driver
   src/kinova_api.cpp
   src/kinova_arm.cpp
   src/kinova_comm.cpp
@@ -67,6 +67,10 @@ add_executable(kinova_arm_driver
   include/kinova/KinovaTypes.h
 )
 
+add_executable(kinova_arm_driver
+  src/nodes/kinova_arm_driver.cpp
+)
+
 add_executable(kinova_tf_updater
   src/kinova_ros_types.cpp
   src/nodes/kinova_tf_updater.cpp
@@ -75,11 +79,12 @@ add_executable(kinova_tf_updater
   include/kinova_driver/kinova_tf_updater.h
   include/kinova_driver/kinova_arm_kinematics.h
 )
-
+add_dependencies(kinova_driver ${catkin_EXPORTED_TARGETS})
 add_dependencies(kinova_arm_driver ${catkin_EXPORTED_TARGETS})
 add_dependencies(kinova_tf_updater ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(kinova_arm_driver ${catkin_LIBRARIES} dl)
+target_link_libraries(kinova_driver ${catkin_LIBRARIES} dl)
+#target_link_libraries(kinova_arm_driver ${catkin_LIBRARIES} dl)
+target_link_libraries(kinova_arm_driver ${catkin_LIBRARIES} kinova_driver)
 target_link_libraries(kinova_tf_updater ${catkin_LIBRARIES})
 
 

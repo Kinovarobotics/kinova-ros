@@ -332,12 +332,12 @@ void KinovaArm::publishJointAngles(void)
         joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
     }
 
-    if(finger_number_==4)
+    if(finger_number_==2)
     {
         joint_state.position[joint_total_number_-2] = 0;
         joint_state.position[joint_total_number_-1] = 0;
     }
-    else if(finger_number_==6)
+    else if(finger_number_==3)
     {
         joint_state.position[joint_total_number_-3] = 0;
         joint_state.position[joint_total_number_-2] = 0;
@@ -354,12 +354,12 @@ void KinovaArm::publishJointAngles(void)
     joint_state.velocity[2] = current_vels.Actuator3;
     joint_state.velocity[3] = current_vels.Actuator4;
     // no velocity info for fingers
-    if(finger_number_==4)
+    if(finger_number_==2)
     {
         joint_state.velocity[joint_total_number_-2] = 0;
         joint_state.velocity[joint_total_number_-1] = 0;
     }
-    else if(finger_number_==6)
+    else if(finger_number_==3)
     {
         joint_state.velocity[joint_total_number_-3] = 0;
         joint_state.velocity[joint_total_number_-2] = 0;
@@ -395,12 +395,12 @@ void KinovaArm::publishJointAngles(void)
     joint_state.effort[2] = joint_tqs.Actuator3;
     joint_state.effort[3] = joint_tqs.Actuator4;
     // no effort info for fingers
-    if(finger_number_==4)
+    if(finger_number_==2)
     {
         joint_state.effort[joint_total_number_-2] = 0;
         joint_state.effort[joint_total_number_-1] = 0;
     }
-    else if(finger_number_==6)
+    else if(finger_number_==3)
     {
         joint_state.effort[joint_total_number_-3] = 0;
         joint_state.effort[joint_total_number_-2] = 0;
