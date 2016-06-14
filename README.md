@@ -102,6 +102,11 @@ For Cartesian linear velocity, the unit is meter/second. Definition of angular v
 
 The motion will stop once the publish on the topic is finished. Please be caution when use velocity control as it is a continuous motion unless you stopped it.
 
+** Note on publish frequency **
+The joint velocity is set to publish at a frequency of 100Hz, due to the DSP inside the robot loops each 10ms. Any higher frequency will not have any influence to the speed. However, it will fills up a buffer (size of 2000) and the robot may continue to move a bit even stops receiving velocity topic. For a frequency lower than 100Hz, the robot will not able to achieve the requested velocity.
+
+Therefore, the publishing rate at 100Hz is not an optional argument, but a requirement.
+
 ### ROS service commands
 User can home the robot by the command below. It takes no argument and bring robot to pre-defined home position. The command support customized home position that user defined by SDK or JacoSoft as well.
 `/'${kinova_robotType}_driver'/in/home_arm`
