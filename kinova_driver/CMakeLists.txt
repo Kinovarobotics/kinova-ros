@@ -89,6 +89,7 @@ target_link_libraries(kinova_tf_updater ${catkin_LIBRARIES})
 
 
 add_executable(kinova_interactive_control src/nodes/kinova_interactive_control.cpp)
+add_dependencies(kinova_interactive_control ${catkin_EXPORTED_TARGETS})
 target_link_libraries(kinova_interactive_control ${catkin_LIBRARIES})
 
 #############
