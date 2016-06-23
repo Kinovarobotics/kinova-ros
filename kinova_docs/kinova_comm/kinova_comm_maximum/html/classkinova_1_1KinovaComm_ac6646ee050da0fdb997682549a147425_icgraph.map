@@ -1,9 +1,0 @@
-<map id="kinova::KinovaComm::isStopped" name="kinova::KinovaComm::isStopped">
-<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#adb803410fd256db8808e175f159f9d26" title="Sends a joint angle command to the Kinova arm. This function sends trajectory point(Angular) that wil..." alt="" coords="208,5,355,46"/>
-<area shape="rect" id="node3" href="$classkinova_1_1KinovaComm.html#ae3416267240f582bf27792f87570aea9" title="This function controls robot with joint velocity. This function sends trajectory point(ANGULAR_VELOCI..." alt="" coords="208,70,355,111"/>
-<area shape="rect" id="node4" href="$classkinova_1_1KinovaComm.html#a33ba2e7bea81292a5b305dc64baf1b04" title="Sends a cartesian coordinate trajectory to the Kinova arm. This function sends trajectory point(Carte..." alt="" coords="206,135,357,177"/>
-<area shape="rect" id="node5" href="$classkinova_1_1KinovaComm.html#a346c9cd235ce3d55b7a6eb55eb9133ef" title="Linear and angular velocity control in Cartesian space This function sends trajectory point(CARTESIAN..." alt="" coords="201,201,362,242"/>
-<area shape="rect" id="node7" href="$classkinova_1_1KinovaComm.html#ab235b6800e8e8efaa458988a4e6f950a" title="This function sets the finger positions The new finger position, combined with current joint values a..." alt="" coords="208,266,355,307"/>
-<area shape="rect" id="node8" href="$classkinova_1_1KinovaComm.html#a75e9c38e8303f9989a39c67dc3cde72b" title="This function move the arm to the &quot;home&quot; position. The code replicates the function of the &quot;home&quot; but..." alt="" coords="208,331,355,373"/>
-<area shape="rect" id="node6" href="$classkinova_1_1KinovaComm.html#ad2053ca613caad670cd81d3bb246bd56" title="kinova::KinovaComm\l::KinovaComm" alt="" coords="411,201,557,242"/>
-</map>

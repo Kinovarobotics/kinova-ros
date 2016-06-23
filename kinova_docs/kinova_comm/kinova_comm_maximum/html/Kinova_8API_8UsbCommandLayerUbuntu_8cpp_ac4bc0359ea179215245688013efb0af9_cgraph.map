@@ -1,6 +1,0 @@
-<map id="GetCartesianForce" name="GetCartesianForce">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="216,5,349,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a215713f6ff4dfad33d956d8733fdb087" title="DeserializeCartesianPosition" alt="" coords="187,56,378,83"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="468,5,527,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="427,56,567,83"/>
-</map>

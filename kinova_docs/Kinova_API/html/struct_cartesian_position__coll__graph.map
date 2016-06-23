@@ -1,4 +1,0 @@
-<map id="CartesianPosition" name="CartesianPosition">
-<area shape="rect" id="node2" href="$struct_cartesian_info.html" title="This data structure holds values in an cartesian control context. " alt="" coords="5,5,104,32"/>
-<area shape="rect" id="node3" href="$struct_fingers_position.html" title="This data structure holds the values of the robot&#39;s fingers. " alt="" coords="128,5,239,32"/>
-</map>

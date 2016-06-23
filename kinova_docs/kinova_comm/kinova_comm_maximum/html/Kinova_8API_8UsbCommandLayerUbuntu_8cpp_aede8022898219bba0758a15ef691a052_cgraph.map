@@ -1,5 +1,0 @@
-<map id="SetActuatorPIDFilter" name="SetActuatorPIDFilter">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#aaa93d66f27387fac3456cc6c9784e1d5" title="SerializeActuatorPIDFilter" alt="" coords="197,5,371,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="219,56,349,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="218,107,350,133"/>
-</map>

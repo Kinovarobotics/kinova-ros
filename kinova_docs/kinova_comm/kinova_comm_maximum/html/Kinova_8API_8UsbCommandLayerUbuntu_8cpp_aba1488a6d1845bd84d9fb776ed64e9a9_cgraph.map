@@ -1,5 +1,0 @@
-<map id="SendBasicTrajectory" name="SendBasicTrajectory">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#af0f5161b5561b31d84d8038035d01ee2" title="SerializeBasicTrajectory\lPoint" alt="" coords="197,5,360,46"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="213,71,344,97"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="213,121,345,148"/>
-</map>

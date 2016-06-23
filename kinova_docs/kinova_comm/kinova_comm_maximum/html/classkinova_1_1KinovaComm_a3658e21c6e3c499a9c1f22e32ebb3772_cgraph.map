@@ -1,4 +1,0 @@
-<map id="kinova::KinovaComm::setMaxOrientationVelocity" name="kinova::KinovaComm::setMaxOrientationVelocity">
-<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#a28827e27b664ab0bcecc7acfd67de728" title="obtain the current client configuration. " alt="" coords="237,5,384,46"/>
-<area shape="rect" id="node3" href="$classkinova_1_1KinovaComm.html#abe6e19c315ba59ebbe4267ee3a55d79b" title="This function set the client configurations of the robotical arm. The configuration data is stored on..." alt="" coords="237,70,384,111"/>
-</map>

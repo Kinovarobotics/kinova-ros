@@ -1,7 +1,0 @@
-<map id="GetClientConfigurations" name="GetClientConfigurations">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="249,5,383,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ace01ce643c2b1c608214edd63ff18807" title="DeserializeClientConfiguration" alt="" coords="217,56,415,83"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="505,5,564,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="471,56,598,83"/>
-<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="465,107,605,133"/>
-</map>

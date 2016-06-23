@@ -1,5 +1,0 @@
-<map id="SendAdvanceTrajectory" name="SendAdvanceTrajectory">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#acfde0bccd4cf373d8ac893f4f1f2bf26" title="SerializeTrajectoryPoint" alt="" coords="216,5,376,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="231,56,361,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="230,107,362,133"/>
-</map>

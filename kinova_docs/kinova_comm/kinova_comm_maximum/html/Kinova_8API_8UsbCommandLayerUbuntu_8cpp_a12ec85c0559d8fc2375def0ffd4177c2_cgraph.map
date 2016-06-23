@@ -1,7 +1,0 @@
-<map id="GetGlobalTrajectoryInfo" name="GetGlobalTrajectoryInfo">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="239,5,372,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a51fab087b364b320638099a9d5fec68f" title="DeserializeGlobalTrajectory" alt="" coords="214,56,397,83"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="487,5,545,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="453,56,579,83"/>
-<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="446,107,586,133"/>
-</map>

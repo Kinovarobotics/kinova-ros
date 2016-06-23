@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['linearmatrixtype',['LinearMatrixType',['../class_eigen_1_1_scaling_ab123316c79bd49697f551c8047cc2356.html#ab123316c79bd49697f551c8047cc2356',1,'Eigen::Scaling::LinearMatrixType()'],['../class_eigen_1_1_transform_ab123316c79bd49697f551c8047cc2356.html#ab123316c79bd49697f551c8047cc2356',1,'Eigen::Transform::LinearMatrixType()'],['../class_eigen_1_1_translation_ab123316c79bd49697f551c8047cc2356.html#ab123316c79bd49697f551c8047cc2356',1,'Eigen::Translation::LinearMatrixType()'],['../class_eigen_1_1_transform_ade2ee06371d257b0eff58531d95a6474.html#ade2ee06371d257b0eff58531d95a6474',1,'Eigen::Transform::LinearMatrixType()'],['../class_eigen_1_1_translation_ab123316c79bd49697f551c8047cc2356.html#ab123316c79bd49697f551c8047cc2356',1,'Eigen::Translation::LinearMatrixType()']]],
-  ['linearpart',['LinearPart',['../class_eigen_1_1_transform_a385044a77900d345ea04d36482c2b68d.html#a385044a77900d345ea04d36482c2b68d',1,'Eigen::Transform::LinearPart()'],['../class_eigen_1_1_transform_a3239ff8c2d15598525a1770c764cc3f5.html#a3239ff8c2d15598525a1770c764cc3f5',1,'Eigen::Transform::LinearPart()']]]
-];

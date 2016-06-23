@@ -1,5 +1,0 @@
-<map id="SetTorqueGain" name="SetTorqueGain">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8610c520c1232e8ef8c156c30bc1deb8" title="SerializeTorqueGain" alt="" coords="163,5,301,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="167,56,297,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="166,107,298,133"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="SetSpasmFilterValues" name="SetSpasmFilterValues">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac3c2a14dd207db1e34556d23575b6d9b" title="SerializeSpasmFilterValue" alt="" coords="206,5,381,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="228,56,359,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="227,107,359,133"/>
-</map>

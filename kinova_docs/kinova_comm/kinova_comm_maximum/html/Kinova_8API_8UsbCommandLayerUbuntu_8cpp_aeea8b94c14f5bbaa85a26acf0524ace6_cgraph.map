@@ -1,6 +1,0 @@
-<map id="GetPeripheralInventory" name="GetPeripheralInventory">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="241,5,375,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abb08842ed661a1c98ecbd7516b04a30d" title="DeserializePeripheralInventory" alt="" coords="209,56,407,83"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="495,5,553,32"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a16536171355d06661fe6c6e26bde4ca2" title="GetUIntFromVector" alt="" coords="456,56,592,83"/>
-</map>

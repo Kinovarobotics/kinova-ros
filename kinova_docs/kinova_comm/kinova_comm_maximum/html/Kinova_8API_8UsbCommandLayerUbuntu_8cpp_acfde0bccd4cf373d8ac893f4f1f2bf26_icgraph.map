@@ -1,4 +1,0 @@
-<map id="SerializeTrajectoryPoint" name="SerializeTrajectoryPoint">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#af4ef3569d1edc6216d9df5306fd54d38" title="This function sends trajectory point(With limitation) that will be added in the robotical arm&#39;s FIFO..." alt="" coords="214,5,375,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a4b3390109ed7e40ecfa412e1eff72331" title="This function is used to run a sequence to estimate the optimal gravity parameters when the robot is ..." alt="" coords="424,5,640,32"/>
-</map>

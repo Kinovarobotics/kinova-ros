@@ -1,6 +1,0 @@
-<map id="SetTorqueFeedCurrentVoltage" name="SetTorqueFeedCurrentVoltage">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae169827de98bac5b0bdaad61292e8904" title="SerializeTorqueValue" alt="" coords="254,5,399,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="261,56,392,83"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="261,107,393,133"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a4e669904a2b2799247ddb9484b2aa624" title="SerializeFloatVector" alt="" coords="448,5,587,32"/>
-</map>
