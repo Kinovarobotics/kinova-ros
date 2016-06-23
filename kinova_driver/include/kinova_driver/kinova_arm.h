@@ -26,6 +26,7 @@
 #include <kinova_msgs/PoseVelocity.h>
 #include <kinova_msgs/FingerPosition.h>
 #include <kinova_msgs/JointAngles.h>
+#include <kinova_msgs/KinovaPose.h>
 #include <kinova_msgs/SetForceControlParams.h>
 #include <kinova_msgs/SetEndEffectorOffset.h>
 
@@ -89,6 +90,9 @@ class KinovaArm
     ros::Publisher tool_wrench_publisher_;
     ros::Publisher finger_position_publisher_;
     ros::Publisher joint_state_publisher_;
+
+    ros::Publisher joint_command_publisher_;
+    ros::Publisher cartesian_command_publisher_;
 
     ros::ServiceServer stop_service_;
     ros::ServiceServer start_service_;

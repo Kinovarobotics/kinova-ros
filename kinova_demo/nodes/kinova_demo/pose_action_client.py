@@ -22,7 +22,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-currentCartesianPose = [0.21287, -0.25666, 0.50763, 0.64483, 0.31765, 0.42573, 0.54957] # default home in unit mq
+currentCartesianCommand = [0.21287, -0.25666, 0.50763, 0.64483, 0.31765, 0.42573, 0.54957] # default home in unit mq
 
 
 def cartesian_pose_client(position, orientation):
@@ -38,7 +38,7 @@ def cartesian_pose_client(position, orientation):
     goal.pose.pose.orientation = geometry_msgs.msg.Quaternion(
         x=orientation[0], y=orientation[1], z=orientation[2], w=orientation[3])
 
-    print('goal.pose in client 1: {}'.format(goal.pose.pose)) # debug
+    # print('goal.pose in client 1: {}'.format(goal.pose.pose)) # debug
 
     client.send_goal(goal)
 
@@ -94,29 +94,24 @@ def EulerXYZ2Quaternion(EulerXYZ_):
 
 
 
-def getCurrentCartesianPose(prefix_):
+def getcurrentCartesianCommand(prefix_):
     # wait to get current position
-    topic_address = '/' + prefix_ + 'driver/out/tool_pose'
-    rospy.Subscriber(topic_address, geometry_msgs.msg.PoseStamped, setCurrentCartesianPose)
-    print 'waiting for message'
-    rospy.wait_for_message(topic_address, geometry_msgs.msg.PoseStamped)
+    topic_address = '/' + prefix_ + 'driver/out/cartesian_command'
+    rospy.Subscriber(topic_address, kinova_msgs.msg.KinovaPose, setcurrentCartesianCommand)
+    rospy.wait_for_message(topic_address, kinova_msgs.msg.KinovaPose)
     print 'position listener obtained message for Cartesian pose. '
 
 
-def setCurrentCartesianPose(feedback):
-    global currentCartesianPose
+def setcurrentCartesianCommand(feedback):
+    global currentCartesianCommand
 
-    currentCartesianPosition_str_list = str(feedback.pose.position).split("\n") # x, y, z in meter
-    currentCartesianOrientation_str_list = str(feedback.pose.orientation).split("\n") # x, y,
-    currentCartesianPose_str_list = currentCartesianPosition_str_list + currentCartesianOrientation_str_list
-    # print 'currentCartesianPose_str_list is ', currentCartesianPose_str_list
-
-    for index in range(0,len(currentCartesianPose_str_list)):
-        temp_str=currentCartesianPose_str_list[index].split(": ")
-        currentCartesianPose[index] = float(temp_str[1])
-
-    # print 'currentCartesianPose is: '
-    # print currentCartesianPose
+    currentCartesianCommand_str_list = str(feedback).split("\n")
+    for index in range(0,len(currentCartesianCommand_str_list)):
+        temp_str=currentCartesianCommand_str_list[index].split(": ")
+        currentCartesianCommand[index] = float(temp_str[1])
+    # the following directly reading only read once and didn't update the value.
+    # currentCartesianCommand = [feedback.X, feedback.Y, feedback.Z, feedback.ThetaX, feedback.ThetaY, feedback.Z] 
+    # print 'currentCartesianCommand is: ', currentCartesianCommand
 
 
 def argumentParser(argument_):
@@ -155,14 +150,14 @@ def kinova_robotTypeParser(kinova_robotType_):
 
 def unitParser(unit_, pose_value_, relative_):
     """ Argument unit """
-    global currentCartesianPose
+    global currentCartesianCommand
 
     position_ = pose_value_[:3]
     orientation_ = pose_value_[3:]
 
     for i in range(0,3):
         if relative_:
-            position_[i] = pose_value_[i] + currentCartesianPose[i]
+            position_[i] = pose_value_[i] + currentCartesianCommand[i]
         else:
             position_[i] = pose_value_[i]
 
@@ -170,7 +165,8 @@ def unitParser(unit_, pose_value_, relative_):
 
     if unit_ == 'mq':
         if relative_:
-            orientation_q = [orientation_[i] + currentCartesianPose[3+i] for i in range(0,4)]
+            orientation_q_list = EulerXYZ2Quaternion(currentCartesianCommand[3:])
+            orientation_q = [orientation_[i] + orientation_q_list[3+i] for i in range(0,4)]
             print 'Please be aware that relative motion to Quaternion is not intuitive.'
         else:
             orientation_q = orientation_
@@ -180,7 +176,7 @@ def unitParser(unit_, pose_value_, relative_):
 
     elif unit_ == 'mdeg':
         if relative_:
-            orientation_deg_list = list(map(math.degrees, Quaternion2EulerXYZ(currentCartesianPose[3:])))
+            orientation_deg_list = list(map(math.degrees, currentCartesianCommand[3:]))
             orientation_deg = [orientation_[i] + orientation_deg_list[i] for i in range(0,3)]
         else:
             orientation_deg = orientation_
@@ -190,7 +186,7 @@ def unitParser(unit_, pose_value_, relative_):
 
     elif unit_ == 'mrad':
         if relative_:
-            orientation_rad_list =  Quaternion2EulerXYZ(currentCartesianPose[3:])
+            orientation_rad_list =  currentCartesianCommand[3:]
             orientation_rad = [orientation_[i] + orientation_rad_list[i] for i in range(0,3)]
         else:
             orientation_rad = orientation_
@@ -244,7 +240,7 @@ if __name__ == '__main__':
     else:
         raise Exception('Finger value have to be in mq, mdeg or mrad')
 
-    getCurrentCartesianPose(prefix)
+    getcurrentCartesianCommand(prefix)
 
     pose_mq, pose_mdeg, pose_mrad = unitParser(args.unit, args.pose_value, args.relative)
 

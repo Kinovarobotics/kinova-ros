@@ -20,7 +20,6 @@ namespace
     inline void convertKinDeg(double& qd)
     {
         static const double PI_180 = (M_PI / 180.0);
-
         // Angle velocities from the API are 0..180 for positive values,
         // and 360..181 for negative ones, in a kind of 2-complement setup.
         if (qd > 180.0) {
@@ -136,6 +135,10 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>("out/tool_wrench", 2);
     finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>("out/finger_position", 2);
 
+    // Publish last command for relative motion (read current position cause arm drop)
+    joint_command_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_command", 2);
+    cartesian_command_publisher_ = node_handle_.advertise<kinova_msgs::KinovaPose>("out/cartesian_command", 2);
+
     /* Set up Subscribers*/
     joint_velocity_subscriber_ = node_handle_.subscribe("in/joint_velocity", 1,
                                                       &KinovaArm::jointVelocityCallback, this);
@@ -196,9 +199,26 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
  */
 bool KinovaArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
-    kinova_comm_.stopAPI();
-    res.stop_result = "Arm stopped";
-    ROS_DEBUG("Arm stop requested");
+    AngularPosition last_angularcommand;
+    kinova_comm_.getAngularCommand(last_angularcommand);
+    ROS_WARN_STREAM("last_angularcommand:  " << last_angularcommand.Actuators.Actuator1 << ", "
+                    << last_angularcommand.Actuators.Actuator2 << ", "
+                    << last_angularcommand.Actuators.Actuator3 << ", "
+                    << last_angularcommand.Actuators.Actuator4 << ", "
+                    << last_angularcommand.Actuators.Actuator5 << ", "
+                    << last_angularcommand.Actuators.Actuator6 << ". ");
+    CartesianPosition last_cartesiancommand;
+    kinova_comm_.getCartesianCommand(last_cartesiancommand);
+    ROS_WARN_STREAM("last_cartesiancommand:  " << last_cartesiancommand.Coordinates.X << ", "
+                    << last_cartesiancommand.Coordinates.Y << ", "
+                    << last_cartesiancommand.Coordinates.Z << ", "
+                    << last_cartesiancommand.Coordinates.ThetaX << ", "
+                    << last_cartesiancommand.Coordinates.ThetaY << ", "
+                    << last_cartesiancommand.Coordinates.ThetaZ << ". ");
+
+//    kinova_comm_.stopAPI();
+//    res.stop_result = "Arm stopped";
+//    ROS_DEBUG("Arm stop requested");
     return true;
 }
 
@@ -316,6 +336,10 @@ void KinovaArm::publishJointAngles(void)
     kinova_comm_.getJointAngles(current_angles);
     kinova_msgs::JointAngles kinova_angles = current_angles.constructAnglesMsg();
 
+    AngularPosition joint_command;
+    kinova_comm_.getAngularCommand(joint_command);
+    kinova_msgs::JointAngles joint_command_msg = KinovaAngles(joint_command.Actuators).constructAnglesMsg();
+
     sensor_msgs::JointState joint_state;
     joint_state.name = joint_names_;
     joint_state.header.stamp = ros::Time::now();
@@ -413,9 +437,10 @@ void KinovaArm::publishJointAngles(void)
     }
 
     joint_angles_publisher_.publish(kinova_angles);
+    joint_command_publisher_.publish(joint_command_msg);
     joint_state_publisher_.publish(joint_state);
-}
 
+}
 
 /*!
  * \brief Publishes the current cartesian coordinates
@@ -424,14 +449,19 @@ void KinovaArm::publishToolPosition(void)
 {
     KinovaPose pose;
     geometry_msgs::PoseStamped current_position;
-
     kinova_comm_.getCartesianPosition(pose);
+
+
+    CartesianPosition cartesian_command;
+    kinova_comm_.getCartesianCommand(cartesian_command);
+    kinova_msgs::KinovaPose cartesian_command_msg = KinovaPose(cartesian_command.Coordinates).constructKinovaPoseMsg();
 
     current_position.pose            = pose.constructPoseMsg();
     current_position.header.stamp    = ros::Time::now();
     current_position.header.frame_id = tf_prefix_ + "link_base";
 
     tool_position_publisher_.publish(current_position);
+    cartesian_command_publisher_.publish(cartesian_command_msg);
 }
 
 /*!
