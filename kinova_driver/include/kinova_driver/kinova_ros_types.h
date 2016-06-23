@@ -51,6 +51,7 @@
 #include <geometry_msgs/Wrench.h>
 #include <kinova_msgs/JointAngles.h>
 #include <kinova_msgs/FingerPosition.h>
+#include <kinova_msgs/KinovaPose.h>
 #include <tf/tf.h>
 
 #include <string>
@@ -92,6 +93,7 @@ class KinovaPose : public CartesianInfo
     explicit KinovaPose(const CartesianInfo &pose);
 
     geometry_msgs::Pose   constructPoseMsg();
+    kinova_msgs::KinovaPose constructKinovaPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
     tf::Quaternion getQuaternion(tf::Quaternion &q);
 

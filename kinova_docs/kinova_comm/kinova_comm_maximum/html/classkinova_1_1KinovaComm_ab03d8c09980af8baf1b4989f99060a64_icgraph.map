@@ -1,5 +1,0 @@
-<map id="kinova::KinovaComm::getQuickStatus" name="kinova::KinovaComm::getQuickStatus">
-<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#ad2053ca613caad670cd81d3bb246bd56" title="kinova::KinovaComm\l::KinovaComm" alt="" coords="200,5,347,46"/>
-<area shape="rect" id="node3" href="$classkinova_1_1KinovaComm.html#ac82fe58ca6589b0a8670a0c4b61f1bca" title="Determines whether the arm has returned to its &quot;Home&quot; state. Checks the current joint angles..." alt="" coords="200,70,347,111"/>
-<area shape="rect" id="node4" href="$classkinova_1_1KinovaComm.html#a75e9c38e8303f9989a39c67dc3cde72b" title="This function move the arm to the &quot;home&quot; position. The code replicates the function of the &quot;home&quot; but..." alt="" coords="395,70,541,111"/>
-</map>

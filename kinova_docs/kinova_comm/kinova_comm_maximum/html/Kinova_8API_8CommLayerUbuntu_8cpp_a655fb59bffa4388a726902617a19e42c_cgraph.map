@@ -1,5 +1,0 @@
-<map id="ScanForNewDevice" name="ScanForNewDevice">
-<area shape="rect" id="node2" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a80c77aee9f2745b91afd2b7c8bbe1265" title="ScanDevices" alt="" coords="193,5,293,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#a9cc50290e25608ca7d6a2878fc6dfbad" title="GetDeviceInfo" alt="" coords="341,5,448,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8CommLayerUbuntu_8cpp.html#ac354c6701554b469ae24863172c99d8a" title="SendPacketInternal" alt="" coords="496,5,632,32"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="kinova::KinovaComm::setCartesianPosition" name="kinova::KinovaComm::setCartesianPosition">
-<area shape="rect" id="node2" href="$classkinova_1_1KinovaComm.html#ac6646ee050da0fdb997682549a147425" title="check if API lost the control of robot. " alt="" coords="217,15,364,57"/>
-<area shape="rect" id="node3" href="$structTrajectoryPoint.html#a1a9f12ad88f5011c6a4644792fa67f99" title="TrajectoryPoint::InitStruct" alt="" coords="205,81,376,108"/>
-<area shape="rect" id="node4" href="$structUserPosition.html#ad682f9be07fa2307028f86624ded2958" title="UserPosition::InitStruct" alt="" coords="425,56,583,83"/>
-<area shape="rect" id="node8" href="$structLimitation.html#a098f4ee5d0eb6baf844ff3164f1a20f6" title="Limitation::InitStruct" alt="" coords="435,107,573,133"/>
-<area shape="rect" id="node5" href="$structCartesianInfo.html#a6d47623939d86124525ab4c8f7a2b8e9" title="CartesianInfo::InitStruct" alt="" coords="638,5,799,32"/>
-<area shape="rect" id="node6" href="$structAngularInfo.html#a092156b3e0e6cb657ed4bb2f6b15a9f0" title="AngularInfo::InitStruct" alt="" coords="644,56,793,83"/>
-<area shape="rect" id="node7" href="$structFingersPosition.html#a2d958923675995d54d56e59f8549495d" title="FingersPosition::InitStruct" alt="" coords="632,107,805,133"/>
-</map>

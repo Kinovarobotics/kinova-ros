@@ -1,5 +1,0 @@
-<map id="DeserializeGlobalTrajectory" name="DeserializeGlobalTrajectory">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a12ec85c0559d8fc2375def0ffd4177c2" title="This function returns informations about the trajectories FIFO stored inside the robotical arm..." alt="" coords="237,31,397,57"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a00ecf5ff05b686b829a58cbf9536aa0c" title="This Moce the robot to the HOME position also known as READY position. " alt="" coords="446,5,535,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a4b3390109ed7e40ecfa412e1eff72331" title="This function is used to run a sequence to estimate the optimal gravity parameters when the robot is ..." alt="" coords="584,31,800,57"/>
-</map>

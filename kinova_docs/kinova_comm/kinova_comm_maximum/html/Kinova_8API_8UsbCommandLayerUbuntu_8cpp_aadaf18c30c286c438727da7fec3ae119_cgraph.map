@@ -1,5 +1,0 @@
-<map id="SetActuatorPID" name="SetActuatorPID">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a2edd3afb68852a11f6806c9f70d1e84e" title="SerializeActuatorPID" alt="" coords="168,5,312,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ae6db6f33d3799faf367495c1f58dbc80" title="BuildSetCommand" alt="" coords="175,56,305,83"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a8df6fa8bf7dbe27dbb41b55ce9744568" title="SendSetCommand" alt="" coords="174,107,306,133"/>
-</map>

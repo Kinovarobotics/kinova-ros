@@ -1,8 +1,0 @@
-<map id="Custom_GetActuatorsPosition" name="Custom_GetActuatorsPosition">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ab9b604613df8c4d45ed1c5f24d6288c2" title="Custom_GetStandardActuatorsInfo" alt="" coords="253,81,480,108"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="539,5,669,32"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="537,56,671,83"/>
-<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a697640826813b76b9bf4e47f92bc860d" title="GetUShortFromVector" alt="" coords="528,107,680,133"/>
-<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="534,157,674,184"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="728,56,787,83"/>
-</map>

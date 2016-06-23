@@ -1,9 +1,0 @@
-<map id="GetProtectionZone" name="GetProtectionZone">
-<area shape="rect" id="node2" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a7682a749d17db06f2b86cb81d200f095" title="PrepareGetPacket" alt="" coords="189,5,318,32"/>
-<area shape="rect" id="node3" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac34eae8ec385607473893f2368af38ff" title="SendGetCommand" alt="" coords="187,56,320,83"/>
-<area shape="rect" id="node5" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#ac3f261b1bbd9e12d63bed4193f685436" title="DeserializeZoneList" alt="" coords="185,107,322,133"/>
-<area shape="rect" id="node4" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#abf846081e3db2d51ff39a0afb2b2738e" title="merge" alt="" coords="400,56,459,83"/>
-<area shape="rect" id="node6" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#affa90a43622b72784bfb1a063c1ce9d3" title="GetIntFromVector" alt="" coords="543,107,670,133"/>
-<area shape="rect" id="node7" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a1daf9621e6543f5300295ebff8c2d7ab" title="DeserializeZone" alt="" coords="371,157,487,184"/>
-<area shape="rect" id="node8" href="$Kinova_8API_8UsbCommandLayerUbuntu_8cpp.html#a854ea22d50e7be0fd6185443b8ab864c" title="GetFloatFromVector" alt="" coords="537,157,677,184"/>
-</map>

@@ -20,7 +20,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-currentJointPosition = [] # number of joints is defined in __main__
+currentJointCommand = [] # number of joints is defined in __main__
 
 def joint_angle_client(angle_set):
     """Send a joint angle goal to the action server."""
@@ -47,24 +47,24 @@ def joint_angle_client(angle_set):
         return None
 
 
-def getCurrentJointPosition(prefix_):
+def getcurrentJointCommand(prefix_):
     # wait to get current position
-    topic_address = '/' + prefix_ + 'driver/out/joint_angles'
-    rospy.Subscriber(topic_address, kinova_msgs.msg.JointAngles, setCurrentJointPosition)
+    topic_address = '/' + prefix_ + 'driver/out/joint_command'
+    rospy.Subscriber(topic_address, kinova_msgs.msg.JointAngles, setcurrentJointCommand)
     rospy.wait_for_message(topic_address, kinova_msgs.msg.JointAngles)
     print 'position listener obtained message for joint position. '
 
 
-def setCurrentJointPosition(feedback):
-    global currentJointPosition
+def setcurrentJointCommand(feedback):
+    global currentJointCommand
 
-    currentJointPosition_str_list = str(feedback).split("\n")
-    for index in range(0,len(currentJointPosition_str_list)):
-        temp_str=currentJointPosition_str_list[index].split(": ")
-        currentJointPosition[index] = float(temp_str[1])
+    currentJointCommand_str_list = str(feedback).split("\n")
+    for index in range(0,len(currentJointCommand_str_list)):
+        temp_str=currentJointCommand_str_list[index].split(": ")
+        currentJointCommand[index] = float(temp_str[1])
 
-    # print 'currentJointPosition is: '
-    # print currentJointPosition
+    # print 'currentJointCommand is: '
+    # print currentJointCommand
 
 
 def argumentParser(argument):
@@ -102,13 +102,13 @@ def kinova_robotTypeParser(kinova_robotType_):
 
 def unitParser(unit, joint_value, relative_):
     """ Argument unit """
-    global currentJointPosition
+    global currentJointCommand
 
     if unit == 'degree':
         joint_degree_command = joint_value
         # get absolute value
         if relative_:
-            joint_degree_absolute_ = [joint_degree_command[i] + currentJointPosition[i] for i in range(0, len(joint_value))]
+            joint_degree_absolute_ = [joint_degree_command[i] + currentJointCommand[i] for i in range(0, len(joint_value))]
         else:
             joint_degree_absolute_ = joint_degree_command
         joint_degree = joint_degree_absolute_
@@ -117,7 +117,7 @@ def unitParser(unit, joint_value, relative_):
         joint_degree_command = list(map(math.degrees, joint_value))
         # get absolute value
         if relative_:
-            joint_degree_absolute_ = [joint_degree_command[i] + currentJointPosition[i] for i in range(0, len(joint_value))]
+            joint_degree_absolute_ = [joint_degree_command[i] + currentJointCommand[i] for i in range(0, len(joint_value))]
         else:
             joint_degree_absolute_ = joint_degree_command
         joint_degree = joint_degree_absolute_
@@ -145,16 +145,16 @@ if __name__ == '__main__':
     kinova_robotTypeParser(args.kinova_robotType)
     rospy.init_node(prefix + 'gripper_workout')
 
-    # currentJointPosition = [0]*arm_joint_number
+    # currentJointCommand = [0]*arm_joint_number
     # KinovaType defines AngularInfo has 6DOF, so for published topics on joints.
-    currentJointPosition = [0]*6
+    currentJointCommand = [0]*6
 
     if len(args.joint_value) != arm_joint_number:
         print('Number of input values {} is not equal to number of joints {}. Please run help to check number of joints with different robot type.'.format(len(args.joint_value), arm_joint_number))
         sys.exit(0)
 
     # get Current finger position if relative position
-    getCurrentJointPosition(prefix)
+    getcurrentJointCommand(prefix)
     joint_degree, joint_radian = unitParser(args.unit, args.joint_value, args.relative)
 
     try:

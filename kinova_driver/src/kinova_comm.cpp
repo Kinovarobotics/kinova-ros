@@ -1141,7 +1141,9 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
     AngularPosition joint_angles;
     memset(&joint_angles, 0, sizeof(joint_angles));  // zero structure
 
-    result = kinova_api_.getAngularPosition(joint_angles);
+    // getAngularPosition will cause arm drop
+    // result = kinova_api_.getAngularPosition(joint_angles);
+    result = kinova_api_.getAngularCommand(joint_angles);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the angular position", result);
