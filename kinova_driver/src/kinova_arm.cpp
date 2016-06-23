@@ -199,26 +199,9 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
  */
 bool KinovaArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res)
 {
-    AngularPosition last_angularcommand;
-    kinova_comm_.getAngularCommand(last_angularcommand);
-    ROS_WARN_STREAM("last_angularcommand:  " << last_angularcommand.Actuators.Actuator1 << ", "
-                    << last_angularcommand.Actuators.Actuator2 << ", "
-                    << last_angularcommand.Actuators.Actuator3 << ", "
-                    << last_angularcommand.Actuators.Actuator4 << ", "
-                    << last_angularcommand.Actuators.Actuator5 << ", "
-                    << last_angularcommand.Actuators.Actuator6 << ". ");
-    CartesianPosition last_cartesiancommand;
-    kinova_comm_.getCartesianCommand(last_cartesiancommand);
-    ROS_WARN_STREAM("last_cartesiancommand:  " << last_cartesiancommand.Coordinates.X << ", "
-                    << last_cartesiancommand.Coordinates.Y << ", "
-                    << last_cartesiancommand.Coordinates.Z << ", "
-                    << last_cartesiancommand.Coordinates.ThetaX << ", "
-                    << last_cartesiancommand.Coordinates.ThetaY << ", "
-                    << last_cartesiancommand.Coordinates.ThetaZ << ". ");
-
-//    kinova_comm_.stopAPI();
-//    res.stop_result = "Arm stopped";
-//    ROS_DEBUG("Arm stop requested");
+    kinova_comm_.stopAPI();
+    res.stop_result = "Arm stopped";
+    ROS_DEBUG("Arm stop requested");
     return true;
 }
 
