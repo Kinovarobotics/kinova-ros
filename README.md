@@ -84,6 +84,15 @@ The Cartesian coordinate of robot root frame is defined by the following rules:
 The current Cartesian position is published via topic: `/'${kinova_robotType}_driver'/out/tool_pose`
 In addition, the wrench of end-effector is published via topic: `/'${kinova_robotType}_driver'/out/tool_wrench`
 
+
+ Another way to control Cartesian position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
+  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200
+  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4a200
+  - open Rviz: rosrun rviz rviz
+  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Cart/update*
+  - Now a cubic with 3 axis (translation) and 3 rings(rotation) should appear at the end-effector, and you can move the robot by drag the axis or rings.
+
+
 ### Finger position control
 Cartesian position control can be realized by calling KinovaComm::setFingerPositions() in customized node, or you may simply call the node `fingers_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of finger command can be by `{turn | mm | percent}`, which refers to turn of motor, milimeter and percentage. The finger is essentially controlled by `turn`, and the rest units are propotional to `turn` for convenience. The value 0 indicates fully open, while *finger_maxTurn* represents a fully close. The value of *finger_maxTurn* may vary due to many factors. A proper reference value for finger turn will be 0 (fully-open) to 6400 (fully-close)  If necessary, please modify this variable in the code. With the option `-v` on, positions in other unit format are printed for convenience. The following code fully close the fingers.
 
