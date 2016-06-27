@@ -35,6 +35,7 @@ boost::shared_ptr<interactive_markers::InteractiveMarkerServer> armJoint_interMa
 interactive_markers::MenuHandler menu_handler;
 
 kinova::KinovaAngles current_joint_command;
+kinova::KinovaPose current_pose_command;
 
 std::string tf_prefix_;
 std::string kinova_robotType_;
@@ -47,6 +48,8 @@ int finger_number_;
 int joint_total_number_;
 
 bool mouse_was_up = true;
+bool marker_6DOF = false;
+bool getCurrentCommand = false;
 // %EndTag(vars)%
 
 // declare processFeedback(), action when interative marker is clicked.
@@ -142,11 +145,11 @@ void make1DofMarker(const std::string& frame_id, const std::string& axis, unsign
 
 
 // %Tag(6DOF)%
-void make6DofMarker( bool fixed, unsigned int interaction_mode, const tf::Vector3& position, bool show_6dof )
+void make6DofMarker( bool fixed, unsigned int interaction_mode, const tf::Pose pose, bool show_6dof )
 {
     InteractiveMarker int_marker;
-    int_marker.header.frame_id = tf_prefix_+"_end_effector";
-    tf::pointTFToMsg(position, int_marker.pose.position);
+    int_marker.header.frame_id = tf_prefix_+"_link_base";
+    tf::poseTFToMsg(pose, int_marker.pose);
     int_marker.scale = 0.1;
     int_marker.name = "cartesian_6dof";
     int_marker.description = "6-DOF Cartesian Control";
@@ -351,23 +354,6 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
             if (feedback->marker_name == "cartesian_6dof")
             {
                 ROS_INFO_STREAM("cartesian_6dof control mode.");
-                ROS_INFO_STREAM( s.str() << ": mouse DOWN (refers to current status): "
-                                 << "\nposition = "
-                                 << feedback->pose.position.x
-                                 << ", " << feedback->pose.position.y
-                                 << ", " << feedback->pose.position.z
-                                 << "\norientation = "
-                                 << "w: " << feedback->pose.orientation.w
-                                 << ", x: " << feedback->pose.orientation.x
-                                 << ", y: " << feedback->pose.orientation.y
-                                 << ", z: " << feedback->pose.orientation.z
-                                 << "\nRollPitchYaw = "
-                                 << ": Roll: " << roll_mousedown
-                                 << ", Pitch: " << pitch_mousedown
-                                 << ", Yaw: " << yaw_mousedown
-                                 << "\nframe: " << feedback->header.frame_id
-                                 << " time: " << feedback->header.stamp.sec << "sec, "
-                                 << feedback->header.stamp.nsec << " nsec" );
             }
             else
             {
@@ -389,27 +375,13 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
         tf::Matrix3x3(quaternion_mouseup).getRPY(roll_mouseup, pitch_mouseup, yaw_mouseup);
         if (feedback->marker_name == "cartesian_6dof")
         {
-            tf::TransformListener transform_listener;
+//            tf::TransformListener transform_listener;
             tf::StampedTransform transform;
             geometry_msgs::PoseStamped pose_endeffector;
             pose_endeffector.header.frame_id = tf_prefix_+"_link_base";
             pose_endeffector.header.stamp = ros::Time::now();
 
-            try{
-                ros::Time now = ros::Time::now();
-                transform_listener.waitForTransform(tf_prefix_+"_link_base",tf_prefix_+"_end_effector", now, ros::Duration(3.0));
-                transform_listener.lookupTransform(tf_prefix_+"_link_base",tf_prefix_+"_end_effector", ros::Time(0), transform);
-            }
-            catch(tf::TransformException exception)
-            {
-                ROS_ERROR("Error occured during transformation from end_effector to link_base: %s", exception.what());
-                ros::Duration(1.0).sleep();
-            }
-            pose_endeffector.pose.position.x = transform.getOrigin().x();
-            pose_endeffector.pose.position.y = transform.getOrigin().y();
-            pose_endeffector.pose.position.z = transform.getOrigin().z();
-            tf::quaternionTFToMsg(transform.getRotation().normalize(), pose_endeffector.pose.orientation);
-
+            pose_endeffector.pose = feedback->pose;
             ROS_INFO_STREAM( s.str() << ": mouse UP (refers to command): "
                              << "\nposition = "
                              << feedback->pose.position.x
@@ -429,7 +401,7 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
                              << feedback->header.stamp.nsec << " nsec" );
 
             ROS_INFO_STREAM("POSE_endeffector parent frame is : " << pose_endeffector.header.frame_id);
-//            sendArmPoseGoal(pose_endeffector);
+            sendArmPoseGoal(pose_endeffector);
             // armPose_interMark_server->applyChanges();
         }
         else
@@ -469,6 +441,28 @@ void currentJointsFeedback(const kinova_msgs::JointAnglesConstPtr joint_command)
 }
 // %EndTag(CurrentJoint)%
 
+// %Tag(CurrentPose)%
+void currentPoseFeedback(const kinova_msgs::KinovaPoseConstPtr pose_command)
+{
+    current_pose_command.X = pose_command->X;
+    current_pose_command.Y = pose_command->Y;
+    current_pose_command.Z = pose_command->Z;
+    current_pose_command.ThetaX = pose_command->ThetaX;
+    current_pose_command.ThetaY = pose_command->ThetaY;
+    current_pose_command.ThetaZ = pose_command->ThetaZ;
+
+    getCurrentCommand = true;
+
+//    if (marker_6DOF == false) //cannot see the markers ...
+//    {
+//        tf::Vector3 position = tf::Vector3(current_pose_command.X, current_pose_command.Y, current_pose_command.Z);
+//        make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, position, true );
+//        ROS_WARN_STREAM("current_pose_command is: " << current_pose_command.X << ", " << current_pose_command.Y << ", " << current_pose_command.Z);
+//        marker_6DOF = true;
+//    }
+}
+
+// %EndTag(CurrentPose)%
 ////////////////////////////////////////////////////////////////////////////////////
 /// \brief main
 /// \param argc
@@ -511,6 +505,7 @@ int main(int argc, char** argv)
     ros::NodeHandle nh("~");
 
     ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_command", 1, &currentJointsFeedback);
+    ros::Subscriber armCartesian_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/cartesian_command", 1, &currentPoseFeedback);
 
     armJoint_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Joint","",false) );
     armPose_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Cart","",false) );
@@ -519,22 +514,25 @@ int main(int argc, char** argv)
 
 
     // %Tag(CreatInteractiveMarkers)%
-    tf::Vector3 position;
-    position = tf::Vector3(0, 0, 0); // Simple 6-DOF Control
-    make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, position, true );
 
-    position = tf::Vector3(0, 0, 0);
+    // Cartesian Control
+
+    tf::Pose pose; // home position for j2n6
+    pose.setOrigin(tf::Vector3(0.212322428823, -0.257192730904, 0.509634077549));
+    pose.setRotation(tf::Quaternion(0.645343005657, 0.319322735071, 0.423950701952, 0.549391567707));
+    make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, pose, true );
+    // cannot read current pose before create marker.
+    ROS_WARN_STREAM("current_pose_command is: " << current_pose_command.X << ", " << current_pose_command.Y << ", " << current_pose_command.Z);
+
+    // Joint Control
+    tf::Vector3 position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_1", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "1st Axis", "marker_joint1");
-    position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_2", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "2nd Axis", "marker_joint2");
-    position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_3", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "3rd Axis", "marker_joint3");
-    position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_4", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "4th Axis", "marker_joint4");
     if(arm_joint_number_==6)
     {
-        position = tf::Vector3(0, 0, 0);
-        make1DofMarker(tf_prefix_+"_link_5", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "5th Axis", "marker_joint5");    position = tf::Vector3(0, 0, 0);
+        make1DofMarker(tf_prefix_+"_link_5", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "5th Axis", "marker_joint5");
         make1DofMarker(tf_prefix_+"_link_6", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "6th Axis", "marker_joint6");
     }
     // %EndTag(CreatInteractiveMarkers)%
@@ -543,6 +541,7 @@ int main(int argc, char** argv)
     armPose_interMark_server->applyChanges();
 
     ros::spin();
+
 
     armJoint_interMark_server.reset();
     armPose_interMark_server.reset();
