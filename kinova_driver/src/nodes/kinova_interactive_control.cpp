@@ -33,7 +33,9 @@ typedef actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction> Fin
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> armPose_interMark_server;
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> armJoint_interMark_server;
 interactive_markers::MenuHandler menu_handler;
-sensor_msgs::JointState current_joint_state;
+
+kinova::KinovaAngles current_joint_command;
+
 std::string tf_prefix_;
 std::string kinova_robotType_;
 char robot_category_;
@@ -257,10 +259,10 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
     ArmJoint_actionlibClient client("/"+tf_prefix_+"_driver/joints_action/joint_angles", true);
     kinova_msgs::ArmJointAnglesGoal goal;
 
-    goal.angles.joint1 = current_joint_state.position[0]*180/M_PI;
-    goal.angles.joint2 = current_joint_state.position[1]*180/M_PI;
-    goal.angles.joint3 = current_joint_state.position[2]*180/M_PI;
-    goal.angles.joint4 = current_joint_state.position[3]*180/M_PI;
+    goal.angles.joint1 = current_joint_command.Actuator1;
+    goal.angles.joint2 = current_joint_command.Actuator2;
+    goal.angles.joint3 = current_joint_command.Actuator3;
+    goal.angles.joint4 = current_joint_command.Actuator4;
     if(arm_joint_number_==4)
     {
         goal.angles.joint5 = 0.0;
@@ -268,8 +270,8 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
     }
     else if(arm_joint_number_==6)
     {
-        goal.angles.joint5 = current_joint_state.position[4]*180/M_PI;
-        goal.angles.joint6 = current_joint_state.position[5]*180/M_PI;
+        goal.angles.joint5 = current_joint_command.Actuator5;
+        goal.angles.joint6 = current_joint_command.Actuator6;
     }
 
     client.waitForServer();
@@ -305,11 +307,11 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
 
     if (arm_joint_number_==6)
     {
-        ROS_INFO( " current joint is as : %f, %f, %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3], current_joint_state.position[4], current_joint_state.position[5]);
+        ROS_INFO( " current joint command is as : %f, %f, %f, %f, %f, %f (degree)\n",  current_joint_command.Actuator1, current_joint_command.Actuator2, current_joint_command.Actuator3, current_joint_command.Actuator4, current_joint_command.Actuator5, current_joint_command.Actuator6);
     }
     else if(arm_joint_number_==4)
     {
-        ROS_INFO( " current joint is as : %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3]);
+        ROS_INFO( " current joint command is as : %f, %f, %f, %f (degree)\n",  current_joint_command.Actuator1, current_joint_command.Actuator2, current_joint_command.Actuator3, current_joint_command.Actuator4);
     }
     ROS_INFO( " joint goal is set as : %f, %f, %f, %f, %f, %f (degree)\n",  goal.angles.joint1, goal.angles.joint2, goal.angles.joint3, goal.angles.joint4, goal.angles.joint5, goal.angles.joint6);
 
@@ -456,40 +458,14 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
 
 
 // %Tag(CurrentJoint)%
-void currentJointsFeedback(const sensor_msgs::JointStateConstPtr joint_state)
+void currentJointsFeedback(const kinova_msgs::JointAnglesConstPtr joint_command)
 {
-    std::vector<std::string> joint_names_;
-    joint_names_.resize(joint_total_number_);
-
-    joint_names_[0] =  tf_prefix_+"_joint_1";
-    joint_names_[1] =  tf_prefix_+"_joint_2";
-    joint_names_[2] =  tf_prefix_+"_joint_3";
-    joint_names_[3] =  tf_prefix_+"_joint_4";
-    if(arm_joint_number_==6)
-    {
-        joint_names_[4] =  tf_prefix_+"_joint_5";
-        joint_names_[5] =  tf_prefix_+"_joint_6";
-    }
-
-    if (finger_number_ ==2)
-    {
-        joint_names_[joint_total_number_-2] =  tf_prefix_+"_joint_finger_1";
-        joint_names_[joint_total_number_-1] =  tf_prefix_+"_joint_finger_2";
-    }
-    else if(finger_number_ ==3)
-    {
-        joint_names_[joint_total_number_-3] =  tf_prefix_+"_joint_finger_1";
-        joint_names_[joint_total_number_-2] =  tf_prefix_+"_joint_finger_2";
-        joint_names_[joint_total_number_-1] =  tf_prefix_+"_joint_finger_3";
-    }
-    current_joint_state.name = joint_names_;
-
-    current_joint_state.header.stamp = ros::Time::now();
-    current_joint_state.position.resize(joint_total_number_);
-    current_joint_state.position = joint_state->position;
-    current_joint_state.velocity = joint_state->velocity;
-    current_joint_state.effort = joint_state->effort;
-
+    current_joint_command.Actuator1 = joint_command->joint1;
+    current_joint_command.Actuator2 = joint_command->joint2;
+    current_joint_command.Actuator3 = joint_command->joint3;
+    current_joint_command.Actuator4 = joint_command->joint4;
+    current_joint_command.Actuator5 = joint_command->joint5;
+    current_joint_command.Actuator6 = joint_command->joint6;
 }
 // %EndTag(CurrentJoint)%
 
@@ -534,7 +510,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, tf_prefix_+"_interactive_control");
     ros::NodeHandle nh("~");
 
-    ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_state", 1, &currentJointsFeedback);
+    ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_command", 1, &currentJointsFeedback);
 
     armJoint_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Joint","",false) );
     armPose_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Cart","",false) );
