@@ -33,7 +33,9 @@ typedef actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction> Fin
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> armPose_interMark_server;
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> armJoint_interMark_server;
 interactive_markers::MenuHandler menu_handler;
-sensor_msgs::JointState current_joint_state;
+
+kinova::KinovaAngles current_joint_command;
+
 std::string tf_prefix_;
 std::string kinova_robotType_;
 char robot_category_;
@@ -136,17 +138,131 @@ void make1DofMarker(const std::string& frame_id, const std::string& axis, unsign
     //  if (interaction_mode != visualization_msgs::InteractiveMarkerControl::NONE)
     //    menu_handler.apply( *server, int_marker.name );
 }
-// %EndTag(6DOF)%position
+// %EndTag(1DOF)%position
+
+
+// %Tag(6DOF)%
+void make6DofMarker( bool fixed, unsigned int interaction_mode, const tf::Vector3& position, bool show_6dof )
+{
+    InteractiveMarker int_marker;
+    int_marker.header.frame_id = tf_prefix_+"_end_effector";
+    tf::pointTFToMsg(position, int_marker.pose.position);
+    int_marker.scale = 0.1;
+    int_marker.name = "cartesian_6dof";
+    int_marker.description = "6-DOF Cartesian Control";
+
+    // insert a box
+    makeBoxControl(int_marker);
+    int_marker.controls[0].interaction_mode = interaction_mode;
+
+    InteractiveMarkerControl control;
+
+    if ( fixed )
+    {
+        int_marker.name += "_fixed";
+        int_marker.description += "\n(fixed orientation)";
+        control.orientation_mode = InteractiveMarkerControl::FIXED;
+    }
+
+    if(show_6dof)
+    {
+        control.orientation.w = 1;
+        control.orientation.x = 1;
+        control.orientation.y = 0;
+        control.orientation.z = 0;
+        control.name = "rotate_x";
+        control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
+        int_marker.controls.push_back(control);
+        control.name = "move_x";
+        control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
+        int_marker.controls.push_back(control);
+
+        control.orientation.w = 1;
+        control.orientation.x = 0;
+        control.orientation.y = 1;
+        control.orientation.z = 0;
+        control.name = "rotate_y";
+        control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
+        int_marker.controls.push_back(control);
+        control.name = "move_y";
+        control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
+        int_marker.controls.push_back(control);
+
+        control.orientation.w = 1;
+        control.orientation.x = 0;
+        control.orientation.y = 0;
+        control.orientation.z = 1;
+        control.name = "rotate_z";
+        control.interaction_mode = InteractiveMarkerControl::ROTATE_AXIS;
+        int_marker.controls.push_back(control);
+        control.name = "move_z";
+        control.interaction_mode = InteractiveMarkerControl::MOVE_AXIS;
+        int_marker.controls.push_back(control);
+    }
+
+    armPose_interMark_server->insert(int_marker);
+    //  armPose_interMark_server->setCallback(int_marker.name, &processFeedback, visualization_msgs::InteractiveMarkerFeedback::MOUSE_UP);
+    armPose_interMark_server->setCallback(int_marker.name, &processFeedback);
+    //  if (interaction_mode != visualization_msgs::InteractiveMarkerControl::NONE)
+    //    menu_handler.apply( *server, int_marker.name );
+}
+// %EndTag(6DOF)%
+
+
+// %Tag(send actionlib goals)%
+void sendFingerGoal(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback)
+{
+    Finger_actionlibClient client("/"+tf_prefix_+"_driver/fingers/finger_positions", true);
+    kinova_msgs::SetFingersPositionGoal goal;
+
+    client.waitForServer();
+    // limit the range of marker to [0 10] before mapping to finger position
+    float markerPos;
+    float maxMarkerPose = 2.0f;
+    markerPos = std::min(maxMarkerPose, std::max(0.0f,float(feedback->pose.position.x)));
+    // map marker position to gripper position
+    goal.fingers.finger1 = markerPos/maxMarkerPose*5000;
+    goal.fingers.finger2 = markerPos/maxMarkerPose*5000;
+    goal.fingers.finger3 = 0.0;
+    client.sendGoal(goal);
+
+    ROS_INFO("client send goal to Finger actionlib: %f \n", goal.fingers.finger1);
+}
+
+
+void sendArmPoseGoal(geometry_msgs::PoseStamped &endeffector_pose)
+{
+    ArmPose_actionlibClient client("/"+tf_prefix_+"_driver/pose_action/tool_pose", true);
+    kinova_msgs::ArmPoseGoal goal;
+    client.waitForServer();
+
+    goal.pose = endeffector_pose;
+
+    ROS_INFO_STREAM("Goal parent frame is : " << goal.pose.header.frame_id);
+
+    ROS_INFO_STREAM("Goal to arm pose actionlib: \n"
+                    << "  x: " << goal.pose.pose.position.x
+                    << ", y: " << goal.pose.pose.position.y
+                    << ", z: " << goal.pose.pose.position.z
+                    << ", qx: " << goal.pose.pose.orientation.x
+                    << ", qy: " << goal.pose.pose.orientation.y
+                    << ", qz: " << goal.pose.pose.orientation.z
+                    << ", qw: " << goal.pose.pose.orientation.w);
+
+    client.sendGoal(goal);
+
+}
+
 
 void sendArmJointGoal(const std::string marker_name, double joint_offset)
 {
     ArmJoint_actionlibClient client("/"+tf_prefix_+"_driver/joints_action/joint_angles", true);
     kinova_msgs::ArmJointAnglesGoal goal;
 
-    goal.angles.joint1 = current_joint_state.position[0]*180/M_PI;
-    goal.angles.joint2 = current_joint_state.position[1]*180/M_PI;
-    goal.angles.joint3 = current_joint_state.position[2]*180/M_PI;
-    goal.angles.joint4 = current_joint_state.position[3]*180/M_PI;
+    goal.angles.joint1 = current_joint_command.Actuator1;
+    goal.angles.joint2 = current_joint_command.Actuator2;
+    goal.angles.joint3 = current_joint_command.Actuator3;
+    goal.angles.joint4 = current_joint_command.Actuator4;
     if(arm_joint_number_==4)
     {
         goal.angles.joint5 = 0.0;
@@ -154,8 +270,8 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
     }
     else if(arm_joint_number_==6)
     {
-        goal.angles.joint5 = current_joint_state.position[4]*180/M_PI;
-        goal.angles.joint6 = current_joint_state.position[5]*180/M_PI;
+        goal.angles.joint5 = current_joint_command.Actuator5;
+        goal.angles.joint6 = current_joint_command.Actuator6;
     }
 
     client.waitForServer();
@@ -191,20 +307,18 @@ void sendArmJointGoal(const std::string marker_name, double joint_offset)
 
     if (arm_joint_number_==6)
     {
-        ROS_INFO( " current joint is as : %f, %f, %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3], current_joint_state.position[4], current_joint_state.position[5]);
+        ROS_INFO( " current joint command is as : %f, %f, %f, %f, %f, %f (degree)\n",  current_joint_command.Actuator1, current_joint_command.Actuator2, current_joint_command.Actuator3, current_joint_command.Actuator4, current_joint_command.Actuator5, current_joint_command.Actuator6);
     }
     else if(arm_joint_number_==4)
     {
-        ROS_INFO( " current joint is as : %f, %f, %f, %f (degree)\n",  current_joint_state.position[0], current_joint_state.position[1], current_joint_state.position[2], current_joint_state.position[3]);
+        ROS_INFO( " current joint command is as : %f, %f, %f, %f (degree)\n",  current_joint_command.Actuator1, current_joint_command.Actuator2, current_joint_command.Actuator3, current_joint_command.Actuator4);
     }
     ROS_INFO( " joint goal is set as : %f, %f, %f, %f, %f, %f (degree)\n",  goal.angles.joint1, goal.angles.joint2, goal.angles.joint3, goal.angles.joint4, goal.angles.joint5, goal.angles.joint6);
 
     client.sendGoal(goal);
-
 }
-
-
 // %EndTag(send actionlib goals)%
+
 
 // %Tag(processFeedback)%
 void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
@@ -344,40 +458,14 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
 
 
 // %Tag(CurrentJoint)%
-void currentJointsFeedback(const sensor_msgs::JointStateConstPtr joint_state)
+void currentJointsFeedback(const kinova_msgs::JointAnglesConstPtr joint_command)
 {
-    std::vector<std::string> joint_names_;
-    joint_names_.resize(joint_total_number_);
-
-    joint_names_[0] =  tf_prefix_+"_joint_1";
-    joint_names_[1] =  tf_prefix_+"_joint_2";
-    joint_names_[2] =  tf_prefix_+"_joint_3";
-    joint_names_[3] =  tf_prefix_+"_joint_4";
-    if(arm_joint_number_==6)
-    {
-        joint_names_[4] =  tf_prefix_+"_joint_5";
-        joint_names_[5] =  tf_prefix_+"_joint_6";
-    }
-
-    if (finger_number_ ==2)
-    {
-        joint_names_[joint_total_number_-2] =  tf_prefix_+"_joint_finger_1";
-        joint_names_[joint_total_number_-1] =  tf_prefix_+"_joint_finger_2";
-    }
-    else if(finger_number_ ==3)
-    {
-        joint_names_[joint_total_number_-3] =  tf_prefix_+"_joint_finger_1";
-        joint_names_[joint_total_number_-2] =  tf_prefix_+"_joint_finger_2";
-        joint_names_[joint_total_number_-1] =  tf_prefix_+"_joint_finger_3";
-    }
-    current_joint_state.name = joint_names_;
-
-    current_joint_state.header.stamp = ros::Time::now();
-    current_joint_state.position.resize(joint_total_number_);
-    current_joint_state.position = joint_state->position;
-    current_joint_state.velocity = joint_state->velocity;
-    current_joint_state.effort = joint_state->effort;
-
+    current_joint_command.Actuator1 = joint_command->joint1;
+    current_joint_command.Actuator2 = joint_command->joint2;
+    current_joint_command.Actuator3 = joint_command->joint3;
+    current_joint_command.Actuator4 = joint_command->joint4;
+    current_joint_command.Actuator5 = joint_command->joint5;
+    current_joint_command.Actuator6 = joint_command->joint6;
 }
 // %EndTag(CurrentJoint)%
 
@@ -422,17 +510,18 @@ int main(int argc, char** argv)
     ros::init(argc, argv, tf_prefix_+"_interactive_control");
     ros::NodeHandle nh("~");
 
-    ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_state", 1, &currentJointsFeedback);
+    ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_command", 1, &currentJointsFeedback);
 
     armJoint_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Joint","",false) );
+    armPose_interMark_server.reset( new interactive_markers::InteractiveMarkerServer(tf_prefix_+"_interactive_control_Cart","",false) );
 
     ros::Duration(0.1).sleep();
 
 
     // %Tag(CreatInteractiveMarkers)%
     tf::Vector3 position;
-//    position = tf::Vector3(0, 0, 0); // Simple 6-DOF Control
-//    make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, position, true );
+    position = tf::Vector3(0, 0, 0); // Simple 6-DOF Control
+    make6DofMarker( false, visualization_msgs::InteractiveMarkerControl::NONE, position, true );
 
     position = tf::Vector3(0, 0, 0);
     make1DofMarker(tf_prefix_+"_link_1", "z", visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS, position, "1st Axis", "marker_joint1");
@@ -451,10 +540,12 @@ int main(int argc, char** argv)
     // %EndTag(CreatInteractiveMarkers)%
 
     armJoint_interMark_server->applyChanges();
+    armPose_interMark_server->applyChanges();
 
     ros::spin();
 
     armJoint_interMark_server.reset();
+    armPose_interMark_server.reset();
 
     return 0;
 

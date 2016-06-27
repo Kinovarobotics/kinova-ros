@@ -22,7 +22,7 @@ finger_number = 0
 prefix = 'NO_ROBOT_TYPE_DEFINED_'
 finger_maxDist = 18.9/2/1000  # max distance for one finger
 finger_maxTurn = 6800  # max thread rotation for one finger
-currentCartesianCommand = [0.21287, -0.25666, 0.50763, 0.64483, 0.31765, 0.42573, 0.54957] # default home in unit mq
+currentCartesianCommand = [0.212322831154, -0.257197618484, 0.509646713734, 1.63771402836, 1.11316478252, 0.134094119072] # default home in unit mq
 
 
 def cartesian_pose_client(position, orientation):
@@ -106,12 +106,13 @@ def setcurrentCartesianCommand(feedback):
     global currentCartesianCommand
 
     currentCartesianCommand_str_list = str(feedback).split("\n")
+
     for index in range(0,len(currentCartesianCommand_str_list)):
         temp_str=currentCartesianCommand_str_list[index].split(": ")
         currentCartesianCommand[index] = float(temp_str[1])
     # the following directly reading only read once and didn't update the value.
     # currentCartesianCommand = [feedback.X, feedback.Y, feedback.Z, feedback.ThetaX, feedback.ThetaY, feedback.Z] 
-    # print 'currentCartesianCommand is: ', currentCartesianCommand
+    # print 'currentCartesianCommand in setcurrentCartesianCommand is: ', currentCartesianCommand
 
 
 def argumentParser(argument_):
@@ -165,9 +166,9 @@ def unitParser(unit_, pose_value_, relative_):
 
     if unit_ == 'mq':
         if relative_:
-            orientation_q_list = EulerXYZ2Quaternion(currentCartesianCommand[3:])
-            orientation_q = [orientation_[i] + orientation_q_list[3+i] for i in range(0,4)]
-            print 'Please be aware that relative motion to Quaternion is not intuitive.'
+            orientation_XYZ = Quaternion2EulerXYZ(orientation_)
+            orientation_xyz_list = [orientation_XYZ[i] + currentCartesianCommand[3+i] for i in range(0,3)]
+            orientation_q = EulerXYZ2Quaternion(orientation_xyz_list)
         else:
             orientation_q = orientation_
 
