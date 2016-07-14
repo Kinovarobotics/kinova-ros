@@ -91,7 +91,9 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     // updating the joint_state topic.
     node_handle_.param("convert_joint_velocities", convert_joint_velocities_, true);
 
-    joint_names_.resize(JACO_JOINTS_COUNT);
+    robot_type = jaco_comm_.robotType();
+    jaco_joints_count = robot_type == ROBOT_TYPE_JACO ? JACO_JOINT_COUNT : MICO_JOINT_COUNT;
+    joint_names_.resize(jaco_joints_count);
     joint_names_[0] = tf_prefix_ + "joint_1";
     joint_names_[1] = tf_prefix_ + "joint_2";
     joint_names_[2] = tf_prefix_ + "joint_3";
@@ -100,7 +102,9 @@ JacoArm::JacoArm(JacoComm &arm, const ros::NodeHandle &nodeHandle)
     joint_names_[5] = tf_prefix_ + "joint_6";
     joint_names_[6] = tf_prefix_ + "joint_finger_1";
     joint_names_[7] = tf_prefix_ + "joint_finger_2";
-    joint_names_[8] = tf_prefix_ + "joint_finger_3";
+    if(robot_type == ROBOT_TYPE_JACO) {
+        joint_names_[8] = tf_prefix_ + "joint_finger_3";
+    }
 
     status_timer_ = node_handle_.createTimer(ros::Duration(status_interval_seconds_),
                                            &JacoArm::statusTimer, this);
@@ -315,7 +319,7 @@ void JacoArm::publishJointAngles(void)
     // Query arm for current joint angles
     JacoAngles current_angles;
     jaco_comm_.getJointAngles(current_angles);
-    jaco_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg();
+    jaco_msgs::JointAngles jaco_angles = current_angles.constructAnglesMsg(robot_type);
 
     jaco_angles.joint1 = current_angles.Actuator1;
     jaco_angles.joint2 = current_angles.Actuator2;
@@ -329,23 +333,25 @@ void JacoArm::publishJointAngles(void)
     joint_state.header.stamp = ros::Time::now();
 
     // Transform from Kinova DH algorithm to physical angles in radians, then place into vector array
-    joint_state.position.resize(9);
+    joint_state.position.resize(jaco_joints_count);
 
-    double j6o = jaco_comm_.robotType() == 2 ? 270.0 : 260.0;
+    double j6o = robot_type == ROBOT_TYPE_JACO ? JACO_JOINT_2_ANGLE : MICO_JOINT_2_ANGLE;
     joint_state.position[0] = (180- jaco_angles.joint1) * (PI / 180);
     joint_state.position[1] = (jaco_angles.joint2 - j6o) * (PI / 180);
     joint_state.position[2] = (90-jaco_angles.joint3) * (PI / 180);
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
-    joint_state.position[5] = (270-jaco_angles.joint6) * (PI / 180);
+    joint_state.position[5] = (j6o-jaco_angles.joint6) * (PI / 180);
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
-    joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
+    if(robot_type == ROBOT_TYPE_JACO) {
+        joint_state.position[8] = finger_conv_ratio_ * fingers.Finger3;
+    }
 
     // Joint velocities
     JacoAngles current_vels;
     jaco_comm_.getJointVelocities(current_vels);
-    joint_state.velocity.resize(9);
+    joint_state.velocity.resize(jaco_joints_count);
     joint_state.velocity[0] = current_vels.Actuator1;
     joint_state.velocity[1] = current_vels.Actuator2;
     joint_state.velocity[2] = current_vels.Actuator3;
@@ -369,12 +375,14 @@ void JacoArm::publishJointAngles(void)
     // No velocity for the fingers:
     joint_state.velocity[6] = 0.0;
     joint_state.velocity[7] = 0.0;
-    joint_state.velocity[8] = 0.0;
+    if(robot_type==ROBOT_TYPE_JACO){
+        joint_state.velocity[8] = 0.0;
+    }
 
     // Joint torques (effort)
     // NOTE: Currently invalid.
     JacoAngles joint_tqs;
-    joint_state.effort.resize(9);
+    joint_state.effort.resize(jaco_joints_count);
     joint_state.effort[0] = joint_tqs.Actuator1;
     joint_state.effort[1] = joint_tqs.Actuator2;
     joint_state.effort[2] = joint_tqs.Actuator3;
@@ -383,7 +391,9 @@ void JacoArm::publishJointAngles(void)
     joint_state.effort[5] = joint_tqs.Actuator6;
     joint_state.effort[6] = 0.0;
     joint_state.effort[7] = 0.0;
-    joint_state.effort[8] = 0.0;
+    if(robot_type==ROBOT_TYPE_JACO){
+        joint_state.effort[8] = 0.0;
+    }
 
     ROS_DEBUG_THROTTLE(0.1,
                        "Raw joint torques: %f %f %f %f %f %f",

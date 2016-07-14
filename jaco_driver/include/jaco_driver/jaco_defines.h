@@ -1,0 +1,11 @@
+#ifndef JACO_DEFINES_H
+#define JACO_DEFINES_H
+
+#define ROBOT_TYPE_JACO 0
+#define ROBOT_TYPE_MICO 1
+#define JACO_JOINT_2_ANGLE 260
+#define MICO_JOINT_2_ANGLE 270
+#define JACO_JOINT_COUNT 9
+#define MICO_JOINT_COUNT 8
+
+#endif

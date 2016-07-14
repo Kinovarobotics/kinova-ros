@@ -657,6 +657,52 @@ void JacoComm::setCartesianForceMinMax(const CartesianInfo &min, const Cartesian
 }
 
 /*!
+ * \brief Initializes trajectory.
+ */
+void JacoComm::initTrajectory(void)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    int result = ERROR_NOT_INITIALIZED;
+
+    if (isStopped())
+    {
+        ROS_INFO("The trajectory init is aborted because the arm is stopped");
+        throw JacoCommException("The trajectory init is aborted because the arm is stopped", result);
+    }
+
+    result = jaco_api_.eraseAllTrajectories();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could empty trajectories inside the robotical arm's FIFO", result);
+    }
+
+    startAPI();
+
+    result = jaco_api_.setAngularControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not set angular control", result);
+    }
+}
+
+/*!
+ * \brief Adds a point to jaco's basic trajectory.
+ */
+void JacoComm::addTrajectoryPoint(const TrajectoryPoint &point)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    int result = NO_ERROR_KINOVA;
+
+    result = jaco_api_.sendBasicTrajectory(point);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw JacoCommException("Could not add point to the trajectory", result);
+    }
+}
+
+/*!
  * \brief Start cartesian force control.
  */
 void JacoComm::startForceControl()

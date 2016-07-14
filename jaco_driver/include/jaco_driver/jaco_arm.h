@@ -34,13 +34,11 @@
 #include "kinova/KinovaTypes.h"
 #include "jaco_driver/jaco_comm.h"
 #include "jaco_driver/jaco_api.h"
+#include "jaco_driver/jaco_defines.h"
 
 
 namespace jaco
 {
-
-// Maximum number of joints on Jaco-like robots:
-static const int     JACO_JOINTS_COUNT = 9;
 
 class JacoArm
 {
@@ -121,6 +119,9 @@ class JacoArm
     ros::Time last_cartesian_vel_cmd_time_;
 
     std::vector< std::string > joint_names_;
+
+    int jaco_joints_count;
+    int robot_type;
 };
 
 }  // namespace jaco

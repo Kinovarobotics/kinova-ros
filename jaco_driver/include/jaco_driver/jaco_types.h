@@ -54,6 +54,7 @@
 
 #include <string>
 
+#include "jaco_driver/jaco_defines.h"
 
 namespace jaco
 {
@@ -91,10 +92,10 @@ class JacoAngles : public AngularInfo
 {
  public:
     JacoAngles() {}
-    explicit JacoAngles(const jaco_msgs::JointAngles &angles);
+    explicit JacoAngles(const jaco_msgs::JointAngles &angles, int robot_type);
     explicit JacoAngles(const AngularInfo &angles);
 
-    jaco_msgs::JointAngles constructAnglesMsg();
+    jaco_msgs::JointAngles constructAnglesMsg(int robot_type);
     bool isCloseToOther(const JacoAngles &, float tolerance) const;
 };
 

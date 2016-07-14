@@ -78,6 +78,7 @@ JacoAnglesActionServer::~JacoAnglesActionServer()
 
 void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalConstPtr &goal)
 {
+    int robot_type = arm_comm_.robotType();
     jaco_msgs::ArmJointAnglesFeedback feedback;
     jaco_msgs::ArmJointAnglesResult result;
     JacoAngles current_joint_angles;
@@ -90,7 +91,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
         if (arm_comm_.isStopped())
         {
             ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
-            result.angles = current_joint_angles.constructAnglesMsg();
+            result.angles = current_joint_angles.constructAnglesMsg(robot_type);
             action_server_.setAborted(result);
             return;
         }
@@ -98,7 +99,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
         last_nonstall_time_ = current_time;
         last_nonstall_angles_ = current_joint_angles;
 
-        JacoAngles target(goal->angles);
+        JacoAngles target(goal->angles, robot_type);
         arm_comm_.setJointAngles(target);
 
         // Loop until the action completed, is preempted, or fails in some way.
@@ -110,7 +111,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
 
             if (action_server_.isPreemptRequested() || !ros::ok())
             {
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(robot_type);
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
@@ -118,20 +119,20 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
             }
             else if (arm_comm_.isStopped())
             {
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(robot_type);
                 action_server_.setAborted(result);
                 return;
             }
 
             arm_comm_.getJointAngles(current_joint_angles);
             current_time = ros::Time::now();
-            feedback.angles = current_joint_angles.constructAnglesMsg();
+            feedback.angles = current_joint_angles.constructAnglesMsg(robot_type);
             action_server_.publishFeedback(feedback);
 
             if (target.isCloseToOther(current_joint_angles, tolerance_))
             {
                 // Check if the action has succeeeded
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(robot_type);
                 action_server_.setSucceeded(result);
                 return;
             }
@@ -144,7 +145,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
             else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
             {
                 // Check if the full stall condition has been meet
-                result.angles = current_joint_angles.constructAnglesMsg();
+                result.angles = current_joint_angles.constructAnglesMsg(robot_type);
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
@@ -156,7 +157,7 @@ void JacoAnglesActionServer::actionCallback(const jaco_msgs::ArmJointAnglesGoalC
     }
     catch(const std::exception& e)
     {
-        result.angles = current_joint_angles.constructAnglesMsg();
+        result.angles = current_joint_angles.constructAnglesMsg(robot_type);
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
     }

@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="use_urdf" default="false"/>
+  <arg name="use_urdf" default="true"/>
 
   <node name="mico_arm_driver" pkg="jaco_driver" type="jaco_arm_driver" output="screen" cwd="node">
     <!-- Set this parameter to use a specific arm on your system    --> 
