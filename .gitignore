@@ -1,6 +1,7 @@
 #Back files
 *.*~
-
+*.autosave
+*.orig
 # Compiled Object files
 *.slo
 *.lo
@@ -51,6 +52,3 @@ kvh_driver/src/kvh_driver/
 
 # Python
 *.pyc
-
-# Project specific
-jaco_driver/jaco_msgs
