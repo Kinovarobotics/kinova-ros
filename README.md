@@ -1,6 +1,11 @@
+# IMPORTANT
+
+After this `kinova-ros` release, the previous ROS release, which mainly developed for jaco arm will be named as "jaco-ros"; and the previous "master" branch is renamed as "jaco-ros-master" branch. Users can keep both "jaco-ros" and new release "kinova-ros" as two parallel stacks. However, further update and support will be only available on "kinova-ros".
+
+
 # KINOVA-ROS
 
-The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. The stack mainly contains the following packages:
+The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides  widely support of Kinova products, there are many bug fixing, improvements and new features as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. The stack mainly contains the following packages:
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations
