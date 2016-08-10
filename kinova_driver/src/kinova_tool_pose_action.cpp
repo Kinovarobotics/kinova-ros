@@ -44,10 +44,7 @@
  */
 
 #include "kinova_driver/kinova_tool_pose_action.h"
-#include <kinova/KinovaTypes.h>
 #include "kinova_driver/kinova_ros_types.h"
-#include <string>
-
 
 namespace kinova
 {

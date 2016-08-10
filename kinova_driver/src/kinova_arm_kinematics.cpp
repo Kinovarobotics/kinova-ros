@@ -7,8 +7,6 @@
 
 #include <kinova_driver/kinova_arm_kinematics.h>
 #include <kinova_driver/kinova_ros_types.h>
-#include <string>
-#include <vector>
 #include <boost/lexical_cast.hpp>
 
 
