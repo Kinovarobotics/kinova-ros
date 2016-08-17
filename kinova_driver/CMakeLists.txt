@@ -96,13 +96,6 @@ target_link_libraries(kinova_interactive_control ${catkin_LIBRARIES} kinova_driv
 ## Install ##
 #############
 
-install(PROGRAMS
-  test/angle_action_client.py
-  test/finger_action_client.py
-  test/pose_action_client.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
 # Copy over Kinova .so binary blobs to /usr/lib
 install(FILES
   lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.CommLayerUbuntu.so
