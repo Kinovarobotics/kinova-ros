@@ -48,6 +48,8 @@
 #include "kinova_driver/kinova_ros_types.h"
 #include <string>
 
+#include <ros/console.h>
+
 
 namespace kinova
 {
@@ -64,8 +66,8 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
-    node_handle_.param<double>("position_tolerance", position_tolerance, 0.001);
-    node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 1.0*M_PI/180);
+    node_handle_.param<double>("position_tolerance", position_tolerance, 0.01);
+    node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 2.0*M_PI/180);
 
     //    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
     tf_prefix_ = kinova_robotType_ + "_";
@@ -77,6 +79,11 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     link_base_frame_ = ss.str();
 
     action_server_.start();
+
+    if(ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
+    {
+        ros::console::notifyLoggerLevelsChanged();
+    }
 }
 
 
@@ -109,10 +116,8 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             action_server_.setAborted(result);
             return;
         }
-
         listener.transformPose(local_pose.header.frame_id, goal->pose, local_pose);
         arm_comm_.getCartesianPosition(current_pose);
-
         if (arm_comm_.isStopped())
         {
             ROS_INFO("Could not complete cartesian action because the arm is 'stopped'.");
@@ -126,9 +131,9 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
         last_nonstall_pose_ = current_pose;
 
         KinovaPose target(local_pose.pose);
+        ROS_DEBUG_STREAM(std::endl << std::endl << "***-----------------------***" << std::endl << __PRETTY_FUNCTION__ << ":  target X " << target.X << "; Y "<< target.Y << "; Z "<< target.Z << "; ThetaX " << target.ThetaX << "; ThetaY " << target.ThetaY  << "; ThetaZ " << target.ThetaZ << std::endl << "***-----------------------***" << std::endl );
         arm_comm_.setCartesianPosition(target);
-
-        while (true)
+        while (ros::ok())
         {
             // without setCartesianPosition() in while loop, robot stopped in the half way, and the goal won't be reached.
             arm_comm_.setCartesianPosition(target);
@@ -136,6 +141,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
 
             if (action_server_.isPreemptRequested() || !ros::ok())
             {
+                ROS_DEBUG_STREAM("" << __PRETTY_FUNCTION__ << ": action server isPreemptRequested");
                 result.pose = feedback.pose;
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
@@ -144,6 +150,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             }
             else if (arm_comm_.isStopped())
             {
+                ROS_DEBUG_STREAM("" << __PRETTY_FUNCTION__ << ": arm_comm_.isStopped()");
                 result.pose = feedback.pose;
                 action_server_.setAborted(result);
                 return;
@@ -153,9 +160,11 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             current_time = ros::Time::now();
             local_pose.pose = current_pose.constructPoseMsg();
             listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
-            action_server_.publishFeedback(feedback);
+//            action_server_.publishFeedback(feedback);
+            ROS_DEBUG_STREAM("" << __PRETTY_FUNCTION__ << ": current_pose X " << current_pose.X << "; Y "<< current_pose.Y << "; Z "<< current_pose.Z << "; ThetaX " << current_pose.ThetaX << "; ThetaY " << current_pose.ThetaY  << "; ThetaZ " << current_pose.ThetaZ );
             if (target.isCloseToOther(current_pose, position_tolerance_, EulerAngle_tolerance_))
             {
+                ROS_DEBUG_STREAM("" << __PRETTY_FUNCTION__ << ": arm_comm_.isCloseToOther");
                 result.pose = feedback.pose;
                 action_server_.setSucceeded(result);
                 return;
@@ -168,6 +177,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             }
             else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
             {
+                ROS_DEBUG_STREAM("" << __PRETTY_FUNCTION__ << ": stall_interval_seconds_");
                 // Check if the full stall condition has been meet
                 result.pose = feedback.pose;
                 arm_comm_.stopAPI();
