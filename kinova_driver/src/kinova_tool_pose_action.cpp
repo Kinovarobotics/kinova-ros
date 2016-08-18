@@ -130,6 +130,8 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
 
         while (true)
         {
+            // without setCartesianPosition() in while loop, robot stopped in the half way, and the goal won't be reached.
+            arm_comm_.setCartesianPosition(target);
             ros::spinOnce();
 
             if (action_server_.isPreemptRequested() || !ros::ok())
@@ -152,7 +154,6 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             local_pose.pose = current_pose.constructPoseMsg();
             listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
             action_server_.publishFeedback(feedback);
-
             if (target.isCloseToOther(current_pose, position_tolerance_, EulerAngle_tolerance_))
             {
                 result.pose = feedback.pose;
@@ -174,7 +175,6 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
                 action_server_.setPreempted(result);
                 return;
             }
-
             ros::Rate(rate_hz_).sleep();
         }
     }

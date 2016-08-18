@@ -196,7 +196,7 @@ def unitParser(unit_, pose_value_, relative_):
         orientation_q = EulerXYZ2Quaternion(orientation_rad)
 
     else:
-        raise Exception("Finger value have to be in mq, mdeg or mrad")
+        raise Exception("Cartesian value have to be in unit: mq, mdeg or mrad")
 
     pose_mq_ = position_ + orientation_q
     pose_mdeg_ = position_ + orientation_deg
@@ -239,7 +239,7 @@ if __name__ == '__main__':
             print('Number of input values {} is not equal to 6(3 position + 3 EulerAngles).'.format(len(args.pose_value)))
             sys.exit(0)
     else:
-        raise Exception('Finger value have to be in mq, mdeg or mrad')
+        raise Exception('Cartesian value have to be in unit: mq, mdeg or mrad')
 
     getcurrentCartesianCommand(prefix)
 
