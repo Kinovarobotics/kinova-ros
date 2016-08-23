@@ -61,7 +61,7 @@ KinovaFingersActionServer::KinovaFingersActionServer(KinovaComm &arm_comm, const
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
-    node_handle_.param<double>("tolerance", tolerance, 2.0);
+    node_handle_.param<double>("tolerance", tolerance, 6400.0*0.01);
     tolerance_ = static_cast<float>(tolerance);
 
     action_server_.start();
@@ -95,6 +95,7 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
         {
             ROS_INFO("Could not complete finger action because the arm is stopped");
             result.fingers = current_finger_positions.constructFingersMsg();
+            ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
             action_server_.setAborted(result);
             return;
         }
@@ -118,25 +119,27 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
             else if (arm_comm_.isStopped())
             {
                 result.fingers = current_finger_positions.constructFingersMsg();
                 action_server_.setAborted(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
 
             arm_comm_.getFingerPositions(current_finger_positions);
             current_time = ros::Time::now();
             feedback.fingers = current_finger_positions.constructFingersMsg();
-            action_server_.publishFeedback(feedback);
-
+//            action_server_.publishFeedback(feedback);
             if (target.isCloseToOther(current_finger_positions, tolerance_))
             {
                 // Check if the action has succeeeded
                 result.fingers = current_finger_positions.constructFingersMsg();
                 action_server_.setSucceeded(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
                 return;
             }
             else if (!last_nonstall_finger_positions_.isCloseToOther(current_finger_positions, stall_threshold_))
@@ -152,6 +155,7 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
 
@@ -163,6 +167,7 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
         result.fingers = current_finger_positions.constructFingersMsg();
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
+        ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
     }
 }
 

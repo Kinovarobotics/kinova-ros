@@ -107,6 +107,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             ROS_ERROR("Could not get transfrom from %s to %s, aborting cartesian movement",
                       link_base_frame_.c_str(), goal->pose.header.frame_id.c_str());
             action_server_.setAborted(result);
+            ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
             return;
         }
 
@@ -119,6 +120,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             local_pose.pose = current_pose.constructPoseMsg();
             listener.transformPose(result.pose.header.frame_id, local_pose, result.pose);
             action_server_.setAborted(result);
+            ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
             return;
         }
 
@@ -138,12 +140,14 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
             else if (arm_comm_.isStopped())
             {
                 result.pose = feedback.pose;
                 action_server_.setAborted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
 
@@ -151,12 +155,13 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
             current_time = ros::Time::now();
             local_pose.pose = current_pose.constructPoseMsg();
             listener.transformPose(feedback.pose.header.frame_id, local_pose, feedback.pose);
-            action_server_.publishFeedback(feedback);
+//            action_server_.publishFeedback(feedback);
 
             if (target.isCloseToOther(current_pose, position_tolerance_, EulerAngle_tolerance_))
             {
                 result.pose = feedback.pose;
                 action_server_.setSucceeded(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
                 return;
             }
             else if (!last_nonstall_pose_.isCloseToOther(current_pose, stall_threshold_, stall_threshold_))
@@ -172,6 +177,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
 
@@ -183,6 +189,7 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
         result.pose = feedback.pose;
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
+        ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
     }
 }
 
