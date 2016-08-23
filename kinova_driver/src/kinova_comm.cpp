@@ -847,6 +847,99 @@ void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool 
 
 
 /**
+ * @brief Sends a cartesian coordinate trajectory to the Kinova arm.
+ * This function sends trajectory point(Cartesian) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
+ * @param position trajectory point of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ, finger1, finger2, finger3, speed limitation], unit in meter and radians.
+ * @param timeout default 0.0, not used.
+ * @param push default true, errase all trajectory before request motion..
+ */
+void KinovaComm::setCartesianPosition(const TrajectoryPoint &position, int timeout, bool push)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: The pose could not be set because the arm is stopped" << std::endl);
+        return;
+    }
+
+    int result = NO_ERROR_KINOVA;
+    if (push)
+    {
+        result = kinova_api_.eraseAllTrajectories();
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw KinovaCommException("Could not erase trajectories", result);
+        }
+    }
+
+    //startAPI();
+
+    result = kinova_api_.setCartesianControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set Cartesian control", result);
+    }
+
+
+    result = kinova_api_.sendAdvanceTrajectory(position);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advance trajectory", result);
+    }
+}
+
+
+/**
+ * @brief Sends a cartesian coordinate trajectory to the Kinova arm.
+ * This function sends a vector of trajectory point(Cartesian) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
+ * @param position vector trajectory point of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ, finger1, finger2, finger3, speed limitation], unit in meter and radians.
+ * @param timeout default 0.0, not used.
+ * @param push default true, errase all trajectory before request motion..
+ */
+void KinovaComm::setCartesianPosition(const std::vector<TrajectoryPoint> &positions, int timeout, bool push)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_WARN_STREAM("In class [" << typeid(*this).name() << "], function ["<< __FUNCTION__ << "]: The pose could not be set because the arm is stopped" << std::endl);
+        return;
+    }
+
+    int result = NO_ERROR_KINOVA;
+    if (push)
+    {
+        result = kinova_api_.eraseAllTrajectories();
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw KinovaCommException("Could not erase trajectories", result);
+        }
+    }
+
+    //startAPI();
+
+    result = kinova_api_.setCartesianControl();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set Cartesian control", result);
+    }
+
+
+    for(std::vector<TrajectoryPoint>::const_iterator it = positions.begin(); it != positions.end(); ++it){
+        result = kinova_api_.sendAdvanceTrajectory(*it);
+
+        if (result != NO_ERROR_KINOVA)
+        {
+            throw KinovaCommException("Could not send advance trajectory", result);
+        }
+
+    } //End iterator loop
+
+}
+
+
+/**
  * @brief Linear and angular velocity control in Cartesian space
  * This function sends trajectory point(CARTESIAN_VELOCITY) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
  * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".

@@ -52,6 +52,7 @@ add_library(kinova_driver
   src/kinova_arm.cpp
   src/kinova_comm.cpp
   src/kinova_tool_pose_action.cpp
+  src/kinova_advanced_pose_action.cpp
   src/kinova_joint_angles_action.cpp
   src/kinova_fingers_action.cpp
   src/kinova_ros_types.cpp
@@ -61,6 +62,7 @@ add_library(kinova_driver
   include/kinova_driver/kinova_comm.h
   include/kinova_driver/kinova_fingers_action.h
   include/kinova_driver/kinova_tool_pose_action.h
+  include/kinova_driver/kinova_advanced_pose_action.h
   include/kinova_driver/kinova_ros_types.h
   include/kinova/Kinova.API.CommLayerUbuntu.h
   include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
@@ -110,8 +112,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 
 ## Mark executables and/or libraries for installation
-install(TARGETS kinova_arm_driver kinova_tf_updater
-kinova_interactive_control
+install(TARGETS kinova_arm_driver kinova_tf_updater kinova_interactive_control kinova_driver
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

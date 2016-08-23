@@ -19,6 +19,7 @@ add_message_files(
   JointVelocity.msg
   KinovaPose.msg
   PoseVelocity.msg
+  KinovaTrajectory.msg
 )
 
 add_service_files(
@@ -36,6 +37,7 @@ add_action_files(DIRECTORY action
   ArmPose.action
   Arm_KinovaPose.action
   SetFingersPosition.action
+  Arm_KinovaTrajectory.action
 )
 
 generate_messages(

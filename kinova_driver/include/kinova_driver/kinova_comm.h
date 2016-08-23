@@ -97,6 +97,8 @@ class KinovaComm
     void getCartesianCommand(CartesianPosition &cartesian_command);
     void getCartesianPosition(KinovaPose &position);
     void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
+    void setCartesianPosition(const TrajectoryPoint &position, int timeout = 0, bool push = true);
+    void setCartesianPosition(const std::vector<TrajectoryPoint> &positions, int timeout = 0, bool push = true);
     void setCartesianVelocities(const CartesianInfo &velocities);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
