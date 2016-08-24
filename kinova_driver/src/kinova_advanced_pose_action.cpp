@@ -52,9 +52,9 @@ KinovaAdvancedPoseActionServer::KinovaAdvancedPoseActionServer(KinovaComm &arm_c
 {
     double position_tolerance;
     double EulerAngle_tolerance;
-    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 1.0);
+    node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
-    node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
+    node_handle_.param<double>("rate_hz", rate_hz_, 100.0);
     node_handle_.param<double>("position_tolerance", position_tolerance, 0.001);
     node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 1.0*M_PI/180);
 
