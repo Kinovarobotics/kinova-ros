@@ -47,7 +47,7 @@
 #include "kinova_driver/kinova_comm.h"
 #include <string>
 #include <vector>
-#include <KinovaTypes.h>
+#include <kinova/KinovaTypes.h>
 #include <kinova_driver/kinova_ros_types.h>
 
 #include <tf/tf.h>
