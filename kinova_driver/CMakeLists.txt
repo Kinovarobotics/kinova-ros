@@ -53,6 +53,7 @@ add_library(kinova_driver
   src/kinova_comm.cpp
   src/kinova_tool_pose_action.cpp
   src/kinova_advanced_pose_action.cpp
+  src/kinova_advanced_trajectory_action.cpp
   src/kinova_joint_angles_action.cpp
   src/kinova_fingers_action.cpp
   src/kinova_ros_types.cpp
@@ -63,6 +64,7 @@ add_library(kinova_driver
   include/kinova_driver/kinova_fingers_action.h
   include/kinova_driver/kinova_tool_pose_action.h
   include/kinova_driver/kinova_advanced_pose_action.h
+  include/kinova_driver/kinova_advanced_trajectory_action.h
   include/kinova_driver/kinova_ros_types.h
   include/kinova/Kinova.API.CommLayerUbuntu.h
   include/kinova/Kinova.API.UsbCommandLayerUbuntu.h

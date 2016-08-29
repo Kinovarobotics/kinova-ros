@@ -38,6 +38,7 @@ add_action_files(DIRECTORY action
   Arm_KinovaPose.action
   SetFingersPosition.action
   Arm_KinovaTrajectory.action
+  Arm_KinovaTrajectoryList.action
 )
 
 generate_messages(

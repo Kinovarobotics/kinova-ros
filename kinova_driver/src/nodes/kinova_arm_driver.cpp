@@ -10,6 +10,7 @@
 #include "kinova_driver/kinova_arm.h"
 #include "kinova_driver/kinova_tool_pose_action.h"
 #include "kinova_driver/kinova_advanced_pose_action.h"
+#include "kinova_driver/kinova_advanced_trajectory_action.h"
 #include "kinova_driver/kinova_joint_angles_action.h"
 #include "kinova_driver/kinova_fingers_action.h"
 
@@ -44,6 +45,7 @@ int main(int argc, char **argv)
             kinova::KinovaArm kinova_arm(comm, nh, kinova_robotType);
             kinova::KinovaPoseActionServer pose_server(comm, nh, kinova_robotType);
             kinova::KinovaAdvancedPoseActionServer advanced_pose_server(comm, nh, kinova_robotType);
+            kinova::KinovaAdvancedTrajectoryActionServer advanced_trajectory_server(comm, nh, kinova_robotType);
             kinova::KinovaAnglesActionServer angles_server(comm, nh);
             kinova::KinovaFingersActionServer fingers_server(comm, nh);
 

@@ -55,8 +55,8 @@ KinovaAdvancedPoseActionServer::KinovaAdvancedPoseActionServer(KinovaComm &arm_c
     node_handle_.param<double>("stall_interval_seconds", stall_interval_seconds_, 0.5);
     node_handle_.param<double>("stall_threshold", stall_threshold_, 0.005);
     node_handle_.param<double>("rate_hz", rate_hz_, 100.0);
-    node_handle_.param<double>("position_tolerance", position_tolerance, 0.001);
-    node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 1.0*M_PI/180);
+    node_handle_.param<double>("position_tolerance", position_tolerance, 0.002);
+    node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 2.0*M_PI/180);
 
     //    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
     tf_prefix_ = kinova_robotType_ + "_";
