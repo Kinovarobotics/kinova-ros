@@ -89,6 +89,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
             ROS_INFO("Could not complete joint angle action because the arm is 'stopped'.");
             result.angles = current_joint_angles.constructAnglesMsg();
             action_server_.setAborted(result);
+            ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
             return;
         }
 
@@ -111,25 +112,28 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
             else if (arm_comm_.isStopped())
             {
                 result.angles = current_joint_angles.constructAnglesMsg();
                 action_server_.setAborted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
 
             arm_comm_.getJointAngles(current_joint_angles);
             current_time = ros::Time::now();
             feedback.angles = current_joint_angles.constructAnglesMsg();
-            action_server_.publishFeedback(feedback);
+//            action_server_.publishFeedback(feedback);
 
             if (target.isCloseToOther(current_joint_angles, tolerance_))
             {
                 // Check if the action has succeeeded
                 result.angles = current_joint_angles.constructAnglesMsg();
                 action_server_.setSucceeded(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
                 return;
             }
             else if (!last_nonstall_angles_.isCloseToOther(current_joint_angles, stall_threshold_))
@@ -145,6 +149,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
 
@@ -156,6 +161,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
         result.angles = current_joint_angles.constructAnglesMsg();
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
+        ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
     }
 }
 
