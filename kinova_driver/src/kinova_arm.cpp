@@ -378,14 +378,14 @@ void KinovaArm::publishJointAngles(void)
         joint_state.velocity[5] = current_vels.Actuator6;
     }
 
-    ROS_DEBUG_THROTTLE(0.1,
-                       "Raw joint velocities: %f %f %f %f %f %f",
-                       current_vels.Actuator1,
-                       current_vels.Actuator2,
-                       current_vels.Actuator3,
-                       current_vels.Actuator4,
-                       current_vels.Actuator5,
-                       current_vels.Actuator6);
+//    ROS_DEBUG_THROTTLE(0.1,
+//                       "Raw joint velocities: %f %f %f %f %f %f",
+//                       current_vels.Actuator1,
+//                       current_vels.Actuator2,
+//                       current_vels.Actuator3,
+//                       current_vels.Actuator4,
+//                       current_vels.Actuator5,
+//                       current_vels.Actuator6);
 
     if (convert_joint_velocities_) {
         convertKinDeg(joint_state.velocity);
