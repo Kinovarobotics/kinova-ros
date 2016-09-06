@@ -46,9 +46,7 @@
 
 #include <math.h>
 #include <angles/angles.h>
-#include <tf/tf.h>
 #include <kinova_driver/kinova_ros_types.h>
-#include <string>
 
 namespace kinova
 {
