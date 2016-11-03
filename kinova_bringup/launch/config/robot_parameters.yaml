@@ -2,7 +2,7 @@
 # serial_number: PJ00000001030703130
 
 # Joint speed limit for joints 1, 2, 3
-jointSpeedLimitParameter1: 20
+jointSpeedLimitParameter1: 10
 
 # Joint speed limit for joints 4, 5, 6
 jointSpeedLimitParameter2: 20

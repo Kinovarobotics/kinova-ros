@@ -55,5 +55,6 @@ install(PROGRAMS
   nodes/kinova_demo/pose_action_client.py
   nodes/kinova_demo/fingers_action_client.py
   nodes/kinova_demo/joints_action_client.py
+  nodes/kinova_demo/testActionSvr.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
