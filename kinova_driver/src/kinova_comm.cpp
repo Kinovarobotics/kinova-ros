@@ -128,6 +128,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                 case 4:
                 case 6:
                 case 7:
+                case 8:
                     num_fingers_ = 3;
                     break;
                 case 1:
@@ -691,13 +692,15 @@ void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
  */
 void KinovaComm::printAngles(const KinovaAngles &angles)
 {
-    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f \n",
+    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f, J7: %f \n",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
-             angles.Actuator4, angles.Actuator5, angles.Actuator6);
+             angles.Actuator4, angles.Actuator5, angles.Actuator6,
+             angles.Actuator7);
 
-    ROS_INFO("Joint angles (rad) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
+    ROS_INFO("Joint angles (rad) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f, J7: %f \n",
              angles.Actuator1/180.0*M_PI, angles.Actuator2/180.0*M_PI, angles.Actuator3/180.0*M_PI,
-             angles.Actuator4/180.0*M_PI, angles.Actuator5/180.0*M_PI, angles.Actuator6/180.0*M_PI);
+             angles.Actuator4/180.0*M_PI, angles.Actuator5/180.0*M_PI, angles.Actuator6/180.0*M_PI,
+             angles.Actuator7/180.0*M_PI);
 }
 
 
@@ -1205,7 +1208,7 @@ void KinovaComm::homeArm(void)
         // if (myhome.isCloseToOther(KinovaAngles(currentAngles.Actuators), angle_tolerance))
         if(isHomed())
         {
-            ROS_INFO(" haha Arm is in \"home\" position");
+            ROS_INFO("Arm is in \"home\" position");
             // release home button.
             mycommand.ButtonValue[2] = 0;
             kinova_api_.sendJoystickCommand(mycommand);

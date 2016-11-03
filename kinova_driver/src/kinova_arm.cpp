@@ -183,6 +183,7 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
         joint_velocities_.Actuator4 = joint_vel->joint4;
         joint_velocities_.Actuator5 = joint_vel->joint5;
         joint_velocities_.Actuator6 = joint_vel->joint6;
+        joint_velocities_.Actuator7 = joint_vel->joint7;
 
         kinova_comm_.setJointVelocities(joint_velocities_);
 
@@ -308,9 +309,9 @@ void KinovaArm::publishJointAngles(void)
     FingerAngles fingers;
     kinova_comm_.getFingerPositions(fingers);
 
-    if (arm_joint_number_ != 4 && arm_joint_number_ != 6)
+    if (arm_joint_number_ != 4 && arm_joint_number_ != 6 && arm_joint_number_ != 7)
     {
-         ROS_WARN_ONCE("The joint_state publisher only supports 4DOF and 6DOF for now.: %d", arm_joint_number_);
+         ROS_WARN_ONCE("The joint_state publisher only supports 4, 6 and 7 DOF for now.: %d", arm_joint_number_);
     }
 
     // Query arm for current joint angles
@@ -332,10 +333,14 @@ void KinovaArm::publishJointAngles(void)
     joint_state.position[1] = kinova_angles.joint2 * M_PI/180;
     joint_state.position[2] = kinova_angles.joint3 * M_PI/180;
     joint_state.position[3] = kinova_angles.joint4 * M_PI/180;
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
         joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
+    }
+    if (arm_joint_number_ == 7)
+    {
+         joint_state.position[6] = kinova_angles.joint7 * M_PI/180;
     }
 
     if(finger_number_==2)
@@ -372,10 +377,14 @@ void KinovaArm::publishJointAngles(void)
         joint_state.velocity[joint_total_number_-1] = 0;
     }
 
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.velocity[4] = current_vels.Actuator5;
         joint_state.velocity[5] = current_vels.Actuator6;
+    }
+    if (arm_joint_number_ == 7)
+    {
+        joint_state.velocity[6] = current_vels.Actuator7;
     }
 
 //    ROS_DEBUG_THROTTLE(0.1,
@@ -412,10 +421,14 @@ void KinovaArm::publishJointAngles(void)
         joint_state.effort[joint_total_number_-2] = 0;
         joint_state.effort[joint_total_number_-1] = 0;
     }
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.effort[4] = joint_tqs.Actuator5;
         joint_state.effort[5] = joint_tqs.Actuator6;
+    }
+    if (arm_joint_number_ == 7)
+    {
+        joint_state.effort[6] = joint_tqs.Actuator7;
     }
 
     joint_angles_publisher_.publish(kinova_angles);

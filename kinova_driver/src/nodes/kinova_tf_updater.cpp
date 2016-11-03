@@ -23,6 +23,7 @@ KinovaTFTree::KinovaTFTree(ros::NodeHandle node_handle, std::string& kinova_robo
     current_angles_.joint4 = 0;
     current_angles_.joint5 = 0;
     current_angles_.joint6 = 0;
+    current_angles_.joint7 = 0;
     last_angle_update_ = ros::Time().now();
     tf_update_timer_ = node_handle.createTimer(ros::Duration(0.01),
                                                &KinovaTFTree::tfUpdateHandler, this);
@@ -38,6 +39,7 @@ void KinovaTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr&
     current_angles_.joint4 = joint_angles->joint4;
     current_angles_.joint5 = joint_angles->joint5;
     current_angles_.joint6 = joint_angles->joint6;
+    current_angles_.joint7 = joint_angles->joint7;
     last_angle_update_ = ros::Time().now();
     tf_update_timer_.start();
 }
@@ -46,12 +48,13 @@ void KinovaTFTree::jointAnglesMsgHandler(const kinova_msgs::JointAnglesConstPtr&
 void KinovaTFTree::calculatePostion(void)
 {
     // Update the forward Kinematics
-    float Q[6] = {kinematics_.degToRad(current_angles_.joint1),
+    float Q[7] = {kinematics_.degToRad(current_angles_.joint1),
                  kinematics_.degToRad(current_angles_.joint2),
                  kinematics_.degToRad(current_angles_.joint3),
                  kinematics_.degToRad(current_angles_.joint4),
                  kinematics_.degToRad(current_angles_.joint5),
-                 kinematics_.degToRad(current_angles_.joint6)};
+                 kinematics_.degToRad(current_angles_.joint6),
+                 kinematics_.degToRad(current_angles_.joint7)};
 
     kinematics_.updateForward(Q);
 }

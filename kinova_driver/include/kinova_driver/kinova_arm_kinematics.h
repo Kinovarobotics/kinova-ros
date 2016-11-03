@@ -69,6 +69,7 @@ class KinovaKinematics
     double D4_;         // frist wrist length
     double D5_;         // second wrist length
     double D6_;         // wrist to center of hand
+    double D7_;
     double e2_;         // offset of joint
     double wrist_deg_;  // wrist bend degree
 
