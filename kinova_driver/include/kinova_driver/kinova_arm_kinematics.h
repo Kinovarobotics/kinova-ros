@@ -61,6 +61,8 @@ class KinovaKinematics
     int finger_number_;
     int joint_total_number_;
 
+    //base frame for robot
+    std::string baseFrame;
 
     /* Robot Length Values (Meters) */
     double D1_;         // base to elbow

@@ -186,6 +186,8 @@ KinovaKinematics::KinovaKinematics(const ros::NodeHandle &node_handle, std::stri
         // special parameters for custom robot or other cases
         printf("Please specify the kinematic of robots other than jaco and mico!\n");
     }
+
+    node_handle.param<std::string>("base_frame", baseFrame, "root");
 }
 
 tf::Transform KinovaKinematics::DHParam2Transform(float d, float theta, float a, float alpha)
@@ -225,7 +227,7 @@ void KinovaKinematics::updateForward(float* Q)
         transform = DHParam2Transform(0, 0, 0, 0);
     }
     broadcaster_.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
-                                                    "root",
+                                                    baseFrame,
                                                     concatTfName(tf_prefix_, "link_base")));
     double DH_theta_i;
     for (int i = 0; i<arm_joint_number_; i++)
