@@ -78,6 +78,8 @@ class KinovaAnglesActionServer
     double stall_threshold_;
     double rate_hz_;
     float tolerance_;
+    double jointSpeedLimitJoints123;
+    double jointSpeedLimitJoints456;
 };
 
 }  // namespace kinova

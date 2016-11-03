@@ -62,6 +62,8 @@ KinovaAnglesActionServer::KinovaAnglesActionServer(KinovaComm &arm_comm, const r
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 2.0);
+    nh.param<double>("jointSpeedLimitParameter1",jointSpeedLimitJoints123,20);
+    nh.param<double>("jointSpeedLimitParameter2",jointSpeedLimitJoints456,20);
     tolerance_ = (float)tolerance;
 
     action_server_.start();
@@ -97,7 +99,7 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
         last_nonstall_angles_ = current_joint_angles;
 
         KinovaAngles target(goal->angles);
-        arm_comm_.setJointAngles(target);
+        arm_comm_.setJointAngles(target,jointSpeedLimitJoints123,jointSpeedLimitJoints456);
 
         // Loop until the action completed, is preempted, or fails in some way.
         // timeout is left to the caller since the timeout may greatly depend on
