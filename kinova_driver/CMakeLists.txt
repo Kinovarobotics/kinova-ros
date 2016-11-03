@@ -62,8 +62,8 @@ add_library(kinova_driver
   include/kinova_driver/kinova_fingers_action.h
   include/kinova_driver/kinova_tool_pose_action.h
   include/kinova_driver/kinova_ros_types.h
-  include/kinova/Kinova.API.CommLayerUbuntu.h
-  include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
+  include/kinova/Kinova.API.USBCommLayerUbuntu.h
+  include/kinova/Kinova.API.USBCommandLayerUbuntu.h
   include/kinova/KinovaTypes.h
 )
 
@@ -105,8 +105,10 @@ install(PROGRAMS
 
 # Copy over Kinova .so binary blobs to /usr/lib
 install(FILES
-  lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.CommLayerUbuntu.so
-  lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.USBCommandLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/USBCommLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/USBCommandLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/EthCommLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/EthCommandLayerUbuntu.so
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 

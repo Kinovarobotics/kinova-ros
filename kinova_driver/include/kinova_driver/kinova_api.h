@@ -14,15 +14,15 @@
 
 #include <iostream>
 
-#include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "kinova/Kinova.API.USBCommandLayerUbuntu.h"
 #include "kinova/KinovaTypes.h"
 
 
 namespace kinova
 {
 
-#define KINOVA_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
-#define KINOVA_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
+#define KINOVA_USB_LIBRARY  "USBCommandLayerUbuntu.so"
+#define KINOVA_COMM_LIBRARY "USBCommLayerUbuntu.so"
 
 class KinovaAPI
 {

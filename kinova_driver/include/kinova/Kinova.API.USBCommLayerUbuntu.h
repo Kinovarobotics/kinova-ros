@@ -5,6 +5,11 @@
  *      Author: H. Lamontagne, Kinova
  */
 
+/**
+ * @file Kinova.API.CommLayerUbuntu.h
+ * @brief This file contains header of all low level functions of this API.
+ */
+
 #ifndef KINOVA_DLL_COMMLAYERUBUNTU_H_
 #define KINOVA_DLL_COMMLAYERUBUNTU_H_
 /*
@@ -86,6 +91,13 @@
 
 //You are trying to call a USB function that is not available in the current context.
 #define ERROR_FUNCTION_NOT_ACCESSIBLE 1021 
+
+//No response timeout reached 
+#define ERROR_COMM_TIMEOUT  1022
+
+//If the robot answered a NACK to our command
+#define ERROR_NACK_RECEIVED 9999
+
 // ***** E N D  O F  E R R O R   C O D E S ******
 
 
@@ -203,15 +215,19 @@ gains Kp, Ki and Kd must be set to zero first. */
 
 //Total size of our packet in bytes.
 #define PACKET_SIZE 64
+#define ETH_PACKET_SIZE 1464
 
 //Data's size of a single packet.
 #define PACKET_DATA_SIZE 56
+#define ETH_PACKET_DATA_SIZE 1456
+#define PACKET_MAX_DATA_SIZE 1456 //the bigest of the packet (eth or USB)
 
 //Header's size of a packet.
 #define PACKET_HEADER_SIZE 8
+#define ETH_PACKET_HEADER_SIZE 10
 
 //Version of this library.
-#define COMM_LAYER_VERSION 10002
+#define COMM_LAYER_VERSION 10003
 
 //Max character count in our string.
 #define SERIAL_LENGTH 20
@@ -232,7 +248,7 @@ struct Packet
 	short TotalPacketCount;
 	short IdCommand;
 	short TotalDataSize;
-	unsigned char Data[PACKET_DATA_SIZE];
+	unsigned char Data[PACKET_MAX_DATA_SIZE];
 };
 
 //That is simply a list of packet
@@ -284,16 +300,33 @@ struct RS485_Message
 	};
 };
 
+struct EthernetCommConfig
+{
+  unsigned long localIpAddress;
+  unsigned long subnetMask;
+  unsigned long robotIpAddress;
+  unsigned short localCmdport;
+  unsigned short localBcastPort;
+  unsigned short robotPort;
+  unsigned long  rxTimeOutInMs;
+};
+extern "C" __attribute__ ((visibility ("default"))) int GetDeviceCount(int &result);
 
-
-//N O R M A L   U S B   F U N C T I O N S
 extern "C" __attribute__ ((visibility ("default"))) int InitCommunication(void);
+
+extern "C" __attribute__ ((visibility ("default"))) int InitCommunicationEthernet(EthernetCommConfig & config);
 
 extern "C" __attribute__ ((visibility ("default"))) int CloseCommunication(void);
 
-extern "C" __attribute__ ((visibility ("default"))) int GetDeviceCount(int &result);
+
 
 extern "C" __attribute__ ((visibility ("default"))) Packet SendPacket(Packet &packetOut, Packet &packetIn, int &result);
+
+extern "C" __attribute__ ((visibility ("default"))) int SendPacketList(std::vector<Packet> & listPacket, int &result);
+
+extern "C" __attribute__ ((visibility ("default"))) Packet BroadcastSendPacket(Packet &dataOut, std::vector<Packet> &dataIn, int &result, std::vector<unsigned long> &ipAddresses, int &count);
+
+extern "C" __attribute__ ((visibility ("default"))) int InitDataStructures();
 
 extern "C" __attribute__ ((visibility ("default"))) int ScanForNewDevice();
 
@@ -313,10 +346,10 @@ The data will be sent via the USB port and then transfered on the RS-485 bus. In
 and the OpenRS485_Write function, you need to call the OpenRS485_Activate function. Once the OpenRS485_Activate is called
 you cannot used the joystick anymore and the normal USB API(functions above) will not be accessible.
 */
-extern "C" __attribute__ ((visibility ("default"))) int RS485_Read(RS485_Message* PackagesIn, int QuantityWanted, int &ReceivedQtyIn);
+extern "C" __attribute__ ((visibility ("default"))) int OpenRS485_Read(RS485_Message PackagesIn [50], int QuantityWanted, int &ReceivedQtyIn);
 
-extern "C" __attribute__ ((visibility ("default"))) int RS485_Write(RS485_Message* PackagesOut, int QtyToSend, int &QtySent);
+extern "C" __attribute__ ((visibility ("default"))) int OpenRS485_Write(RS485_Message PackagesOut [50] , int QtyToSend, int &QtySent);
 
-extern "C" __attribute__ ((visibility ("default"))) int RS485_Activate(void);
+extern "C" __attribute__ ((visibility ("default"))) int OpenRS485_Activate(void);
 
 #endif
