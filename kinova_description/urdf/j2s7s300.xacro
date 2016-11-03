@@ -116,25 +116,25 @@
         <xacro:kinova_armlink link_name="${link_base}" link_mesh="${link_base_mesh}"/>
         <xacro:kinova_armjoint joint_name="${joint_base}" type="${joint_base_type}" parent="${base_parent}" child="${link_base}" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
 
-        <xacro:kinova_armlink link_name="${link_1}" link_mesh="${link_1_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_1}" link_mesh="${link_1_mesh}" use_ring_mesh="true"/>
         <xacro:kinova_armjoint joint_name="${joint_1}" type="${joint_1_type}" parent="${link_base}" child="${link_1}" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" joint_lower_limit="${joint_1_lower_limit}" joint_upper_limit="${joint_1_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_2}" link_mesh="${link_2_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_2}" link_mesh="${link_2_mesh}" use_ring_mesh="true"/>
         <xacro:kinova_armjoint joint_name="${joint_2}" type="${joint_2_type}" parent="${link_1}" child="${link_2}" joint_axis_xyz="${joint_2_axis_xyz}" joint_origin_xyz="${joint_2_origin_xyz}" joint_origin_rpy="${joint_2_origin_rpy}" joint_lower_limit="${joint_2_lower_limit}" joint_upper_limit="${joint_2_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_3}" link_mesh="${link_3_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_3}" link_mesh="${link_3_mesh}" use_ring_mesh="true"/>
         <xacro:kinova_armjoint joint_name="${joint_3}" type="${joint_3_type}" parent="${link_2}" child="${link_3}" joint_axis_xyz="${joint_3_axis_xyz}" joint_origin_xyz="${joint_3_origin_xyz}" joint_origin_rpy="${joint_3_origin_rpy}" joint_lower_limit="${joint_3_lower_limit}" joint_upper_limit="${joint_3_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_4}" link_mesh="${link_4_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_4}" link_mesh="${link_4_mesh}" use_ring_mesh="true"/>
         <xacro:kinova_armjoint joint_name="${joint_4}" type="${joint_4_type}" parent="${link_3}" child="${link_4}" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}" joint_lower_limit="${joint_4_lower_limit}" joint_upper_limit="${joint_4_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_5}" link_mesh="${link_5_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_5}" link_mesh="${link_5_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
         <xacro:kinova_armjoint joint_name="${joint_5}" type="${joint_5_type}" parent="${link_4}" child="${link_5}" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" joint_lower_limit="${joint_5_lower_limit}" joint_upper_limit="${joint_5_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_6}" link_mesh="${link_6_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_6}" link_mesh="${link_6_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
         <xacro:kinova_armjoint joint_name="${joint_6}" type="${joint_6_type}" parent="${link_5}" child="${link_6}" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_lower_limit="${joint_6_lower_limit}" joint_upper_limit="${joint_6_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${link_7}" link_mesh="${link_7_mesh}"/>
+        <xacro:kinova_armlink link_name="${link_7}" link_mesh="${link_7_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
         <xacro:kinova_armjoint joint_name="${joint_7}" type="${joint_7_type}" parent="${link_6}" child="${link_7}" joint_axis_xyz="${joint_7_axis_xyz}" joint_origin_xyz="${joint_7_origin_xyz}" joint_origin_rpy="${joint_7_origin_rpy}" joint_lower_limit="${joint_7_lower_limit}" joint_upper_limit="${joint_7_upper_limit}"/>    
 
         <xacro:kinova_virtual_link link_name="${link_end_effector}"/>

@@ -18,7 +18,7 @@
 
     <property name="J_PI" value="3.1415926535897931" />
 
-    <xacro:macro name="kinova_armlink" params="link_name link_mesh">
+    <xacro:macro name="kinova_armlink" params="link_name link_mesh ring_mesh:=ring_big use_ring_mesh:=false">
         <link name="${link_name}">
             <visual>
                 <geometry>
@@ -29,6 +29,17 @@
                     <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
                 </material>
             </visual>
+
+	    <!-- Adding ring to the model -->	
+	    <xacro:if value="${use_ring_mesh}">
+	    <visual>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${ring_mesh}.STL"/>
+                </geometry>              
+            </visual>
+	    </xacro:if>
+
             <collision>
                 <geometry>
                     <mesh
