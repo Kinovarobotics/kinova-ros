@@ -28,6 +28,7 @@ add_service_files(
   HomeArm.srv
   SetForceControlParams.srv
   SetEndEffectorOffset.srv
+  SetNullSpaceModeState.srv
 )
 
 add_action_files(DIRECTORY action

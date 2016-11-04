@@ -29,6 +29,7 @@
 #include <kinova_msgs/KinovaPose.h>
 #include <kinova_msgs/SetForceControlParams.h>
 #include <kinova_msgs/SetEndEffectorOffset.h>
+#include <kinova_msgs/SetNullSpaceModeState.h>
 
 #include <time.h>
 #include <math.h>
@@ -55,7 +56,8 @@ class KinovaArm
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
-    
+    bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req, kinova_msgs::SetNullSpaceModeState::Response &res);
+
     bool setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req,
                                        kinova_msgs::SetForceControlParams::Response &res);
     bool startForceControlCallback(kinova_msgs::Start::Request &req,
@@ -97,6 +99,7 @@ class KinovaArm
     ros::ServiceServer stop_service_;
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
+    ros::ServiceServer startNullSpace_service_;
 
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;

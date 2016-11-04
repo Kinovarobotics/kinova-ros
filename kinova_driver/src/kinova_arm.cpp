@@ -127,6 +127,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
+    startNullSpace_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
+
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
     joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
@@ -172,7 +174,10 @@ bool KinovaArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinov
     return true;
 }
 
-
+bool KinovaArm::ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req, kinova_msgs::SetNullSpaceModeState::Response &res)
+{
+    kinova_comm_.SetRedundantJointNullSpaceMotion(req.state);
+}
 void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)
 {
     if (!kinova_comm_.isStopped())
