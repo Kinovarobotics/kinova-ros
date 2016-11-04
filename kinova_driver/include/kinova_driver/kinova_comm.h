@@ -122,6 +122,22 @@ class KinovaComm
     void setEndEffectorOffset(unsigned int status, float x, float y, float z);
     void getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
 
+    //!Avoid self collisions in Inverse Kinematics.
+    //!Null space is used if available, else Cartesian command is modified
+    int SelfCollisionAvoidanceInCartesianMode(int state);
+
+    //!Avoid Singularities in Inverse Kinematics
+    //!Null space is used if available, else Cartesian command is modified
+    int SingularityAvoidanceInCartesianMode(int state);
+
+    //7 dof API
+    //! Activates/deactivates control mode where robot moves in null space using the joystick
+    int SetRedundantJointNullSpaceMotion(int state);
+
+    //!Resolve redundancy for 7 dof robot using Least square solution
+    int SetRedundancyResolutionToleastSquares(int state);
+
+
  private:
     boost::recursive_mutex& api_mutex_;
     kinova::KinovaAPI kinova_api_;

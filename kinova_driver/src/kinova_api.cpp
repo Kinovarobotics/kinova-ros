@@ -158,6 +158,16 @@ KinovaAPI::KinovaAPI(void)
 
     setProtectionZone = (int (*)(ZoneList))checkApiInit(usbLib, "SetProtectionZone");
 
+    StartRedundantJointNullSpaceMotion = (int (*)())checkApiInit(usbLib, "StartRedundantJointNullSpaceMotion");
+
+    StopRedundantJointNullSpaceMotion = (int (*)())checkApiInit(usbLib, "StopRedundantJointNullSpaceMotion");
+
+    ActivateCollisionAutomaticAvoidance = (int (*)(int))checkApiInit(usbLib, "ActivateCollisionAutomaticAvoidance");
+
+    //ActivateSingularityAutomaticAvoidance = (int (*)(int))checkApiInit(usbLib, "ActivateSingularityAutomaticAvoidance");
+
+    //ActivateAutoNullSpaceMotionCartesian = (int (*)(int))checkApiInit(usbLib, "ActivateAutoNullSpaceMotionCartesian");
+
     // %EndTag(tool cartesian)%
 
 

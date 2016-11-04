@@ -1305,5 +1305,29 @@ void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, 
     }
 }
 
+int KinovaComm::SelfCollisionAvoidanceInCartesianMode(int state)
+{
+    kinova_api_.ActivateCollisionAutomaticAvoidance(state);
+}
+
+int KinovaComm::SingularityAvoidanceInCartesianMode(int state)
+{
+    kinova_api_.ActivateSingularityAutomaticAvoidance(state);
+}
+
+int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
+{
+    ROS_INFO("Setting null space mode to %d",state);
+    if (state)
+        kinova_api_.StartRedundantJointNullSpaceMotion();
+    else
+        kinova_api_.StopRedundantJointNullSpaceMotion();
+}
+
+int KinovaComm::SetRedundancyResolutionToleastSquares(int state)
+{
+    //Not Available in API
+}
+
 
 }  // namespace kinova

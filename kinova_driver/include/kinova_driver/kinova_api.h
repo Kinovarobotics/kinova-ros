@@ -105,6 +105,22 @@ public:
     int (*getProtectionZone)(ZoneList &);
     int (*setProtectionZone)(ZoneList);
 
+
+    //! Enables control mode where robot moves in null space using the joystick
+    int (*StartRedundantJointNullSpaceMotion)();
+
+    //! Disables control mode where robot moves in null space using the joystick
+    int (*StopRedundantJointNullSpaceMotion)();
+
+    //!Activate(state =1) or deactivates (state =0) the avoidance of robot self-collisions
+    int (*ActivateCollisionAutomaticAvoidance)(int state);
+
+    //!Activates (state =1) or deactivates (state =0) the automatic avoidance of robot singularities (but the fitness function stays active). Note: in the 7-dof robot, if the fitness function is not able to avoid a singularity, the user's command is modified to try to avoid the singularity.
+    int (*ActivateSingularityAutomaticAvoidance)(int state);
+
+    //!Activates (state =1) or deactivates (state =0)  the fitness function 7 dof robot
+    int (*ActivateAutoNullSpaceMotionCartesian)(int state);
+
     // %EndTag(tool cartesian)%
 
 
