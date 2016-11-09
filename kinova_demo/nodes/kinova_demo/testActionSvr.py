@@ -12,8 +12,10 @@ import tf
 import std_msgs.msg
 import math
 from kinova_msgs.srv import *
+import argparse
 
 prefix = 'j2s7s300_'
+nbJoints = 7
 
 
 def joint_position_client(angle_set):
@@ -91,21 +93,133 @@ def homeRobot():
            return None
         except rospy.ServiceException, e:
            print "Service call failed: %s"%e
+
+def activateNullSpaceMode():
+	service_address = '/' + prefix + 'driver/in/set_null_space_mode_state'
+	rospy.wait_for_service(service_address)
+        try:
+           SetNullSpaceMode = rospy.ServiceProxy(service_address, SetNullSpaceModeState)
+           SetNullSpaceMode(1)           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	rospy.sleep(5)
+	try:           
+           SetNullSpaceMode(0)
+           return None
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+
+def argumentParser(argument):
+    	""" Argument parser """
+    	parser = argparse.ArgumentParser(description='Drive robot joint to command position')
+    	parser.add_argument('kinova_robotType', metavar='kinova_robotType', type=str, default='j2n6a300',
+                        help='kinova_RobotType is in format of: [{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]. eg: j2n6a300 refers to jaco v2 6DOF assistive 3fingers. Please be noted that not all options are valided for different robot types.')
+	args_ = parser.parse_args(argument)
+	prefix = args_.kinova_robotType + "_"
+	nbJoints = int(args_.kinova_robotType[3])	
+
+def publishVelCmd(jointCmds):
+	topic_name = '/' + prefix + 'driver/in/joint_velocity'
+	pub = rospy.Publisher(topic_name, kinova_msgs.msg.JointVelocity, queue_size=1)
+        jointCmd = kinova_msgs.msg.JointVelocity()
+	jointCmd.joint1 = jointCmds[0];
+	jointCmd.joint2 = jointCmds[1];
+	jointCmd.joint3 = jointCmds[2];
+	jointCmd.joint4 = jointCmds[3];
+	jointCmd.joint5 = jointCmds[4];
+	jointCmd.joint6 = jointCmds[5];
+	jointCmd.joint7 = jointCmds[6];
+	count = 0		
+	rate = rospy.Rate(100)
+	while (count < 500):
+		count = count + 1
+		#rospy.loginfo("I will publish to the topic %d", count)
+		pub.publish(jointCmd)
+		rate.sleep()
+
+def publishTorqueCmd(jointCmds):
+	topic_name = '/' + prefix + 'driver/in/joint_torque'
+	service_address = '/' + prefix + 'driver/in/setTorqueControlMode'
+
+	#use service to switch to torque control
+	rospy.wait_for_service(service_address)
+	try:
+           switchTorquemode = rospy.ServiceProxy(service_address, SetTorqueControlMode)
+           switchTorquemode(1)           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None	
+
+	#publish joint torque commands
+	pub = rospy.Publisher(topic_name, kinova_msgs.msg.JointTorque, queue_size=1)
+        jointCmd = kinova_msgs.msg.JointTorque()
+	jointCmd.joint1 = jointCmds[0];
+	jointCmd.joint2 = jointCmds[1];
+	jointCmd.joint3 = jointCmds[2];
+	jointCmd.joint4 = jointCmds[3];
+	jointCmd.joint5 = jointCmds[4];
+	jointCmd.joint6 = jointCmds[5];
+	jointCmd.joint7 = jointCmds[6];
+	count = 0		
+	rate = rospy.Rate(100)
+	while (count < 500):
+		count = count + 1
+		#rospy.loginfo("I will publish to the topic %d", count)
+		pub.publish(jointCmd)
+		rate.sleep()
+
+	#use service to switch to position control	
+	try:           
+           switchTorquemode(0)
+           return None
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None
+
+def publishCatesianVelocityCommands(cartVel):
+	topic_name = '/' + prefix + 'driver/in/cartesian_velocity'
+	#publish joint torque commands
+	pub = rospy.Publisher(topic_name, kinova_msgs.msg.PoseVelocity, queue_size=1)
+	poseVelCmd = kinova_msgs.msg.PoseVelocity()
+	poseVelCmd.twist_linear_x = cartVel[0];
+	poseVelCmd.twist_linear_y = cartVel[1];
+	poseVelCmd.twist_linear_z = cartVel[2];
+	poseVelCmd.twist_angular_x = cartVel[3];
+	poseVelCmd.twist_angular_x = cartVel[4];
+	poseVelCmd.twist_angular_x = cartVel[5];
+	count = 0
+	rate = rospy.Rate(100)
+	while (count < 500):
+		count = count + 1		
+		pub.publish(poseVelCmd)
+		rate.sleep()
 	
+
 if __name__ == '__main__':
-    try:
-        # Initializes a rospy node so that the SimpleActionClient can
-        # publish and subscribe over ROS.
-        rospy.init_node('test_action_servers')
-	
-        #test joint srv - move robot to 180 pos
-        #jointCommand180 = [180]*7
-        #result = joint_position_client(jointCommand180)
+    try:        
+	args = argumentParser(None)	
+        rospy.init_node('test_action_servers')	
+  
+	#test joint srv - move robot to 180 pos        
+        result = joint_position_client([180]*7)
+
+	#test joint velocity control	
+	if (nbJoints == 7):
+		publishVelCmd([10,0,-10,0,10,0,-10])
+	else:
+		publishVelCmd([10,0,0,-10,0,0,0])
+	rospy.sleep(5)
+
+	#test joint torque control
+	publishTorqueCmd([1,0,0,0,0,0,0])
 
 	#test cartesian srv
 	#move robot in joint space to init pose
-        jointCmdInitPose = [270,220,0,90,180,270,0]
-        result = joint_position_client(jointCmdInitPose)
+	if (nbJoints == 7):
+        	result = joint_position_client([270,220,0,90,180,270,0])
+	else:
+		result = joint_position_client([270,220,90,180,270,0,0])
+        
 
 	#homeRobot()
 
@@ -123,7 +237,14 @@ if __name__ == '__main__':
 	result = cartesian_pose_client(position, quaternion)
 
 	#close gripper
-	result = gripper_client([0,6800,0])
+	result = gripper_client([6800,6800,6800])
+
+	#test cartesian velocity publisher
+	publishCatesianVelocityCommands([-0.1, 0, -0.1, 0, 0, 0])
+	publishCatesianVelocityCommands([0.1, 0, 0.1, 0, 0, 0])
+
+	#set null space mode
+	activateNullSpaceMode()
 	
     except rospy.ROSInterruptException:
         print "program interrupted before completion"
