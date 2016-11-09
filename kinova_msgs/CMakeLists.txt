@@ -17,6 +17,7 @@ add_message_files(
   FingerPosition.msg
   JointAngles.msg
   JointVelocity.msg
+  JointTorque.msg
   KinovaPose.msg
   PoseVelocity.msg
 )
@@ -29,6 +30,7 @@ add_service_files(
   SetForceControlParams.srv
   SetEndEffectorOffset.srv
   SetNullSpaceModeState.srv
+  SetTorqueControlMode.srv
 )
 
 add_action_files(DIRECTORY action

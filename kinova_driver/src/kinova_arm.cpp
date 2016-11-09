@@ -128,6 +128,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
     startNullSpace_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
+    setTorqueControlMode_service_ = node_handle_.advertiseService("in/setTorqueControlMode", &KinovaArm::setTorqueControlModeService, this);
 
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
@@ -145,6 +146,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
                                                       &KinovaArm::jointVelocityCallback, this);
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
                                                           &KinovaArm::cartesianVelocityCallback, this);
+    joint_torque_subscriber_ = node_handle_.subscribe("in/joint_torque", 1,
+                                                      &KinovaArm::jointTorqueSubscriberCallback, this);
 
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
 
@@ -178,6 +181,12 @@ bool KinovaArm::ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState
 {
     kinova_comm_.SetRedundantJointNullSpaceMotion(req.state);
 }
+
+bool KinovaArm::setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res)
+{
+    kinova_comm_.SetTorqueControlState(req.state);
+}
+
 void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)
 {
     if (!kinova_comm_.isStopped())
@@ -191,6 +200,22 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
         joint_velocities_.Actuator7 = joint_vel->joint7;
 
         kinova_comm_.setJointVelocities(joint_velocities_);
+    }
+}
+
+void KinovaArm::jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        l_joint_torque_[0] = joint_torque->joint1;
+        l_joint_torque_[1] = joint_torque->joint2;
+        l_joint_torque_[2] = joint_torque->joint3;
+        l_joint_torque_[3] = joint_torque->joint4;
+        l_joint_torque_[4] = joint_torque->joint5;
+        l_joint_torque_[5] = joint_torque->joint6;
+        l_joint_torque_[6] = joint_torque->joint7;
+
+        kinova_comm_.setJointTorques(l_joint_torque_);
 
     }
 }

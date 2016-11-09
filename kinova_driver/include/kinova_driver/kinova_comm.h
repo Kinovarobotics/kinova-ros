@@ -87,6 +87,7 @@ class KinovaComm
     void setJointAngles(const KinovaAngles &angles, double speedJoint123 = 20, double speedJoint4567 = 20, int timeout = 0, bool push = true);
     void getJointVelocities(KinovaAngles &vels);
     void setJointVelocities(const AngularInfo& joint_vel);
+    void setJointTorques(float joint_torque[]);
     void getJointAccelerations(AngularAcceleration &joint_acc);
     void getJointTorques(KinovaAngles &tqs);
     void getJointCurrent(AngularPosition &anguler_current);
@@ -94,6 +95,7 @@ class KinovaComm
     void printAngles(const KinovaAngles &angles);
 
     void setCartesianControl();
+    void SetTorqueControlState(int state); //1 for Torque control enabled
     void getCartesianCommand(CartesianPosition &cartesian_command);
     void getCartesianPosition(KinovaPose &position);
     void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);

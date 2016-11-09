@@ -618,6 +618,28 @@ void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
     }
 }
 
+void KinovaComm::setJointTorques(float joint_torque[])
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The joint torques could not be set because the arm is stopped");
+        return;
+    }
+
+    //memset(&joint_torque, 0, sizeof(joint_torque));  // zero structure
+
+    //startAPI();
+    //ROS_INFO("Torque %f %f %f %f %f %f %f ", joint_torque[0],joint_torque[1],joint_torque[2],
+     //       joint_torque[3],joint_torque[4],joint_torque[5],joint_torque[6]);
+    int result = kinova_api_.sendAngularTorqueCommand(joint_torque);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
+    }
+}
+
 
 /**
  * @brief This function get the accelerometer values of each actuator. It does not directly refer to the angular acceleration.
@@ -1302,6 +1324,22 @@ void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, 
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get current end effector offset.", result);
+    }
+}
+
+void KinovaComm::SetTorqueControlState(int state)
+{
+    if (state)
+    {
+        ROS_INFO("Switching to torque control");
+        kinova_api_.switchTrajectoryTorque(TORQUE);
+        //set safety factor
+        kinova_api_.setTorqueSafetyFactor(1);
+    }
+    else
+    {
+        ROS_INFO("Switching to position control");
+        kinova_api_.switchTrajectoryTorque(POSITION);
     }
 }
 

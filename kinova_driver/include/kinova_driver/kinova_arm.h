@@ -24,12 +24,14 @@
 #include <kinova_msgs/HomeArm.h>
 #include <kinova_msgs/JointVelocity.h>
 #include <kinova_msgs/PoseVelocity.h>
+#include <kinova_msgs/JointTorque.h>
 #include <kinova_msgs/FingerPosition.h>
 #include <kinova_msgs/JointAngles.h>
 #include <kinova_msgs/KinovaPose.h>
 #include <kinova_msgs/SetForceControlParams.h>
 #include <kinova_msgs/SetEndEffectorOffset.h>
 #include <kinova_msgs/SetNullSpaceModeState.h>
+#include <kinova_msgs/SetTorqueControlMode.h>
 
 #include <time.h>
 #include <math.h>
@@ -52,6 +54,7 @@ class KinovaArm
 
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
     void cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel);
+    void jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque);
 
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
@@ -67,6 +70,7 @@ class KinovaArm
 
     bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
                                       kinova_msgs::SetEndEffectorOffset::Response& res);
+    bool setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);
@@ -86,6 +90,7 @@ class KinovaArm
     // Publishers, subscribers, services
     ros::Subscriber joint_velocity_subscriber_;
     ros::Subscriber cartesian_velocity_subscriber_;
+    ros::Subscriber joint_torque_subscriber_;
 
     ros::Publisher joint_angles_publisher_;
     ros::Publisher tool_position_publisher_;
@@ -100,6 +105,7 @@ class KinovaArm
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
     ros::ServiceServer startNullSpace_service_;
+    ros::ServiceServer setTorqueControlMode_service_;
 
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;
@@ -129,9 +135,11 @@ class KinovaArm
 
     // State tracking or utility members
     AngularInfo joint_velocities_;
+    float l_joint_torque_[70];
     CartesianInfo cartesian_velocities_;
 
     std::vector< std::string > joint_names_;
+
 };
 
 
