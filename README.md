@@ -135,6 +135,15 @@ The admittance force control can be actived by command
 
 However, it is **very important** to regulate the force sensor before using force/torque control. The regulation can be achieved by set 180 degree to all the joints (robot will stand straight up for most of its links). Then, send zero torques to all by SDK, JacoSoft or API functions. SDK may not function well in certain cases. Therefore, it is better to use other two ways.
 
+### Support for 7 dof Spherical Wrist robot
+Support for the 7 dof robot has been added in this new release. All of the previous control methods can be used on a 7 dof Kinova robot.
+
+The inverse kinematics of the 7 dof robot results infinite possible solutions for a give pose command. The choice of the best solution (redundancy resolution) is done in the robot considering criteria such as joint limits, closeness to singularities.
+
+To see the full set of solutions, a new fuction is introduced in KinovaAPI - StartRedundantJointNullSpaceMotion(). When in this mode the Kinova joystick can be used to move the robot in null space while keeping the end-effector maintaining its pose.
+
+The mode can be activated by calling the service SetNullSpaceModeState - (*driver/in/set_null_space_mode_state).
+
 ## What's new comparison to JACO-ROS
 
 - migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
