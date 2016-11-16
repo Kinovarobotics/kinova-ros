@@ -16,6 +16,7 @@ import argparse
 
 prefix = 'j2s7s300_'
 nbJoints = 7
+interactive = True
 
 
 def joint_position_client(angle_set):
@@ -102,7 +103,7 @@ def activateNullSpaceMode():
            SetNullSpaceMode(1)           
         except rospy.ServiceException, e:
            print "Service call failed: %s"%e
-	rospy.sleep(5)
+	rospy.sleep(10)
 	try:           
            SetNullSpaceMode(0)
            return None
@@ -138,10 +139,19 @@ def publishVelCmd(jointCmds):
 		rate.sleep()
 
 def publishTorqueCmd(jointCmds):
-	topic_name = '/' + prefix + 'driver/in/joint_torque'
-	service_address = '/' + prefix + 'driver/in/setTorqueControlMode'
+	
+	#use service to set torque control parameters	
+	service_address = '/' + prefix + 'driver/in/set_torque_control_parameters'	
+	rospy.wait_for_service(service_address)
+	try:
+           setTorqueParameters = rospy.ServiceProxy(service_address, SetTorqueControlParameters)
+           setTorqueParameters()           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None	
 
-	#use service to switch to torque control
+	#use service to switch to torque control	
+	service_address = '/' + prefix + 'driver/in/set_torque_control_mode'	
 	rospy.wait_for_service(service_address)
 	try:
            switchTorquemode = rospy.ServiceProxy(service_address, SetTorqueControlMode)
@@ -151,6 +161,7 @@ def publishTorqueCmd(jointCmds):
 	   return None	
 
 	#publish joint torque commands
+	topic_name = '/' + prefix + 'driver/in/joint_torque'
 	pub = rospy.Publisher(topic_name, kinova_msgs.msg.JointTorque, queue_size=1)
         jointCmd = kinova_msgs.msg.JointTorque()
 	jointCmd.joint1 = jointCmds[0];
@@ -162,7 +173,7 @@ def publishTorqueCmd(jointCmds):
 	jointCmd.joint7 = jointCmds[6];
 	count = 0		
 	rate = rospy.Rate(100)
-	while (count < 500):
+	while (count < 1000):
 		count = count + 1
 		#rospy.loginfo("I will publish to the topic %d", count)
 		pub.publish(jointCmd)
@@ -198,22 +209,31 @@ def publishCatesianVelocityCommands(cartVel):
 if __name__ == '__main__':
     try:        
 	args = argumentParser(None)	
-        rospy.init_node('test_action_servers')	
-  
-	#test joint srv - move robot to 180 pos        
+        rospy.init_node('test_action_servers')	  
+		
+	#test joint srv - move robot to 180 pos
+	if (interactive == True):        
+		nb = raw_input('Moving robot to candle like position, press key')
         result = joint_position_client([180]*7)
 
-	#test joint velocity control	
+	#test joint velocity control
+	if (interactive == True):        
+		nb = raw_input('Testing velocity control, press key')
 	if (nbJoints == 7):
 		publishVelCmd([10,0,-10,0,10,0,-10])
 	else:
 		publishVelCmd([10,0,0,-10,0,0,0])
 	rospy.sleep(5)
-
+	
 	#test joint torque control
-	publishTorqueCmd([1,0,0,0,0,0,0])
-
+	if (interactive == True):        
+		nb = raw_input('Testing torque control, enabled for 10 sec, press key')
+	publishTorqueCmd([0,0,0,0,0,0,0])
+	
+	
 	#test cartesian srv
+	if (interactive == True):        
+		nb = raw_input('Testing Cartesian control, press key')
 	#move robot in joint space to init pose
 	if (nbJoints == 7):
         	result = joint_position_client([270,220,0,90,180,270,0])
@@ -222,7 +242,7 @@ if __name__ == '__main__':
         
 
 	#homeRobot()
-
+	
         #set cartesian pose 1
 	position = [0.4,-0.5,0]
         quaternion = tf.transformations.quaternion_from_euler(90*3.1415/180, 0, 0,'rxyz')	
@@ -240,11 +260,17 @@ if __name__ == '__main__':
 	result = gripper_client([6800,6800,6800])
 
 	#test cartesian velocity publisher
+	if (interactive == True):        
+		nb = raw_input('Testing Cartesian velocity control, press key')
 	publishCatesianVelocityCommands([-0.1, 0, -0.1, 0, 0, 0])
 	publishCatesianVelocityCommands([0.1, 0, 0.1, 0, 0, 0])
 
 	#set null space mode
+	if (interactive == True):        
+		nb = raw_input('Testing Null space control control,active for 10s, use joystick to move robot in Null space,press key')
 	activateNullSpaceMode()
+
+	print("done!")
 	
     except rospy.ROSInterruptException:
         print "program interrupted before completion"
