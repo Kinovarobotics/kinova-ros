@@ -710,6 +710,29 @@ void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
     }
 }
 
+/**
+ * @brief setPayload
+ * @param payload Array - Mass, COMx, COMy, COMz
+ */
+void KinovaComm::setPayload(std::vector<float> payload)
+{
+    float payload_[4];
+    std::copy(payload.begin(), payload.end(), payload_);
+    kinova_api_.setGravityPayload(payload_);
+}
+
+/**
+ * @brief Safety factor defines a velocity threshold at which torque control switches to position control
+ * @param factor between 0 and 1
+ */
+void KinovaComm::setToquesControlSafetyFactor(float factor)
+{
+    kinova_api_.setTorqueSafetyFactor(factor);
+}
+
+
+
+
 
 /**
  * @brief Dumps the current joint angles onto the screen.
@@ -1333,8 +1356,6 @@ void KinovaComm::SetTorqueControlState(int state)
     {
         ROS_INFO("Switching to torque control");
         kinova_api_.switchTrajectoryTorque(TORQUE);
-        //set safety factor
-        kinova_api_.setTorqueSafetyFactor(1);
     }
     else
     {

@@ -128,7 +128,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
     startNullSpace_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
-    setTorqueControlMode_service_ = node_handle_.advertiseService("in/setTorqueControlMode", &KinovaArm::setTorqueControlModeService, this);
+    set_torque_control_mode_service_ = node_handle_.advertiseService("in/set_torque_control_mode", &KinovaArm::setTorqueControlModeService, this);
+    set_torque_control_parameters_service_ = node_handle_.advertiseService("in/set_torque_control_parameters", &KinovaArm::setTorqueControlParametersService,this);
 
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
@@ -185,6 +186,19 @@ bool KinovaArm::ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState
 bool KinovaArm::setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res)
 {
     kinova_comm_.SetTorqueControlState(req.state);
+}
+
+bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res)
+{
+    float safetyFactor;
+    node_handle_.param<float>("torque_parameters/safety_factor", safetyFactor,1.0);
+    kinova_comm_.setToquesControlSafetyFactor(safetyFactor);
+
+    std::vector<float> payload;
+    if ( node_handle_.getParam("payload", payload) )
+    {
+        kinova_comm_.setPayload(payload);
+    }
 }
 
 void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)

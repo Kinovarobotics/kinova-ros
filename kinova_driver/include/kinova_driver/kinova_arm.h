@@ -32,6 +32,7 @@
 #include <kinova_msgs/SetEndEffectorOffset.h>
 #include <kinova_msgs/SetNullSpaceModeState.h>
 #include <kinova_msgs/SetTorqueControlMode.h>
+#include <kinova_msgs/SetTorqueControlParameters.h>
 
 #include <time.h>
 #include <math.h>
@@ -71,6 +72,7 @@ class KinovaArm
     bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
                                       kinova_msgs::SetEndEffectorOffset::Response& res);
     bool setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res);
+    bool setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);
@@ -105,7 +107,9 @@ class KinovaArm
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
     ros::ServiceServer startNullSpace_service_;
-    ros::ServiceServer setTorqueControlMode_service_;
+    ros::ServiceServer set_torque_control_mode_service_;
+    ros::ServiceServer set_torque_control_parameters_service_;
+
 
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;

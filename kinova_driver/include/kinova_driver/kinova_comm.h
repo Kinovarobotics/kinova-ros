@@ -90,9 +90,13 @@ class KinovaComm
     void setJointTorques(float joint_torque[]);
     void getJointAccelerations(AngularAcceleration &joint_acc);
     void getJointTorques(KinovaAngles &tqs);
-    void getJointCurrent(AngularPosition &anguler_current);
-    void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
+    void getJointCurrent(AngularPosition &anguler_current);    
     void printAngles(const KinovaAngles &angles);
+
+    //Set torque parameters
+    void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
+    void setPayload(std::vector<float> payload);
+    void setToquesControlSafetyFactor(float factor);
 
     void setCartesianControl();
     void SetTorqueControlState(int state); //1 for Torque control enabled

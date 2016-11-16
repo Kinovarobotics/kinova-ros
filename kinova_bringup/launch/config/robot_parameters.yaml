@@ -6,3 +6,15 @@ jointSpeedLimitParameter1: 10
 
 # Joint speed limit for joints 4, 5, 6
 jointSpeedLimitParameter2: 20
+
+# payload: [COM COMx COMy COMz]
+payload: [0, 0, 0, 0]
+
+#Torque control parameters
+#Do not change these parameters unless you want to change torque control behavior
+torque_parameters: {
+    # torqueMin: 1,
+    # torqueMax: 50,
+    # Decides velocity threshold at which robot switches torque to position control (between 0 and 1)
+    safety_factor: 1
+}

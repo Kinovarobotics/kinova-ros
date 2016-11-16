@@ -31,6 +31,7 @@ add_service_files(
   SetEndEffectorOffset.srv
   SetNullSpaceModeState.srv
   SetTorqueControlMode.srv
+  SetTorqueControlParameters.srv
 )
 
 add_action_files(DIRECTORY action
