@@ -13,9 +13,23 @@
 namespace kinova
 {
 
-void* checkApiInit(void * usbLib, const char* name)
+void* KinovaAPI::initCommandLayerFunction(const char* name)
 {
-    void * function_pointer = dlsym(usbLib, name);
+    char functionName[100];
+    strcpy(functionName,name);
+    if (API_type_ == ETHERNET)
+    {
+        strcpy(functionName, "Ethernet_");
+        strcat(functionName, name);
+    }
+    void * function_pointer = dlsym(API_command_lib_,functionName);
+    assert(function_pointer != NULL);
+    return function_pointer;
+}
+
+void* KinovaAPI::initCommLayerFunction(const char* name)
+{
+    void * function_pointer = dlsym(kinova_comm_lib_, name);
     assert(function_pointer != NULL);
     return function_pointer;
 }
@@ -23,159 +37,171 @@ void* checkApiInit(void * usbLib, const char* name)
 
 KinovaAPI::KinovaAPI(void)
 {
-    void *usbLib  = dlopen(KINOVA_USB_LIBRARY,  RTLD_NOW | RTLD_GLOBAL);
-    void *commLib = dlopen(KINOVA_COMM_LIBRARY, RTLD_NOW | RTLD_GLOBAL);
-
-    if ((usbLib == NULL) || (commLib == NULL))
+    //try USB connection
+    API_type_ = USB;
+    if (testAPIConnection(KINOVA_USB_LIBRARY,KINOVA_COMM_USB_LIBRARY) == 1)
     {
-        ROS_FATAL("%s", dlerror());
+        ROS_INFO("USB Connection Successful");
+    }
+    else
+    //try Ethernet connection
+    {
+        API_type_ = ETHERNET;
+        if (testAPIConnection(KINOVA_ETH_LIBRARY,KINOVA_COMM_ETH_LIBRARY) == 1)
+        {
+          ROS_INFO("Ethernet Connection Successful");
+        }
+        else
+        {
+           ROS_FATAL("Cannot open USB or Ethernet connection");
+        }
     }
 
     // %Tag(general function)%
 
-    initAPI = (int (*)())checkApiInit(usbLib, "InitAPI");
+    initAPI = (int (*)())initCommandLayerFunction("InitAPI");
 
-    closeAPI = (int (*)())checkApiInit(usbLib, "CloseAPI");
+    closeAPI = (int (*)())initCommandLayerFunction("CloseAPI");
 
-    startControlAPI = (int (*)())checkApiInit(usbLib, "StartControlAPI");
+    startControlAPI = (int (*)())initCommandLayerFunction("StartControlAPI");
 
-    stopControlAPI = (int (*)())checkApiInit(usbLib, "StopControlAPI");
+    stopControlAPI = (int (*)())initCommandLayerFunction("StopControlAPI");
 
-    startForceControl = (int (*)())checkApiInit(usbLib, "StartForceControl");
+    startForceControl = (int (*)())initCommandLayerFunction("StartForceControl");
 
-    stopForceControl = (int (*)())checkApiInit(usbLib, "StopForceControl");
+    stopForceControl = (int (*)())initCommandLayerFunction("StopForceControl");
 
-    restoreFactoryDefault = (int (*)())checkApiInit(usbLib, "RestoreFactoryDefault");
+    restoreFactoryDefault = (int (*)())initCommandLayerFunction("RestoreFactoryDefault");
 
-    sendJoystickCommand = (int (*)(JoystickCommand))checkApiInit(usbLib, "SendJoystickCommand");
+    sendJoystickCommand = (int (*)(JoystickCommand))initCommandLayerFunction("SendJoystickCommand");
 
-    getJoystickValue = (int (*)(JoystickCommand &))checkApiInit(usbLib, "GetJoystickValue");
-
-
-    getCodeVersion = (int (*)(int[CODE_VERSION_COUNT]))checkApiInit(usbLib, "GetCodeVersion");
-
-    getAPIVersion = (int (*)(int[API_VERSION_COUNT]))checkApiInit(usbLib, "GetAPIVersion");
-
-    getDeviceCount = (int (*)(int &))checkApiInit(commLib, "GetDeviceCount");
-
-    getDevices = (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))checkApiInit(usbLib, "GetDevices");
-
-    setActiveDevice = (int (*)(KinovaDevice))checkApiInit(usbLib, "SetActiveDevice");
-
-    refresDevicesList = (int (*)())checkApiInit(usbLib, "RefresDevicesList");
-
-    getControlType = (int (*)(int &)) checkApiInit(usbLib, "GetControlType");
-
-    getClientConfigurations = (int (*)(ClientConfigurations &))checkApiInit(usbLib, "GetClientConfigurations");
-
-    setClientConfigurations = (int (*)( ClientConfigurations))checkApiInit(usbLib, "SetClientConfigurations");
-
-    setFrameType = (int (*)(int))checkApiInit(usbLib, "SetFrameType");
-
-    startCurrentLimitation = (int (*)())checkApiInit(usbLib, "StartCurrentLimitation");
-
-    stopCurrentLimitation = (int (*)())checkApiInit(usbLib, "StopCurrentLimitation");
+    getJoystickValue = (int (*)(JoystickCommand &))initCommandLayerFunction("GetJoystickValue");
 
 
-    getGeneralInformations = (int (*)(GeneralInformations &))checkApiInit(usbLib, "GetGeneralInformations");
+    getCodeVersion = (int (*)(int[CODE_VERSION_COUNT]))initCommandLayerFunction("GetCodeVersion");
 
-    getQuickStatus = (int (*)(QuickStatus &))checkApiInit(usbLib, "GetQuickStatus");
+    getAPIVersion = (int (*)(int[API_VERSION_COUNT]))initCommandLayerFunction("GetAPIVersion");
 
-    getForcesInfo = (int (*)(ForcesInfo &))checkApiInit(usbLib, "GetForcesInfo");
+    getDeviceCount = (int (*)(int &))initCommLayerFunction("GetDeviceCount");
 
-    getSensorsInfo = (int (*)(SensorsInfo &))checkApiInit(usbLib, "GetSensorsInfo");
+    getDevices = (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))initCommandLayerFunction("GetDevices");
 
-    getGripperStatus = (int (*)(Gripper &))checkApiInit(usbLib, "GetGripperStatus");
+    setActiveDevice = (int (*)(KinovaDevice))initCommandLayerFunction("SetActiveDevice");
 
-    getCommandVelocity = (int (*)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]))checkApiInit(usbLib, "GetCommandVelocity");
+    refresDevicesList = (int (*)())initCommandLayerFunction("RefresDevicesList");
+
+    getControlType = (int (*)(int &)) initCommandLayerFunction("GetControlType");
+
+    getClientConfigurations = (int (*)(ClientConfigurations &))initCommandLayerFunction("GetClientConfigurations");
+
+    setClientConfigurations = (int (*)( ClientConfigurations))initCommandLayerFunction("SetClientConfigurations");
+
+    setFrameType = (int (*)(int))initCommandLayerFunction("SetFrameType");
+
+    startCurrentLimitation = (int (*)())initCommandLayerFunction("StartCurrentLimitation");
+
+    stopCurrentLimitation = (int (*)())initCommandLayerFunction("StopCurrentLimitation");
+
+
+    getGeneralInformations = (int (*)(GeneralInformations &))initCommandLayerFunction("GetGeneralInformations");
+
+    getQuickStatus = (int (*)(QuickStatus &))initCommandLayerFunction("GetQuickStatus");
+
+    getForcesInfo = (int (*)(ForcesInfo &))initCommandLayerFunction("GetForcesInfo");
+
+    getSensorsInfo = (int (*)(SensorsInfo &))initCommandLayerFunction("GetSensorsInfo");
+
+    getGripperStatus = (int (*)(Gripper &))initCommandLayerFunction("GetGripperStatus");
+
+    getCommandVelocity = (int (*)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]))initCommandLayerFunction("GetCommandVelocity");
 
     // %EndTag(general function)%
 
 
     // %Tag(joint angular)%
 
-    setAngularControl = (int (*)())checkApiInit(usbLib, "SetAngularControl");
+    setAngularControl = (int (*)())initCommandLayerFunction("SetAngularControl");
 
-    getAngularCommand = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularCommand");
+    getAngularCommand = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularCommand");
 
-    getAngularPosition = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularPosition");
+    getAngularPosition = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularPosition");
 
-    getAngularVelocity = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularVelocity");
+    getAngularVelocity = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularVelocity");
 
-    getAngularAcceleration = (int (*)(AngularAcceleration &))checkApiInit(usbLib, "GetActuatorAcceleration");
-
-
-    getAngularForce = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularForce");
-
-    setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))checkApiInit(usbLib, "SetAngularTorqueMinMax");
+    getAngularAcceleration = (int (*)(AngularAcceleration &))initCommandLayerFunction("GetActuatorAcceleration");
 
 
-    getAngularCurrent = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularCurrent");
+    getAngularForce = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularForce");
 
-    getAngularCurrentMotor = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularCurrentMotor");
+    setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularTorqueMinMax");
 
-    getPositionCurrentActuators = (int (*)(float[POSITION_CURRENT_COUNT]))checkApiInit(usbLib, "GetPositionCurrentActuators");
 
-    setActuatorPID = (int (*)(unsigned int, float, float, float))checkApiInit(usbLib, "SetActuatorPID");
+    getAngularCurrent = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularCurrent");
+
+    getAngularCurrentMotor = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularCurrentMotor");
+
+    getPositionCurrentActuators = (int (*)(float[POSITION_CURRENT_COUNT]))initCommandLayerFunction("GetPositionCurrentActuators");
+
+    setActuatorPID = (int (*)(unsigned int, float, float, float))initCommandLayerFunction("SetActuatorPID");
 
     // %EndTag(joint angular)%
 
 
     // %Tag(tool cartesian)%
 
-    setCartesianControl = (int (*)())checkApiInit(usbLib, "SetCartesianControl");
+    setCartesianControl = (int (*)())initCommandLayerFunction("SetCartesianControl");
 
-    getCartesianCommand = (int (*)(CartesianPosition &))checkApiInit(usbLib, "GetCartesianCommand");
+    getCartesianCommand = (int (*)(CartesianPosition &))initCommandLayerFunction("GetCartesianCommand");
 
-    getCartesianPosition = (int (*)(CartesianPosition &))checkApiInit(usbLib, "GetCartesianPosition");
-
-
-    getCartesianForce = (int (*)(CartesianPosition &))checkApiInit(usbLib, "GetCartesianForce");
-
-    setCartesianForceMinMax = (int (*)(CartesianInfo, CartesianInfo))checkApiInit(usbLib, "SetCartesianForceMinMax");
-
-    setCartesianInertiaDamping = (int (*)(CartesianInfo, CartesianInfo))checkApiInit(usbLib, "SetCartesianInertiaDamping");
+    getCartesianPosition = (int (*)(CartesianPosition &))initCommandLayerFunction("GetCartesianPosition");
 
 
-    setEndEffectorOffset = (int (*)(unsigned int, float, float, float))checkApiInit(usbLib, "SetEndEffectorOffset");
+    getCartesianForce = (int (*)(CartesianPosition &))initCommandLayerFunction("GetCartesianForce");
 
-    getEndEffectorOffset = (int (*)(unsigned int&, float&, float&, float&))checkApiInit(usbLib, "GetEndEffectorOffset");
+    setCartesianForceMinMax = (int (*)(CartesianInfo, CartesianInfo))initCommandLayerFunction("SetCartesianForceMinMax");
+
+    setCartesianInertiaDamping = (int (*)(CartesianInfo, CartesianInfo))initCommandLayerFunction("SetCartesianInertiaDamping");
 
 
-    getActualTrajectoryInfo = (int (*)(TrajectoryPoint &))checkApiInit(usbLib, "GetActualTrajectoryInfo");
+    setEndEffectorOffset = (int (*)(unsigned int, float, float, float))initCommandLayerFunction("SetEndEffectorOffset");
 
-    getGlobalTrajectoryInfo = (int (*)(TrajectoryFIFO &))checkApiInit(usbLib, "GetGlobalTrajectoryInfo");
+    getEndEffectorOffset = (int (*)(unsigned int&, float&, float&, float&))initCommandLayerFunction("GetEndEffectorOffset");
 
-    sendAdvanceTrajectory = (int (*)(TrajectoryPoint))checkApiInit(usbLib, "SendAdvanceTrajectory");
 
-    sendBasicTrajectory = (int (*)(TrajectoryPoint))checkApiInit(usbLib, "SendBasicTrajectory");
+    getActualTrajectoryInfo = (int (*)(TrajectoryPoint &))initCommandLayerFunction("GetActualTrajectoryInfo");
 
-    eraseAllTrajectories = (int (*)())checkApiInit(usbLib, "EraseAllTrajectories");
+    getGlobalTrajectoryInfo = (int (*)(TrajectoryFIFO &))initCommandLayerFunction("GetGlobalTrajectoryInfo");
 
-     eraseAllProtectionZones = (int (*)())checkApiInit(usbLib, "EraseAllProtectionZones");
+    sendAdvanceTrajectory = (int (*)(TrajectoryPoint))initCommandLayerFunction("SendAdvanceTrajectory");
 
-    getProtectionZone = (int (*)(ZoneList &))checkApiInit(usbLib, "GetProtectionZone");
+    sendBasicTrajectory = (int (*)(TrajectoryPoint))initCommandLayerFunction("SendBasicTrajectory");
 
-    setProtectionZone = (int (*)(ZoneList))checkApiInit(usbLib, "SetProtectionZone");
+    eraseAllTrajectories = (int (*)())initCommandLayerFunction("EraseAllTrajectories");
 
-    StartRedundantJointNullSpaceMotion = (int (*)())checkApiInit(usbLib, "StartRedundantJointNullSpaceMotion");
+     eraseAllProtectionZones = (int (*)())initCommandLayerFunction("EraseAllProtectionZones");
 
-    StopRedundantJointNullSpaceMotion = (int (*)())checkApiInit(usbLib, "StopRedundantJointNullSpaceMotion");
+    getProtectionZone = (int (*)(ZoneList &))initCommandLayerFunction("GetProtectionZone");
 
-    ActivateCollisionAutomaticAvoidance = (int (*)(int))checkApiInit(usbLib, "ActivateCollisionAutomaticAvoidance");
+    setProtectionZone = (int (*)(ZoneList))initCommandLayerFunction("SetProtectionZone");
 
-    //ActivateSingularityAutomaticAvoidance = (int (*)(int))checkApiInit(usbLib, "ActivateSingularityAutomaticAvoidance");
+    StartRedundantJointNullSpaceMotion = (int (*)())initCommandLayerFunction("StartRedundantJointNullSpaceMotion");
 
-    //ActivateAutoNullSpaceMotionCartesian = (int (*)(int))checkApiInit(usbLib, "ActivateAutoNullSpaceMotionCartesian");
+    StopRedundantJointNullSpaceMotion = (int (*)())initCommandLayerFunction("StopRedundantJointNullSpaceMotion");
+
+    ActivateCollisionAutomaticAvoidance = (int (*)(int))initCommandLayerFunction("ActivateCollisionAutomaticAvoidance");
+
+    //ActivateSingularityAutomaticAvoidance = (int (*)(int))initCommandLayerFunction("ActivateSingularityAutomaticAvoidance");
+
+    //ActivateAutoNullSpaceMotionCartesian = (int (*)(int))initCommandLayerFunction("ActivateAutoNullSpaceMotionCartesian");
 
     // %EndTag(tool cartesian)%
 
 
     // %Tag(pre-defined)%
 
-    moveHome = (int (*)())checkApiInit(usbLib, "MoveHome");
+    moveHome = (int (*)())initCommandLayerFunction("MoveHome");
 
-    initFingers = (int (*)())checkApiInit(usbLib, "InitFingers");
+    initFingers = (int (*)())initCommandLayerFunction("InitFingers");
 
     // %EndTag(pre-defined)%
 
@@ -187,9 +213,9 @@ KinovaAPI::KinovaAPI(void)
 
     // %Tag(less interest in ROS)%
 
-    setControlMapping = (int (*)(ControlMappingCharts)) checkApiInit(usbLib, "SetControlMapping");
+    setControlMapping = (int (*)(ControlMappingCharts)) initCommandLayerFunction("SetControlMapping");
 
-    getControlMapping = (int (*)(ControlMappingCharts &)) checkApiInit(usbLib, "GetControlMapping");
+    getControlMapping = (int (*)(ControlMappingCharts &)) initCommandLayerFunction("GetControlMapping");
 
     // %EndTag(less interest in ROS)%
 
@@ -197,9 +223,9 @@ KinovaAPI::KinovaAPI(void)
 
     // %Tag(not function, place holder, etc)%
 
-    getSingularityVector = (int (*)(SingularityVector &))checkApiInit(usbLib, "SendCartesianForceCommand"); // old style, not constantly set to zeros
+    getSingularityVector = (int (*)(SingularityVector &))initCommandLayerFunction("SendCartesianForceCommand"); // old style, not constantly set to zeros
 
-    setActuatorMaxVelocity = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetActuatorMaxVelocity"); // no corresponding DSP code.
+    setActuatorMaxVelocity = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetActuatorMaxVelocity"); // no corresponding DSP code.
 
 
     // %EndTag(not function, place holder, etc)%
@@ -212,83 +238,122 @@ KinovaAPI::KinovaAPI(void)
     // force/torque control are not tested in ROS and may lead to unexpect motion.
     // do not use these functions unless you are know exactly what you are doing.
 
-    setTorqueControlType = (int (*)(TORQUECONTROL_TYPE))checkApiInit(usbLib, "SetTorqueControlType");
+    setTorqueControlType = (int (*)(TORQUECONTROL_TYPE))initCommandLayerFunction("SetTorqueControlType");
 
 
-    setActuatorPIDFilter = (int (*)(int, float, float, float))checkApiInit(usbLib, "SetActuatorPIDFilter");
+    setActuatorPIDFilter = (int (*)(int, float, float, float))initCommandLayerFunction("SetActuatorPIDFilter");
 
-    setAngularInertiaDamping = (int (*)(AngularInfo, AngularInfo))checkApiInit(usbLib, "SetAngularInertiaDamping");
+    setAngularInertiaDamping = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularInertiaDamping");
 
-    getAngularForceGravityFree = (int (*)(AngularPosition &))checkApiInit(usbLib, "GetAngularForceGravityFree");
+    getAngularForceGravityFree = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularForceGravityFree");
 
-    sendAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SendAngularTorqueCommand");
+    sendAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendAngularTorqueCommand");
 
-    setTorqueActuatorGain = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueActuatorGain");
+    setTorqueActuatorGain = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueActuatorGain");
 
-    setTorqueActuatorDamping = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueActuatorDamping");
+    setTorqueActuatorDamping = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueActuatorDamping");
 
-    setTorqueCommandMax = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueCommandMax");
+    setTorqueCommandMax = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueCommandMax");
 
-    setTorqueSafetyFactor = (int (*)(float))checkApiInit(usbLib, "SetTorqueSafetyFactor");
+    setTorqueSafetyFactor = (int (*)(float))initCommandLayerFunction("SetTorqueSafetyFactor");
 
-    setTorqueRateLimiter = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueRateLimiter");
+    setTorqueRateLimiter = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueRateLimiter");
 
-    setTorqueFeedCurrent = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFeedCurrent");
+    setTorqueFeedCurrent = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFeedCurrent");
 
-    setTorqueFeedVelocity = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFeedVelocity");
+    setTorqueFeedVelocity = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFeedVelocity");
 
-    setTorquePositionLimitDampingGain = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorquePositionLimitDampingGain");
+    setTorquePositionLimitDampingGain = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorquePositionLimitDampingGain");
 
-    setTorquePositionLimitDampingMax = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorquePositionLimitDampingMax");
+    setTorquePositionLimitDampingMax = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorquePositionLimitDampingMax");
 
-    setTorquePositionLimitRepulsGain = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorquePositionLimitRepulsGain");
+    setTorquePositionLimitRepulsGain = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorquePositionLimitRepulsGain");
 
-    setTorquePositionLimitRepulsMax = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorquePositionLimitRepulsMax");
+    setTorquePositionLimitRepulsMax = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorquePositionLimitRepulsMax");
 
-    setTorqueFilterVelocity = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFilterVelocity");
-
-
-    setTorqueFilterMeasuredTorque = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFilterMeasuredTorque");
-
-    setTorqueFilterError = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFilterError");
-
-    setTorqueFilterControlEffort = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetTorqueFilterControlEffort");
+    setTorqueFilterVelocity = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterVelocity");
 
 
-    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SendCartesianForceCommand");
+    setTorqueFilterMeasuredTorque = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterMeasuredTorque");
 
-    switchTrajectoryTorque = (int (*)(GENERALCONTROL_TYPE))checkApiInit(usbLib, "SwitchTrajectoryTorque");
+    setTorqueFilterError = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterError");
 
-    setGravityType = (int (*)(GRAVITY_TYPE))checkApiInit(usbLib, "SetGravityType");
+    setTorqueFilterControlEffort = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterControlEffort");
 
-    setGravityVector = (int (*)(float[GRAVITY_VECTOR_SIZE]))checkApiInit(usbLib, "SetGravityVector");
 
-    setGravityOptimalZParam = (int (*)(float[GRAVITY_PARAM_SIZE]))checkApiInit(usbLib, "SetGravityOptimalZParam");
+    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendCartesianForceCommand");
 
-    setGravityManualInputParam = (int (*)(float[GRAVITY_PARAM_SIZE]))checkApiInit(usbLib, "SetGravityManualInputParam");
+    switchTrajectoryTorque = (int (*)(GENERALCONTROL_TYPE))initCommandLayerFunction("SwitchTrajectoryTorque");
 
-    getAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "GetAngularTorqueCommand");
+    setGravityType = (int (*)(GRAVITY_TYPE))initCommandLayerFunction("SetGravityType");
 
-    getAngularTorqueGravityEstimation = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "GetAngularTorqueGravityEstimation");
+    setGravityVector = (int (*)(float[GRAVITY_VECTOR_SIZE]))initCommandLayerFunction("SetGravityVector");
 
-    setSwitchThreshold = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetSwitchThreshold");
+    setGravityOptimalZParam = (int (*)(float[GRAVITY_PARAM_SIZE]))initCommandLayerFunction("SetGravityOptimalZParam");
 
-    setPositionLimitDistance = (int (*)(float[COMMAND_SIZE]))checkApiInit(usbLib, "SetPositionLimitDistance");
+    setGravityManualInputParam = (int (*)(float[GRAVITY_PARAM_SIZE]))initCommandLayerFunction("SetGravityManualInputParam");
 
-    setGravityPayload = (int (*)(float[GRAVITY_PAYLOAD_SIZE]))checkApiInit(usbLib, "SetGravityPayload");
+    getAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("GetAngularTorqueCommand");
 
-    setTorqueVibrationController = (int (*)(float))checkApiInit(usbLib, "SetTorqueVibrationController");
+    getAngularTorqueGravityEstimation = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("GetAngularTorqueGravityEstimation");
 
-    setTorqueRobotProtection = (int (*)(int))checkApiInit(usbLib, "SetTorqueRobotProtection");
+    setSwitchThreshold = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetSwitchThreshold");
 
-    runGravityZEstimationSequence = (int (*)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]))checkApiInit(usbLib, "RunGravityZEstimationSequence");
+    setPositionLimitDistance = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetPositionLimitDistance");
 
-    getTrajectoryTorqueMode = (int (*)(int &))checkApiInit(usbLib, "GetTrajectoryTorqueMode");
+    setGravityPayload = (int (*)(float[GRAVITY_PAYLOAD_SIZE]))initCommandLayerFunction("SetGravityPayload");
 
-    setTorqueInactivityType = (int (*)(int))checkApiInit(usbLib, "SetTorqueInactivityType");
+    setTorqueVibrationController = (int (*)(float))initCommandLayerFunction("SetTorqueVibrationController");
+
+    setTorqueRobotProtection = (int (*)(int))initCommandLayerFunction("SetTorqueRobotProtection");
+
+    runGravityZEstimationSequence = (int (*)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]))initCommandLayerFunction("RunGravityZEstimationSequence");
+
+    getTrajectoryTorqueMode = (int (*)(int &))initCommandLayerFunction("GetTrajectoryTorqueMode");
+
+    setTorqueInactivityType = (int (*)(int))initCommandLayerFunction("SetTorqueInactivityType");
 
 
         // %EndTag(experimental)%
+}
+
+//returns 1 if robot connection sucessful
+int KinovaAPI::testAPIConnection(const char *command_lib, const char *comm_lib)
+{
+    API_command_lib_  = dlopen(command_lib,  RTLD_NOW | RTLD_GLOBAL);
+    if (API_command_lib_ == NULL)
+    {
+        ROS_WARN("%s", dlerror());
+        return 0;
+    }
+    kinova_comm_lib_ = dlopen(comm_lib, RTLD_NOW | RTLD_GLOBAL);
+    if (kinova_comm_lib_ == NULL)
+    {
+        ROS_WARN("%s", dlerror());
+        return 0;
+    }
+
+    if (API_type_ == USB){
+        initAPI = (int (*)())dlsym(API_command_lib_,"InitAPI");
+    }
+    else
+    {
+        initAPI = (int (*)())dlsym(API_command_lib_,"Ethernet_InitAPI");
+    }
+    if (initAPI!= NULL)
+        initAPI();
+    getDeviceCount = (int (*)(int &))dlsym(kinova_comm_lib_, "GetDeviceCount");
+    int device_count = 0, result;
+    if (getDeviceCount != NULL)
+      device_count = getDeviceCount(result);
+    if (device_count > 0 && device_count!=ERROR_NOT_INITIALIZED)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 }  // namespace kinova

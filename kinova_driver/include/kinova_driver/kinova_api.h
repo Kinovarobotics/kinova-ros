@@ -22,13 +22,23 @@ namespace kinova
 {
 
 #define KINOVA_USB_LIBRARY  "USBCommandLayerUbuntu.so"
-#define KINOVA_COMM_LIBRARY "USBCommLayerUbuntu.so"
+#define KINOVA_COMM_USB_LIBRARY "USBCommLayerUbuntu.so"
+
+#define KINOVA_ETH_LIBRARY  "EthCommandLayerUbuntu.so"
+#define KINOVA_COMM_ETH_LIBRARY "EthCommLayerUbuntu.so"
+
+
+enum KinovaAPIType {
+    USB = 0,
+    ETHERNET
+};
 
 class KinovaAPI
 {
 public:
     KinovaAPI(void);
 
+    int testAPIConnection(const char *API_command_lib, const char *kinova_comm_lib);
     // %Tag(general function)%
 
     int (*initAPI)(void);
@@ -200,6 +210,13 @@ public:
 
     // %EndTag(experimental)%
 
+  private:
+    KinovaAPIType API_type_;
+    void *API_command_lib_;
+    void *kinova_comm_lib_;
+
+    void* initCommandLayerFunction(const char* name);
+    void* initCommLayerFunction(const char* name);
 };
 
 
