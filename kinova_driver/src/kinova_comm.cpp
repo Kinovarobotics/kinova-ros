@@ -54,7 +54,8 @@ namespace kinova
 
 KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                    boost::recursive_mutex &api_mutex,
-                   const bool is_movement_on_start)
+                   const bool is_movement_on_start,
+                   const std::string &kinova_robotType)
     : is_software_stop_(false), api_mutex_(api_mutex)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
@@ -122,25 +123,6 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
             getQuickStatus(quick_status);
 
             robot_type_ = quick_status.RobotType;
-            switch (robot_type_) {
-                case 0:
-                case 3:
-                case 4:
-                case 6:
-                case 7:
-                case 8:
-                    num_fingers_ = 3;
-                    break;
-                case 1:
-                case 2:
-                case 5:
-                    num_fingers_ = 3; // Mico (case 1,2,5) may equipped with 3-finger gripper as well.
-                    break;
-                default:
-                    ROS_ERROR("Unknown robot type: %d", quick_status.RobotType);
-                    throw KinovaCommException("Could not recognize the type of the arm", quick_status.RobotType);
-                    break;
-            };
 
             ROS_INFO_STREAM("Found " << devices_count << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
@@ -160,6 +142,9 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         throw KinovaCommException("Could not find the specified arm", 0);
     }
 
+    //find the number of joints and fingers of the arm using robotType passed from arm node
+    num_joints_ = kinova_robotType[3]-'0';
+    num_fingers_ = kinova_robotType[5]-'0';
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
     startAPI();
