@@ -48,6 +48,7 @@
 #include <string>
 #include <vector>
 #include <tf/tf.h>
+#include <arpa/inet.h>
 
 namespace kinova
 {
@@ -62,7 +63,32 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
 
     int result = NO_ERROR_KINOVA;
 
-    // Get the serial number parameter for the arm we wish to connec to
+    //initialize kinova api functions
+    std::string api_type;
+    node_handle.param<std::string>("connection_type", api_type, "USB");
+    if (api_type == "USB")
+      kinova_api_.initializeKinovaAPIFunctions(USB);
+    else
+      kinova_api_.initializeKinovaAPIFunctions(ETHERNET);
+
+
+    //Set ethernet parameters
+    EthernetCommConfig ethernet_settings;
+    std::string local_IP,subnet_mask;
+    int local_cmd_port,local_bcast_port;
+    node_handle.getParam("ethernet/local_machine_IP", local_IP);
+    node_handle.getParam("ethernet/subnet_mask", subnet_mask);
+    node_handle.getParam("ethernet/local_cmd_port", local_cmd_port);
+    node_handle.getParam("ethernet/local_broadcast_port", local_bcast_port);
+    ethernet_settings.localCmdport = local_cmd_port;
+    ethernet_settings.localBcastPort = local_bcast_port;
+    ethernet_settings.localIpAddress = inet_addr(local_IP.c_str());
+    ethernet_settings.subnetMask = inet_addr(subnet_mask.c_str());
+    ethernet_settings.rxTimeOutInMs = 1000;
+    ethernet_settings.robotIpAddress = inet_addr("192.168.100.11");
+    ethernet_settings.robotPort = 55000;
+
+    // Get the serial number parameter for the arm we wish to connect to
     std::string serial_number = "";
     node_handle.getParam("serial_number", serial_number);
 
@@ -76,21 +102,28 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
                     << api_version[0] << "." << api_version[1] << "." << api_version[2] << ")");
 
-    result = kinova_api_.initAPI();
+    if (api_type == "USB"){
+      result = kinova_api_.initAPI();
+    }
+    else{
+        result =kinova_api_.initEthernetAPI(ethernet_settings);
+    }
+
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not initialize Kinova API", result);
-    }
+    }    
+
+    result = kinova_api_.refresDevicesList();
 
     KinovaDevice devices_list[MAX_KINOVA_DEVICE];
     result = NO_ERROR_KINOVA;
-    kinova_api_.getDevices(devices_list, result);
+    int devices_count = kinova_api_.getDevices(devices_list, result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get devices list", result);
     }
 
-    int devices_count = kinova_api_.getDeviceCount(result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get devices list count.", result);
@@ -145,6 +178,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     //find the number of joints and fingers of the arm using robotType passed from arm node
     num_joints_ = kinova_robotType[3]-'0';
     num_fingers_ = kinova_robotType[5]-'0';
+
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
     startAPI();
@@ -674,6 +708,20 @@ void KinovaComm::getJointCurrent(AngularPosition &anguler_current)
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the current in joints", result);
+    }
+}
+
+/**
+  *@brief Set zero torque for all joints
+ */
+void KinovaComm::setZeroTorque()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int actuator_address[] = {16,17,18,19,20,21,25};
+    for (int i=0;i<num_joints_;i++)
+    {
+        //kinova_api_.setTorqueZero(actuator_address[i]);
+        ROS_INFO("Zero torque %d", actuator_address[i]);
     }
 }
 
