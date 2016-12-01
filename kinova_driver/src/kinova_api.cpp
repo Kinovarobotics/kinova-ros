@@ -28,38 +28,41 @@ void* KinovaAPI::initCommandLayerFunction(const char* name)
 }
 
 void* KinovaAPI::initCommLayerFunction(const char* name)
-{
+{    
+    char functionName[100];
+    strcpy(functionName,name);
+    if (API_type_ == ETHERNET)
+    {
+        strcpy(functionName, "Ethernet_Communication_");
+        strcat(functionName, name);
+    }    
     void * function_pointer = dlsym(kinova_comm_lib_, name);
     assert(function_pointer != NULL);
     return function_pointer;
 }
 
 
-KinovaAPI::KinovaAPI(void)
+int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 {
     //try USB connection
-    API_type_ = USB;
-    if (testAPIConnection(KINOVA_USB_LIBRARY,KINOVA_COMM_USB_LIBRARY) == 1)
+    API_type_ = connection_type;
+
+    if (API_type_ == USB)
     {
-        ROS_INFO("USB Connection Successful");
+        loadLibraries(KINOVA_USB_LIBRARY,KINOVA_COMM_USB_LIBRARY);
     }
     else
-    //try Ethernet connection
     {
-        API_type_ = ETHERNET;
-        if (testAPIConnection(KINOVA_ETH_LIBRARY,KINOVA_COMM_ETH_LIBRARY) == 1)
-        {
-          ROS_INFO("Ethernet Connection Successful");
-        }
-        else
-        {
-           ROS_FATAL("Cannot open USB or Ethernet connection");
-        }
+        loadLibraries(KINOVA_ETH_LIBRARY,KINOVA_COMM_ETH_LIBRARY);
     }
 
     // %Tag(general function)%
 
     initAPI = (int (*)())initCommandLayerFunction("InitAPI");
+
+    if (API_type_ != USB){
+      initEthernetAPI = (int (*)(EthernetCommConfig &))initCommandLayerFunction("InitEthernetAPI");
+    }
 
     closeAPI = (int (*)())initCommandLayerFunction("CloseAPI");
 
@@ -77,12 +80,12 @@ KinovaAPI::KinovaAPI(void)
 
     getJoystickValue = (int (*)(JoystickCommand &))initCommandLayerFunction("GetJoystickValue");
 
-
     getCodeVersion = (int (*)(int[CODE_VERSION_COUNT]))initCommandLayerFunction("GetCodeVersion");
 
     getAPIVersion = (int (*)(int[API_VERSION_COUNT]))initCommandLayerFunction("GetAPIVersion");
 
-    getDeviceCount = (int (*)(int &))initCommLayerFunction("GetDeviceCount");
+    //not working with Ethernet API
+    //getDeviceCount = (int (*)(int &))initCommLayerFunction("GetDeviceCount");
 
     getDevices = (int (*)(KinovaDevice[MAX_KINOVA_DEVICE], int &))initCommandLayerFunction("GetDevices");
 
@@ -101,7 +104,6 @@ KinovaAPI::KinovaAPI(void)
     startCurrentLimitation = (int (*)())initCommandLayerFunction("StartCurrentLimitation");
 
     stopCurrentLimitation = (int (*)())initCommandLayerFunction("StopCurrentLimitation");
-
 
     getGeneralInformations = (int (*)(GeneralInformations &))initCommandLayerFunction("GetGeneralInformations");
 
@@ -132,8 +134,6 @@ KinovaAPI::KinovaAPI(void)
 
 
     getAngularForce = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularForce");
-
-    setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularTorqueMinMax");
 
 
     getAngularCurrent = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularCurrent");
@@ -197,6 +197,24 @@ KinovaAPI::KinovaAPI(void)
     // %EndTag(tool cartesian)%
 
 
+    // %Tag(torque control)%
+
+    switchTrajectoryTorque = (int (*)(GENERALCONTROL_TYPE))initCommandLayerFunction("SwitchTrajectoryTorque");
+
+    sendAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendAngularTorqueCommand");
+
+    setTorqueZero = (int (*)(int))initCommandLayerFunction("SetTorqueZero");
+
+    // Toque parameters
+
+    setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularTorqueMinMax");
+
+    setTorqueSafetyFactor = (int (*)(float))initCommandLayerFunction("SetTorqueSafetyFactor");
+
+
+    // %EndTag(torque control)%
+
+
     // %Tag(pre-defined)%
 
     moveHome = (int (*)())initCommandLayerFunction("MoveHome");
@@ -240,22 +258,17 @@ KinovaAPI::KinovaAPI(void)
 
     setTorqueControlType = (int (*)(TORQUECONTROL_TYPE))initCommandLayerFunction("SetTorqueControlType");
 
-
     setActuatorPIDFilter = (int (*)(int, float, float, float))initCommandLayerFunction("SetActuatorPIDFilter");
 
     setAngularInertiaDamping = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularInertiaDamping");
 
     getAngularForceGravityFree = (int (*)(AngularPosition &))initCommandLayerFunction("GetAngularForceGravityFree");
 
-    sendAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendAngularTorqueCommand");
-
     setTorqueActuatorGain = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueActuatorGain");
 
     setTorqueActuatorDamping = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueActuatorDamping");
 
-    setTorqueCommandMax = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueCommandMax");
-
-    setTorqueSafetyFactor = (int (*)(float))initCommandLayerFunction("SetTorqueSafetyFactor");
+    setTorqueCommandMax = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueCommandMax");    
 
     setTorqueRateLimiter = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueRateLimiter");
 
@@ -280,10 +293,7 @@ KinovaAPI::KinovaAPI(void)
 
     setTorqueFilterControlEffort = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterControlEffort");
 
-
-    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendCartesianForceCommand");
-
-    switchTrajectoryTorque = (int (*)(GENERALCONTROL_TYPE))initCommandLayerFunction("SwitchTrajectoryTorque");
+    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendCartesianForceCommand");    
 
     setGravityType = (int (*)(GRAVITY_TYPE))initCommandLayerFunction("SetGravityType");
 
@@ -313,47 +323,25 @@ KinovaAPI::KinovaAPI(void)
 
     setTorqueInactivityType = (int (*)(int))initCommandLayerFunction("SetTorqueInactivityType");
 
-
         // %EndTag(experimental)%
 }
 
 //returns 1 if robot connection sucessful
-int KinovaAPI::testAPIConnection(const char *command_lib, const char *comm_lib)
+int KinovaAPI::loadLibraries(const char *command_lib, const char *comm_lib)
 {
     API_command_lib_  = dlopen(command_lib,  RTLD_NOW | RTLD_GLOBAL);
     if (API_command_lib_ == NULL)
     {
-        ROS_WARN("%s", dlerror());
+        ROS_FATAL("%s", dlerror());
         return 0;
     }
     kinova_comm_lib_ = dlopen(comm_lib, RTLD_NOW | RTLD_GLOBAL);
     if (kinova_comm_lib_ == NULL)
     {
-        ROS_WARN("%s", dlerror());
+        ROS_FATAL("%s", dlerror());
         return 0;
     }
-
-    if (API_type_ == USB){
-        initAPI = (int (*)())dlsym(API_command_lib_,"InitAPI");
-    }
-    else
-    {
-        initAPI = (int (*)())dlsym(API_command_lib_,"Ethernet_InitAPI");
-    }
-    if (initAPI!= NULL)
-        initAPI();
-    getDeviceCount = (int (*)(int &))dlsym(kinova_comm_lib_, "GetDeviceCount");
-    int device_count = 0, result;
-    if (getDeviceCount != NULL)
-      device_count = getDeviceCount(result);
-    if (device_count > 0 && device_count!=ERROR_NOT_INITIALIZED)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return 1;
 }
 
 }  // namespace kinova

@@ -15,6 +15,7 @@
 #include <iostream>
 
 #include "kinova/Kinova.API.USBCommandLayerUbuntu.h"
+#include "kinova/Kinova.API.EthCommandLayerUbuntu.h"
 #include "kinova/KinovaTypes.h"
 
 
@@ -36,12 +37,16 @@ enum KinovaAPIType {
 class KinovaAPI
 {
 public:
-    KinovaAPI(void);
-
-    int testAPIConnection(const char *API_command_lib, const char *kinova_comm_lib);
+    KinovaAPI(){}
+    int initializeKinovaAPIFunctions(KinovaAPIType connection_type);
+    int loadLibraries(const char *API_command_lib, const char *kinova_comm_lib);
     // %Tag(general function)%
 
     int (*initAPI)(void);
+
+    //note - there is already an Ethernet_initAPI()
+    //this one is also needed to init ethernet connection
+    int (*initEthernetAPI)(EthernetCommConfig & config);
     int (*closeAPI)(void);
     int (*startControlAPI)();
     int (*stopControlAPI)();
@@ -69,7 +74,7 @@ public:
     int (*getForcesInfo)(ForcesInfo &);
     int (*getSensorsInfo)(SensorsInfo &);
     int (*getGripperStatus)(Gripper &);
-    int (*getCommandVelocity)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]);
+    int (*getCommandVelocity)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]);    
 
     // %EndTag(general function)%
 
@@ -82,8 +87,7 @@ public:
     int (*getAngularVelocity)(AngularPosition &);
     int (*getAngularAcceleration)(AngularAcceleration &);
 
-    int (*getAngularForce)(AngularPosition &);
-    int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
+    int (*getAngularForce)(AngularPosition &);    
 
     int (*getAngularCurrent)(AngularPosition &);
     int (*getAngularCurrentMotor)(AngularPosition &);
@@ -116,19 +120,21 @@ public:
     int (*setProtectionZone)(ZoneList);
 
 
-    //! Enables control mode where robot moves in null space using the joystick
+    //! 7 dof - Enables control mode where robot moves in null space using the joystick
     int (*StartRedundantJointNullSpaceMotion)();
 
-    //! Disables control mode where robot moves in null space using the joystick
+    //! 7 dof - Disables control mode where robot moves in null space using the joystick
     int (*StopRedundantJointNullSpaceMotion)();
 
-    //!Activate(state =1) or deactivates (state =0) the avoidance of robot self-collisions
+    //! Only works for 7 dof for now - Activate(state =1) or deactivates (state =0) the
+    //!  avoidance of robot self-collisions
     int (*ActivateCollisionAutomaticAvoidance)(int state);
 
-    //!Activates (state =1) or deactivates (state =0) the automatic avoidance of robot singularities (but the fitness function stays active). Note: in the 7-dof robot, if the fitness function is not able to avoid a singularity, the user's command is modified to try to avoid the singularity.
+    //! Only works for 7 dof for now - Activates (state =1) or deactivates (state =0)
+    //! the automatic avoidance of robot singularities (but the fitness function stays active).
     int (*ActivateSingularityAutomaticAvoidance)(int state);
 
-    //!Activates (state =1) or deactivates (state =0)  the fitness function 7 dof robot
+    //! 7 dof - Activates (state =1) or deactivates (state =0)  the fitness function 7 dof robot
     int (*ActivateAutoNullSpaceMotionCartesian)(int state);
 
     // %EndTag(tool cartesian)%
@@ -142,7 +148,18 @@ public:
     // %EndTag(pre-defined)%
 
 
+    //%Tag(Torque control)%
 
+    int (*switchTrajectoryTorque)(GENERALCONTROL_TYPE);
+    int (*sendAngularTorqueCommand)(float[COMMAND_SIZE]);
+    int (*setTorqueZero)(int actuator_address);
+
+
+    //Torque Parameters
+    int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
+    int (*setTorqueSafetyFactor)(float);
+
+    //%EndTag(Torque control)%
 
 
     // The following APIs are not wrapped in kinova_comm, users should call kinova_api with extra caution.
@@ -173,14 +190,12 @@ public:
 
     int (*setActuatorPIDFilter)(int, float, float, float);
     int (*setAngularInertiaDamping)(AngularInfo, AngularInfo);
-    int (*getAngularForceGravityFree)(AngularPosition &);
-    int (*sendAngularTorqueCommand)(float[COMMAND_SIZE]);
+    int (*getAngularForceGravityFree)(AngularPosition &);    
     int (*getAngularTorqueCommand)(float[COMMAND_SIZE]);
     int (*getAngularTorqueGravityEstimation)(float[COMMAND_SIZE]);
     int (*setTorqueActuatorGain)(float[COMMAND_SIZE]);
     int (*setTorqueActuatorDamping)(float[COMMAND_SIZE]);
-    int (*setTorqueCommandMax)(float[COMMAND_SIZE]);
-    int (*setTorqueSafetyFactor)(float);
+    int (*setTorqueCommandMax)(float[COMMAND_SIZE]);    
     int (*setTorqueRateLimiter)(float[COMMAND_SIZE]);
     int (*setTorqueFeedCurrent)(float[COMMAND_SIZE]);
     int (*setTorqueFeedVelocity)(float[COMMAND_SIZE]);
@@ -197,8 +212,7 @@ public:
     int (*setGravityVector)(float[GRAVITY_VECTOR_SIZE]);
     int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);
     int (*setGravityManualInputParam)(float[GRAVITY_PARAM_SIZE]);
-    int (*setGravityType)(GRAVITY_TYPE);
-    int (*switchTrajectoryTorque)(GENERALCONTROL_TYPE);
+    int (*setGravityType)(GRAVITY_TYPE);   
     int (*setSwitchThreshold)(float[COMMAND_SIZE]);
     int (*setPositionLimitDistance)(float[COMMAND_SIZE]);
     int (*setGravityPayload)(float[GRAVITY_PAYLOAD_SIZE]);
