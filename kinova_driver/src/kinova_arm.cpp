@@ -199,6 +199,22 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
     {
         kinova_comm_.setPayload(payload);
     }
+    std::vector<float> min_torque, max_torque;
+    if (node_handle_.getParam("torque_min", min_torque) && node_handle_.getParam("torque_max", max_torque))
+    {
+        AngularInfo min_torque_info,max_torque_info;
+
+        //since fist 7 members of the struct we assume no padding
+        //and use float pointer to access struct elements
+        float *min_torque_actuator = &(min_torque_info.Actuator1);
+        float *max_torque_actuator = &(max_torque_info.Actuator1);
+        for (int i = 0; min_torque.size(); i++)
+        {
+            min_torque_actuator[i] = min_torque.at(i);
+            max_torque_actuator[i] = max_torque.at(i);
+        }
+        kinova_comm_.setJointTorqueMinMax(min_torque_info,max_torque_info);
+    }
 }
 
 void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)

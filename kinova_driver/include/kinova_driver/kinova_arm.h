@@ -60,7 +60,8 @@ class KinovaArm
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
-    bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req, kinova_msgs::SetNullSpaceModeState::Response &res);
+    bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req,
+                                       kinova_msgs::SetNullSpaceModeState::Response &res);
 
     bool setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req,
                                        kinova_msgs::SetForceControlParams::Response &res);
@@ -71,8 +72,10 @@ class KinovaArm
 
     bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
                                       kinova_msgs::SetEndEffectorOffset::Response& res);
-    bool setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res);
-    bool setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res);
+    bool setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req,
+                                     kinova_msgs::SetTorqueControlMode::Response &res);
+    bool setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req,
+                                           kinova_msgs::SetTorqueControlParameters::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);
