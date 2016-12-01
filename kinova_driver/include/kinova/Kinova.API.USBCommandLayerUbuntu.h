@@ -15,8 +15,8 @@
 #include <stdio.h>
 
 //This defines the the location of the communication layer.(Kinova.API.CommLayerUbuntu.so)
-#define COMM_LAYER_PATH "USBCommLayerUbuntu.so"
-#define COMM_LAYER_ETHERNET_PATH "/home/soli/catkin_ws/src/kinova-ros/kinova_driver/lib/EthCommLayerUbuntu.so"
+//#define COMM_LAYER_PATH "USBCommLayerUbuntu.so"
+//#define COMM_LAYER_ETHERNET_PATH "/home/soli/catkin_ws/src/kinova-ros/kinova_driver/lib/EthCommLayerUbuntu.so"
 
 // ***** E R R O R   C O D E S ******
 #define ERROR_INIT_API 2001      // Error while initializing the API
