@@ -150,8 +150,13 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
                 result.angles = current_joint_angles.constructAnglesMsg();
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
+                //why preemted, if the robot is stalled, trajectory/action failed!
+                /*
                 action_server_.setPreempted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
+                */
+                action_server_.setAborted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
                 return;
             }
 

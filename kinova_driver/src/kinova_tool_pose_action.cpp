@@ -188,8 +188,13 @@ void KinovaPoseActionServer::actionCallback(const kinova_msgs::ArmPoseGoalConstP
                 result.pose = feedback.pose;
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
+                //why preemted, if the robot is stalled, trajectory/action failed!
+                /*
                 action_server_.setPreempted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
+                */
+                action_server_.setAborted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
                 return;
             }
             ros::Rate(rate_hz_).sleep();
