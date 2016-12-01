@@ -10,11 +10,23 @@ jointSpeedLimitParameter2: 20
 # payload: [COM COMx COMy COMz]
 payload: [0, 0, 0, 0]
 
+# connection type
+connection_type: ethernet #USB
+
+# Ethernet connection parameters
+ethernet: {
+  local_machine_IP: 192.168.100.21,
+  subnet_mask: 255.255.255.0,
+  local_cmd_port: 25000,
+  local_broadcast_port: 25025
+}
+
 #Torque control parameters
 #Do not change these parameters unless you want to change torque control behavior
 torque_parameters: {
-    # torqueMin: 1,
-    # torqueMax: 50,
+    # if torque min/max sepecified, all min/max values need to be specified
+    # torque_min: [1, 0, 0, 0, 0, 0, 0],
+    # torque_max: [50, 0, 0, 0, 0, 0, 0],
     # Decides velocity threshold at which robot switches torque to position control (between 0 and 1)
-    safety_factor: 1
+    # safety_factor: 1
 }
