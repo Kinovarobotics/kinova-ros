@@ -129,7 +129,11 @@ class KinovaComm
     void setCartesianControl();    
     void getCartesianCommand(CartesianPosition &cartesian_command);
     void getCartesianPosition(KinovaPose &position);
-    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
+
+    //! \brief send Pose command to robot
+    //! \arg position - Pose command
+    //! \arg push - If true clears previous trajectories
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = false);
     void setCartesianVelocities(const CartesianInfo &velocities);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
