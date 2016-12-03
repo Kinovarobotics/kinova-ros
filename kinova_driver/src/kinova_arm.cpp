@@ -120,6 +120,9 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &KinovaArm::homeArmServiceCallback, this);
 
+    clear_trajectories_ = node_handle_.advertiseService("in/clear_trajectories",
+                          &KinovaArm::clearTrajectoriesServiceCallback, this);
+
     set_force_control_params_service_ = node_handle_.advertiseService("in/set_force_control_params", &KinovaArm::setForceControlParamsCallback, this);
     start_force_control_service_ = node_handle_.advertiseService("in/start_force_control", &KinovaArm::startForceControlCallback, this);
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &KinovaArm::stopForceControlCallback, this);
@@ -127,7 +130,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
-    startNullSpace_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
+    start_null_space_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
     set_torque_control_mode_service_ = node_handle_.advertiseService("in/set_torque_control_mode", &KinovaArm::setTorqueControlModeService, this);
     set_torque_control_parameters_service_ = node_handle_.advertiseService("in/set_torque_control_parameters", &KinovaArm::setTorqueControlParametersService,this);
 
@@ -279,7 +282,16 @@ bool KinovaArm::startServiceCallback(kinova_msgs::Start::Request &req, kinova_ms
     return true;
 }
 
-bool KinovaArm::setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req, kinova_msgs::SetForceControlParams::Response &res)
+bool KinovaArm::clearTrajectoriesServiceCallback(
+        kinova_msgs::ClearTrajectories::Request &req,
+        kinova_msgs::ClearTrajectories::Response &res)
+{
+    kinova_comm_.eraseAllTrajectories();
+}
+
+bool KinovaArm::setForceControlParamsCallback(
+        kinova_msgs::SetForceControlParams::Request &req,
+        kinova_msgs::SetForceControlParams::Response &res)
 {
     CartesianInfo inertia, damping, force_min, force_max;
     inertia.X      = req.inertia_linear.x;

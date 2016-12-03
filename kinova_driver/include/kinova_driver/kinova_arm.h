@@ -33,6 +33,7 @@
 #include <kinova_msgs/SetNullSpaceModeState.h>
 #include <kinova_msgs/SetTorqueControlMode.h>
 #include <kinova_msgs/SetTorqueControlParameters.h>
+#include <kinova_msgs/ClearTrajectories.h>
 
 #include <time.h>
 #include <math.h>
@@ -53,15 +54,19 @@ class KinovaArm
     KinovaArm(KinovaComm& arm, const ros::NodeHandle &node_handle, const std::string &kinova_robotType);
     ~KinovaArm();
 
+    //Subscriber callbacks --------------------------------------------------------
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
     void cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel);
     void jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque);
 
+    // Service callbacks -----------------------------------------------------------
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
     bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req,
                                        kinova_msgs::SetNullSpaceModeState::Response &res);
+    bool clearTrajectoriesServiceCallback(kinova_msgs::ClearTrajectories::Request &req,
+                                          kinova_msgs::ClearTrajectories::Response &res);
 
     bool setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req,
                                        kinova_msgs::SetForceControlParams::Response &res);
@@ -109,11 +114,11 @@ class KinovaArm
     ros::ServiceServer stop_service_;
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
-    ros::ServiceServer startNullSpace_service_;
+    ros::ServiceServer start_null_space_service_;
+    ros::ServiceServer clear_trajectories_;
+
     ros::ServiceServer set_torque_control_mode_service_;
     ros::ServiceServer set_torque_control_parameters_service_;
-
-
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;
     ros::ServiceServer stop_force_control_service_;
