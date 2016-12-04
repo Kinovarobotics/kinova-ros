@@ -32,7 +32,8 @@ add_service_files(
   SetNullSpaceModeState.srv
   SetTorqueControlMode.srv
   SetTorqueControlParameters.srv
-ClearTrajectories.srv
+  ClearTrajectories.srv
+  ZeroTorques.srv
 )
 
 add_action_files(DIRECTORY action

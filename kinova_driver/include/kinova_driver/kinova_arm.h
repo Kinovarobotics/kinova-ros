@@ -34,6 +34,7 @@
 #include <kinova_msgs/SetTorqueControlMode.h>
 #include <kinova_msgs/SetTorqueControlParameters.h>
 #include <kinova_msgs/ClearTrajectories.h>
+#include <kinova_msgs/ZeroTorques.h>
 
 #include <time.h>
 #include <math.h>
@@ -68,6 +69,10 @@ class KinovaArm
     bool clearTrajectoriesServiceCallback(kinova_msgs::ClearTrajectories::Request &req,
                                           kinova_msgs::ClearTrajectories::Response &res);
 
+    bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
+                                      kinova_msgs::SetEndEffectorOffset::Response& res);
+
+    //Torque control
     bool setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req,
                                        kinova_msgs::SetForceControlParams::Response &res);
     bool startForceControlCallback(kinova_msgs::Start::Request &req,
@@ -75,12 +80,12 @@ class KinovaArm
     bool stopForceControlCallback(kinova_msgs::Stop::Request &req,
                                   kinova_msgs::Stop::Response &res);
 
-    bool setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request& req,
-                                      kinova_msgs::SetEndEffectorOffset::Response& res);
     bool setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req,
                                      kinova_msgs::SetTorqueControlMode::Response &res);
     bool setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req,
                                            kinova_msgs::SetTorqueControlParameters::Response &res);
+    bool setJointTorquesToZeroService(kinova_msgs::ZeroTorques::Request &req,
+                                      kinova_msgs::ZeroTorques::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);
@@ -119,6 +124,7 @@ class KinovaArm
 
     ros::ServiceServer set_torque_control_mode_service_;
     ros::ServiceServer set_torque_control_parameters_service_;
+    ros::ServiceServer set_actuator_torques_to_zero_;
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;
     ros::ServiceServer stop_force_control_service_;

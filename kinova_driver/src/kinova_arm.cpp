@@ -126,7 +126,9 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     set_force_control_params_service_ = node_handle_.advertiseService("in/set_force_control_params", &KinovaArm::setForceControlParamsCallback, this);
     start_force_control_service_ = node_handle_.advertiseService("in/start_force_control", &KinovaArm::startForceControlCallback, this);
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &KinovaArm::stopForceControlCallback, this);
-    
+    set_actuator_torques_to_zero_ = node_handle_.advertiseService(
+                "in/set_zero_torques", &KinovaArm::setJointTorquesToZeroService, this);
+
     set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
@@ -338,6 +340,13 @@ bool KinovaArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova
 {
     kinova_comm_.stopForceControl();
     res.stop_result = "Stop force control requested.";
+    return true;
+}
+
+bool KinovaArm::setJointTorquesToZeroService(kinova_msgs::ZeroTorques::Request &req,
+                                             kinova_msgs::ZeroTorques::Response &res)
+{
+    kinova_comm_.setZeroTorque();
     return true;
 }
 

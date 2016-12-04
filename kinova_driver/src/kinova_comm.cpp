@@ -99,8 +99,10 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         throw KinovaCommException("Could not get the Kinova API version", result);
     }
 
-    ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
-                    << api_version[0] << "." << api_version[1] << "." << api_version[2] << ")");
+    ROS_INFO_STREAM("Initializing Kinova "<< api_type.c_str()
+                    << " API (header version: " << COMMAND_LAYER_VERSION
+                    << ", library version: " << api_version[0] << "."
+                                             << api_version[1] << "." << api_version[2] << ")");
 
     if (api_type == "USB"){
       result = kinova_api_.initAPI();
@@ -189,7 +191,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     TrajectoryPoint kinova_velocity;
     memset(&kinova_velocity, 0, sizeof(kinova_velocity));
     setCartesianVelocities(kinova_velocity.Position.CartesianPosition);
-
+        
     if (is_movement_on_start)
     {
         initFingers();
@@ -720,9 +722,9 @@ void KinovaComm::setZeroTorque()
     int actuator_address[] = {16,17,18,19,20,21,25};
     for (int i=0;i<num_joints_;i++)
     {
-        //kinova_api_.setTorqueZero(actuator_address[i]);
-        ROS_INFO("Zero torque %d", actuator_address[i]);
+        kinova_api_.setTorqueZero(actuator_address[i]);
     }
+    ROS_WARN("Torques for all joints set to zero");
 }
 
 
