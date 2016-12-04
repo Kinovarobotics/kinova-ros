@@ -115,7 +115,7 @@ class KinovaComm
     void SetTorqueControlState(int state);
     void setJointTorques(float joint_torque[]);
     void setZeroTorque();
-
+    void setRobotCOMParam(std::vector<float> params);
 
     //Set torque parameters
     void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);

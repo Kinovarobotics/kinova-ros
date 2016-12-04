@@ -200,12 +200,14 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
     kinova_comm_.setToquesControlSafetyFactor(safetyFactor);
 
     std::vector<float> payload;
-    if ( node_handle_.getParam("payload", payload) )
+    if (node_handle_.getParam("payload", payload))
     {
         kinova_comm_.setPayload(payload);
     }
+
     std::vector<float> min_torque, max_torque;
-    if (node_handle_.getParam("torque_min", min_torque) && node_handle_.getParam("torque_max", max_torque))
+    if (node_handle_.getParam("torque_parameters/torque_min", min_torque)
+          && node_handle_.getParam("torque_parameters/torque_max", max_torque))
     {
         AngularInfo min_torque_info,max_torque_info;
 
@@ -219,6 +221,12 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
             max_torque_actuator[i] = max_torque.at(i);
         }
         kinova_comm_.setJointTorqueMinMax(min_torque_info,max_torque_info);
+    }
+
+    std::vector<float> com_parameters;
+    if (node_handle_.getParam("torque_parameters/com_parameters", com_parameters))
+    {
+        kinova_comm_.setRobotCOMParam(com_parameters);
     }
 }
 

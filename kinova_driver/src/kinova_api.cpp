@@ -211,6 +211,9 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 
     setTorqueSafetyFactor = (int (*)(float))initCommandLayerFunction("SetTorqueSafetyFactor");
 
+    setGravityManualInputParam = (int (*)(float command[GRAVITY_PARAM_SIZE]))
+            initCommandLayerFunction("SetGravityManualInputParam");
+
 
     // %EndTag(torque control)%
 
@@ -300,8 +303,6 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
     setGravityVector = (int (*)(float[GRAVITY_VECTOR_SIZE]))initCommandLayerFunction("SetGravityVector");
 
     setGravityOptimalZParam = (int (*)(float[GRAVITY_PARAM_SIZE]))initCommandLayerFunction("SetGravityOptimalZParam");
-
-    setGravityManualInputParam = (int (*)(float[GRAVITY_PARAM_SIZE]))initCommandLayerFunction("SetGravityManualInputParam");
 
     getAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("GetAngularTorqueCommand");
 

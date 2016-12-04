@@ -159,6 +159,10 @@ public:
     int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
     int (*setTorqueSafetyFactor)(float);
 
+    //! @brief Sets COM and COMxyz for all links
+    //! @arg command[42] - {m1,m2..m7,x1,x2,..x7,y1,y2,...,y7,z1,z2,...z7}
+    int (*setGravityManualInputParam)(float command[GRAVITY_PARAM_SIZE]);
+
     //%EndTag(Torque control)%
 
 
@@ -210,8 +214,7 @@ public:
 
     int (*sendCartesianForceCommand)(float[COMMAND_SIZE]);
     int (*setGravityVector)(float[GRAVITY_VECTOR_SIZE]);
-    int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);
-    int (*setGravityManualInputParam)(float[GRAVITY_PARAM_SIZE]);
+    int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);    
     int (*setGravityType)(GRAVITY_TYPE);   
     int (*setSwitchThreshold)(float[COMMAND_SIZE]);
     int (*setPositionLimitDistance)(float[COMMAND_SIZE]);

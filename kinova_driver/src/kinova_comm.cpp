@@ -765,7 +765,17 @@ void KinovaComm::setToquesControlSafetyFactor(float factor)
     kinova_api_.setTorqueSafetyFactor(factor);
 }
 
-
+/** @brief Sets COM and COMxyz for all links
+  * @arg command[42] - {m1,m2..m7,x1,x2,..x7,y1,y2,...,y7,z1,z2,...z7}
+//! */
+void KinovaComm::setRobotCOMParam(std::vector<float> params)
+{
+    float com_parameters[GRAVITY_PARAM_SIZE];
+    memset(&com_parameters, 0, sizeof(com_parameters));
+    for (int i=0; i<params.size(); i++)
+        com_parameters[i] = params[i];
+    kinova_api_.setGravityManualInputParam(com_parameters);
+}
 
 
 

@@ -29,4 +29,7 @@ torque_parameters: {
     # torque_max: [50, 0, 0, 0, 0, 0, 0],
     # Decides velocity threshold at which robot switches torque to position control (between 0 and 1)
     # safety_factor: 1
+    # COM parameters
+    # order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
+    # com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]
 }
