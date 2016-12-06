@@ -129,13 +129,17 @@ User can also enable and disable the ROS motion command via rosservice
 `/'${kinova_robotType}_driver'/in/start`
 and `/'${kinova_robotType}_driver'/in/stop`. When `stop` is called, robot command from ROS will not able to drive robot until `start` is called. However, joystick still has the control during this phase.
 
-### Force control 
+### Cartesian Admittance mode (User can control the robot by manually guiding it by hand) 
 The admittance force control can be actived by command 
 `rosservice call /'${kinova_robotType}_driver'/in/start_force_control` and disabled by `rosservice call /'${kinova_robotType}_driver'/in/stop_force_control`. The user is able to move the robot by appling force/torque to the end-effector/joints. When there is a Cartesian/joint position command, the result motion will be a combination of both force and position command.
 
-However, it is **very important** to regulate the force sensor before using force/torque control. The regulation can be achieved by set 180 degree to all the joints (robot will stand straight up for most of its links). Then, send zero torques to all by SDK, JacoSoft or API functions. SDK may not function well in certain cases. Therefore, it is better to use other two ways.
+#### Re-calibrate torque sensors
+Over time it is possible that the torque sensors develop offsets in reporting absolute torque. For this they need to be re-calibrated. The calibration process is very simple - 
+1. Move the robot to candle like pose (all joints 180 deg, robot links points straight up), this configuration ensures zero torques at joints.
+2. Call the service 'rosservice call /'${kinova_robotType}_driver'/in/set_zero_torques'
 
 ### Support for 7 dof Spherical Wrist robot
+#### new in release 1.1 
 Support for the 7 dof robot has been added in this new release. All of the previous control methods can be used on a 7 dof Kinova robot.
 
 The inverse kinematics of the 7 dof robot results infinite possible solutions for a give pose command. The choice of the best solution (redundancy resolution) is done in the robot considering criteria such as joint limits, closeness to singularities.
@@ -143,6 +147,21 @@ The inverse kinematics of the 7 dof robot results infinite possible solutions fo
 To see the full set of solutions, a new fuction is introduced in KinovaAPI - StartRedundantJointNullSpaceMotion(). When in this mode the Kinova joystick can be used to move the robot in null space while keeping the end-effector maintaining its pose.
 
 The mode can be activated by calling the service SetNullSpaceModeState - (*driver/in/set_null_space_mode_state).
+
+### Torque control 
+#### new in release 1.1 
+Torque control has been made more accessible. Now you can publish torque/force commands just like joint/cartesian velocity. To do this you need to :
+
+1) Optional - Set torque parameters
+Usually default parameters should work for most applications. But if you need to change some torque parameters, you can set parameters (listed at the end of page) and then call the service - 
+SetTorqueControlParameters '${kinova_robotType}_driver/in/set_torque_control_parameters'
+
+2) Switch to torque control from position control
+You can do this using the service  - SetTorqueControlMode '${kinova_robotType}_driver'/in/set_torque_control_mode'
+
+/'${kinova_robotType}_driver'/in/joint_velocity
+
+## Ethernet connection
 
 ## What's new comparison to JACO-ROS
 
