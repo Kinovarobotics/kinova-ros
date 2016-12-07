@@ -205,6 +205,10 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 
     setTorqueZero = (int (*)(int))initCommandLayerFunction("SetTorqueZero");
 
+    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))
+            initCommandLayerFunction("SendCartesianForceCommand");
+
+
     // Toque parameters
 
     setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularTorqueMinMax");
@@ -295,8 +299,6 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
     setTorqueFilterError = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterError");
 
     setTorqueFilterControlEffort = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetTorqueFilterControlEffort");
-
-    sendCartesianForceCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SendCartesianForceCommand");    
 
     setGravityType = (int (*)(GRAVITY_TYPE))initCommandLayerFunction("SetGravityType");
 

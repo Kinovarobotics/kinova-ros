@@ -657,9 +657,32 @@ void KinovaComm::setJointTorques(float joint_torque[])
     int result = kinova_api_.sendAngularTorqueCommand(joint_torque);
     if (result != NO_ERROR_KINOVA)
     {
-        throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
+        throw KinovaCommException("Could not send joint torques", result);
     }
 }
+
+int KinovaComm::sendCartesianForceCommand(float force_cmd[COMMAND_SIZE])
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    if (isStopped())
+    {
+        ROS_INFO("The force cmd could not be set because the arm is stopped");
+        return 0;
+    }
+
+    //memset(&joint_torque, 0, sizeof(joint_torque));  // zero structure
+
+    //startAPI();
+    //ROS_INFO("Torque %f %f %f %f %f %f %f ", joint_torque[0],joint_torque[1],joint_torque[2],
+     //       joint_torque[3],joint_torque[4],joint_torque[5],joint_torque[6]);
+    int result = kinova_api_.sendCartesianForceCommand(force_cmd);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send force cmd", result);
+    }
+    return result;
+}
+
 
 
 /**

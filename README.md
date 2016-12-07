@@ -5,7 +5,12 @@ After this `kinova-ros` release, the previous ROS release, which mainly develope
 
 # KINOVA-ROS
 
-The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides  widely support of Kinova products, there are many bug fixing, improvements and new features as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. The stack mainly contains the following packages:
+The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides  widely support of Kinova products, there are many bug fixing, improvements and new features as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. 
+
+## Supported versions
+The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
+
+The package may work with other configurations as well but it only tested for the one recommended above. 
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations
@@ -23,7 +28,7 @@ To make kinova-ros part of your workspace, follow these steps (assuming your wor
 
     cd ~/catkin_ws/src
     git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
-    cd ~/catkin
+    cd ~/catkin_ws
     catkin_make
 
 To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
@@ -134,35 +139,84 @@ The admittance force control can be actived by command
 `rosservice call /'${kinova_robotType}_driver'/in/start_force_control` and disabled by `rosservice call /'${kinova_robotType}_driver'/in/stop_force_control`. The user is able to move the robot by appling force/torque to the end-effector/joints. When there is a Cartesian/joint position command, the result motion will be a combination of both force and position command.
 
 #### Re-calibrate torque sensors
-Over time it is possible that the torque sensors develop offsets in reporting absolute torque. For this they need to be re-calibrated. The calibration process is very simple - 
-1. Move the robot to candle like pose (all joints 180 deg, robot links points straight up), this configuration ensures zero torques at joints.
+Over time it is possible that the torque sensors develop offsets in reporting absolute torque. For this they need to be re-calibrated. The calibration process is very simple -   
+1. Move the robot to candle like pose (all joints 180 deg, robot links points straight up), this configuration ensures zero torques at joints.  
 2. Call the service 'rosservice call /'${kinova_robotType}_driver'/in/set_zero_torques'
 
-### Support for 7 dof Spherical Wrist robot
+### Support for 7 dof spherical wrist robot
 #### new in release 1.1 
 Support for the 7 dof robot has been added in this new release. All of the previous control methods can be used on a 7 dof Kinova robot.
 
-The inverse kinematics of the 7 dof robot results infinite possible solutions for a give pose command. The choice of the best solution (redundancy resolution) is done in the robot considering criteria such as joint limits, closeness to singularities.
+##### Inverse Kinematics for 7 dof robot
+The inverse kinematics of the 7 dof robot results infinite possible solutions for a give pose command. The choice of the best solution (redundancy resolution) is done in the base of the robot considering criteria such as joint limits, closeness to singularities.
 
+##### Move robot in Null space
 To see the full set of solutions, a new fuction is introduced in KinovaAPI - StartRedundantJointNullSpaceMotion(). When in this mode the Kinova joystick can be used to move the robot in null space while keeping the end-effector maintaining its pose.
 
-The mode can be activated by calling the service SetNullSpaceModeState - (*driver/in/set_null_space_mode_state).
+The mode can be activated by calling the service SetNullSpaceModeState - ${kinova_robotType}_driver'/in/set_null_space_mode_state. 
+Pass 1 to service to enable and 0 to disable.
 
 ### Torque control 
 #### new in release 1.1 
 Torque control has been made more accessible. Now you can publish torque/force commands just like joint/cartesian velocity. To do this you need to :
 
-1) Optional - Set torque parameters
-Usually default parameters should work for most applications. But if you need to change some torque parameters, you can set parameters (listed at the end of page) and then call the service - 
+1. Optional - Set torque parameters  
+Usually default parameters should work for most applications. But if you need to change some torque parameters, you can set parameters (listed at the end of page) and then call the service -   
 SetTorqueControlParameters '${kinova_robotType}_driver/in/set_torque_control_parameters'
 
-2) Switch to torque control from position control
+2. Switch to torque control from position control  
 You can do this using the service  - SetTorqueControlMode '${kinova_robotType}_driver'/in/set_torque_control_mode'
 
-/'${kinova_robotType}_driver'/in/joint_velocity
+3. Publish torque commands rostopic pub -r 100 /j2n6s300_driver/in/joint_torque kinova_msgs/JointTorque "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 0.0, joint5: 0.0, joint6: 1.0}"
+
+#### Torque inactivity
+If not torque command is sent after a given
+time (250ms by default), the controller will take an action: (0): The robot will return in position
+mode (1): The torque commands will be set to zero. By default, option (1) is set for Kinova classic robots
+(Jaco2 and Mico) while option (0) is set for generic mode.
 
 ## Ethernet connection
+#### new in release 1.1 
+Support for Ethernet connection has been added. All functionalities available in USB are available in Ethernet. 
+To use ethernet just set the parameter 
 
+connection_type: ethernet
+
+## Parameters
+#### new in release 1.1 
+##### General parameters
+* serial_number: PJ00000001030703130  
+  leave commented out if you want to control the first robot found connected.  
+* jointSpeedLimitParameter1: 10  
+  Joint speed limit for joints 1, 2, 3 in deg/s
+* jointSpeedLimitParameter2: 20  
+  Joint speed limit for joints 4, 5, 6 in deg/s
+* payload: [0, 0, 0, 0]  
+  payload: [COM COMx COMy COMz] in [kg m m m]  
+* connection_type: USB  
+  ethernet or USB
+##### Ethernet connection parameters
+ethernet:
+
+* local_machine_IP: 192.168.100.21,  
+* subnet_mask: 255.255.255.0,  
+* local_cmd_port: 25000,  
+* local_broadcast_port: 25025  
+
+
+##### Torque control parameters
+Comment these out to use default values.
+
+torque_parameters:
+
+* torque_min: [1, 0, 0, 0, 0, 0, 0]  
+* torque_max: [50, 0, 0, 0, 0, 0, 0]  
+  If one torque min/max value is sepecified, all min/max values need to be specified  
+* safety_factor: 1  
+  Decides velocity threshold at which robot switches torque to position control (between 0 and 1)  
+* com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]  
+  COM parameters, order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
+  
 ## What's new comparison to JACO-ROS
 
 - migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
@@ -179,6 +233,7 @@ You can do this using the service  - SetTorqueControlMode '${kinova_robotType}_d
 - Kinematic solution to be consistant with robot base code.
 - Fix joint offset bug for joint2 and joint6
 - Fix joint velocity control and position velocity control
+
 
 ## Notes and Limitations
 1. Force/torque control is only for advanced users. Please be caution when using force/torque control api functions.

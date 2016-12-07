@@ -153,7 +153,7 @@ public:
     int (*switchTrajectoryTorque)(GENERALCONTROL_TYPE);
     int (*sendAngularTorqueCommand)(float[COMMAND_SIZE]);
     int (*setTorqueZero)(int actuator_address);
-
+    int (*sendCartesianForceCommand)(float[COMMAND_SIZE]);
 
     //Torque Parameters
     int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
@@ -212,7 +212,6 @@ public:
     int (*setTorqueFilterError)(float[COMMAND_SIZE]);
     int (*setTorqueFilterControlEffort)(float[COMMAND_SIZE]);
 
-    int (*sendCartesianForceCommand)(float[COMMAND_SIZE]);
     int (*setGravityVector)(float[GRAVITY_VECTOR_SIZE]);
     int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);    
     int (*setGravityType)(GRAVITY_TYPE);   

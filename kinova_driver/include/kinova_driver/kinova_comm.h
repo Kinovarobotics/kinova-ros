@@ -121,7 +121,7 @@ class KinovaComm
     void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
     void setPayload(std::vector<float> payload);
     void setToquesControlSafetyFactor(float factor);
-
+    int sendCartesianForceCommand(float force_cmd[COMMAND_SIZE]);
     //%EndTag(Torque control)%
 
 

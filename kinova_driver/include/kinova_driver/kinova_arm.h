@@ -35,6 +35,7 @@
 #include <kinova_msgs/SetTorqueControlParameters.h>
 #include <kinova_msgs/ClearTrajectories.h>
 #include <kinova_msgs/ZeroTorques.h>
+#include <kinova_msgs/CartesianForce.h>
 
 #include <time.h>
 #include <math.h>
@@ -59,6 +60,7 @@ class KinovaArm
     void jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel);
     void cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPtr& cartesian_vel);
     void jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque);
+    void forceSubscriberCallback(const kinova_msgs::CartesianForceConstPtr& force);
 
     // Service callbacks -----------------------------------------------------------
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
@@ -106,6 +108,7 @@ class KinovaArm
     ros::Subscriber joint_velocity_subscriber_;
     ros::Subscriber cartesian_velocity_subscriber_;
     ros::Subscriber joint_torque_subscriber_;
+    ros::Subscriber cartesian_force_subscriber_;
 
     ros::Publisher joint_angles_publisher_;
     ros::Publisher tool_position_publisher_;
@@ -153,7 +156,8 @@ class KinovaArm
 
     // State tracking or utility members
     AngularInfo joint_velocities_;
-    float l_joint_torque_[70];
+    float l_joint_torque_[COMMAND_SIZE];
+    float l_force_cmd_[COMMAND_SIZE];
     CartesianInfo cartesian_velocities_;
 
     std::vector< std::string > joint_names_;

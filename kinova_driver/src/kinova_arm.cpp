@@ -149,11 +149,13 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
 
     /* Set up Subscribers*/
     joint_velocity_subscriber_ = node_handle_.subscribe("in/joint_velocity", 1,
-                                                      &KinovaArm::jointVelocityCallback, this);
+                                 &KinovaArm::jointVelocityCallback, this);
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
-                                                          &KinovaArm::cartesianVelocityCallback, this);
+                                     &KinovaArm::cartesianVelocityCallback, this);
     joint_torque_subscriber_ = node_handle_.subscribe("in/joint_torque", 1,
-                                                      &KinovaArm::jointTorqueSubscriberCallback, this);
+                               &KinovaArm::jointTorqueSubscriberCallback, this);
+    cartesian_force_subscriber_ = node_handle_.subscribe("in/cartesian_force", 1,
+                                  &KinovaArm::forceSubscriberCallback, this);
 
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
 
@@ -260,6 +262,21 @@ void KinovaArm::jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueCons
 
         kinova_comm_.setJointTorques(l_joint_torque_);
 
+    }
+}
+
+void KinovaArm::forceSubscriberCallback(const kinova_msgs::CartesianForceConstPtr& force)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        l_force_cmd_[0] = force->force_x;
+        l_force_cmd_[1] = force->force_y;
+        l_force_cmd_[2] = force->force_x;
+        l_force_cmd_[3] = force->torque_x;
+        l_force_cmd_[4] = force->torque_y;
+        l_force_cmd_[5] = force->torque_z;
+
+        kinova_comm_.sendCartesianForceCommand(l_force_cmd_);
     }
 }
 
