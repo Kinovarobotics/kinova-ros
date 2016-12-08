@@ -8,10 +8,10 @@ jointSpeedLimitParameter1: 10
 jointSpeedLimitParameter2: 20
 
 # payload: [COM COMx COMy COMz]
-payload: [0, 0, 0, 0]
+#payload: [0, 0, 0, 0]
 
 # connection type
-connection_type: ethernet #USB
+connection_type: USB
 
 # Ethernet connection parameters
 ethernet: {

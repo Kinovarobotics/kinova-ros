@@ -102,6 +102,7 @@ class KinovaArm
     void publishToolPosition(void);
     void publishToolWrench(void);
     void publishFingerPosition(void);
+    void publishTorques();
 
     tf::TransformListener tf_listener_;
     ros::NodeHandle node_handle_;
@@ -115,6 +116,7 @@ class KinovaArm
 
     ros::Publisher joint_angles_publisher_;
     ros::Publisher tool_position_publisher_;
+    ros::Publisher joint_torque_publisher_;
     ros::Publisher tool_wrench_publisher_;
     ros::Publisher finger_position_publisher_;
     ros::Publisher joint_state_publisher_;

@@ -140,11 +140,18 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
              &KinovaArm::setTorqueControlParametersService,this);
 
     /* Set up Publishers */
-    joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
-    joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
-    tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>("out/tool_pose", 2);
-    tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>("out/tool_wrench", 2);
-    finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>("out/finger_position", 2);
+    joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>
+            ("out/joint_angles", 2);
+    joint_torque_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>
+            ("out/joint_torques", 2);
+    joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>
+            ("out/joint_state", 2);
+    tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>
+            ("out/tool_pose", 2);
+    tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>
+            ("out/tool_wrench", 2);
+    finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>
+            ("out/finger_position", 2);
 
     // Publish last command for relative motion (read current position cause arm drop)
     joint_command_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_command", 2);
@@ -616,6 +623,12 @@ void KinovaArm::publishFingerPosition(void)
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
+void KinovaArm::publishTorques()
+{
+    KinovaAngles torques;
+    kinova_comm_.getJointTorques(torques);
+    joint_torque_publisher_.publish(torques.constructAnglesMsg());
+}
 
 void KinovaArm::statusTimer(const ros::TimerEvent&)
 {
@@ -623,6 +636,7 @@ void KinovaArm::statusTimer(const ros::TimerEvent&)
     publishToolPosition();
     publishToolWrench();
     publishFingerPosition();
+    publishTorques();
 }
 
 }  // namespace kinova
