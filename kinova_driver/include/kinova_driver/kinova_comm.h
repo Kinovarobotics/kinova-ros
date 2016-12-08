@@ -98,7 +98,7 @@ class KinovaComm
     void getAngularCommand(AngularPosition &angular_command);
     void getJointAngles(KinovaAngles &angles);
     void setJointAngles(const KinovaAngles &angles, double speedJoint123 = 20,
-                        double speedJoint4567 = 20, int timeout = 0, bool push = false);
+                        double speedJoint4567 = 20, int timeout = 0, bool push = true);
     void getJointVelocities(KinovaAngles &vels);
     void setJointVelocities(const AngularInfo& joint_vel);    
     void getJointAccelerations(AngularAcceleration &joint_acc);
@@ -134,7 +134,7 @@ class KinovaComm
     //! \brief send Pose command to robot
     //! \arg position - Pose command
     //! \arg push - If true clears previous trajectories
-    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = false);
+    void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
     void setCartesianVelocities(const CartesianInfo &velocities);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
