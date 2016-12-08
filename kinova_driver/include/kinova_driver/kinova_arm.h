@@ -34,6 +34,7 @@
 #include <kinova_msgs/SetTorqueControlMode.h>
 #include <kinova_msgs/SetTorqueControlParameters.h>
 #include <kinova_msgs/ClearTrajectories.h>
+#include <kinova_msgs/AddPoseToCartesianTrajectory.h>
 #include <kinova_msgs/ZeroTorques.h>
 #include <kinova_msgs/CartesianForce.h>
 
@@ -68,6 +69,8 @@ class KinovaArm
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
     bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req,
                                        kinova_msgs::SetNullSpaceModeState::Response &res);
+    bool addCartesianPoseToTrajectory(kinova_msgs::AddPoseToCartesianTrajectory::Request &req,
+                                kinova_msgs::AddPoseToCartesianTrajectory::Response &res);
     bool clearTrajectoriesServiceCallback(kinova_msgs::ClearTrajectories::Request &req,
                                           kinova_msgs::ClearTrajectories::Response &res);
 
@@ -123,6 +126,7 @@ class KinovaArm
     ros::ServiceServer start_service_;
     ros::ServiceServer homing_service_;
     ros::ServiceServer start_null_space_service_;
+    ros::ServiceServer add_trajectory_;
     ros::ServiceServer clear_trajectories_;
 
     ros::ServiceServer set_torque_control_mode_service_;

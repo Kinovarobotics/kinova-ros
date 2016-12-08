@@ -35,6 +35,7 @@ add_service_files(
   SetTorqueControlParameters.srv
   ClearTrajectories.srv
   ZeroTorques.srv
+  AddPoseToCartesianTrajectory.srv
 )
 
 add_action_files(DIRECTORY action

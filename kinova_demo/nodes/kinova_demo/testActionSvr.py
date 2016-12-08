@@ -20,11 +20,12 @@ interactive = True
 
 
 def joint_position_client(angle_set):
-    action_address = '/' + prefix + 'driver/joints_action/joint_angles'
+    action_address = '/' + prefix + 'driver/joints_action/joint_angles'    
     client = actionlib.SimpleActionClient(action_address,
                                           kinova_msgs.msg.ArmJointAnglesAction)   
+    
     client.wait_for_server()
-  
+    
     goal = kinova_msgs.msg.ArmJointAnglesGoal()
     goal.angles.joint1 = angle_set[0]
     goal.angles.joint2 = angle_set[1]
@@ -39,7 +40,7 @@ def joint_position_client(angle_set):
     client.wait_for_result(rospy.Duration(100.0))
 
     # Prints out the result of executing the action
-    return client.get_result()  # A FibonacciResult
+    return client.get_result()  
 
 def cartesian_pose_client(position, orientation):
     """Send a cartesian goal to the action server."""
@@ -187,6 +188,56 @@ def publishTorqueCmd(jointCmds):
            print "Service call failed: %s"%e
 	   return None
 
+def publishForceCmd(force_cmds):
+	
+	#use service to set torque control parameters	
+	service_address = '/' + prefix + 'driver/in/set_torque_control_parameters'	
+	rospy.wait_for_service(service_address)
+	try:
+           setTorqueParameters = rospy.ServiceProxy(service_address, SetTorqueControlParameters)
+           setTorqueParameters()           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None	
+
+	#use service to switch to torque control	
+	service_address = '/' + prefix + 'driver/in/set_torque_control_mode'	
+	rospy.wait_for_service(service_address)
+	try:
+           switchTorquemode = rospy.ServiceProxy(service_address, SetTorqueControlMode)
+           switchTorquemode(1)           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None	
+
+	#publish joint torque commands
+	topic_name = '/' + prefix + 'driver/in/cartesian_force'
+	pub = rospy.Publisher(topic_name, kinova_msgs.msg.CartesianForce, queue_size=1)
+        force = kinova_msgs.msg.CartesianForce()
+	force.force_x = force_cmds[0];
+	force.force_y = force_cmds[1];
+	force.force_z = force_cmds[2];
+	force.torque_x = force_cmds[3];
+	force.torque_y = force_cmds[4];
+	force.torque_z = force_cmds[5];
+	count = 0		
+	rate = rospy.Rate(100)
+	while (count < 1000):
+		count = count + 1
+		#rospy.loginfo("I will publish to the topic %d", count)
+		pub.publish(force)
+		rate.sleep()
+
+	#use service to switch to position control	
+	try:           
+           switchTorquemode(0)
+           return None
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None
+
+
+
 def publishCatesianVelocityCommands(cartVel):
 	topic_name = '/' + prefix + 'driver/in/cartesian_velocity'
 	#publish joint torque commands
@@ -209,8 +260,9 @@ def publishCatesianVelocityCommands(cartVel):
 if __name__ == '__main__':
     try:        
 	args = argumentParser(None)	
-        rospy.init_node('test_action_servers')	  
-		
+        rospy.init_node('test_action_servers')	  	
+	
+	publishForceCmd([0,10,0,0,0,0])
 	#test joint srv - move robot to 180 pos
 	if (interactive == True):        
 		nb = raw_input('Moving robot to candle like position, press key')
@@ -226,10 +278,10 @@ if __name__ == '__main__':
 	rospy.sleep(5)
 	
 	#test joint torque control
-	if (interactive == True):        
+	'''if (interactive == True):        
 		nb = raw_input('Testing torque control, enabled for 10 sec, press key')
 	publishTorqueCmd([0,0,0,0,0,0,0])
-	
+	'''
 	
 	#test cartesian srv
 	if (interactive == True):        

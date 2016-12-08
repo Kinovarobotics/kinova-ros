@@ -119,7 +119,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &KinovaArm::homeArmServiceCallback, this);
-
+    add_trajectory_ = node_handle_.advertiseService("in/add_pose_to_Cartesian_trajectory",
+                      &KinovaArm::addCartesianPoseToTrajectory, this);
     clear_trajectories_ = node_handle_.advertiseService("in/clear_trajectories",
                           &KinovaArm::clearTrajectoriesServiceCallback, this);
 
@@ -134,7 +135,9 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
 
     start_null_space_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
     set_torque_control_mode_service_ = node_handle_.advertiseService("in/set_torque_control_mode", &KinovaArm::setTorqueControlModeService, this);
-    set_torque_control_parameters_service_ = node_handle_.advertiseService("in/set_torque_control_parameters", &KinovaArm::setTorqueControlParametersService,this);
+    set_torque_control_parameters_service_ = node_handle_.advertiseService
+            ("in/set_torque_control_parameters",
+             &KinovaArm::setTorqueControlParametersService,this);
 
     /* Set up Publishers */
     joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
@@ -196,7 +199,7 @@ bool KinovaArm::setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::R
 }
 
 bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res)
-{
+{    
     float safetyFactor;
     node_handle_.param<float>("torque_parameters/safety_factor", safetyFactor,1.0);
     kinova_comm_.setToquesControlSafetyFactor(safetyFactor);
@@ -307,6 +310,19 @@ bool KinovaArm::startServiceCallback(kinova_msgs::Start::Request &req, kinova_ms
     res.start_result = "Arm started";
     ROS_DEBUG("Arm start requested");
     return true;
+}
+
+bool KinovaArm::addCartesianPoseToTrajectory(kinova_msgs::AddPoseToCartesianTrajectory::Request &req,
+                            kinova_msgs::AddPoseToCartesianTrajectory::Response &res)
+{
+    KinovaPose pose;
+    pose.X = req.X;
+    pose.X = req.X;
+    pose.X = req.X;
+    pose.ThetaX = req.ThetaX;
+    pose.ThetaX = req.ThetaX;
+    pose.ThetaX = req.ThetaX;
+    kinova_comm_.setCartesianPosition(pose,false);
 }
 
 bool KinovaArm::clearTrajectoriesServiceCallback(
