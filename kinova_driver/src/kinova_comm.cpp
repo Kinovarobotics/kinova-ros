@@ -758,9 +758,14 @@ void KinovaComm::setZeroTorque()
  */
 void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
 {
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    memset(&min, 0, sizeof(min));
-    memset(&max, 0, sizeof(max));
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);  
+    ROS_INFO("Setting min torues - %f %f %f %f %f %f %f", min.Actuator1,
+              min.Actuator2,min.Actuator3,min.Actuator4,min.Actuator5,
+              min.Actuator6,min.Actuator7);
+    ROS_INFO("Setting max torues - %f %f %f %f %f %f %f", max.Actuator1,
+              max.Actuator2,max.Actuator3,max.Actuator4,max.Actuator5,
+              max.Actuator6,max.Actuator7);
+
     int result = kinova_api_.setAngularTorqueMinMax(min, max);
     if (result != NO_ERROR_KINOVA)
     {
@@ -776,6 +781,8 @@ void KinovaComm::setPayload(std::vector<float> payload)
 {
     float payload_[4];
     std::copy(payload.begin(), payload.end(), payload_);
+    ROS_INFO("Payload set to - %f %f %f %f", payload_[0],payload_[1],
+            payload_[2],payload_[3]);
     kinova_api_.setGravityPayload(payload_);
 }
 
@@ -785,6 +792,7 @@ void KinovaComm::setPayload(std::vector<float> payload)
  */
 void KinovaComm::setToquesControlSafetyFactor(float factor)
 {
+    ROS_INFO("Setting torque safety factor to %f", factor);
     kinova_api_.setTorqueSafetyFactor(factor);
 }
 
@@ -795,8 +803,14 @@ void KinovaComm::setRobotCOMParam(std::vector<float> params)
 {
     float com_parameters[GRAVITY_PARAM_SIZE];
     memset(&com_parameters, 0, sizeof(com_parameters));
+    std::ostringstream com_params;
+    com_params<<"Setting COM parameters to ";
     for (int i=0; i<params.size(); i++)
+    {
         com_parameters[i] = params[i];
+        com_params<<params[i]<<", ";
+    }
+    ROS_INFO_STREAM(com_params.str());
     kinova_api_.setGravityManualInputParam(com_parameters);
 }
 

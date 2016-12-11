@@ -22,9 +22,8 @@ interactive = True
 def joint_position_client(angle_set):
     action_address = '/' + prefix + 'driver/joints_action/joint_angles'    
     client = actionlib.SimpleActionClient(action_address,
-                                          kinova_msgs.msg.ArmJointAnglesAction)   
-    
-    client.wait_for_server()
+                                          kinova_msgs.msg.ArmJointAnglesAction)       
+    client.wait_for_server()    
     
     goal = kinova_msgs.msg.ArmJointAnglesGoal()
     goal.angles.joint1 = angle_set[0]
@@ -255,18 +254,59 @@ def publishCatesianVelocityCommands(cartVel):
 		count = count + 1		
 		pub.publish(poseVelCmd)
 		rate.sleep()
+
+def testZeroTorque():
+	#move robot to candle like pose
+	#result = joint_position_client([180]*7)
+
+	print "torque before setting zero"
+	topic_name = '/' + prefix + 'driver/out/joint_torques'
+	sub_once = rospy.Subscriber(topic_name, kinova_msgs.msg.JointAngles, printTorqueVaules) 
+	rospy.wait_for_message(topic_name, kinova_msgs.msg.JointAngles, timeout=2)
+	sub_once.unregister()
 	
+	#call zero torque
+	service_address = '/' + prefix + 'driver/in/set_zero_torques'
+	rospy.wait_for_service(service_address)
+	try:
+           zeroTorques = rospy.ServiceProxy(service_address, ZeroTorques)
+           zeroTorques()           
+        except rospy.ServiceException, e:
+           print "Service call failed: %s"%e
+	   return None	
+
+	print "torque after setting zero"
+	sub_once = rospy.Subscriber(topic_name, kinova_msgs.msg.JointAngles, printTorqueVaules) 
+	rospy.wait_for_message(topic_name, kinova_msgs.msg.JointAngles, timeout=2)
+	sub_once.unregister()
+
+
+def printTorqueVaules(torques):
+	print "Torque - {}, {}, {}, {}, {}, {}, {}".format(torques.joint1, 
+	torques.joint2, torques.joint3, torques.joint4, 
+	torques.joint5, torques.joint6, torques.joint7)
 
 if __name__ == '__main__':
     try:        
 	args = argumentParser(None)	
         rospy.init_node('test_action_servers')	  	
 	
-	publishForceCmd([0,10,0,0,0,0])
+	#publishForceCmd([0,10,0,0,0,0])
+	#testZeroTorque()
 	#test joint srv - move robot to 180 pos
 	if (interactive == True):        
 		nb = raw_input('Moving robot to candle like position, press key')
         result = joint_position_client([180]*7)
+
+	#test zero torque
+	testZeroTorque()	
+
+	#test joint torque control
+	'''if (interactive == True):        
+		nb = raw_input('Testing torque control, enabled for 10 sec, press key')
+	publishTorqueCmd([0,0,0,0,0,0,0])
+	'''
+	
 
 	#test joint velocity control
 	if (interactive == True):        
@@ -276,13 +316,7 @@ if __name__ == '__main__':
 	else:
 		publishVelCmd([10,0,0,-10,0,0,0])
 	rospy.sleep(5)
-	
-	#test joint torque control
-	'''if (interactive == True):        
-		nb = raw_input('Testing torque control, enabled for 10 sec, press key')
-	publishTorqueCmd([0,0,0,0,0,0,0])
-	'''
-	
+		
 	#test cartesian srv
 	if (interactive == True):        
 		nb = raw_input('Testing Cartesian control, press key')
