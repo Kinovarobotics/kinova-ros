@@ -187,6 +187,13 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     stopAPI();
     startAPI();
 
+    //Set robot to use manual COM parameters
+    kinova_api_.setGravityType(MANUAL_INPUT);
+
+    //Set torque safety factor to 1
+    kinova_api_.setTorqueSafetyFactor(1);
+
+
     // Set the angular velocity of each of the joints to zero
     TrajectoryPoint kinova_velocity;
     memset(&kinova_velocity, 0, sizeof(kinova_velocity));
@@ -712,6 +719,21 @@ void KinovaComm::getJointTorques(KinovaAngles &tqs)
     memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
 
     int result = kinova_api_.getAngularForce(kinova_tqs);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the joint torques", result);
+    }
+
+    tqs = KinovaAngles(kinova_tqs.Actuators);
+}
+
+void KinovaComm::getGravityCompensatedTorques(KinovaAngles &tqs)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition kinova_tqs;
+    memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
+
+    int result = kinova_api_.getAngularForceGravityFree(kinova_tqs);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get the joint torques", result);

@@ -102,6 +102,12 @@ In addition, the wrench of end-effector is published via topic: `/'${kinova_robo
   - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Cart/update*
   - Now a cubic with 3 axis (translation) and 3 rings(rotation) should appear at the end-effector, and you can move the robot by drag the axis or rings.
 
+#### new in release 1.1
+Executing multiple Cartesian waypoints without stopping  
+The action client executes one goal at a time. In case user wants to give multiple waypoints to the robot without stopping at every waypoint, the service *AddPoseToCartesianTrajectories* can be used. 
+This service adds the commanded poses to a buffer that that maintained by the robot. Robot executes the poses in this buffer in order that they are added, without stopping between poses.
+
+The service *ClearTrajectories* can be used to clear the trajectory buffer in the base.
 
 ### Finger position control
 Cartesian position control can be realized by calling KinovaComm::setFingerPositions() in customized node, or you may simply call the node `fingers_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of finger command can be by `{turn | mm | percent}`, which refers to turn of motor, milimeter and percentage. The finger is essentially controlled by `turn`, and the rest units are propotional to `turn` for convenience. The value 0 indicates fully open, while *finger_maxTurn* represents a fully close. The value of *finger_maxTurn* may vary due to many factors. A proper reference value for finger turn will be 0 (fully-open) to 6400 (fully-close)  If necessary, please modify this variable in the code. With the option `-v` on, positions in other unit format are printed for convenience. The following code fully close the fingers.
@@ -139,6 +145,8 @@ The admittance force control can be actived by command
 `rosservice call /'${kinova_robotType}_driver'/in/start_force_control` and disabled by `rosservice call /'${kinova_robotType}_driver'/in/stop_force_control`. The user is able to move the robot by appling force/torque to the end-effector/joints. When there is a Cartesian/joint position command, the result motion will be a combination of both force and position command.
 
 #### Re-calibrate torque sensors
+
+##### new in release 1.1
 Over time it is possible that the torque sensors develop offsets in reporting absolute torque. For this they need to be re-calibrated. The calibration process is very simple -   
 1. Move the robot to candle like pose (all joints 180 deg, robot links points straight up), this configuration ensures zero torques at joints.  
 2. Call the service 'rosservice call /'${kinova_robotType}_driver'/in/set_zero_torques'
@@ -169,6 +177,16 @@ You can do this using the service  - SetTorqueControlMode '${kinova_robotType}_d
 
 3. Publish torque commands rostopic pub -r 100 /j2n6s300_driver/in/joint_torque kinova_msgs/JointTorque "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 0.0, joint5: 0.0, joint6: 1.0}"
 
+#### Gravity compensation
+Gravity compensation is done by default in the robot's base. This means that if the robot is commanded zero torques the robot does not fall under gravity. This case (zero commanded torque) 
+can be refered to as 'gravity compensated mode', the robot can me moved around freely by manually pushing its joints. You can try out this mode by using the command (for a j2s7300)
+
+rosrun kinova_demo gravity_compensated_mode.py j2s7300 
+
+It is posible to publish torque with or without gravity compensation by setting the parameter -
+
+publish_torque_with_gravity_compensation: false
+
 #### Torque inactivity
 If not torque command is sent after a given
 time (250ms by default), the controller will take an action: (0): The robot will return in position
@@ -178,9 +196,13 @@ mode (1): The torque commands will be set to zero. By default, option (1) is set
 ## Ethernet connection
 #### new in release 1.1 
 Support for Ethernet connection has been added. All functionalities available in USB are available in Ethernet. 
-To use ethernet just set the parameter 
+To use ethernet just set the parameters 
 
-connection_type: ethernet
+connection_type: ethernet  
+local_machine_IP: [your PC network IP]  
+subnet_mask: [your network subnet mask]  
+
+Some functions do not work with Ethernet in this release, they are listed below:
 
 ## Parameters
 #### new in release 1.1 
@@ -209,6 +231,7 @@ Comment these out to use default values.
 
 torque_parameters:
 
+* publish_torque_with_gravity_compensation: false
 * torque_min: [1, 0, 0, 0, 0, 0, 0]  
 * torque_max: [50, 0, 0, 0, 0, 0, 0]  
   If one torque min/max value is sepecified, all min/max values need to be specified  
@@ -217,7 +240,44 @@ torque_parameters:
 * com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]  
   COM parameters, order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
   
-## What's new comparison to JACO-ROS
+
+## GUI for robot status - rqt
+ROS provides a flexible GUI tool to interact with nodes/robots - **rqt**. You can use this
+tool to see topics published by the node - robot position, velocity, torque, etc. 
+You can also launch services like AddPoseToCartesianTrajectory.
+
+Monitoring topics
+
+- Launch rqt by typing the command 'rqt'
+- In the plugin tab, select Topics/Topics monitor
+- Select any messages to see published position/torque etc. values
+
+Other plugins in rqt can similarly be used for quick interation with the robot.
+
+## What's new in this release 
+### new in release 1.1
+
+- Support for 7 dof robot
+- Support for Ethernet
+- Torque control through publisher/subscriber
+- Force control through publisher/subscriber
+- Torque control parameters
+- Speed limit for actionlib Cartesian/Joint control
+- Parameterized base_frame for tf_generator
+- Finger models are now updated in RViz
+- Ring models added to URDF
+- New demo file - gravity_compensated_mode.py
+- Test/demo file - TestSrv.py
+- New services
+  - SetTorqueControlParameters
+  - SetZerotorque
+  - SetNullSpaceModeState
+  - AddPoseToCartesianTrajectory
+  - ClearTrajectories
+  - SetTorqueControlMode
+
+
+### comparison to JACO-ROS
 
 - migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
 - apply kinova_RobotType for widely support

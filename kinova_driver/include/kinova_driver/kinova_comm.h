@@ -115,9 +115,10 @@ class KinovaComm
     void SetTorqueControlState(int state);
     void setJointTorques(float joint_torque[]);
     void setZeroTorque();
-    void setRobotCOMParam(std::vector<float> params);
+    void getGravityCompensatedTorques(KinovaAngles &torques);
 
     //Set torque parameters
+    void setRobotCOMParam(std::vector<float> params);
     void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
     void setPayload(std::vector<float> payload);
     void setToquesControlSafetyFactor(float factor);

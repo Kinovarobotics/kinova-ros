@@ -56,6 +56,6 @@ install(PROGRAMS
   nodes/kinova_demo/fingers_action_client.py
   nodes/kinova_demo/joints_action_client.py
   nodes/kinova_demo/testActionSvr.py
-  nodes/kinova_demo/torque_compensated_mode.py
+  nodes/kinova_demo/gravity_compensated_mode.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

@@ -626,7 +626,12 @@ void KinovaArm::publishFingerPosition(void)
 void KinovaArm::publishTorques()
 {
     KinovaAngles torques;
-    kinova_comm_.getJointTorques(torques);
+    bool gravity_comp;
+    node_handle_.param("torque_parameters/publish_torque_with_gravity_compensation", gravity_comp, false);
+    if (gravity_comp==true)
+      kinova_comm_.getGravityCompensatedTorques(torques);
+    else
+      kinova_comm_.getJointTorques(torques);
     joint_torque_publisher_.publish(torques.constructAnglesMsg());
 }
 
