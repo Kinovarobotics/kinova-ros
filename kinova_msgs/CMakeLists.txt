@@ -36,6 +36,7 @@ add_service_files(
   ClearTrajectories.srv
   ZeroTorques.srv
   AddPoseToCartesianTrajectory.srv
+  RunCOMParametersEstimation.srv
 )
 
 add_action_files(DIRECTORY action

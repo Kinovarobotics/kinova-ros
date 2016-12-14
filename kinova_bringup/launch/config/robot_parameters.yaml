@@ -8,7 +8,7 @@ jointSpeedLimitParameter1: 10
 jointSpeedLimitParameter2: 20
 
 # payload: [COM COMx COMy COMz]
-payload: [1, 0, 0, 0]
+#payload: [0, 0, 0, 0]
 
 connection_type: USB #Ethernet
 
@@ -27,6 +27,7 @@ ethernet: {
 #Do not change these parameters unless you want to change torque control behavior
 torque_parameters: {
       publish_torque_with_gravity_compensation: false
+      use_estimated_COM_parameters: true
     # if torque min/max sepecified, all min/max values need to be specified
     #  torque_min: [80, 80, 80, 80, 80, 80, 80],
     #  torque_max: [90, 90, 90, 90, 90, 90, 90],

@@ -57,5 +57,6 @@ install(PROGRAMS
   nodes/kinova_demo/joints_action_client.py
   nodes/kinova_demo/testActionSvr.py
   nodes/kinova_demo/gravity_compensated_mode.py
+  nodes/kinova_demo/run_COMParameters_estimation.py	
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

@@ -73,10 +73,29 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     if (robot_category_=='j') // jaco robot
     {
         // special parameters for jaco
+        if (arm_joint_number_ == 6)
+        {
+            if (wrist_type_ == 'n')
+                robot_type_ = JACOV2_6DOF_SERVICE;
+            else
+                robot_type_ = SPHERICAL_6DOF_SERVICE;
+        }
+        else if (arm_joint_number_ == 4)
+        {
+            robot_type_ = JACOV2_4DOF_SERVICE;
+        }
+        else if (arm_joint_number_ == 7)
+        {
+            robot_type_ = SPHERICAL_7DOF_SERVICE;
+        }
     }
     else if (robot_category_ == 'm') // mico robot
     {
         // special parameters for mico
+        if (arm_joint_number_ == 6)
+            robot_type_ = MICO_6DOF_SERVICE;
+        else if (arm_joint_number_ == 4)
+            robot_type_ = MICO_4DOF_SERVICE;
     }
     else if (robot_category_ == 'r') // roco robot
     {
@@ -129,6 +148,9 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &KinovaArm::stopForceControlCallback, this);
     set_actuator_torques_to_zero_ = node_handle_.advertiseService(
                 "in/set_zero_torques", &KinovaArm::setJointTorquesToZeroService, this);
+    run_COM_parameter_estimation_service_ = node_handle_.advertiseService(
+                "in/run_COM_parameters_estimation",
+                &KinovaArm::runCOMParameterEstimationService,this);
 
     set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
         &KinovaArm::setEndEffectorOffsetCallback, this);
@@ -238,7 +260,14 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
     std::vector<float> com_parameters;
     if (node_handle_.getParam("torque_parameters/com_parameters", com_parameters))
     {
-        kinova_comm_.setRobotCOMParam(com_parameters);
+        bool use_estimated_COM;
+        node_handle_.param("/torque_parameters/use_estimated_COM_parameters",
+                              use_estimated_COM,true);
+        if (use_estimated_COM == true)
+            kinova_comm_.setRobotCOMParam(OPTIMAL,com_parameters);
+        else
+            kinova_comm_.setRobotCOMParam(MANUAL_INPUT,com_parameters);
+
     }
 }
 
@@ -396,6 +425,13 @@ bool KinovaArm::setJointTorquesToZeroService(kinova_msgs::ZeroTorques::Request &
 {
     kinova_comm_.setZeroTorque();
     return true;
+}
+
+bool KinovaArm::runCOMParameterEstimationService(
+        kinova_msgs::RunCOMParametersEstimation::Request &req,
+        kinova_msgs::RunCOMParametersEstimation::Response &res)
+{
+    kinova_comm_.runCOMParameterEstimation(robot_type_);
 }
 
 bool KinovaArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request &req, kinova_msgs::SetEndEffectorOffset::Response &res)

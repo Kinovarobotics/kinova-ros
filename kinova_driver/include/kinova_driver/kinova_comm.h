@@ -118,11 +118,12 @@ class KinovaComm
     void getGravityCompensatedTorques(KinovaAngles &torques);
 
     //Set torque parameters
-    void setRobotCOMParam(std::vector<float> params);
+    void setRobotCOMParam(GRAVITY_TYPE type, std::vector<float> params);
     void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
     void setPayload(std::vector<float> payload);
     void setToquesControlSafetyFactor(float factor);
     int sendCartesianForceCommand(float force_cmd[COMMAND_SIZE]);
+    int runCOMParameterEstimation(ROBOT_TYPE type);
     //%EndTag(Torque control)%
 
 

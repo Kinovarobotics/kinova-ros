@@ -188,7 +188,13 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     startAPI();
 
     //Set robot to use manual COM parameters
-    kinova_api_.setGravityType(MANUAL_INPUT);
+    bool use_estimated_COM;
+    node_handle.param("/torque_parameters/use_estimated_COM_parameters",
+                          use_estimated_COM,true);
+    if (use_estimated_COM == true)
+        kinova_api_.setGravityType(OPTIMAL);
+    else
+        kinova_api_.setGravityType(MANUAL_INPUT);
 
     //Set torque safety factor to 1
     kinova_api_.setTorqueSafetyFactor(1);
@@ -821,7 +827,7 @@ void KinovaComm::setToquesControlSafetyFactor(float factor)
 /** @brief Sets COM and COMxyz for all links
   * @arg command[42] - {m1,m2..m7,x1,x2,..x7,y1,y2,...,y7,z1,z2,...z7}
 //! */
-void KinovaComm::setRobotCOMParam(std::vector<float> params)
+void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
 {
     float com_parameters[GRAVITY_PARAM_SIZE];
     memset(&com_parameters, 0, sizeof(com_parameters));
@@ -833,9 +839,48 @@ void KinovaComm::setRobotCOMParam(std::vector<float> params)
         com_params<<params[i]<<", ";
     }
     ROS_INFO_STREAM(com_params.str());
-    kinova_api_.setGravityManualInputParam(com_parameters);
+    if (type == MANUAL_INPUT)
+        kinova_api_.setGravityManualInputParam(com_parameters);
+    else
+        kinova_api_.setGravityOptimalZParam(com_parameters);
 }
 
+/**
+* @brief This function is used to run a sequence to estimate the optimal gravity parameters when the robot is
+* standing (Z).
+
+The arm must be in Trajectory-Position mode before to launch the procedure.
+
+Before using this procedure, you should make sure that the torque sensors are well calibrated. This procedure is
+explained in the user guide and in the Advanced Specification Guide.
+
+When the program is launched, the robot will execute a trajectory. The user must remain alert and turn off the
+robot if something wrong occurs (for example if the robot collides with an object). When the program ends, it will
+output the parameters in the console and in a text file named “ParametersOptimal_Z.txt” in the program folder.
+These parameters can then be sent as input to the function SetOptimalZParam().
+*
+* @param type The robot type
+* @param OptimalzParam The result of the sequence
+*/
+int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
+{
+    float COMparams[GRAVITY_PARAM_SIZE];
+    memset(&COMparams[0],0,sizeof(COMparams));
+    if(type == SPHERICAL_7DOF_SERVICE)
+    {
+        ROS_INFO("Running 7 dof robot COM estimation sequence");
+        kinova_api_.runGravityZEstimationSequence7DOF(type,COMparams);
+    }
+    else
+    {
+        double params[OPTIMAL_Z_PARAM_SIZE];
+        ROS_INFO("Running COM estimation sequence");
+        kinova_api_.runGravityZEstimationSequence(type,params);
+        for (int i=0;i<OPTIMAL_Z_PARAM_SIZE;i++)
+            COMparams[i] = (float)params[i];
+    }
+     kinova_api_.setGravityOptimalZParam(COMparams);
+}
 
 
 /**

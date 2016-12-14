@@ -210,6 +210,7 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 
 
     // Toque parameters
+    setGravityPayload = (int (*)(float[GRAVITY_PAYLOAD_SIZE]))initCommandLayerFunction("SetGravityPayload");
 
     setAngularTorqueMinMax = (int (*)(AngularInfo, AngularInfo))initCommandLayerFunction("SetAngularTorqueMinMax");
 
@@ -218,6 +219,14 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
     setGravityManualInputParam = (int (*)(float command[GRAVITY_PARAM_SIZE]))
             initCommandLayerFunction("SetGravityManualInputParam");
 
+    setGravityOptimalZParam = (int (*)(float[GRAVITY_PARAM_SIZE]))
+            initCommandLayerFunction("SetGravityOptimalZParam");
+
+    runGravityZEstimationSequence = (int (*)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]))
+            initCommandLayerFunction("RunGravityZEstimationSequence");
+
+    runGravityZEstimationSequence7DOF = (int (*)(ROBOT_TYPE, float[OPTIMAL_Z_PARAM_SIZE_7DOF]))
+            initCommandLayerFunction("RunGravityZEstimationSequence7DOF");
 
     // %EndTag(torque control)%
 
@@ -302,9 +311,7 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 
     setGravityType = (int (*)(GRAVITY_TYPE))initCommandLayerFunction("SetGravityType");
 
-    setGravityVector = (int (*)(float[GRAVITY_VECTOR_SIZE]))initCommandLayerFunction("SetGravityVector");
-
-    setGravityOptimalZParam = (int (*)(float[GRAVITY_PARAM_SIZE]))initCommandLayerFunction("SetGravityOptimalZParam");
+    setGravityVector = (int (*)(float[GRAVITY_VECTOR_SIZE]))initCommandLayerFunction("SetGravityVector");    
 
     getAngularTorqueCommand = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("GetAngularTorqueCommand");
 
@@ -312,15 +319,11 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
 
     setSwitchThreshold = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetSwitchThreshold");
 
-    setPositionLimitDistance = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetPositionLimitDistance");
-
-    setGravityPayload = (int (*)(float[GRAVITY_PAYLOAD_SIZE]))initCommandLayerFunction("SetGravityPayload");
+    setPositionLimitDistance = (int (*)(float[COMMAND_SIZE]))initCommandLayerFunction("SetPositionLimitDistance");   
 
     setTorqueVibrationController = (int (*)(float))initCommandLayerFunction("SetTorqueVibrationController");
 
-    setTorqueRobotProtection = (int (*)(int))initCommandLayerFunction("SetTorqueRobotProtection");
-
-    runGravityZEstimationSequence = (int (*)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]))initCommandLayerFunction("RunGravityZEstimationSequence");
+    setTorqueRobotProtection = (int (*)(int))initCommandLayerFunction("SetTorqueRobotProtection");    
 
     getTrajectoryTorqueMode = (int (*)(int &))initCommandLayerFunction("GetTrajectoryTorqueMode");
 

@@ -36,6 +36,7 @@
 #include <kinova_msgs/ClearTrajectories.h>
 #include <kinova_msgs/AddPoseToCartesianTrajectory.h>
 #include <kinova_msgs/ZeroTorques.h>
+#include <kinova_msgs/RunCOMParametersEstimation.h>
 #include <kinova_msgs/CartesianForce.h>
 
 #include <time.h>
@@ -91,6 +92,8 @@ class KinovaArm
                                            kinova_msgs::SetTorqueControlParameters::Response &res);
     bool setJointTorquesToZeroService(kinova_msgs::ZeroTorques::Request &req,
                                       kinova_msgs::ZeroTorques::Response &res);
+    bool runCOMParameterEstimationService(kinova_msgs::RunCOMParametersEstimation::Request &req,
+                                          kinova_msgs::RunCOMParametersEstimation::Response &res);
 
  private:
     void positionTimer(const ros::TimerEvent&);
@@ -137,6 +140,7 @@ class KinovaArm
     ros::ServiceServer set_force_control_params_service_;
     ros::ServiceServer start_force_control_service_;
     ros::ServiceServer stop_force_control_service_;
+    ros::ServiceServer run_COM_parameter_estimation_service_;
 
     ros::ServiceServer set_end_effector_offset_service_;
 
@@ -154,6 +158,7 @@ class KinovaArm
     char robot_mode_;
     int finger_number_;
     int joint_total_number_;
+    ROBOT_TYPE robot_type_;
 
 
     double status_interval_seconds_;
