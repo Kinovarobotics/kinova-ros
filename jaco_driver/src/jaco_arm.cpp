@@ -342,6 +342,9 @@ void JacoArm::publishJointAngles(void)
     joint_state.position[3] = (180-jaco_angles.joint4) * (PI / 180);
     joint_state.position[4] = (180-jaco_angles.joint5) * (PI / 180);
     joint_state.position[5] = (j6o-jaco_angles.joint6) * (PI / 180);
+    if (joint_state.position[5] > PI) {
+        joint_state.position[5] -= (2*PI);
+    }
     joint_state.position[6] = finger_conv_ratio_ * fingers.Finger1;
     joint_state.position[7] = finger_conv_ratio_ * fingers.Finger2;
     if(robot_type == ROBOT_TYPE_JACO) {
