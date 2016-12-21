@@ -26,7 +26,7 @@ ethernet: {
 #Torque control parameters
 #Do not change these parameters unless you want to change torque control behavior
 torque_parameters: {
-      publish_torque_with_gravity_compensation: false
+      publish_torque_with_gravity_compensation: false,
       use_estimated_COM_parameters: true
     # if torque min/max sepecified, all min/max values need to be specified
     #  torque_min: [80, 80, 80, 80, 80, 80, 80],
