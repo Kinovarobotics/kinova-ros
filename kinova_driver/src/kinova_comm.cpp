@@ -114,7 +114,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not initialize Kinova API", result);
-    }    
+    }
 
     result = kinova_api_.refresDevicesList();
 
@@ -204,7 +204,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     TrajectoryPoint kinova_velocity;
     memset(&kinova_velocity, 0, sizeof(kinova_velocity));
     setCartesianVelocities(kinova_velocity.Position.CartesianPosition);
-        
+
     if (is_movement_on_start)
     {
         initFingers();
@@ -771,9 +771,14 @@ void KinovaComm::setZeroTorque()
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
     int actuator_address[] = {16,17,18,19,20,21,25};
+    int result;
     for (int i=0;i<num_joints_;i++)
     {
-        kinova_api_.setTorqueZero(actuator_address[i]);
+        result = kinova_api_.setTorqueZero(actuator_address[i]);
+    }
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set zero torques", result);
     }
     ROS_WARN("Torques for all joints set to zero");
 }
@@ -786,7 +791,7 @@ void KinovaComm::setZeroTorque()
  */
 void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
 {
-    boost::recursive_mutex::scoped_lock lock(api_mutex_);  
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
     ROS_INFO("Setting min torues - %f %f %f %f %f %f %f", min.Actuator1,
               min.Actuator2,min.Actuator3,min.Actuator4,min.Actuator5,
               min.Actuator6,min.Actuator7);
@@ -811,7 +816,11 @@ void KinovaComm::setPayload(std::vector<float> payload)
     std::copy(payload.begin(), payload.end(), payload_);
     ROS_INFO("Payload set to - %f %f %f %f", payload_[0],payload_[1],
             payload_[2],payload_[3]);
-    kinova_api_.setGravityPayload(payload_);
+    int result = kinova_api_.setGravityPayload(payload_);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the gravity payload", result);
+    }
 }
 
 /**
@@ -821,7 +830,11 @@ void KinovaComm::setPayload(std::vector<float> payload)
 void KinovaComm::setToquesControlSafetyFactor(float factor)
 {
     ROS_INFO("Setting torque safety factor to %f", factor);
-    kinova_api_.setTorqueSafetyFactor(factor);
+    int result = kinova_api_.setTorqueSafetyFactor(factor);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set torque safety factor", result);
+    }
 }
 
 /** @brief Sets COM and COMxyz for all links
@@ -839,10 +852,15 @@ void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
         com_params<<params[i]<<", ";
     }
     ROS_INFO_STREAM(com_params.str());
+    int result;
     if (type == MANUAL_INPUT)
-        kinova_api_.setGravityManualInputParam(com_parameters);
+        result = kinova_api_.setGravityManualInputParam(com_parameters);
     else
-        kinova_api_.setGravityOptimalZParam(com_parameters);
+        result = kinova_api_.setGravityOptimalZParam(com_parameters);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the COM parameters", result);
+    }
 }
 
 /**
@@ -866,20 +884,29 @@ int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
 {
     float COMparams[GRAVITY_PARAM_SIZE];
     memset(&COMparams[0],0,sizeof(COMparams));
+    int result;
     if(type == SPHERICAL_7DOF_SERVICE)
     {
         ROS_INFO("Running 7 dof robot COM estimation sequence");
-        kinova_api_.runGravityZEstimationSequence7DOF(type,COMparams);
+        result = kinova_api_.runGravityZEstimationSequence7DOF(type,COMparams);
     }
     else
     {
         double params[OPTIMAL_Z_PARAM_SIZE];
         ROS_INFO("Running COM estimation sequence");
-        kinova_api_.runGravityZEstimationSequence(type,params);
+        result = kinova_api_.runGravityZEstimationSequence(type,params);
         for (int i=0;i<OPTIMAL_Z_PARAM_SIZE;i++)
             COMparams[i] = (float)params[i];
     }
-     kinova_api_.setGravityOptimalZParam(COMparams);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not launch COM parameter estimation sequence", result);
+    }
+    result = kinova_api_.setGravityOptimalZParam(COMparams);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set COM Parameters", result);
+    }
 }
 
 
@@ -1501,35 +1528,53 @@ void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, 
 
 void KinovaComm::SetTorqueControlState(int state)
 {
+    int result;
     if (state)
     {
         ROS_INFO("Switching to torque control");
-        kinova_api_.switchTrajectoryTorque(TORQUE);
+        result = kinova_api_.switchTrajectoryTorque(TORQUE);
     }
     else
     {
         ROS_INFO("Switching to position control");
-        kinova_api_.switchTrajectoryTorque(POSITION);
+        result = kinova_api_.switchTrajectoryTorque(POSITION);
+    }
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the torque control state", result);
     }
 }
 
 int KinovaComm::SelfCollisionAvoidanceInCartesianMode(int state)
 {
-    kinova_api_.ActivateCollisionAutomaticAvoidance(state);
+    int result = kinova_api_.ActivateCollisionAutomaticAvoidance(state);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the self collision avoidance in cartesian mode", result);
+    }
 }
 
 int KinovaComm::SingularityAvoidanceInCartesianMode(int state)
 {
-    kinova_api_.ActivateSingularityAutomaticAvoidance(state);
+    int result = kinova_api_.ActivateSingularityAutomaticAvoidance(state);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the singularity avoidance in cartesian mode", result);
+    }
 }
 
 int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
 {
     ROS_INFO("Setting null space mode to %d",state);
+    int result;
     if (state)
-        kinova_api_.StartRedundantJointNullSpaceMotion();
+        result = kinova_api_.StartRedundantJointNullSpaceMotion();
     else
-        kinova_api_.StopRedundantJointNullSpaceMotion();
+        result = kinova_api_.StopRedundantJointNullSpaceMotion();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set redundant joint null space mode", result);
+    }
 }
 
 int KinovaComm::SetRedundancyResolutionToleastSquares(int state)
