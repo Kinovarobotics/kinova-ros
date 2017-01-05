@@ -12,12 +12,9 @@ jointSpeedLimitParameter2: 20
 
 connection_type: USB #Ethernet
 
-#publish
-
-
 # Ethernet connection parameters
 ethernet: {
-  local_machine_IP: 192.168.100.21,
+  local_machine_IP: 192.168.100.100,
   subnet_mask: 255.255.255.0,
   local_cmd_port: 25000,
   local_broadcast_port: 25025

@@ -49,6 +49,12 @@ namespace kinova
 KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const std::string &kinova_robotType)
     : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType)
 {
+    for (int i=0;i<COMMAND_SIZE;i++)
+    {
+      l_joint_torque_[i] = 0;
+      l_force_cmd_[i] = 0;
+    }
+
     /* Set up parameters for different robot type */
     // example for a kinova_robotType: j2n6s300
 
