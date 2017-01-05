@@ -1,0 +1,20 @@
+controller_list:
+  - name: j2n6s300
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - j2n6s300_joint_1
+      - j2n6s300_joint_2
+      - j2n6s300_joint_3
+      - j2n6s300_joint_4
+      - j2n6s300_joint_5
+      - j2n6s300_joint_6
+  - name: j2n6s300_gripper
+    action_ns: gripper_command
+    type: GripperCommand
+    default: true    
+    joints:
+      - j2n6s300_joint_finger_1
+      - j2n6s300_joint_finger_2
+      - j2n6s300_joint_finger_3

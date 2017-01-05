@@ -20,9 +20,10 @@ generate_dynamic_reconfigure_options(
 
 link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 
+# export library to other packages
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES kinova_driver
+  LIBRARIES kinova_driver
   CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs kinova_msgs roscpp rospy sensor_msgs std_msgs tf interactive_markers visualization_msgs
 #  DEPENDS system_lib
 )
