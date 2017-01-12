@@ -1,5 +1,5 @@
 controller_list:
-  - name: fake_mico_arm_controller
+  - name: fake_arm_controller
     joints:
       - m1n6s300_joint_1
       - m1n6s300_joint_2
@@ -7,7 +7,7 @@ controller_list:
       - m1n6s300_joint_4
       - m1n6s300_joint_5
       - m1n6s300_joint_6
-  - name: fake_mico_gripper_controller
+  - name: fake_gripper_controller
     joints:
       - m1n6s300_joint_finger_1
       - m1n6s300_joint_finger_2

@@ -1,4 +1,4 @@
-robot_arm:
+arm:
   #kinematics_solver: j2s7s300_robot_arm_kinematics/IKFastKinematicsPlugin
   #kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
   kinematics_solver: trac_ik_kinematics_plugin/TRAC_IKKinematicsPlugin

@@ -5,6 +5,8 @@
 
 const double FINGER_MAX = 6400;
 
+const bool ROBOT_CONNECTED = false;
+
 using namespace kinova;
 
 
@@ -38,8 +40,11 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 //    }
 
     ros::NodeHandle pn("~");
-    sub_joint_ = nh_.subscribe<sensor_msgs::JointState>("/j2n6s300_driver/out/joint_state", 1, &PickPlace::get_current_state, this);
-    sub_pose_ = nh_.subscribe<geometry_msgs::PoseStamped>("/j2n6s300_driver/out/tool_pose", 1, &PickPlace::get_current_pose, this);
+
+    nh_.param<std::string>("/robot_type",robot_type_,"j2n6s300");
+
+    //sub_joint_ = nh_.subscribe<sensor_msgs::JointState>("/j2s7s300_driver/out/joint_state", 1, &PickPlace::get_current_state, this);
+    //sub_pose_ = nh_.subscribe<geometry_msgs::PoseStamped>("/j2s7s300_driver/out/tool_pose", 1, &PickPlace::get_current_pose, this);
 
     // Before we can load the planner, we need two objects, a RobotModel and a PlanningScene.
     robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
@@ -56,10 +61,11 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
     group_ = new moveit::planning_interface::MoveGroup("arm");
     gripper_group_ = new moveit::planning_interface::MoveGroup("gripper");
 
-    group_->setEndEffectorLink("j2n6s300_end_effector");
+    group_->setEndEffectorLink(robot_type_ + "_end_effector");
 
-    finger_client_ = new actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction>("/j2n6s300_driver/fingers_action/finger_positions", false);
-    while(!finger_client_->waitForServer(ros::Duration(5.0))){
+    finger_client_ = new actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction>
+            ("/" + robot_type_ + "_driver/fingers_action/finger_positions", false);
+    while(ROBOT_CONNECTED && !finger_client_->waitForServer(ros::Duration(5.0))){
       ROS_INFO("Waiting for the finger action server to come up");
     }
 
@@ -67,12 +73,12 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
     pub_aco_ = nh_.advertise<moveit_msgs::AttachedCollisionObject>("/attached_collision_object", 10);
     pub_planning_scene_diff_ = nh_.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
 
-    int arm_joint_num = 6;
+    int arm_joint_num = robot_type_[3]-'0';
     joint_names_.resize(arm_joint_num);
     joint_values_.resize(joint_names_.size());
     for (uint i = 0; i<joint_names_.size(); i++)
     {
-        joint_names_[i] = "j2n6s300_joint_" + boost::lexical_cast<std::string>(i+1);
+        joint_names_[i] = robot_type_ + "_joint_" + boost::lexical_cast<std::string>(i+1);
     }
 
     // set pre-defined joint and pose values.
@@ -101,8 +107,8 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 PickPlace::~PickPlace()
 {
     // shut down pub and subs
-    sub_joint_.shutdown();
-    sub_pose_.shutdown();
+    //sub_joint_.shutdown();
+    //sub_pose_.shutdown();
     pub_co_.shutdown();
     pub_aco_.shutdown();
     pub_planning_scene_diff_.shutdown();
@@ -369,14 +375,15 @@ void PickPlace::define_cartesian_pose()
     start_pose_.header.stamp = ros::Time::now();
     start_pose_.pose.position.x = 0.5;
     start_pose_.pose.position.y = -0.5;
-    start_pose_.pose.position.z = 0.1;
+    start_pose_.pose.position.z = 0.5;
 
     q = EulerZYZ_to_Quaternion(-M_PI/4, M_PI/2, M_PI);
     start_pose_.pose.orientation.x = q.x();
     start_pose_.pose.orientation.y = q.y();
     start_pose_.pose.orientation.z = q.z();
     start_pose_.pose.orientation.w = q.w();
-    ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE: " << __LINE__ << ": " << std::endl << "start_pose_ q = EulerZYZ_to_Quaternion(-M_PI/4, M_PI/2, M_PI/2), qx: " << q.x() << ", q.y: " << q.y() << ", q.z: " << q.z() << ", q.w: " << q.w());
+    ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE: " << __LINE__ << ": " <<
+                    std::endl << "start_pose_ q = EulerZYZ_to_Quaternion(-M_PI/4, M_PI/2, M_PI/2), qx: " << q.x() << ", q.y: " << q.y() << ", q.z: " << q.z() << ", q.w: " << q.w());
 
     // define grasp pose
     grasp_pose_.header.frame_id = "root";
@@ -494,7 +501,7 @@ void PickPlace::setup_constrain(geometry_msgs::Pose target_pose, bool orientatio
 
     // setup constrains
     moveit_msgs::OrientationConstraint ocm;
-    ocm.link_name = "j2n6s300_end_effector";
+    ocm.link_name = robot_type_ + "_end_effector";
     ocm.header.frame_id = "root";
     ocm.orientation = target_pose.orientation;
     ocm.absolute_x_axis_tolerance = 0.1;
@@ -535,7 +542,7 @@ void PickPlace::setup_constrain(geometry_msgs::Pose target_pose, bool orientatio
     box_pose.position.z = (target_pose.position.z + current_pose.position.z)/2.0;
 
     moveit_msgs::PositionConstraint pcm;
-    pcm.link_name = "j2n6s300_end_effector";
+    pcm.link_name = robot_type_+"_end_effector";
     pcm.header.frame_id = "root";
     pcm.constraint_region.primitives.push_back(primitive);
     pcm.constraint_region.primitive_poses.push_back(box_pose);
@@ -658,6 +665,7 @@ bool PickPlace::my_pick()
     ///////////////////////////////////////////////////////////
     //// joint space without obstacle
     ///////////////////////////////////////////////////////////
+
     ROS_INFO_STREAM("Press any key to start motion plan in joint space without obstacle ...");
     std::cin >> pause_;
     group_->setJointValueTarget(start_joint_);
@@ -727,6 +735,7 @@ bool PickPlace::my_pick()
     clear_workscene();
     ros::WallDuration(0.1).sleep();
     group_->setPoseTarget(start_pose_);
+    group_->setJointValueTarget(start_pose_);
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Press any key to start path plan ...");
@@ -751,7 +760,7 @@ bool PickPlace::my_pick()
     ROS_INFO_STREAM("Press any key to come back to start position  ...");
     std::cin >> pause_;
     group_->clearPathConstraints();
-    setup_constrain(start_pose_.pose, true, false);
+    //setup_constrain(start_pose_.pose, true, false);
     group_->setPoseTarget(start_pose_);
     evaluate_plan(*group_);
 
@@ -785,7 +794,7 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Press any key to check motion plan with BOTH constrains ...");
     std::cin >> pause_;
-    setup_constrain(start_pose_.pose, true, true);
+    //setup_constrain(start_pose_.pose, true, true);
     ros::WallDuration(0.1).sleep();
     group_->setPoseTarget(start_pose_);
     evaluate_plan(*group_);
@@ -812,6 +821,7 @@ bool PickPlace::my_pick()
 void PickPlace::getInvK(geometry_msgs::Pose &eef_pose, std::vector<double> &joint_value)
 {
     // TODO: transform cartesian command to joint space, and alway motion plan in joint space.
+
 }
 
 

@@ -52,7 +52,7 @@ planner_configs:
     max_nearest_neighbors: 10  # use k nearest neighbors. default: 10
   PRMstarkConfigDefault:
     type: geometric::PRMstar
-mico_arm:
+arm:
   planner_configs:
     - SBLkConfigDefault
     - ESTkConfigDefault
@@ -65,7 +65,7 @@ mico_arm:
     - TRRTkConfigDefault
     - PRMkConfigDefault
     - PRMstarkConfigDefault
-mico_gripper:
+gripper:
   planner_configs:
     - SBLkConfigDefault
     - ESTkConfigDefault

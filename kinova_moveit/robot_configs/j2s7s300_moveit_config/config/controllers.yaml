@@ -1,5 +1,8 @@
 controller_list:
-  - name: fake_arm_controller
+  - name: j2s7s300
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
     joints:
       - j2s7s300_joint_1
       - j2s7s300_joint_2
@@ -8,7 +11,10 @@ controller_list:
       - j2s7s300_joint_5
       - j2s7s300_joint_6
       - j2s7s300_joint_7
-  - name: fake_gripper_controller
+  - name: j2s7s300_gripper
+    action_ns: gripper_command
+    type: GripperCommand
+    default: true    
     joints:
       - j2s7s300_joint_finger_1
       - j2s7s300_joint_finger_2

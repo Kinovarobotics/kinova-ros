@@ -1,4 +1,4 @@
-mico_arm:
+arm:
   kinematics_solver: trac_ik_kinematics_plugin/TRAC_IKKinematicsPlugin 
   #kinematics_solver: m1n6s300_mico_arm_kinematics/IKFastKinematicsPlugin
   kinematics_solver_attempts: 3

@@ -6,16 +6,26 @@ JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle
     nh_(n),
     has_active_goal_(false)
 {
-    action_server_follow_.reset(new FJTAS(nh_, "/j2n6s300/follow_joint_trajectory", boost::bind(&JointTrajectoryActionController::goalCBFollow, this, _1), boost::bind(&JointTrajectoryActionController::cancelCBFollow, this, _1), false));
+
+    std::string robot_type;
+    nh_.param<std::string>("/robot_type",robot_type,"j2n6s300");
+    std::string address;
+    address = "/" + robot_type + "/follow_joint_trajectory";
+
+    action_server_follow_.reset(
+                new FJTAS(nh_, address,
+                          boost::bind(&JointTrajectoryActionController::goalCBFollow, this, _1),
+                          boost::bind(&JointTrajectoryActionController::cancelCBFollow, this, _1),
+                          false));
 
     ros::NodeHandle pn("~");
 
-    int arm_joint_num = 6;
+    int arm_joint_num = robot_type[3]-'0';
     joint_names_.resize(arm_joint_num);
 
     for (uint i = 0; i<joint_names_.size(); i++)
     {
-        joint_names_[i] = "j2n6s300_joint_" + boost::lexical_cast<std::string>(i+1);
+        joint_names_[i] = robot_type + "_joint_" + boost::lexical_cast<std::string>(i+1);
     }
 
     pn.param("constraints/goal_time", goal_time_constraint_, 0.0);
@@ -33,10 +43,12 @@ JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle
     pn.param("constraints/stopped_velocity_tolerance", stopped_velocity_tolerance_, 0.01);
 
 
-    pub_controller_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>("/trajectory_controller/command", 1);
-    sub_controller_state_ = nh_.subscribe("/trajectory_controller/state", 1, &JointTrajectoryActionController::controllerStateCB, this);
-
-    watchdog_timer_ = nh_.createTimer(ros::Duration(1.0), &JointTrajectoryActionController::watchdog, this);
+    pub_controller_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>
+            ("/trajectory_controller/command", 1);
+    sub_controller_state_ = nh_.subscribe("/trajectory_controller/state",
+            1, &JointTrajectoryActionController::controllerStateCB, this);
+    watchdog_timer_ = nh_.createTimer(ros::Duration(1.0),
+                                      &JointTrajectoryActionController::watchdog, this);
 
 
     ros::Time started_waiting_for_controller = ros::Time::now();

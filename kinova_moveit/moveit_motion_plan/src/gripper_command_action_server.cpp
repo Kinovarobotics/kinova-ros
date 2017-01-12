@@ -9,8 +9,14 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
     nh_(n),
     has_active_goal_(false)
 {
-    action_server_gripper_command_.reset(new GCAS(nh_, "/j2n6s300_gripper/gripper_command", boost::bind(&GripperCommandActionController::goalCBFollow, this, _1), boost::bind(&GripperCommandActionController::cancelCBFollow, this, _1), false));
-    action_client_set_finger_.reset(new SFPAC(nh_, "/j2n6s300_driver/fingers_action/finger_positions"));
+    std::string robot_type;
+    nh_.param<std::string>("/robot_type",robot_type,"j2n6s300");
+    std::string address;
+    address = "/" + robot_type + "_gripper/gripper_command";
+
+    action_server_gripper_command_.reset(new GCAS(nh_, address, boost::bind(&GripperCommandActionController::goalCBFollow, this, _1), boost::bind(&GripperCommandActionController::cancelCBFollow, this, _1), false));
+    address = "/" + robot_type + "_driver/fingers_action/finger_positions";
+    action_client_set_finger_.reset(new SFPAC(nh_, address));
 
     ros::NodeHandle pn("~");
     // unit of GripperCommand is meter. Gripper_command_goal from "moveit.rviz" is in unit of radians.
@@ -23,10 +29,11 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
 
     for (uint i = 0; i<gripper_joint_names_.size(); i++)
     {
-        gripper_joint_names_[i] = "j2n6s300_joint_finger_" + boost::lexical_cast<std::string>(i+1);
+        gripper_joint_names_[i] = "joint_finger_" + boost::lexical_cast<std::string>(i+1);
     }
 
-    sub_fingers_state_ = nh_.subscribe("/j2n6s300_driver/out/finger_position", 1, &GripperCommandActionController::controllerStateCB, this);
+    address = "/" + robot_type + "_driver/out/finger_position";
+    sub_fingers_state_ = nh_.subscribe(address, 1, &GripperCommandActionController::controllerStateCB, this);
 
 
     ros::Time started_waiting_for_controller = ros::Time::now();
@@ -36,7 +43,7 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
         if (started_waiting_for_controller != ros::Time(0) &&
                 ros::Time::now() > started_waiting_for_controller + ros::Duration(30.0))
         {
-            ROS_WARN("Waited for the kinova driver for 30 seconds, but it never showed up. Continue waiting the finger state on topic /j2n6s300_driver/out/finger_position ...");
+            ROS_WARN("Waited for the kinova driver for 30 seconds, but it never showed up. Continue waiting the finger state");
             started_waiting_for_controller = ros::Time(0);
         }
         ros::WallDuration(0.1).sleep();
