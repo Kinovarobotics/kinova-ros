@@ -4,7 +4,8 @@
   <arg name="kinova_robotType" default="j2n6a300" />
 
   <node name="$(arg kinova_robotType)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
-    <rosparam file="$(find kinova_bringup)/launch/config/robot_parameters.yaml" command="load" />    
+    <rosparam file="$(find kinova_bringup)/launch/config/robot_parameters.yaml" command="load" />  
+    <param name="robot_type" value="$(arg kinova_robotType)" />
   </node>
     
   <group unless="$(arg use_urdf)">

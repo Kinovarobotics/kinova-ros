@@ -11,7 +11,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
 
     ros::NodeHandle pn("~");
-    prefix_ = nh_.getNamespace().substr(1,8);
+    nh_.param<std::string>("robot_type",prefix_,"j2n6s300");
     number_joint_ = prefix_[3] - '0';
 
     // Display debug information in teminal
