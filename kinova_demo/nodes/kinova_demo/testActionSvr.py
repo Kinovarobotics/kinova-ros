@@ -72,6 +72,13 @@ if __name__ == '__main__':
 			publishCatesianVelocityCommands([-0.1, 0, -0.1, 0, 0, 0], duration_sec, prefix)
 			publishCatesianVelocityCommands([0.1, 0, 0.1, 0, 0, 0], duration_sec, prefix)
 
+    #test cartesian force publisher
+		if (interactive == True):
+			nb = raw_input('Testing Cartesian force control, press return, n to skip')
+		if (nb != 'n' and nb != 'N'):
+			publishForceCmd([0, 0, -2, 0, 0, 0], 10, prefix)
+			#publishForceCmd([0, 0, 5, 0, 0, 0], 2, prefix)
+
 		#set null space mode
 		if (interactive == True):        
 			nb = raw_input('Testing Null space control control,active for 10s, use joystick to move robot in Null space,press key')

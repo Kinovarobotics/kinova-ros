@@ -686,8 +686,8 @@ int KinovaComm::sendCartesianForceCommand(float force_cmd[COMMAND_SIZE])
     //memset(&joint_torque, 0, sizeof(joint_torque));  // zero structure
 
     //startAPI();
-    //ROS_INFO("Torque %f %f %f %f %f %f %f ", joint_torque[0],joint_torque[1],joint_torque[2],
-     //       joint_torque[3],joint_torque[4],joint_torque[5],joint_torque[6]);
+    //ROS_INFO("Force %f %f %f %f %f %f", force_cmd[0],force_cmd[1],force_cmd[2],
+     //       force_cmd[3],force_cmd[4],force_cmd[5]);
     int result = kinova_api_.sendCartesianForceCommand(force_cmd);
     if (result != NO_ERROR_KINOVA)
     {

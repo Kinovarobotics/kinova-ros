@@ -196,13 +196,21 @@ mode (1): The torque commands will be set to zero. By default, option (1) is set
 ## Ethernet connection
 #### new in release 1.1 
 Support for Ethernet connection has been added. All functionalities available in USB are available in Ethernet. 
-To use ethernet just set the parameters 
+To use ethernet follow these steps
+1. Setup a static IP address for your ethernet network say - 192.168.100.100
+2. With the robot connected to your PC via USB open kinova's Develepment Center
+3. Open tab General/Ethernet - Set robot IP Address to something like - 192.168.100.xxx 
+4. Make sure MAC address is not all zero. If so contact support@kinova.ca
+5. Press 'Update' and restart robot
+6. In a terminal ping your robot's IP, your robot is setup for ethernet
+
+To connect to robot via ethernet in ROS just set these parameters in robot_parameters.yaml - 
 
 connection_type: ethernet  
 local_machine_IP: [your PC network IP]  
 subnet_mask: [your network subnet mask]  
 
-Some functions do not work with Ethernet in this release, they are listed below:
+
 
 ## Parameters
 #### new in release 1.1 

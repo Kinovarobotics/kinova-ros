@@ -316,7 +316,7 @@ void KinovaArm::forceSubscriberCallback(const kinova_msgs::CartesianForceConstPt
     {
         l_force_cmd_[0] = force->force_x;
         l_force_cmd_[1] = force->force_y;
-        l_force_cmd_[2] = force->force_x;
+        l_force_cmd_[2] = force->force_z;
         l_force_cmd_[3] = force->torque_x;
         l_force_cmd_[4] = force->torque_y;
         l_force_cmd_[5] = force->torque_z;
