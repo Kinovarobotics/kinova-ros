@@ -41,8 +41,6 @@
   <!-- If database loading was enabled, start mongodb as well -->
   <include file="$(find j2n6s300_moveit_config)/launch/default_warehouse_db.launch" if="$(arg db)">
     <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
-  </include>
-
-	<remap from="/joint_states" to="/j2n6s300_driver/out/joint_state" /> 
+  </include>	
 
 </launch>

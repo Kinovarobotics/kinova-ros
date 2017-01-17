@@ -9,7 +9,9 @@ controller_list:
       - j2s7s300_joint_6
       - j2s7s300_joint_7
   - name: fake_gripper_controller
-    joints:
-      - j2s7s300_joint_finger_1
-      - j2s7s300_joint_finger_2
-      - j2s7s300_joint_finger_3
+    joints:       
+      []
+
+initial:
+  - group: arm
+    pose: Home
