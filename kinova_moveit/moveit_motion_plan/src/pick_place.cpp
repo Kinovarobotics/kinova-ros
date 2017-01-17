@@ -5,8 +5,6 @@
 
 const double FINGER_MAX = 6400;
 
-const bool ROBOT_CONNECTED = false;
-
 using namespace kinova;
 
 
@@ -42,6 +40,7 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
     ros::NodeHandle pn("~");
 
     nh_.param<std::string>("/robot_type",robot_type_,"j2n6s300");
+    nh_.param<bool>("/robot_connected",robot_connected_,true);
 
     //sub_joint_ = nh_.subscribe<sensor_msgs::JointState>("/j2s7s300_driver/out/joint_state", 1, &PickPlace::get_current_state, this);
     //sub_pose_ = nh_.subscribe<geometry_msgs::PoseStamped>("/j2s7s300_driver/out/tool_pose", 1, &PickPlace::get_current_pose, this);
@@ -65,7 +64,7 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 
     finger_client_ = new actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction>
             ("/" + robot_type_ + "_driver/fingers_action/finger_positions", false);
-    while(ROBOT_CONNECTED && !finger_client_->waitForServer(ros::Duration(5.0))){
+    while(robot_connected_ && !finger_client_->waitForServer(ros::Duration(5.0))){
       ROS_INFO("Waiting for the finger action server to come up");
     }
 
@@ -139,6 +138,20 @@ void PickPlace::get_current_pose(const geometry_msgs::PoseStampedConstPtr &msg)
  */
 bool PickPlace::gripper_action(double finger_turn)
 {
+    if(robot_connected_ == false)
+    {
+        if (finger_turn>0.5*FINGER_MAX)
+        {
+          gripper_group_->setNamedTarget("Open");
+        }
+        else
+        {
+          gripper_group_->setNamedTarget("Close");
+        }
+        gripper_group_->move();
+        return true;
+    }
+
     if (finger_turn < 0)
     {
         finger_turn = 0.0;

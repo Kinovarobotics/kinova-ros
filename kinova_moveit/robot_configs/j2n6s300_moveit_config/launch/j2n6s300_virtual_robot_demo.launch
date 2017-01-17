@@ -1,6 +1,7 @@
 <launch>
 
   <param name="robot_type" value="j2n6s300" />
+  <param name="robot_connected" value="false" />
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />

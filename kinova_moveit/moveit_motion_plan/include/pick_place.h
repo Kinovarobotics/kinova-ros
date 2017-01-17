@@ -78,6 +78,7 @@ namespace kinova
         // wait for user input to continue: cin >> pause_;
         std::string pause_;
         std::string robot_type_;
+        bool robot_connected_;
 
         // update current state and pose
         boost::mutex mutex_state_;
