@@ -42,8 +42,11 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
     nh_.param<std::string>("/robot_type",robot_type_,"j2n6s300");
     nh_.param<bool>("/robot_connected",robot_connected_,true);
 
-    //sub_joint_ = nh_.subscribe<sensor_msgs::JointState>("/j2s7s300_driver/out/joint_state", 1, &PickPlace::get_current_state, this);
-    //sub_pose_ = nh_.subscribe<geometry_msgs::PoseStamped>("/j2s7s300_driver/out/tool_pose", 1, &PickPlace::get_current_pose, this);
+    if (robot_connected_)
+    {
+        //sub_joint_ = nh_.subscribe<sensor_msgs::JointState>("/j2s7s300_driver/out/joint_state", 1, &PickPlace::get_current_state, this);
+        sub_pose_ = nh_.subscribe<geometry_msgs::PoseStamped>("/" + robot_type_ +"_driver/out/tool_pose", 1, &PickPlace::get_current_pose, this);
+    }
 
     // Before we can load the planner, we need two objects, a RobotModel and a PlanningScene.
     robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
@@ -83,13 +86,6 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
     // set pre-defined joint and pose values.
     define_cartesian_pose();
     define_joint_values();
-
-    // send robot to home position
-    group_->setNamedTarget("Home");
-    group_->move();
-    ROS_INFO_STREAM(__PRETTY_FUNCTION__ << ": LINE: " << __LINE__ << ": ");
-    ROS_INFO_STREAM("send robot to home position");
-
 
     // add collision objects
     build_workscene();
@@ -142,11 +138,11 @@ bool PickPlace::gripper_action(double finger_turn)
     {
         if (finger_turn>0.5*FINGER_MAX)
         {
-          gripper_group_->setNamedTarget("Open");
+          gripper_group_->setNamedTarget("Close");
         }
         else
         {
-          gripper_group_->setNamedTarget("Close");
+          gripper_group_->setNamedTarget("Open");
         }
         gripper_group_->move();
         return true;
@@ -388,7 +384,7 @@ void PickPlace::define_cartesian_pose()
     start_pose_.header.stamp = ros::Time::now();
     start_pose_.pose.position.x = 0.5;
     start_pose_.pose.position.y = -0.5;
-    start_pose_.pose.position.z = 0.5;
+    start_pose_.pose.position.z = 0.1;
 
     q = EulerZYZ_to_Quaternion(-M_PI/4, M_PI/2, M_PI);
     start_pose_.pose.orientation.x = q.x();
@@ -622,6 +618,7 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
         while (result_ == false && count < 10)
         {
             count++;
+            //group_->setJointValueTarget(start_pose_);
             result_ = group.plan(my_plan);
             std::cout << "at attemp: " << count << std::endl;
             ros::WallDuration(0.1).sleep();
@@ -666,20 +663,24 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
 
 
 bool PickPlace::my_pick()
-{
-//    ROS_INFO_STREAM("Press any key to open gripper ...");
-//    std::cin >> pause_;
+{    
+    ROS_INFO_STREAM("Press any key to send robot to home position ...");
+    std::cin >> pause_;
+    group_->setNamedTarget("Home");
+    group_->move();
+
     ros::WallDuration(1.0).sleep();
     group_->clearPathConstraints();
     gripper_group_->setNamedTarget("Open");
     gripper_group_->move();
 
-
+    /*
     ///////////////////////////////////////////////////////////
     //// joint space without obstacle
     ///////////////////////////////////////////////////////////
 
-    ROS_INFO_STREAM("Press any key to start motion plan in joint space without obstacle ...");
+    ROS_INFO_STREAM("Starting Joint space motion planing without obstacle");
+    ROS_INFO_STREAM("Press any key to move to start pose ...");
     std::cin >> pause_;
     group_->setJointValueTarget(start_joint_);
     group_->move();
@@ -735,7 +736,7 @@ bool PickPlace::my_pick()
     group_->setJointValueTarget(start_joint_);
     evaluate_plan(*group_);
 
-
+    */
     ///////////////////////////////////////////////////////////
     //// Cartesian space without obstacle
     ///////////////////////////////////////////////////////////
@@ -747,8 +748,27 @@ bool PickPlace::my_pick()
     clear_obstacle();
     clear_workscene();
     ros::WallDuration(0.1).sleep();
-    group_->setPoseTarget(start_pose_);
-    group_->setJointValueTarget(start_pose_);
+    group_->setPoseTarget(start_pose_);    
+
+    double toleranceOrientation = group_->getGoalOrientationTolerance();
+    double tolerancePosition = group_->getGoalPositionTolerance();
+    moveit_msgs::Constraints path_constraints = group_->getPathConstraints();
+    if (path_constraints.orientation_constraints.size()>0)
+    {
+        ROS_INFO("Path constraints position %f,%f,%f",
+             path_constraints.position_constraints[0].target_point_offset.x,
+             path_constraints.position_constraints[0].target_point_offset.y,
+             path_constraints.position_constraints[0].target_point_offset.z);
+    }
+    ROS_INFO("Orientation tolerance %f", toleranceOrientation);
+    ROS_INFO("Position tolerance %f", tolerancePosition);
+    group_->setGoalOrientationTolerance(toleranceOrientation*100);
+    group_->setGoalPositionTolerance(tolerancePosition*100);
+    toleranceOrientation = group_->getGoalOrientationTolerance();
+    tolerancePosition = group_->getGoalPositionTolerance();
+    ROS_INFO("Orientation tolerance %f", toleranceOrientation);
+    ROS_INFO("Position tolerance %f", tolerancePosition);
+
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Press any key to start path plan ...");
