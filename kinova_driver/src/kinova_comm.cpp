@@ -135,8 +135,8 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     for (int device_i = 0; device_i < devices_count; device_i++)
     {
         // If no device is specified, just use the first available device
-        if ((serial_number == "")
-            || (std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0))
+        if (serial_number == "" || serial_number == "not_set" ||
+            std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0)
         {
             result = kinova_api_.setActiveDevice(devices_list[device_i]);
             if (result != NO_ERROR_KINOVA)
