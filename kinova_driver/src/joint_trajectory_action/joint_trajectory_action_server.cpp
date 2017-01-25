@@ -1,4 +1,4 @@
-#include <joint_trajectory_action_server.h>
+#include <kinova_driver/joint_trajectory_action_server.h>
 
 using namespace kinova;
 

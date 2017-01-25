@@ -74,6 +74,24 @@ add_executable(kinova_arm_driver
   src/nodes/kinova_arm_driver.cpp
 )
 
+add_executable(joint_trajectory_action_server 
+  src/joint_trajectory_action/joint_trajectory_action_server.cpp
+  include/kinova_driver/joint_trajectory_action_server.h)
+target_link_libraries(joint_trajectory_action_server 
+  ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
+install(TARGETS joint_trajectory_action_server 
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+add_dependencies(joint_trajectory_action_server ${catkin_EXPORTED_TARGETS})
+
+add_executable(gripper_command_action_server 
+  src/joint_trajectory_action/gripper_command_action_server.cpp 
+  include/kinova_driver/gripper_command_action_server.h)
+target_link_libraries(gripper_command_action_server 
+  ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
+install(TARGETS gripper_command_action_server 
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+add_dependencies(gripper_command_action_server ${catkin_EXPORTED_TARGETS})
+
 add_executable(kinova_tf_updater
   src/kinova_ros_types.cpp
   src/nodes/kinova_tf_updater.cpp

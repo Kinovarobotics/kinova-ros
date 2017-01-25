@@ -1,4 +1,4 @@
-#include <gripper_command_action_server.h>
+#include <kinova_driver/gripper_command_action_server.h>
 
 using namespace kinova;
 

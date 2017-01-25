@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(moveit_motion_plan)
+project(kinova_arm_moveit_demo)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -44,14 +44,6 @@ include_directories(${kinova_driver_INCLUDE_DIRS})
 add_executable(motion_plan src/motion_plan.cpp)
 target_link_libraries(motion_plan ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
 install(TARGETS motion_plan DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-add_executable(joint_trajectory_action_server src/joint_trajectory_action_server.cpp include/joint_trajectory_action_server.h)
-target_link_libraries(joint_trajectory_action_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
-install(TARGETS joint_trajectory_action_server DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-add_executable(gripper_command_action_server src/gripper_command_action_server.cpp include/gripper_command_action_server.h)
-target_link_libraries(gripper_command_action_server ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
-install(TARGETS gripper_command_action_server DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 add_executable(work_scene src/work_scene.cpp)
 target_link_libraries(work_scene ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
