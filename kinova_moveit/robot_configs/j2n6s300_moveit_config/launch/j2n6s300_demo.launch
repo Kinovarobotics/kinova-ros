@@ -18,10 +18,10 @@
   <!-- If needed, broadcast static tf for robot root -->
   
   <!-- Run joint trajectory action server, which receives planned motion goal under "follow_joint_trajectory", and publish ROS standard trajectory via topic "command". Then for specified robot, the trajectory will be interpreted to their own joint trajectory controller -->
-  <node name="Joint_trajectory_action_server" pkg="moveit_motion_plan" type="joint_trajectory_action_server" output="screen" respawn="false" />
+  <node name="Joint_trajectory_action_server" pkg="kinova_driver" type="joint_trajectory_action_server" output="screen" respawn="false" />
 
   <!-- Run gripper command action server, which receives planned motion goal under "gripper_command". After receiving the command from Moveit Rviz Plugin, this node act as an actionlib client and send the goal to the finger position action server from kinova_driver.  -->
-  <node name="gripper_command_action_server" pkg="moveit_motion_plan" type="gripper_command_action_server" output="screen" respawn="false" />
+  <node name="gripper_command_action_server" pkg="kinova_driver" type="gripper_command_action_server" output="screen" respawn="false" />
 
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
