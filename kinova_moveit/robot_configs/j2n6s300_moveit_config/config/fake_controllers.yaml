@@ -13,6 +13,7 @@ controller_list:
       - j2n6s300_joint_finger_1
       - j2n6s300_joint_finger_2
       - j2n6s300_joint_finger_3
+
 initial:
   - group: arm
     pose: Home

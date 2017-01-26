@@ -1,5 +1,7 @@
 <launch>
   <param name="robot_type" value="j2s7s300" />
+  <param name="/pick_place_demo/arm/solve_type" value="Manipulation2" />
+  <param name="/pick_place_demo/arm/kinematics_solver_timeout" value="0.05" />
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
