@@ -32,13 +32,13 @@
         <joint name="j2s7s300_joint_7" value="3.1415" />
     </group_state>
     <group_state name="Home" group="arm">
-        <joint name="j2s7s300_joint_1" value="3.1415" />
-        <joint name="j2s7s300_joint_2" value="3.1415" />
-        <joint name="j2s7s300_joint_3" value="3.1415" />
-        <joint name="j2s7s300_joint_4" value="3.1415" />
-        <joint name="j2s7s300_joint_5" value="3.1415" />
-        <joint name="j2s7s300_joint_6" value="3.1415" />
-        <joint name="j2s7s300_joint_7" value="3.1415" />
+        <joint name="j2s7s300_joint_1" value="4.71" />
+        <joint name="j2s7s300_joint_2" value="2.84" />
+        <joint name="j2s7s300_joint_3" value="0.00" />
+        <joint name="j2s7s300_joint_4" value="0.75" />
+        <joint name="j2s7s300_joint_5" value="4.62" />
+        <joint name="j2s7s300_joint_6" value="4.48" />
+        <joint name="j2s7s300_joint_7" value="4.88" />
     </group_state>
     <group_state name="Open" group="gripper">
         <joint name="j2s7s300_joint_finger_1" value="0" />
