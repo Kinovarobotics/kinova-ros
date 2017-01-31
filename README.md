@@ -10,7 +10,7 @@ The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JA
 ## Supported versions
 The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
 
-The package may work with other configurations as well but it only tested for the one recommended above. 
+The package may work with other configurations as well, but it has only been tested for the one recommended above. 
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations
@@ -195,6 +195,9 @@ mode (1): The torque commands will be set to zero. By default, option (1) is set
 
 ## Ethernet connection
 #### new in release 1.1 
+**Note** - Although this release supports Ethernet connection, this feature is only limited to test clients.
+Kinova will notify all users when Ethernet support released for all customers. 
+
 Support for Ethernet connection has been added. All functionalities available in USB are available in Ethernet. 
 To use ethernet follow these steps
 1. Setup a static IP address for your ethernet network say - 192.168.100.100

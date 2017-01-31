@@ -3,7 +3,7 @@
 ## Supported versions
 The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
 
-The package may work with other configurations as well but it only tested for the one recommended above. 
+The package may work with other configurations as well, but it has only been tested for the one recommended above. 
 
 # New in this release
 - Robot configs added for Mico, Jaco, and Jaco 7 dof
@@ -11,63 +11,175 @@ The package may work with other configurations as well but it only tested for th
 - Trajectory following action server
 - Trajectory following controller
 - Gripper command action server
-- Demo for using MoveIt with Kinova arms
+- Sample pick and place code demonstrating use of MoveIt with all Kinova arms - demo includes adding
+  obstacles, ataching obstacles to robot, adding constraints and test motion plans
 
-# Robot configs for Jaco, Mico, Jaco 7dof
+# Installation
 
-The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides  widely support of Kinova products, there are many bug fixing, improvements and new features as well. The stack is developped upon the Kinova C++ API functions, which communicates with the DSP inside robot base. 
-
-
-## Installation
-To make kinova-ros part of your workspace, follow these steps (assuming your workspace is setup following the standard conventions):
-
-    cd ~/catkin_ws/src
-    git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
-    cd ~/catkin_ws
-    catkin_make
-
-To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
-
-    sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
-
-## How to use the stack
-
-### launch driver
-`kinova_robot.launch` in kinova_bringup folder launches the essential drivers and configurations for kinova robots. kinova_robot.launch has two arguments:
-
-**kinova_robotType** specifies which robot type is used. For better supporting wider range of robot configurations,  *robot type* is defined by a `char[8]`, in the format of: `[{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]`. *Robot category* `{j|m|r|c}` refers to *jaco*, *mico*, *roco* and *customized*, *version* is `{1|2}` for now, *wrist type* `{s|n}` can be spherical or *non-spherical*, *Degree of Freedom* is possible to be `{4|6|7}`, *robot mode* `{s|a}` can be in *service* or *assistive*, *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. Last two positions are *undifined* and *reserved* for further features.
-
-*eg*: `j2n6a300` (default value) refers to *jaco v2 6DOF assistive 3 fingers*. Please be aware that not all options are valided for different robot types.
-
-**use_urdf** specifies whether the kinematic solution is provided by the URDF model. 
-
-When `use_urdf:=true` (default value), the kinematic solution is automatically solved by URDF model. 
-The robot can be virtually presented in the Rviz and the frames in Rviz are located at each joints. 
-To visulize the robot in Rviz, run `$ rosrun rviz rviz`, and select *root* as the world frame. 
-The robot model will synchronize the motion with the real robot.
-
-If `use_urdf:=false`, the kinematic solution is as ame as the DSP code inside robot. 
-Node `kinova_tf_updater` will be activated to publish frames, and the frames are defined 
-according the classic D-H converntion(frame may not locat at joints). Even you are not able to visulize
-the robot properly in Rviz, you are able to observe the D-H frames in Rviz.
-
-*eg*: `roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200 use_urdf:=true`
-
-If the robot is not able to move after boot, please try to home the arm by either pressing *home* button on the joystick or calling rosservice in the **ROS service commands** below.
+1. Install MoveIt! For detailed instructions see [MoveIt install page](http://moveit.ros.org/install/ "http://moveit.ros.org/install/").  
+```
+sudo apt-get install ros-indigo-moveit
+```
+2. Install Trac_IK see [Trac_IK repository](https://bitbucket.org/traclabs/trac_ik "https://bitbucket.org/traclabs/trac_ik").  
+```
+sudo apt-get install ros-indigo-trac-ik
+```
+3. Checkout kinova-ros in your catkin workspace  
+```
+git clone https://github.com/Kinovarobotics/kinova-ros
+```
 
 
-## Notes and Limitations
-1. Force/torque control is only for advanced users. Please be caution when using force/torque control api functions.
+# MoveIt config files for Kinova robots
 
-2. The ``joint_state`` topic currently reports only the arm position and
-velocity. Effort is a placeholder for future compatibility. Depending on your
-firmware version velocity values can be wrong. 
+MoveIt! setup assistant is the easiest way to quickly setup robot configs for your robot.
+You can find the tutorial to use it [here](http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html "http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/setup_assistant/setup_assistant_tutorial.html").
 
-3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
+Config files for Kinova robots (Jaco, Mico, and Jaco-7-dof) have already been set up, the
+config folders can be found at ```kinova-ros/kinova_moveit/robot_configs/```  
 
-4. Some virtualization software products are known to work well with this package, while others do not.  The issue appears to be related to proper handover of access to the USB port to the API.  Parallels and VMWare are able to do this properly, while VirtualBox causes the API to fail with a "1015" error.
+### Move groups
+The robots have been setup to use two move groups - 1) arm 2) gripper
 
-5. Previously, files under ``kinova-ros/kinova_driver/lib/i386-linux-gnu`` had a bug which required uses 32-bit systems to manually copy them into devel or install to work. This package has not been tested with 32-bit systems and this workaround may still be required. 64-bit versions seem to be unaffected.
+![alt text](jaco_move_groups.png)
+
+# Interacting with Robot using MoveIt RViz plugin
+
+Easiest way to start moving the robot with MoveIt is with the moveIt! rviz plugin. 
+
+### Launching MoveIt! and RViz
+You can choose launch MoveIt! with a virtual robot, useful for visualization and testing.
+Or you can choose to launch MoveIt! with the kinova_driver node which controls the actual
+robot.
+ 
+#### With virtual robot  
+```
+roslaunch robot_name_moveit_config robot_name_virtual_robot_demo.launch
+```
+
+For eg, for Jaco robot -
+ 
+```
+  roslaunch j2n6s300_moveit_config j2n6s300_virtual_robot_demo.launch
+```
+
+Launches the -
+ 
+- move_group node, with
+  - fake controllers, defined in /config/fake_controllers.yaml
+- fake joint_state_publisher, robot_state_publisher
+- rviz
+
+This configuration will let you play with the virtual robot and test your MoveIt envirionment
+without needing the real robot.
+
+#### With actual robot connected
+
+```
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=*robot_type*
+```
+
+Launches the kinova_driver node to control the arm.
+
+```
+roslaunch robot_name_moveit_config robot_name_demo.launch
+```
+
+Launches the - 
+
+- move_group node, with 
+  -  controllers, defined in /config/controllers.yaml 
+- joint_trajectory_action_server node available in kinova_driver
+- gripper_command_action_server node available in kinova_driver
+- rviz 
+
+This configuration will move the actual robot, so be careful before you execute your trajectories.
+
+### RViz MoveIt Plugin
+
+The image below shows the RViz window with the MoveIt! plugin. You can move the robot's end-effector
+using the interactive markers (marked in the image by a red rectangle). While you move the end-effector
+MoveIt! runs inverse kinematics to update the joint positions while you drag the marker.
+
+![alt text](jaco_rviz_moveIt.png)
+
+### Setting Start and Goal poses
+
+The planning tab (marked in the image by a blue rectangle), gives you the ability to plan and execute
+trajectory. To do this drag the interactive marker to the starting pose that you would like to set for the
+robot (if you are connected to the real robot, keep the start state as the current state). In the query 
+menu set the start state. Next follow the same procedure to set the goal state. 
+
+### Planning and executing trajectories
+
+Next, click on *plan* and MoveIt will visualize its planned path to move from the start state to the goal 
+state. If the visualized plan is acceptable you can command the robot to execute the plan by clicking 
+*execute*. If you are connected to the real robot the robot will move according to the visualized plan,
+or if you are running the virtual robot the joints of the model will move to the goal state without
+the real robot moving.
+
+The moveIt! RViz plugin can also be used to add obstacles, edit planning parameters. It is left to 
+the users to explore these features on their own. We will demonstrate these features through the
+MoveIt API.
+
+
+# Interacting with Robot using MoveIt API
+MoveIt repository has examples for using its API. A pick and place demo has been adapted for 
+Kinova robots to help users develop their own applications.
+
+### Pick and place demo
+
+To run the demo, launch moveIt and RViz -
+
+```
+roslaunch robot_name_moveit_config robot_name_virtual_robot_demo.launch
+```
+
+or with real robot connected - 
+
+```
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=*robot_type*
+```
+
+Next run the pick and place demo node - 
+
+```
+rosrun kinova_arm_moveit_demo pick_place 
+```
+
+The script runs through various senarios -
+
+- Setting up the workscene, adding obstacles
+- Setting goals for the robot in Joint space
+- setting goals in Cartesian space
+- Setting path constraints
+- Attaching objects to robot 
+
+Attaching objects is useful when the robot is holding objects in its gripper and it needs
+to move the object through the workspace while checking for collisions for the robot and 
+the object it is holding.
+
+
+# Kinematics
+
+Three types of kinematics plugins have been test with this package - 
+
+1. Kinematics and Dynamics Library (KDL)
+2. IKFast
+3. Trac_IK
+
+It is possible to set which library to use with MoveIt by setting the kinematics_solver 
+parameter in the file robot_config/config/kinematics.yaml.
+
+The recommended kinematics plugin to use is **Trac_IK** with parameter solve type set to
+**Distance** or **Manipulation2**.  
+**Note** - To make sure the parameter is correctly set, the demo launch file sets 
+the parameter '/pick_place/solve_type' in the parameter server.
+
+**IKFast** works well too, unfortunately, it often gives the elbow down solution which is
+undesireble. This will be improved with future releases.
+
+**KDL** has a higher faliure rate than the other two.  
 
 
 ## Report a Bug
