@@ -267,7 +267,7 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
     if (node_handle_.getParam("torque_parameters/com_parameters", com_parameters))
     {
         bool use_estimated_COM;
-        node_handle_.param("/torque_parameters/use_estimated_COM_parameters",
+        node_handle_.param("torque_parameters/use_estimated_COM_parameters",
                               use_estimated_COM,true);
         if (use_estimated_COM == true)
             kinova_comm_.setRobotCOMParam(OPTIMAL,com_parameters);
