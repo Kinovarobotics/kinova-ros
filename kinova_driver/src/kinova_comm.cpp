@@ -842,13 +842,21 @@ void KinovaComm::setToquesControlSafetyFactor(float factor)
 //! */
 void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
 {
+    //API seems to need three different sizes of arrays for different cases
     float com_parameters[GRAVITY_PARAM_SIZE];
+    float com_parameters_optimal[OPTIMAL_Z_PARAM_SIZE];
+    float com_parameters_optimal_7dof[OPTIMAL_Z_PARAM_SIZE_7DOF];
     memset(&com_parameters, 0, sizeof(com_parameters));
     std::ostringstream com_params;
     com_params<<"Setting COM parameters to ";
     for (int i=0; i<params.size(); i++)
     {
-        com_parameters[i] = params[i];
+        if (type == MANUAL_INPUT)
+          com_parameters[i] = params[i];
+        else if (num_joints_ == 7)
+          com_parameters_optimal_7dof[i] = params[i];
+        else
+          com_parameters_optimal[i] = params[i];
         com_params<<params[i]<<", ";
     }
     ROS_INFO_STREAM(com_params.str());
@@ -856,7 +864,7 @@ void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
     if (type == MANUAL_INPUT)
         result = kinova_api_.setGravityManualInputParam(com_parameters);
     else
-        result = kinova_api_.setGravityOptimalZParam(com_parameters);
+        result = kinova_api_.setGravityOptimalZParam(com_parameters_optimal);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set the COM parameters", result);
@@ -882,7 +890,7 @@ These parameters can then be sent as input to the function SetOptimalZParam().
 */
 int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
 {
-    float COMparams[GRAVITY_PARAM_SIZE];
+    float COMparams[OPTIMAL_Z_PARAM_SIZE];
     memset(&COMparams[0],0,sizeof(COMparams));
     int result;
     if(type == SPHERICAL_7DOF_SERVICE)
