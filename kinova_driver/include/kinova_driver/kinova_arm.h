@@ -51,6 +51,13 @@
 namespace kinova
 {
 
+struct robot_info
+{
+    int id;
+    std::string name;
+    std::string type;
+    std::string serial;
+};
 
 class KinovaArm
 {
@@ -172,6 +179,10 @@ class KinovaArm
     CartesianInfo cartesian_velocities_;
 
     std::vector< std::string > joint_names_;
+
+    //multiple robots
+    int active_robot_id_;
+    std::vector<robot_info> robots_;
 
 };
 

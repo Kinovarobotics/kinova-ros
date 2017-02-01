@@ -17,7 +17,7 @@
 	xmlns:xacro="http://ros.org/wiki/xacro" name="j2s6a300">
 
 
-  <xacro:include filename="$(find kinova_description)/urdf/j2s6a300.xacro"/>
+  <xacro:include filename="$(find kinova_description)/urdf/j2n6s300.xacro"/>
 
   <link name="root">
     <visual>
@@ -25,7 +25,7 @@
       <geometry>
         <box size = "0 0 0"/>
       </geometry>
-    <!--<material name="Black" /> -->
+    
     </visual>
 
     <collision>
@@ -38,6 +38,8 @@
 
   <property name="robot_root" value="root" />
 
-  <xacro:j2s6a300  base_parent="${robot_root}"/>
+  <xacro:j2s6a300  base_parent="${robot_root}" prefix="left_"/>
+
+	<xacro:j2s6a300  base_parent="${robot_root}" prefix="right_"/>
 
 </robot>

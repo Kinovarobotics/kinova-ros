@@ -186,7 +186,7 @@ class KinovaComm
     int num_joints_;
     int robot_type_;
     int motion_command_type_;
-
+    KinovaDevice devices_list_[MAX_KINOVA_DEVICE];
 };
 
 }  // namespace kinova

@@ -118,9 +118,8 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
 
     result = kinova_api_.refresDevicesList();
 
-    KinovaDevice devices_list[MAX_KINOVA_DEVICE];
     result = NO_ERROR_KINOVA;
-    int devices_count = kinova_api_.getDevices(devices_list, result);
+    int devices_count = kinova_api_.getDevices(devices_list_, result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get devices list", result);
@@ -136,9 +135,9 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     {
         // If no device is specified, just use the first available device
         if (serial_number == "" || serial_number == "not_set" ||
-            std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0)
+            std::strcmp(serial_number.c_str(), devices_list_[device_i].SerialNumber) == 0)
         {
-            result = kinova_api_.setActiveDevice(devices_list[device_i]);
+            result = kinova_api_.setActiveDevice(devices_list_[device_i]);
             if (result != NO_ERROR_KINOVA)
             {
                 throw KinovaCommException("Could not set the active device", result);
@@ -161,7 +160,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
 
             ROS_INFO_STREAM("Found " << devices_count << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
-                            << ", serial number: " << devices_list[device_i].SerialNumber
+                            << ", serial number: " << devices_list_[device_i].SerialNumber
                             << ", code version: " << general_info.CodeVersion
                             << ", code revision: " << general_info.CodeRevision << ")");
 
