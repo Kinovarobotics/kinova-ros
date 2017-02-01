@@ -95,14 +95,18 @@ namespace kinova
 
         geometry_msgs::PoseStamped start_pose_;
         geometry_msgs::PoseStamped grasp_pose_;
+        geometry_msgs::PoseStamped can_pose_;
         geometry_msgs::PoseStamped pregrasp_pose_;
         geometry_msgs::PoseStamped postgrasp_pose_;
 
 
         void build_workscene();
         void add_obstacle();
+        void add_complex_obstacle();
         void clear_obstacle();
         void clear_workscene();
+        void add_attached_obstacle();
+        void add_target();
 
         void define_joint_values();
         void define_cartesian_pose();
