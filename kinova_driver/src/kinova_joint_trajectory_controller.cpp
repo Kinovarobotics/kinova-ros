@@ -11,17 +11,19 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
 
     ros::NodeHandle pn("~");
-    nh_.param<std::string>("robot_type",prefix_,"j2n6s300");
-    number_joint_ = prefix_[3] - '0';
+    std::string robot_type;
+    nh_.param<std::string>("robot_name",prefix_,"j2n6s300");
+    nh_.param<std::string>("robot_type",robot_type,"j2n6s300");
+    number_joint_ =robot_type[3] - '0';
 
     // Display debug information in teminal
     if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
         ros::console::notifyLoggerLevelsChanged();
     }
 
-    sub_command_ = nh_.subscribe("/trajectory_controller/command", 1, &JointTrajectoryController::commandCB, this);
+    sub_command_ = nh_.subscribe("trajectory_controller/command", 1, &JointTrajectoryController::commandCB, this);
 
-    pub_joint_feedback_ = nh_.advertise<control_msgs::FollowJointTrajectoryFeedback>("/trajectory_controller/state", 1);
+    pub_joint_feedback_ = nh_.advertise<control_msgs::FollowJointTrajectoryFeedback>("trajectory_controller/state", 1);
     pub_joint_velocity_ = pn.advertise<kinova_msgs::JointVelocity>("in/joint_velocity", 2);
 
     traj_frame_id_ = "root";   

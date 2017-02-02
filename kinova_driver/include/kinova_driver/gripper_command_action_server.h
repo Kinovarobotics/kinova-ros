@@ -17,7 +17,7 @@ namespace kinova
         typedef actionlib::ActionClient<kinova_msgs::SetFingersPositionAction> SFPAC;
 
     public:
-        GripperCommandActionController(ros::NodeHandle &n);
+        GripperCommandActionController(ros::NodeHandle &n, std::string &robot_name);
         ~GripperCommandActionController();
 
 

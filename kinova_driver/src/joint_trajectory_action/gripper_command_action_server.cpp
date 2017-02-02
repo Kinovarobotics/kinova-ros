@@ -5,17 +5,19 @@ using namespace kinova;
 
 
 
-GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &n):
+GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &n, std::string &robot_name):
     nh_(n),
     has_active_goal_(false)
-{
-    std::string robot_type;
-    nh_.param<std::string>("/robot_type",robot_type,"j2n6s300");
+{    
     std::string address;
-    address = "/" + robot_type + "_gripper/gripper_command";
+    address = "/" + robot_name + "_gripper/gripper_command";
 
-    action_server_gripper_command_.reset(new GCAS(nh_, address, boost::bind(&GripperCommandActionController::goalCBFollow, this, _1), boost::bind(&GripperCommandActionController::cancelCBFollow, this, _1), false));
-    address = "/" + robot_type + "_driver/fingers_action/finger_positions";
+    action_server_gripper_command_.reset(
+                new GCAS(nh_, address, boost::bind(
+                             &GripperCommandActionController::goalCBFollow, this, _1),
+                         boost::bind(&GripperCommandActionController::cancelCBFollow,
+                                     this, _1), false));
+    address = "/" + robot_name + "_driver/fingers_action/finger_positions";
     action_client_set_finger_.reset(new SFPAC(nh_, address));
 
     ros::NodeHandle pn("~");
@@ -32,7 +34,7 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
         gripper_joint_names_[i] = "joint_finger_" + boost::lexical_cast<std::string>(i+1);
     }
 
-    address = "/" + robot_type + "_driver/out/finger_position";
+    address = "/" + robot_name + "_driver/out/finger_position";
     sub_fingers_state_ = nh_.subscribe(address, 1, &GripperCommandActionController::controllerStateCB, this);
 
 
@@ -160,10 +162,22 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "gripper_command_action_server");
     ros::NodeHandle node;
+
+    // Retrieve the (non-option) argument:
+     std::string robot_name = "";
+    if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
+    {
+        std::cerr << "No kinova_robot_name provided in the argument!" << std::endl;
+        return -1;
+    }
+    else
+    {
+        robot_name = argv[argc-1];
+    }
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
-    kinova::GripperCommandActionController gcac(node);
+    kinova::GripperCommandActionController gcac(node,robot_name);
 
     ros::spin();
     return 0;

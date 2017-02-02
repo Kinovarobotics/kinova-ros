@@ -2,16 +2,21 @@
 
 using namespace kinova;
 
-JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle &n):
+JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle &n, std::string &robot_name):
     nh_(n),
     has_active_goal_(false)
 {
-
-    std::string robot_type;
-    nh_.param<std::string>("/robot_type",robot_type,"j2n6s300");
+    std::string robot_type = "";
     std::string address;
-    address = "/" + robot_type + "/follow_joint_trajectory";
 
+    address = "/" + robot_name + "_driver/robot_type";
+    nh_.getParam(address,robot_type);
+    if (robot_type == "")
+    {
+        ROS_ERROR_STREAM("Parameter "<<address<<" not found, make sure robot driver node is running");
+    }
+
+    address = "/" + robot_name + "/follow_joint_trajectory";
     action_server_follow_.reset(
                 new FJTAS(nh_, address,
                           boost::bind(&JointTrajectoryActionController::goalCBFollow, this, _1),
@@ -25,7 +30,7 @@ JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle
 
     for (uint i = 0; i<joint_names_.size(); i++)
     {
-        joint_names_[i] = robot_type + "_joint_" + boost::lexical_cast<std::string>(i+1);
+        joint_names_[i] = robot_name + "_joint_" + boost::lexical_cast<std::string>(i+1);
     }
 
     pn.param("constraints/goal_time", goal_time_constraint_, 0.0);
@@ -44,8 +49,8 @@ JointTrajectoryActionController::JointTrajectoryActionController(ros::NodeHandle
 
 
     pub_controller_command_ = nh_.advertise<trajectory_msgs::JointTrajectory>
-            ("/trajectory_controller/command", 1);
-    sub_controller_state_ = nh_.subscribe("/trajectory_controller/state",
+            ("/"+ robot_name + "_driver/trajectory_controller/command", 1);
+    sub_controller_state_ = nh_.subscribe("/" + robot_name + "_driver/trajectory_controller/state",
             1, &JointTrajectoryActionController::controllerStateCB, this);
     watchdog_timer_ = nh_.createTimer(ros::Duration(1.0),
                                       &JointTrajectoryActionController::watchdog, this);
@@ -257,10 +262,22 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "follow_joint_trajecotry_action_server");
     ros::NodeHandle node;
+
+    // Retrieve the (non-option) argument:
+     std::string robot_name = "";
+    if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
+    {
+        std::cerr << "No kinova_robot_name provided in the argument!" << std::endl;
+        return -1;
+    }
+    else
+    {
+        robot_name = argv[argc-1];
+    }
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
-    kinova::JointTrajectoryActionController jtac(node);
+    kinova::JointTrajectoryActionController jtac(node, robot_name);
 
     ros::spin();
     return 0;

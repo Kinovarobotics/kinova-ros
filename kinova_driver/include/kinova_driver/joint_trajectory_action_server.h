@@ -15,7 +15,7 @@ namespace kinova
         typedef std::vector<trajectory_msgs::JointTrajectoryPoint> JTPointVector;
 
     public:
-        JointTrajectoryActionController(ros::NodeHandle &n);
+        JointTrajectoryActionController(ros::NodeHandle &n, std::string &robot_name);
         ~JointTrajectoryActionController();
 
 
