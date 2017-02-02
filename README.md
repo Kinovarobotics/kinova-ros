@@ -7,7 +7,7 @@ To contribute fixes please add pull requests to this beta branch.
 
 The previous ROS release, which mainly developed for jaco arm will be named as "jaco-ros"; and the previous "master" branch is renamed as "jaco-ros-master" branch. Users can keep both "jaco-ros" and new release "kinova-ros" as two parallel stacks. However, further update and support will be only available on "kinova-ros".
 
-### new in release 1.1
+### new in release 1.2.0
 
 - MoveIt! support
 - Restructured URDF files
@@ -40,7 +40,7 @@ The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
 The package may work with other configurations as well, but it has only been tested for the one recommended above. 
 
 ## MoveIt!
-#### new in release 1.1
+#### new in release 1.2.0
 The readme for MoveIt! support is available [here](kinova_moveit/readme.md)
 
 ## file system
@@ -75,13 +75,13 @@ To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/
 
 *eg*: `j2n6s300` (default value) refers to *jaco v2 6DOF service 3 fingers*. Please be aware that not all options are valided for different robot types.
 
-#### new in release 1.1
+#### new in release 1.2.0
 To avoid redundancy urdf for assistive models has been deleted. Please use the service 's' option instead.
 For Mico 1 and 2 use the tag 'm1' for both.
 For Jaco 1 and 2 use the tag 'j2' for both.
 
 **kinova_robotName**
-#### new in release 1.1
+#### new in release 1.2.0
 To allow multiple robots under a ros master, kinova_robotName was added.
 For applications like **moveIt!** set this to your prefix for the robot in the URDF. 
 For example you can launch two jaco robots by using the following - 
@@ -149,7 +149,7 @@ In addition, the wrench of end-effector is published via topic: `/'${kinova_robo
   - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Cart/update*
   - Now a cubic with 3 axis (translation) and 3 rings(rotation) should appear at the end-effector, and you can move the robot by drag the axis or rings.
 
-#### new in release 1.1
+#### new in release 1.2.0
 Executing multiple Cartesian waypoints without stopping  
 The action client executes one goal at a time. In case user wants to give multiple waypoints to the robot without stopping at every waypoint, the service *AddPoseToCartesianTrajectories* can be used. 
 This service adds the commanded poses to a buffer that that maintained by the robot. Robot executes the poses in this buffer in order that they are added, without stopping between poses.
@@ -193,13 +193,13 @@ The admittance force control can be actived by command
 
 #### Re-calibrate torque sensors
 
-##### new in release 1.1
+##### new in release 1.2.0
 Over time it is possible that the torque sensors develop offsets in reporting absolute torque. For this they need to be re-calibrated. The calibration process is very simple -   
 1. Move the robot to candle like pose (all joints 180 deg, robot links points straight up), this configuration ensures zero torques at joints.  
 2. Call the service 'rosservice call /'${kinova_robotType}_driver'/in/set_zero_torques'
 
 ### Support for 7 dof spherical wrist robot
-#### new in release 1.1 
+#### new in release 1.2.0 
 Support for the 7 dof robot has been added in this new release. All of the previous control methods can be used on a 7 dof Kinova robot.
 
 ##### Inverse Kinematics for 7 dof robot
@@ -212,7 +212,7 @@ The mode can be activated by calling the service SetNullSpaceModeState - ${kinov
 Pass 1 to service to enable and 0 to disable.
 
 ### Torque control 
-#### new in release 1.1 
+#### new in release 1.2.0 
 Torque control has been made more accessible. Now you can publish torque/force commands just like joint/cartesian velocity. To do this you need to :
 
 1. Optional - Set torque parameters  
@@ -241,7 +241,7 @@ mode (1): The torque commands will be set to zero. By default, option (1) is set
 (Jaco2 and Mico) while option (0) is set for generic mode.
 
 ## Ethernet connection
-#### new in release 1.1 
+#### new in release 1.2.0 
 **Note** - Although this release supports Ethernet connection, this feature is only limited to test clients.
 Kinova will notify all users when Ethernet support released for all customers. 
 
@@ -263,7 +263,7 @@ subnet_mask: [your network subnet mask]
 
 
 ## Parameters
-#### new in release 1.1 
+#### new in release 1.2.0 
 ##### General parameters
 * serial_number: PJ00000001030703130  
   leave commented out if you want to control the first robot found connected.  
@@ -313,7 +313,7 @@ Monitoring topics
 Other plugins in rqt can similarly be used for quick interation with the robot.
 
 ## What's new in this release 
-### new in release 1.1
+### new in release 1.2.0
 
 - MoveIt! support
 - Restructured URDF files
