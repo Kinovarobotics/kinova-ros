@@ -80,16 +80,18 @@ To avoid redundancy urdf for assistive models has been deleted. Please use the s
 For Mico 1 and 2 use the tag 'm1' for both.
 For Jaco 1 and 2 use the tag 'j2' for both.
 
-**kinova_robotName**
+**kinova_robotName** and **kinova_robotSerial**
 #### new in release 1.2.0
-To allow multiple robots under a ros master, kinova_robotName was added.
-For applications like **moveIt!** set this to your prefix for the robot in the URDF. 
+To allow multiple robots under a ros master, kinova_robotName and kinova_robotSerial was added.
+For applications like **moveIt!** set kinova_robotName to your prefix for the robot in the URDF. 
 For example you can launch two jaco robots by using the following - 
 
 '''
-roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=left
-roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=right
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=left kinova_robotSerial:=PJ00000001030703130
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=right kinova_robotSerial:=PJ00000001030703133
 '''
+
+These parameters are optional and can be dropped of only one robot is connected.
 
 **use_urdf** specifies whether the kinematic solution is provided by the URDF model. THis is recommended and the default option.
 
