@@ -36,10 +36,26 @@
     </collision>     
   </link>
 
-  <property name="robot_root" value="root" />
+	<link name="left_arm_mount">
+  </link>
 
-  <xacro:j2s6a300  base_parent="${robot_root}" prefix="left_"/>
+  <link name="right_arm_mount">
+  </link>
 
-	<xacro:j2s6a300  base_parent="${robot_root}" prefix="right_"/>
+	 <joint name="left_arm_attach" type="fixed">
+    <child link="left_arm_mount" />
+    <parent link="root" />
+    <origin xyz="-0.2 0 0" rpy="0 0 1.5707" />   
+  </joint>
+
+  <joint name="right_arm_attach" type="fixed">
+    <child link="right_arm_mount" />
+    <parent link="root" />
+    <origin xyz="0.2 0 0" rpy="0 0 1.5707" />    
+  </joint> 
+
+  <xacro:j2n6s300  base_parent="left_arm_mount" prefix="left_"/>
+
+	<xacro:j2n6s300  base_parent="right_arm_mount" prefix="right_"/>
 
 </robot>
