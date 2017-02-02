@@ -1,7 +1,33 @@
 # IMPORTANT
 
-After this `kinova-ros` release, the previous ROS release, which mainly developed for jaco arm will be named as "jaco-ros"; and the previous "master" branch is renamed as "jaco-ros-master" branch. Users can keep both "jaco-ros" and new release "kinova-ros" as two parallel stacks. However, further update and support will be only available on "kinova-ros".
+kinova-driver 1.1.0 is released.
 
+For quicker bug-fixes and updates a beta version of the branch is added. If you would like to contribute fixes please add pull requests to the beta branch.
+
+The previous ROS release, which mainly developed for jaco arm will be named as "jaco-ros"; and the previous "master" branch is renamed as "jaco-ros-master" branch. Users can keep both "jaco-ros" and new release "kinova-ros" as two parallel stacks. However, further update and support will be only available on "kinova-ros".
+
+### new in release 1.1
+
+- MoveIt! support
+- Restructured URDF files
+- Support for 7 dof robot
+- Support for Ethernet
+- Torque control through publisher/subscriber
+- Force control through publisher/subscriber
+- Torque control parameters
+- Speed limit for actionlib Cartesian/Joint control
+- Parameterized base_frame for tf_generator
+- Finger models are now updated in RViz
+- Ring models added to URDF
+- New demo file - gravity_compensated_mode.py
+- Test/demo file - TestSrv.py
+- New services
+  - SetTorqueControlParameters
+  - SetZerotorque
+  - SetNullSpaceModeState
+  - AddPoseToCartesianTrajectory
+  - ClearTrajectories
+  - SetTorqueControlMode
 
 # KINOVA-ROS
 
@@ -11,6 +37,10 @@ The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JA
 The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
 
 The package may work with other configurations as well, but it has only been tested for the one recommended above. 
+
+## MoveIt!
+#### new in release 1.1
+The readme for MoveIt! support is available [here](kinova_moveit/readme.md)
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations
@@ -38,13 +68,29 @@ To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/
 ## How to use the stack
 
 ### launch driver
-`kinova_robot.launch` in kinova_bringup folder launches the essential drivers and configurations for kinova robots. kinova_robot.launch has two arguments:
+`kinova_robot.launch` in kinova_bringup folder launches the essential drivers and configurations for kinova robots. kinova_robot.launch has three arguments:
 
 **kinova_robotType** specifies which robot type is used. For better supporting wider range of robot configurations,  *robot type* is defined by a `char[8]`, in the format of: `[{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]`. *Robot category* `{j|m|r|c}` refers to *jaco*, *mico*, *roco* and *customized*, *version* is `{1|2}` for now, *wrist type* `{s|n}` can be spherical or *non-spherical*, *Degree of Freedom* is possible to be `{4|6|7}`, *robot mode* `{s|a}` can be in *service* or *assistive*, *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. Last two positions are *undifined* and *reserved* for further features.
 
-*eg*: `j2n6a300` (default value) refers to *jaco v2 6DOF assistive 3 fingers*. Please be aware that not all options are valided for different robot types.
+*eg*: `j2n6s300` (default value) refers to *jaco v2 6DOF service 3 fingers*. Please be aware that not all options are valided for different robot types.
 
-**use_urdf** specifies whether the kinematic solution is provided by the URDF model. 
+#### new in release 1.1
+To avoid redundancy urdf for assistive models has been deleted. Please use the service 's' option instead.
+For Mico 1 and 2 use the tag 'm1' for both.
+For Jaco 1 and 2 use the tag 'j2' for both.
+
+**kinova_robotName**
+#### new in release 1.1
+To allow multiple robots under a ros master, kinova_robotName was added.
+For applications like **moveIt!** set this to your prefix for the robot in the URDF. 
+For example you can launch two jaco robots by using the following - 
+
+'''
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=left
+roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=right
+'''
+
+**use_urdf** specifies whether the kinematic solution is provided by the URDF model. THis is recommended and the default option.
 
 When `use_urdf:=true` (default value), the kinematic solution is automatically solved by URDF model. 
 The robot can be virtually presented in the Rviz and the frames in Rviz are located at each joints. 
@@ -268,6 +314,8 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
 ## What's new in this release 
 ### new in release 1.1
 
+- MoveIt! support
+- Restructured URDF files
 - Support for 7 dof robot
 - Support for Ethernet
 - Torque control through publisher/subscriber

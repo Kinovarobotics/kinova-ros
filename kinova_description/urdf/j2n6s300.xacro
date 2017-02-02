@@ -28,13 +28,13 @@
     <property name="link_6_mesh" value="hand_3finger" />
 
 
-    <property name="joint_base" value="${prefix}_joint_base" />
+    <property name="joint_base" value="joint_base" />
     <property name="joint_base_type" value="fixed" />
     <property name="joint_base_axis_xyz" value="0 0 0" />
     <property name="joint_base_origin_xyz" value="0 0 0" />
     <property name="joint_base_origin_rpy" value="0 0 0" />
 
-    <property name="joint_1" value="${prefix}_joint_1" />
+    <property name="joint_1" value="joint_1" />
     <property name="joint_1_type" value="continuous" />
     <property name="joint_1_axis_xyz" value="0 0 1" />
     <property name="joint_1_origin_xyz" value="0 0 0.15675" />
@@ -42,7 +42,7 @@
     <property name="joint_1_lower_limit" value="${-2*J_PI}" />
     <property name="joint_1_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_2" value="${prefix}_joint_2" />
+    <property name="joint_2" value="joint_2" />
     <property name="joint_2_type" value="revolute" />
     <property name="joint_2_axis_xyz" value="0 0 1" />
     <property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
@@ -50,7 +50,7 @@
     <property name="joint_2_lower_limit" value="${30/180*J_PI}" />
     <property name="joint_2_upper_limit" value="${330/180*J_PI}" />
 
-    <property name="joint_3" value="${prefix}_joint_3" />
+    <property name="joint_3" value="joint_3" />
     <property name="joint_3_type" value="revolute" />
     <property name="joint_3_axis_xyz" value="0 0 1" />
     <property name="joint_3_origin_xyz" value="0 -0.410 0" />
@@ -58,7 +58,7 @@
     <property name="joint_3_lower_limit" value="${30/180*J_PI}" />
     <property name="joint_3_upper_limit" value="${330/180*J_PI}" />
 
-    <property name="joint_4" value="${prefix}_joint_4" />
+    <property name="joint_4" value="joint_4" />
     <property name="joint_4_type" value="continuous" />
     <property name="joint_4_axis_xyz" value="0 0 1" />
     <property name="joint_4_origin_xyz" value="0 0.2073 -0.0114" />
@@ -66,7 +66,7 @@
     <property name="joint_4_lower_limit" value="${-2*J_PI}" />
     <property name="joint_4_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_5" value="${prefix}_joint_5" />
+    <property name="joint_5" value="joint_5" />
     <property name="joint_5_type" value="continuous" />
     <property name="joint_5_axis_xyz" value="0 0 1" />
     <property name="joint_5_origin_xyz" value="0 -0.03703 -0.06414" />
@@ -74,7 +74,7 @@
     <property name="joint_5_lower_limit" value="${-2*J_PI}" />
     <property name="joint_5_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_6" value="${prefix}_joint_6" />
+    <property name="joint_6" value="joint_6" />
     <property name="joint_6_type" value="continuous" />
     <property name="joint_6_axis_xyz" value="0 0 1" />
     <property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
@@ -82,7 +82,7 @@
     <property name="joint_6_lower_limit" value="${-2*J_PI}" />
     <property name="joint_6_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_end_effector" value="${prefix}_end_effector_offset" />
+    <property name="joint_end_effector" value="end_effector_offset" />
     <property name="joint_end_effector_type" value="fixed" />
     <property name="joint_end_effector_axis_xyz" value="0 0 0" />
     <property name="joint_end_effector_origin_xyz" value="0 0 -0.1600" />
@@ -90,34 +90,34 @@
 
 
 
-    <xacro:macro name="j2n6s300" params="base_parent prefix:=j2n6s300_">
+    <xacro:macro name="j2n6s300" params="base_parent prefix:=j2n6s300">
     
-        <xacro:kinova_armlink link_name="${prefix}link_base" link_mesh="${link_base_mesh}"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_base" type="${joint_base_type}" parent="${base_parent}" child="${prefix}link_base" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_base" link_mesh="${link_base_mesh}"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_base" type="${joint_base_type}" parent="${base_parent}" child="${prefix}_link_base" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_1" link_mesh="${link_1_mesh}" use_ring_mesh="true"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_1" type="${joint_1_type}" parent="${prefix}link_base" child="${prefix}link_1" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" joint_lower_limit="${joint_1_lower_limit}" joint_upper_limit="${joint_1_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_1" link_mesh="${link_1_mesh}" use_ring_mesh="true"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_1" type="${joint_1_type}" parent="${prefix}_link_base" child="${prefix}_link_1" joint_axis_xyz="${joint_1_axis_xyz}" joint_origin_xyz="${joint_1_origin_xyz}" joint_origin_rpy="${joint_1_origin_rpy}" joint_lower_limit="${joint_1_lower_limit}" joint_upper_limit="${joint_1_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_2" link_mesh="${link_2_mesh}" use_ring_mesh="true"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_2" type="${joint_2_type}" parent="${prefix}link_1" child="${prefix}link_2" joint_axis_xyz="${joint_2_axis_xyz}" joint_origin_xyz="${joint_2_origin_xyz}" joint_origin_rpy="${joint_2_origin_rpy}" joint_lower_limit="${joint_2_lower_limit}" joint_upper_limit="${joint_2_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_2" link_mesh="${link_2_mesh}" use_ring_mesh="true"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_2" type="${joint_2_type}" parent="${prefix}_link_1" child="${prefix}_link_2" joint_axis_xyz="${joint_2_axis_xyz}" joint_origin_xyz="${joint_2_origin_xyz}" joint_origin_rpy="${joint_2_origin_rpy}" joint_lower_limit="${joint_2_lower_limit}" joint_upper_limit="${joint_2_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_3" link_mesh="${link_3_mesh}" use_ring_mesh="true"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_3" type="${joint_3_type}" parent="${prefix}link_2" child="${prefix}link_3" joint_axis_xyz="${joint_3_axis_xyz}" joint_origin_xyz="${joint_3_origin_xyz}" joint_origin_rpy="${joint_3_origin_rpy}" joint_lower_limit="${joint_3_lower_limit}" joint_upper_limit="${joint_3_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_3" link_mesh="${link_3_mesh}" use_ring_mesh="true"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_3" type="${joint_3_type}" parent="${prefix}_link_2" child="${prefix}_link_3" joint_axis_xyz="${joint_3_axis_xyz}" joint_origin_xyz="${joint_3_origin_xyz}" joint_origin_rpy="${joint_3_origin_rpy}" joint_lower_limit="${joint_3_lower_limit}" joint_upper_limit="${joint_3_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_4" link_mesh="${link_4_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_4" type="${joint_4_type}" parent="${prefix}link_3" child="${prefix}link_4" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}" joint_lower_limit="${joint_4_lower_limit}" joint_upper_limit="${joint_4_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_4" link_mesh="${link_4_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_4" type="${joint_4_type}" parent="${prefix}_link_3" child="${prefix}_link_4" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}" joint_lower_limit="${joint_4_lower_limit}" joint_upper_limit="${joint_4_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_5" link_mesh="${link_5_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_5" type="${joint_5_type}" parent="${prefix}link_4" child="${prefix}link_5" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" joint_lower_limit="${joint_5_lower_limit}" joint_upper_limit="${joint_5_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_5" link_mesh="${link_5_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_5" type="${joint_5_type}" parent="${prefix}_link_4" child="${prefix}_link_5" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" joint_lower_limit="${joint_5_lower_limit}" joint_upper_limit="${joint_5_upper_limit}"/>
 
-        <xacro:kinova_armlink link_name="${prefix}link_6" link_mesh="${link_6_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
-        <xacro:kinova_armjoint joint_name="${prefix}joint_6" type="${joint_6_type}" parent="${prefix}link_5" child="${prefix}link_6" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_lower_limit="${joint_6_lower_limit}" joint_upper_limit="${joint_6_upper_limit}"/>
+        <xacro:kinova_armlink link_name="${prefix}_link_6" link_mesh="${link_6_mesh}" use_ring_mesh="true" ring_mesh="ring_small"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_6" type="${joint_6_type}" parent="${prefix}_link_5" child="${prefix}_link_6" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_lower_limit="${joint_6_lower_limit}" joint_upper_limit="${joint_6_upper_limit}"/>
 
 
-        <xacro:kinova_virtual_link link_name="${prefix}link_end_effector"/>
-        <xacro:kinova_virtual_joint joint_name="${prefix}joint_end_effector" type="${joint_end_effector_type}" parent="${prefix}link_6" child="${prefix}link_end_effector" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>    
+        <xacro:kinova_virtual_link link_name="${prefix}_end_effector"/>
+        <xacro:kinova_virtual_joint joint_name="${prefix}_joint_end_effector" type="${joint_end_effector_type}" parent="${prefix}_link_6" child="${prefix}_end_effector" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>    
 
-    <xacro:kinova_3fingers link_hand="${prefix}link_6" prefix="${prefix}"/>
+    <xacro:kinova_3fingers link_hand="${prefix}_link_6" prefix="${prefix}_"/>
     </xacro:macro>
  
 
