@@ -41,7 +41,7 @@ The package may work with other configurations as well, but it has only been tes
 
 ## MoveIt!
 #### new in release 1.2.0
-The readme for MoveIt! support is available [here](kinova_moveit/readme.md)
+The readme for MoveIt! support is available [here](/kinova_moveit)
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations
