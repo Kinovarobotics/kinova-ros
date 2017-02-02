@@ -1,8 +1,9 @@
 # IMPORTANT
 
-kinova-driver 1.1.0 is released.
+kinova-driver release 1.2.0.
 
-For quicker bug-fixes and updates a beta version of the branch is added. If you would like to contribute fixes please add pull requests to the beta branch.
+For quicker bug-fixes and updates a beta version of the branch is added. Use this if you would like to use latest code.
+To contribute fixes please add pull requests to this beta branch.
 
 The previous ROS release, which mainly developed for jaco arm will be named as "jaco-ros"; and the previous "master" branch is renamed as "jaco-ros-master" branch. Users can keep both "jaco-ros" and new release "kinova-ros" as two parallel stacks. However, further update and support will be only available on "kinova-ros".
 
