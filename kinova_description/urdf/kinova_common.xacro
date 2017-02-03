@@ -15,10 +15,12 @@
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
+<xacro:include filename="$(find kinova_description)/urdf/kinova_inertial.xacro" />
+
 
     <property name="J_PI" value="3.1415926535897931" />
 
-    <xacro:macro name="kinova_armlink" params="link_name link_mesh ring_mesh:=ring_big use_ring_mesh:=false">
+    <xacro:macro name="kinova_armlink" params="link_name link_mesh ring_mesh:=ring_big use_ring_mesh:=false mesh_no">
         <link name="${link_name}">
             <visual>
                 <geometry>
@@ -31,13 +33,13 @@
             </visual>
 
 	    <!-- Adding ring to the model -->	
-	    <xacro:if value="${use_ring_mesh}">
-	    <visual>
+	         <xacro:if value="${use_ring_mesh}">
+	           <visual>
                 <geometry>
                     <mesh
                         filename="package://kinova_description/meshes/${ring_mesh}.STL"/>
                 </geometry>              
-            </visual>
+             </visual>
 	    </xacro:if>
 
             <collision>
@@ -46,18 +48,33 @@
                         filename="package://kinova_description/meshes/${link_mesh}.dae"/>
                 </geometry>
             </collision>
-        </link>
+						<xacro:kinova_inertial mesh_no="${mesh_no}"/>	
+      </link>			
+		  	
     </xacro:macro>
 
-    <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit">
+  <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit fixed:=false">
     <joint name="${joint_name}" type="${type}">
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
         <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <dynamics damping="0.0" friction="0.0"/>
      </joint>
-    </xacro:macro>
+   <xacro:unless value="${fixed}">
+     <transmission name="${joint_name}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint_name}">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint_name}_actuator">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+     </transmission>
+     </xacro:unless>
+  </xacro:macro>
 
 
     <xacro:macro name="kinova_virtual_link" params="link_name">
