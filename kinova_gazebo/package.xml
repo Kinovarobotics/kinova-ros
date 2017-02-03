@@ -1,0 +1,25 @@
+<package>
+  <name>kinova_gazebo</name>
+  <version>0.0.0</version>
+  <description>kinova_gazebo</description>
+  <maintainer email="soli@kinova.ca">Siddharth Oli</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://github.com/Kinovarobotics/kinova-ros</url> 
+  <url type="repository">https://github.com/Kinovarobotics/kinova-ros</url>
+
+  <author email="davetcoleman@gmail.com">Dave Coleman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>gazebo_plugins</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>gazebo_ros_control</run_depend>
+  <run_depend>kinova_control</run_depend>
+  <run_depend>kinova_description</run_depend>
+  <run_depend>xacro</run_depend>
+
+  <export>
+  </export>
+</package>
