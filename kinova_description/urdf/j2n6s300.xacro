@@ -30,7 +30,11 @@
     <property name="link_5_mesh" value="wrist" />
     <property name="link_6_mesh" value="hand_3finger" />
 
-    <!--Used for conditional arguments for setting inertial parameters-->
+    <!--Used for conditional arguments for setting inertial parameters
+        base 0, shoulder 1, arm 2, forearm 3, wrist 4, arm_mico 5,
+        arm_half1 (7dof)	6, arm_half2 (7dof) 7, wrist_spherical_1  8, wrist_spherical_2  9
+        hand 3 finger 55, hand_2finger 56, finger_proximal 57, finger_distal 58 
+    -->
     <property name="link_base_mesh_no" value="0" />
     <property name="link_1_mesh_no" value="1" />
     <property name="link_2_mesh_no" value="2" />
@@ -128,7 +132,7 @@
         <xacro:kinova_virtual_link link_name="${prefix}_end_effector"/>
         <xacro:kinova_virtual_joint joint_name="${prefix}_joint_end_effector" type="${joint_end_effector_type}" parent="${prefix}_link_6" child="${prefix}_end_effector" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>    
 
-    <!--xacro:kinova_3fingers link_hand="${prefix}_link_6" prefix="${prefix}_"/-->		
+    <xacro:kinova_3fingers link_hand="${prefix}_link_6" prefix="${prefix}_"/>		
     </xacro:macro>
  
 

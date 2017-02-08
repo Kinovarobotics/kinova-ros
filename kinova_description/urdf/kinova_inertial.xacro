@@ -15,6 +15,31 @@
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
+<!-- links      		mesh_no
+   base           		0
+   shoulder       		1
+   arm            		2
+   forearm        		3
+   wrist          		4
+   arm_mico       		5
+   arm_half1 (7dof)		6
+   arm_half2 (7dof)		7
+   wrist_spherical_1  8
+   wrist_spherical_2  9
+
+   hand 3 finger  		55
+   hand_2finger   		56
+   finger_proximal		57
+   finger_distal      58 
+-->
+
+<xacro:macro name="small_inertia_tensor">  
+  <inertia  ixx="0.000001"  ixy="0.0"  ixz="0.0" 
+            iyx="0.0"  iyy="0.000001"  iyz="0.0" 
+            izx="0.0"  izy="0.0"  izz="0.000001" />
+</xacro:macro>
+
+
 <xacro:macro name="kinova_inertial" params="mesh_no">
   <!-- base = 0 -->
   <xacro:unless value="${mesh_no}">
@@ -69,7 +94,58 @@
                           iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
                           izx="-0.000294"  izy="0.000000"  izz="0.000312" />
     </inertial>  
-  </xacro:unless>       
+  </xacro:unless>  
+
+<!--arm_mico       		5 -->
+  <xacro:unless value="${mesh_no-5}">
+    <inertial>
+        <mass value="0.441232" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
+                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
+                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+    </inertial>  
+  </xacro:unless> 
+<!--   arm_half1 (7dof)		6 -->
+  <xacro:unless value="${mesh_no-6}">
+    <inertial>
+        <mass value="0.441232" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
+                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
+                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+    </inertial>  
+  </xacro:unless> 
+<!--   arm_half2 (7dof)		7 -->
+  <xacro:unless value="${mesh_no-7}">
+    <inertial>
+        <mass value="0.441232" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
+                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
+                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+    </inertial>  
+  </xacro:unless> 
+<!--   wrist_spherical_1  8 -->
+  <xacro:unless value="${mesh_no-8}">
+    <inertial>
+        <mass value="0.441232" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
+                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
+                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+    </inertial>  
+  </xacro:unless> 
+<!--   wrist_spherical_2  9 -->   
+  <xacro:unless value="${mesh_no-9}">
+    <inertial>
+        <mass value="0.441232" />
+        <origin xyz="0 0 0" />
+        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
+                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
+                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+    </inertial>  
+  </xacro:unless>  
 
   <!-- hand 3 finger = 55 -->
   <xacro:unless value="${mesh_no - 55}">
@@ -80,31 +156,39 @@
                           iyx="0.000000"  iyy="0.001907"  iyz="0.000000" 
                           izx="0.000000"  izy="0.000001"  izz="0.000209" />
     </inertial> 
+  </xacro:unless> 
 
-  </xacro:unless>        
-</xacro:macro>
-
-<!--
-<xacro:macro name="finger_proximal">
+  <!-- hand 2 finger = 56 -->
+  <xacro:unless value="${mesh_no - 56}">
     <inertial>
-        <mass value="0.968862" />
+        <mass value="0.363290" />
         <origin xyz="0 0 0" />
-        <inertia  ixx="0.000789"  ixy="0.000008"  ixz="-0.002914" 
-                          iyx="0.000008"  iyy="0.069034"  iyz="-0.000001" 
-                          izx="-0.002914"  izy="-0.000001"  izz="0.069005" />
-    </inertial>       
-</xacro:macro>
+        <inertia  ixx="0.001908"  ixy="0.000000"  ixz="0.000000" 
+                          iyx="0.000000"  iyy="0.001907"  iyz="0.000000" 
+                          izx="0.000000"  izy="0.000001"  izz="0.000209" />
+    </inertial> 
+  </xacro:unless> 
 
-<xacro:macro name="finger_distal">
+  <!-- finger_proximal = 57 -->
+  <xacro:unless value="${mesh_no - 57}">
     <inertial>
-        <mass value="0.968862" />
+        <mass value="0.01" />
         <origin xyz="0 0 0" />
-        <inertia  ixx="0.000789"  ixy="0.000008"  ixz="-0.002914" 
-                          iyx="0.000008"  iyy="0.069034"  iyz="-0.000001" 
-                          izx="-0.002914"  izy="-0.000001"  izz="0.069005" />
+        <xacro:small_inertia_tensor/>
     </inertial>       
+
+  </xacro:unless> 
+
+  <!-- finger_distal = 58 -->
+  <xacro:unless value="${mesh_no - 58}">
+    <inertial>
+        <mass value="0.01" />
+        <origin xyz="0 0 0" />
+        <xacro:small_inertia_tensor/>  
+    </inertial> 
+  </xacro:unless> 
+      
 </xacro:macro>
--->
 </root>
 
 

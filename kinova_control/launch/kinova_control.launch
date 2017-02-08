@@ -10,6 +10,9 @@
     args="$(arg robot_name)_joint_1_position_controller $(arg robot_name)_joint_2_position_controller  
           $(arg robot_name)_joint_3_position_controller $(arg robot_name)_joint_4_position_controller
           $(arg robot_name)_joint_5_position_controller $(arg robot_name)_joint_6_position_controller
+          $(arg robot_name)_joint_finger_1_position_controller
+					$(arg robot_name)_joint_finger_2_position_controller
+					$(arg robot_name)_joint_finger_3_position_controller
           joint_state_controller"/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->

@@ -1,0 +1,7 @@
+<launch>
+
+  <!-- Load RQT with a pre-setup GUI for Kinova controls from a perspective file  -->
+  <node name="kinova_rqt" pkg="rqt_gui" type="rqt_gui" respawn="false"
+	output="screen" args="--perspective-file $(find kinova_gazebo)/launch/j2n6s300.perspective"/>
+  
+</launch>
