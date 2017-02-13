@@ -60,7 +60,7 @@
         <axis xyz="${joint_axis_xyz}"/>
         <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0.7" friction="0.0"/>
      </joint>
    <xacro:unless value="${fixed}">
      <transmission name="${joint_name}_trans">
