@@ -33,10 +33,28 @@
    finger_distal      58 
 -->
 
-<xacro:macro name="small_inertia_tensor">  
-  <inertia  ixx="0.000001"  ixy="0.0"  ixz="0.0" 
-            iyx="0.0"  iyy="0.000001"  iyz="0.0" 
-            izx="0.0"  izy="0.0"  izz="0.000001" />
+<xacro:macro name="inertia_cylinder" params="mass height radius axis:=0">  
+
+  <!-- z Axis -->
+  <xacro:unless value="${axis}">
+    <inertia  ixx="${0.083333 * mass * (3*radius*radius + height*height)}" ixy="0" ixz="0" 
+              iyy="${0.083333 * mass * (3*radius*radius + height*height)}" iyz="0" 
+              izz="${0.5*mass*radius*radius}" />
+  </xacro:unless>   
+
+  <!-- y Axis -->
+  <xacro:unless value="${axis-1}">
+   <inertia  ixx="${0.083333 * mass * (3*radius*radius + height*height)}" ixy="0" ixz="0" 
+             iyy="${0.5*mass*radius*radius}"
+             izz="${0.083333 * mass * (3*radius*radius + height*height)}" iyz="0" />             
+  </xacro:unless> 
+
+  <!-- x Axis -->
+  <xacro:unless value="${axis-2}">
+   <inertia  ixx="${0.5*mass*radius*radius}" 
+             iyy="${0.083333 * mass * (3*radius*radius + height*height)}" iyz="0" 
+             izz="${0.083333 * mass * (3*radius*radius + height*height)}" ixy="0" ixz="0" />
+  </xacro:unless> 
 </xacro:macro>
 
 
@@ -44,55 +62,45 @@
   <!-- base = 0 -->
   <xacro:unless value="${mesh_no}">
     <inertial>
-        <mass value="0.752103" />
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <inertia  ixx="0.009025"  ixy="-0.000002"  ixz="-0.000005" 
-                  iyx="-0.000002"  iyy="0.009007"  iyz="0.000000" 
-                  izx="-0.000005"  izy="0.000000"  izz="0.000704" />
+        <mass value="0.46784" />
+        <origin xyz="0 0 0.1255" rpy="0 0 0"/>
+        <xacro:inertia_cylinder height="0.15"  radius = "0.04" mass="0.46784"/>  
     </inertial> 
   </xacro:unless>      
 
   <!-- shoulder = 1 -->
   <xacro:unless value="${mesh_no-1}">
     <inertial>
-        <mass value="0.839784" />
-        <origin xyz="0 0 0" />
-        <inertia  ixx="0.005735"  ixy="0.000000"  ixz="0.000000" 
-                  iyx="0.000000"  iyy="0.005801"  iyz="0.000496" 
-                  izx="0.000000"  izy="0.000496"  izz="0.000570" />
+        <mass value="0.7477" />
+        <origin xyz="0 -0.002 -0.0605" />
+        <xacro:inertia_cylinder height="0.15"  radius = "0.04" mass="0.7477"/>  
     </inertial>   
   </xacro:unless>      
 
   <!-- arm = 2-->
   <xacro:unless value="${mesh_no-2}">
     <inertial>
-        <mass value="0.968862" />
-        <origin xyz="0 0 0" />
-        <inertia  ixx="0.000789"  ixy="0.000008"  ixz="-0.002914" 
-                          iyx="0.000008"  iyy="0.069034"  iyz="-0.000001" 
-                          izx="-0.002914"  izy="-0.000001"  izz="0.069005" />
+        <mass value="0.99" />
+        <origin xyz="0 -0.2065 -0.01" />
+        <xacro:inertia_cylinder height="0.4"  radius = "0.04" mass="0.99" axis="1"/>  
     </inertial>  
   </xacro:unless>   
 
   <!-- forearm = 3 -->
   <xacro:unless value="${mesh_no-3}">
     <inertial>
-        <mass value="0.709960" />
-        <origin xyz="0 0 0" />
-        <inertia  ixx="0.000341"  ixy="0.000003"  ixz="-0.000034" 
-                          iyx="0.000003"  iyy="0.008491"  iyz="-0.000000" 
-                          izx="-0.000034"  izy="0.000000"  izz="0.008612" />
+        <mass value="0.6763" />
+        <origin xyz="0 0.081 -0.0086" />
+        <xacro:inertia_cylinder height="0.2"  radius = "0.03" mass="0.6763" axis="1"/>  
     </inertial>  
   </xacro:unless>       
 
   <!-- wrist = 4 -->
   <xacro:unless value="${mesh_no-4}">
     <inertial>
-        <mass value="0.441232" />
-        <origin xyz="0 0 0" />
-        <inertia  ixx="0.000924"  ixy="0.000000"  ixz="-0.000294" 
-                          iyx="0.000000"  iyy="0.001034"  iyz="0.000000" 
-                          izx="-0.000294"  izy="0.000000"  izz="0.000312" />
+        <mass value="0.1785" />
+        <origin xyz="0 -0.037 -0.0642" />
+        <xacro:inertia_cylinder height="0.06"  radius = "0.03" mass="0.1785"/>  
     </inertial>  
   </xacro:unless>  
 
@@ -150,11 +158,9 @@
   <!-- hand 3 finger = 55 -->
   <xacro:unless value="${mesh_no - 55}">
     <inertial>
-        <mass value="0.363290" />
-        <origin xyz="0 0 0" />
-        <inertia  ixx="0.001908"  ixy="0.000000"  ixz="0.000000" 
-                          iyx="0.000000"  iyy="0.001907"  iyz="0.000000" 
-                          izx="0.000000"  izy="0.000001"  izz="0.000209" />
+        <mass value="0.727" />
+        <origin xyz="0 -0.004029 -0.059694" />
+        <xacro:inertia_cylinder height="0.05"  radius = "0.04" mass="0.727"/>  
     </inertial> 
   </xacro:unless> 
 
@@ -174,7 +180,7 @@
     <inertial>
         <mass value="0.01" />
         <origin xyz="0 0 0" />
-        <xacro:small_inertia_tensor/>
+        <xacro:inertia_cylinder height="0.05"  radius = "0.004" mass="0.01"/>
     </inertial>       
 
   </xacro:unless> 
@@ -184,7 +190,7 @@
     <inertial>
         <mass value="0.01" />
         <origin xyz="0 0 0" />
-        <xacro:small_inertia_tensor/>  
+        <xacro:inertia_cylinder height="0.05"  radius = "0.004" mass="0.01"/>  
     </inertial> 
   </xacro:unless> 
       
