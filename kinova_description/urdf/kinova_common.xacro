@@ -105,7 +105,7 @@
 
     <xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">
 
-        <xacro:kinova_armlink link_name="${prefix}link_finger_${finger_number}" link_mesh="finger_proximal" mesh_no="1"/>
+        <xacro:kinova_armlink link_name="${prefix}link_finger_${finger_number}" link_mesh="finger_proximal" mesh_no="57"/>
 
         <joint name="${prefix}joint_finger_${finger_number}" type="revolute">
             <parent link="${hand}"/>
