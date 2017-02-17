@@ -384,11 +384,11 @@ bool KinovaArm::addCartesianPoseToTrajectory(kinova_msgs::AddPoseToCartesianTraj
 {
     KinovaPose pose;
     pose.X = req.X;
-    pose.X = req.X;
-    pose.X = req.X;
+    pose.Y = req.Y;
+    pose.Z = req.Z;
     pose.ThetaX = req.ThetaX;
-    pose.ThetaX = req.ThetaX;
-    pose.ThetaX = req.ThetaX;
+    pose.ThetaY = req.ThetaY;
+    pose.ThetaZ = req.ThetaZ;
     kinova_comm_.setCartesianPosition(pose,false);
 }
 
