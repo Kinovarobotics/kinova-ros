@@ -1,12 +1,17 @@
 <?xml version="1.0"?>
-<robot>
 
-  <!-- ros_control plugin -->  
-  <gazebo>
-    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/kinova</robotNamespace>
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-    </plugin>
-  </gazebo>
+<root xmlns:xacro="http://ros.org/wiki/xacro">
 
-</robot>
+<xacro:macro name="gazebo_config" params="robot_namespace">
+
+    <!-- ros_control plugin -->  
+    <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      </plugin>
+    </gazebo>
+
+</xacro:macro>
+
+</root>

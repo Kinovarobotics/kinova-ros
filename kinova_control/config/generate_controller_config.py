@@ -1,7 +1,7 @@
 import yaml
 
-robot_name = 'j2s7s300'
-dof = 7 
+robot_name = 'j2n6s300'
+dof = 6 
 fingers = 3
 robot_joints = []
 finger_joints = []
@@ -22,7 +22,7 @@ for joint in robot_joints:
 										                     {
 										                     'type':'effort_controllers/JointPositionController',
 										                     'joint':joint,
-										                     'pid': {'p': 100.0, 'i': 0.01, 'd': 10.0}
+										                     'pid': {'p': 1000.0, 'i': 0.01, 'd': 10.0}
 										                     }
 										                 }
   robot_joint_controllers.update(robot_joint_position_controller)
@@ -33,7 +33,7 @@ for joint in robot_joints:
 												                 {
 												                 'type':'velocity_controllers/JointVelocityController',
 												                 'joint':joint,
-												                 'pid': '{p: 100.0, i: 0.5, d: 1.0}'
+												                 'pid': '{p: 1000.0, i: 0.5, d: 1.0}'
 												                 }
 												             }
   robot_joint_controllers.update(robot_joint_velocity_controller)
@@ -45,7 +45,7 @@ for joint in finger_joints:
 										                     {
 										                     'type':'effort_controllers/JointPositionController',
 										                     'joint':joint,
-										                     'pid': {'p': 100.0, 'i': 0.01, 'd': 10.0}
+										                     'pid': {'p': 1000.0, 'i': 0.01, 'd': 10.0}
 										                     }
 										                 }
   robot_joint_controllers.update(finger_joint_position_controller)
@@ -53,6 +53,6 @@ for joint in finger_joints:
 
 config = {'kinova': robot_joint_controllers}
 
-with open(robot_name +'_control.yaml', 'w') as outfile:
+with open(robot_name +'_control_gen.yaml', 'w') as outfile:
     yaml.dump(config, outfile, default_flow_style=False)
 

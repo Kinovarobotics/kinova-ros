@@ -106,6 +106,8 @@
 
 
     <xacro:macro name="j2n6s300" params="base_parent prefix:=j2n6s300">
+        
+        <xacro:gazebo_config robot_namespace="${prefix}"/>
     
         <xacro:kinova_armlink link_name="${prefix}_link_base" link_mesh="${link_base_mesh}" mesh_no="${link_base_mesh_no}"/>
         <xacro:kinova_armjoint joint_name="${prefix}_joint_base" type="${joint_base_type}" parent="${base_parent}" child="${prefix}_link_base" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0" fixed="true"/>

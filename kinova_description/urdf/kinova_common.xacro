@@ -58,7 +58,7 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="60" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <dynamics damping="0.7" friction="0.0"/>
      </joint>
@@ -66,10 +66,10 @@
      <transmission name="${joint_name}_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="${joint_name}">
-          <hardwareInterface>EffortJointInterface</hardwareInterface>
+          <hardwareInterface>PositionJointInterface</hardwareInterface>
         </joint>
         <actuator name="${joint_name}_actuator">
-          <hardwareInterface>EffortJointInterface</hardwareInterface>
+          <hardwareInterface>PositionJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
         </actuator>
      </transmission>
@@ -97,7 +97,7 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="60" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
@@ -112,15 +112,15 @@
             <child link="${prefix}link_finger_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="30" velocity="5"/>						
+            <limit lower="0" upper="2" effort="60" velocity="5"/>						
         </joint>
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
 					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>EffortJointInterface</hardwareInterface>
+					  <hardwareInterface>PositionJointInterface</hardwareInterface>
 					</joint>
 					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>EffortJointInterface</hardwareInterface>
+					<hardwareInterface>PositionJointInterface</hardwareInterface>
 					<mechanicalReduction>1</mechanicalReduction>
 					</actuator>
 		    </transmission>
@@ -134,9 +134,7 @@
             <child link="${prefix}link_finger_tip_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
-            <limit lower="0" upper="2" effort="30" velocity="5"/>
-            <mimic joint="${J_PI/180*40}" multiplier="1.0" offset="0.0"/>
-						<spring_stiffness>100</spring_stiffness>
+            <limit lower="0" upper="2" effort="60" velocity="5"/>        
         </joint>
 
     </xacro:macro>
