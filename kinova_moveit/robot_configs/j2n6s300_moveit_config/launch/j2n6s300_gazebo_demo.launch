@@ -1,6 +1,7 @@
 <launch>
 
   <param name="robot_type" value="j2n6s300" />
+  <param name="robot_connected" value="false" />
   <param name="/pick_place_demo/arm/solve_type" value="Manipulation2" />
   <param name="/pick_place_demo/arm/kinematics_solver_timeout" value="0.05" />
 
@@ -16,20 +17,6 @@
   <include file="$(find j2n6s300_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
   </include>
-  
-  <!-- Run joint trajectory action server, which receives planned joint trajectory under "follow_joint_trajectory", and publish 
-       command for ros_control controller -->  
-  
-  <node name="j2n6s300_joint_trajectory_action_server" pkg="kinova_driver" type="joint_trajectory_action_server" output="screen" respawn="false" 
-     args="j2n6s300 follow_joint_trajectory position_joint_trajectory_controller" />
-
-<!-- Run joint trajectory action server, which receives planned finger trajectory under "follow_joint_trajectory", and publish 
-       command for ros_control controller -->  
-  
-  <node name="j2n6s300_joint_trajectory_action_server" pkg="kinova_driver" type="joint_trajectory_action_server" output="screen" respawn="false" 
-     args="j2n6s300 gripper_command position_finger_trajectory_controller" />
-
-
 
   <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
   <include file="$(find j2n6s300_moveit_config)/launch/move_group_j2n6s300.launch">
@@ -37,7 +24,12 @@
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-  </include>
+    <arg name="joint_states_ns" value="/j2n6s300/joint_states"/>
+    <arg name="controller_manager" value="j2n6s300_ros_control"/>
+  </include>  
+
+  <!-- ros-control Controller parameters-->  
+  <rosparam file="$(find j2n6s300_moveit_config)/config/controllers_ros_control.yaml"/>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find j2n6s300_moveit_config)/launch/moveit_rviz.launch">
