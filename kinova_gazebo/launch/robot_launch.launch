@@ -24,7 +24,7 @@
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model rrbot -param robot_description"/>
+    args="-urdf -model $(arg robot_name) -param robot_description"/>
 
   <!-- ros_control launch file -->
   <include file="$(find kinova_control)/launch/kinova_control.launch">

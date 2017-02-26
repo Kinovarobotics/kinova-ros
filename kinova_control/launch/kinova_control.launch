@@ -4,25 +4,31 @@
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find kinova_control)/config/$(arg robot_name)_control.yaml" command="load"/>
  
-  <!-- load the controllers -->
-  <!--
+
+<!-- load the joint by joint position controllers   
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/kinova" 
-    args="$(arg robot_name)_joint_1_position_controller $(arg robot_name)_joint_2_position_controller  
-          $(arg robot_name)_joint_3_position_controller $(arg robot_name)_joint_4_position_controller
-          $(arg robot_name)_joint_5_position_controller $(arg robot_name)_joint_6_position_controller          
+    output="screen" ns="$(arg robot_name)" 
+    args="joint_1_position_controller joint_2_position_controller  
+          joint_3_position_controller joint_4_position_controller
+          joint_5_position_controller joint_6_position_controller
+          finger_1_position_controller finger_2_position_controller
+          finger_3_position_controller
           joint_state_controller"/>
-  -->
+-->
 
-  <!-- Joint trajectory  controller -->
+  <!-- Effort Joint trajectory controller-->
   <node name="$(arg robot_name)_trajectory_controller" pkg="controller_manager" type="spawner" 
-     output="screen" ns="$(arg robot_name)" args="$(arg robot_name)_position_trajectory_controller"/>
-
+    output="screen" ns="$(arg robot_name)" 
+    args="effort_joint_trajectory_controller
+    effort_finger_trajectory_controller    
+    joint_state_controller">    
+  </node>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
-    respawn="false" output="screen">
-    <remap from="/joint_states" to="/kinova/joint_states" />
+        respawn="false" output="screen">    
+    <remap from="/joint_states" to="/$(arg robot_name)/joint_states"/>
+    
   </node>
 
 </launch>

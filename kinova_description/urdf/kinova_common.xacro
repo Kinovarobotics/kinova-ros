@@ -66,11 +66,11 @@
      <transmission name="${joint_name}_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="${joint_name}">
-          <hardwareInterface>PositionJointInterface</hardwareInterface>
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="${joint_name}_actuator">
-          <hardwareInterface>PositionJointInterface</hardwareInterface>
-        <mechanicalReduction>1</mechanicalReduction>
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
      </xacro:unless>
@@ -117,10 +117,10 @@
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
 					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>PositionJointInterface</hardwareInterface>
+					  <hardwareInterface>EffortJointInterface</hardwareInterface>
 					</joint>
 					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>PositionJointInterface</hardwareInterface>
+					<hardwareInterface>EffortJointInterface</hardwareInterface>
 					<mechanicalReduction>1</mechanicalReduction>
 					</actuator>
 		    </transmission>
