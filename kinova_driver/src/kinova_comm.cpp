@@ -188,7 +188,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
 
     //Set robot to use manual COM parameters
     bool use_estimated_COM;
-    node_handle.param("/torque_parameters/use_estimated_COM_parameters",
+    node_handle.param("torque_parameters/use_estimated_COM_parameters",
                           use_estimated_COM,true);
     if (use_estimated_COM == true)
         kinova_api_.setGravityType(OPTIMAL);
@@ -615,6 +615,15 @@ void KinovaComm::getJointVelocities(KinovaAngles &vels)
     }
 
     vels = KinovaAngles(kinova_vels.Actuators);
+
+    //velocities reported back by firmware seem to be half of actual value
+    vels.Actuator1 = vels.Actuator1*2;
+    vels.Actuator2 = vels.Actuator2*2;
+    vels.Actuator3 = vels.Actuator3*2;
+    vels.Actuator4 = vels.Actuator4*2;
+    vels.Actuator5 = vels.Actuator5*2;
+    vels.Actuator6 = vels.Actuator6*2;
+    vels.Actuator7 = vels.Actuator7*2;
 }
 
 
