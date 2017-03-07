@@ -22,7 +22,7 @@
     <property name="link_base_mesh" value="base" />
     <property name="link_1_mesh" value="shoulder" />
     <property name="link_2_mesh" value="arm_mico" />
-    <property name="link_3_mesh" value="forearm" />
+    <property name="link_3_mesh" value="forearm_mico" />
     <property name="link_4_mesh" value="hand_2finger" />
 
 
@@ -59,7 +59,7 @@
     <property name="joint_4" value="joint_4" />
     <property name="joint_4_type" value="continuous" />
     <property name="joint_4_axis_xyz" value="0 0 1" />
-    <property name="joint_4_origin_xyz" value="0 0.2073 -0.0114" />
+    <property name="joint_4_origin_xyz" value="0 0.1231 -0.0086" />
     <property name="joint_4_origin_rpy" value="${-J_PI/2} 0 ${J_PI}" />
     <property name="joint_4_lower_limit" value="${-2*J_PI}" />
     <property name="joint_4_upper_limit" value="${2*J_PI}" />

@@ -25,7 +25,7 @@
     <property name="link_base_mesh" value="base" />
     <property name="link_1_mesh" value="shoulder" />
     <property name="link_2_mesh" value="arm_mico" />
-    <property name="link_3_mesh" value="forearm" />
+    <property name="link_3_mesh" value="forearm_mico" />
     <property name="link_4_mesh" value="wrist" />
     <property name="link_5_mesh" value="wrist" />
     <property name="link_6_mesh" value="hand_2finger" />
@@ -33,12 +33,13 @@
     <!--Used for conditional arguments for setting inertial parameters
         base 0, shoulder 1, arm 2, forearm 3, wrist 4, arm_mico 5,
         arm_half1 (7dof)	6, arm_half2 (7dof) 7, wrist_spherical_1  8, wrist_spherical_2  9
+        fore_arm_mico 10,
         hand 3 finger 55, hand_2finger 56, finger_proximal 57, finger_distal 58 
     -->
     <property name="link_base_mesh_no" value="0" />
     <property name="link_1_mesh_no" value="1" />
     <property name="link_2_mesh_no" value="5" />
-    <property name="link_3_mesh_no" value="3" />
+    <property name="link_3_mesh_no" value="10" />
     <property name="link_4_mesh_no" value="4" />
     <property name="link_5_mesh_no" value="4" />
     <property name="link_6_mesh_no" value="56" />
@@ -76,7 +77,7 @@
     <property name="joint_4" value="joint_4" />
     <property name="joint_4_type" value="continuous" />
     <property name="joint_4_axis_xyz" value="0 0 1" />
-    <property name="joint_4_origin_xyz" value="0 0.2073 -0.0114" />
+    <property name="joint_4_origin_xyz" value="0 0.1231 -0.0086" />
     <property name="joint_4_origin_rpy" value="${-J_PI/2} 0 ${J_PI}" />
     <property name="joint_4_lower_limit" value="${-2*J_PI}" />
     <property name="joint_4_upper_limit" value="${2*J_PI}" />
