@@ -157,9 +157,9 @@ j2n6s300:
         goal: 0.01                     # Not enforced if unspecified
 
     gains: # Required because we're controlling an effort interface
-      j2n6s300_joint_finger_1: {p: 10.0,  d: 2, i: 0.1, i_clamp: 1}
-      j2n6s300_joint_finger_2: {p: 10.0,  d: 2, i: 0.1, i_clamp: 1}
-      j2n6s300_joint_finger_3: {p: 10.0,  d: 2, i: 0.1, i_clamp: 1}
+      j2n6s300_joint_finger_1: {p: 10.0,  d: 0, i: 0.1, i_clamp: 1}
+      j2n6s300_joint_finger_2: {p: 10.0,  d: 0, i: 0.1, i_clamp: 1}
+      j2n6s300_joint_finger_3: {p: 10.0,  d: 0, i: 0.1, i_clamp: 1}
 
     state_publish_rate:  25            # Override default
     action_monitor_rate: 30            # Override default

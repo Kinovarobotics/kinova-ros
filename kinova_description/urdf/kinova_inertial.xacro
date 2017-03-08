@@ -108,7 +108,7 @@
   <xacro:unless value="${mesh_no-5}">
     <inertial>
         <mass value="0.85968" />
-        <origin xyz="0 -0.145  -0.1043782058" />
+        <origin xyz="0 -0.145  -0.0076"/>
         <xacro:inertia_cylinder height="0.3"  radius = "0.03" mass="0.85968"/>  
     </inertial>  
   </xacro:unless>
@@ -145,6 +145,15 @@
         <mass value="0.463" />
         <origin xyz="0 0.0497208855 -0.0028562765" />
         <xacro:inertia_cylinder height="0.005"  radius = "0.02" mass="0.463"/>  
+    </inertial>  
+  </xacro:unless>  
+
+<!--   forearm_mico  10 -->   
+  <xacro:unless value="${mesh_no-10}">
+    <inertial>
+        <mass value="0.606" />
+        <origin xyz="0 0.0463 -0.0065" />
+        <xacro:inertia_cylinder height="0.005"  radius = "0.02" mass="0.606"/>  
     </inertial>  
   </xacro:unless>  
 
