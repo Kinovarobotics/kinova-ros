@@ -28,7 +28,7 @@
     <property name="link_3_mesh" value="forearm_mico" />
     <property name="link_4_mesh" value="wrist" />
     <property name="link_5_mesh" value="wrist" />
-    <property name="link_6_mesh" value="hand_2finger" />
+    <property name="link_6_mesh" value="hand_3finger" />
 
     <!--Used for conditional arguments for setting inertial parameters
         base 0, shoulder 1, arm 2, forearm 3, wrist 4, arm_mico 5,
@@ -42,7 +42,7 @@
     <property name="link_3_mesh_no" value="10" />
     <property name="link_4_mesh_no" value="4" />
     <property name="link_5_mesh_no" value="4" />
-    <property name="link_6_mesh_no" value="56" />
+    <property name="link_6_mesh_no" value="55" />
 
     <property name="joint_base" value="joint_base" />
     <property name="joint_base_type" value="fixed" />
@@ -107,6 +107,8 @@
 
 
     <xacro:macro name="m1n6s300" params="base_parent prefix:=m1n6s300">
+
+        <xacro:gazebo_config robot_namespace="${prefix}"/>
     
         <xacro:kinova_armlink link_name="${prefix}_link_base" link_mesh="${link_base_mesh}" mesh_no="${link_base_mesh_no}"/>
         <xacro:kinova_armjoint joint_name="${prefix}_joint_base" type="${joint_base_type}" parent="${base_parent}" child="${prefix}_link_base" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0" fixed="true"/>
