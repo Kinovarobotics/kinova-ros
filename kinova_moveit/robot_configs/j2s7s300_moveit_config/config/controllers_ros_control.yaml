@@ -1,0 +1,21 @@
+controller_list:
+  - name: j2s7s300/effort_joint_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - j2s7s300_joint_1
+      - j2s7s300_joint_2
+      - j2s7s300_joint_3
+      - j2s7s300_joint_4
+      - j2s7s300_joint_5
+      - j2s7s300_joint_6
+      - j2s7s300_joint_7
+  - name: j2s7s300/effort_finger_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true    
+    joints:
+      - j2s7s300_joint_finger_1
+      - j2s7s300_joint_finger_2
+      - j2s7s300_joint_finger_3
