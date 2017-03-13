@@ -58,9 +58,9 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="60" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-        <dynamics damping="0.7" friction="0.0"/>
+        <dynamics damping="0.3" friction="0.0"/>
      </joint>
    <xacro:unless value="${fixed}">
      <transmission name="${joint_name}_trans">
@@ -97,7 +97,7 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="60" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
@@ -112,7 +112,7 @@
             <child link="${prefix}link_finger_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="60" velocity="5"/>						
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>						
         </joint>
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
@@ -134,7 +134,7 @@
             <child link="${prefix}link_finger_tip_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
-            <limit lower="0" upper="2" effort="60" velocity="5"/>        
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>        
         </joint>
 
     </xacro:macro>

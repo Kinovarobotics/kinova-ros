@@ -66,13 +66,13 @@ if __name__ == '__main__':
     rospy.init_node('move_robot_using_trajectory_msg')		
     prefix, nbJoints, nbfingers = argumentParser(None)    
     #allow gazebo to launch
-    rospy.sleep(10)
+    rospy.sleep(5)
 
     if (nbJoints==6):
       #home robots
-      moveJoint ([0.0,2.9,1.0,4.2,1.4,0.0],prefix,nbJoints)
+      moveJoint ([0.0,2.9,1.3,4.2,1.4,0.0],prefix,nbJoints)
     else:
-      moveJoint ([0.0,2.9,0.0,0.75,4.2,4.4,0.0],prefix,nbJoints)
+      moveJoint ([0.0,2.9,0.0,1.3,4.2,4.4,0.0],prefix,nbJoints)
 
     moveFingers ([1,1,1],prefix,nbfingers)
   except rospy.ROSInterruptException:

@@ -32,7 +32,7 @@
   <include file="$(find kinova_control)/launch/kinova_control.launch">
     <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
     <arg name="kinova_robotType" value="$(arg kinova_robotType)"/>
-    <arg name="use_trajectory_controller" value="true"/>
+    <arg name="use_trajectory_controller" value="$(arg use_trajectory_controller)"/>
   </include>
 
   <!-- rqt launch file -->

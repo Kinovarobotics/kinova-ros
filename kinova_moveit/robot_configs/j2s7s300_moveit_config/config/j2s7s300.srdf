@@ -45,9 +45,9 @@
         <joint name="j2s7s300_joint_7" value="4.88" />
     </group_state>
     <group_state name="Open" group="gripper">
-        <joint name="j2s7s300_joint_finger_1" value="0" />
-        <joint name="j2s7s300_joint_finger_2" value="0" />
-        <joint name="j2s7s300_joint_finger_3" value="0" />
+        <joint name="j2s7s300_joint_finger_1" value="0.2" />
+        <joint name="j2s7s300_joint_finger_2" value="0.2" />
+        <joint name="j2s7s300_joint_finger_3" value="0.2" />
     </group_state>
     <group_state name="Close" group="gripper">
         <joint name="j2s7s300_joint_finger_1" value="1.2" />

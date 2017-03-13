@@ -14,20 +14,20 @@ j2s6s300:
       stopped_velocity_tolerance: 0.02
     gains:
       j2s6s300_joint_finger_1:
-        d: 0.0
-        i: 0.01
+        d: 0
+        i: 0
         i_clamp: 1
-        p: 10.0
+        p: 10
       j2s6s300_joint_finger_2:
-        d: 0.0
-        i: 0.01
+        d: 0
+        i: 0
         i_clamp: 1
-        p: 10.0
+        p: 10
       j2s6s300_joint_finger_3:
-        d: 0.0
-        i: 0.01
+        d: 0
+        i: 0
         i_clamp: 1
-        p: 10.0
+        p: 10
     joints:
     - j2s6s300_joint_finger_1
     - j2s6s300_joint_finger_2
@@ -57,35 +57,35 @@ j2s6s300:
       stopped_velocity_tolerance: 0.02
     gains:
       j2s6s300_joint_1:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
       j2s6s300_joint_2:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
       j2s6s300_joint_3:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
       j2s6s300_joint_4:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 500
       j2s6s300_joint_5:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 500
       j2s6s300_joint_6:
-        d: 2.0
-        i: 0.01
-        i_clamp: 1
-        p: 1000.0
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 500
     joints:
     - j2s6s300_joint_1
     - j2s6s300_joint_2
@@ -94,68 +94,68 @@ j2s6s300:
     - j2s6s300_joint_5
     - j2s6s300_joint_6
     type: effort_controllers/JointTrajectoryController
-  j2s6s300_joint_1_position_controller:
-    joint: j2s6s300_joint_1
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_2_position_controller:
-    joint: j2s6s300_joint_2
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_3_position_controller:
-    joint: j2s6s300_joint_3
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_4_position_controller:
-    joint: j2s6s300_joint_4
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_5_position_controller:
-    joint: j2s6s300_joint_5
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_6_position_controller:
-    joint: j2s6s300_joint_6
-    pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
-    type: effort_controllers/JointPositionController
-  j2s6s300_joint_finger_1_position_controller:
+  finger_1_position_controller:
     joint: j2s6s300_joint_finger_1
     pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
+      d: 0
+      i: 0
+      p: 10
     type: effort_controllers/JointPositionController
-  j2s6s300_joint_finger_2_position_controller:
+  finger_2_position_controller:
     joint: j2s6s300_joint_finger_2
     pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
+      d: 0
+      i: 0
+      p: 10
     type: effort_controllers/JointPositionController
-  j2s6s300_joint_finger_3_position_controller:
+  finger_3_position_controller:
     joint: j2s6s300_joint_finger_3
     pid:
-      d: 10.0
-      i: 0.01
-      p: 1000.0
+      d: 0
+      i: 0
+      p: 10
+    type: effort_controllers/JointPositionController
+  joint_1_position_controller:
+    joint: j2s6s300_joint_1
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_2_position_controller:
+    joint: j2s6s300_joint_2
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_3_position_controller:
+    joint: j2s6s300_joint_3
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_4_position_controller:
+    joint: j2s6s300_joint_4
+    pid:
+      d: 0
+      i: 0
+      p: 500
+    type: effort_controllers/JointPositionController
+  joint_5_position_controller:
+    joint: j2s6s300_joint_5
+    pid:
+      d: 0
+      i: 0
+      p: 500
+    type: effort_controllers/JointPositionController
+  joint_6_position_controller:
+    joint: j2s6s300_joint_6
+    pid:
+      d: 0
+      i: 0
+      p: 500
     type: effort_controllers/JointPositionController
   joint_state_controller:
     publish_rate: 50
