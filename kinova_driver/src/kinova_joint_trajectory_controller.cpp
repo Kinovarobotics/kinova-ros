@@ -165,6 +165,8 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
         kinova_angle_command_[i].Actuator4 = traj_command_points_[i].velocities[3] *180/M_PI;
         kinova_angle_command_[i].Actuator5 = traj_command_points_[i].velocities[4] *180/M_PI;
         kinova_angle_command_[i].Actuator6 = traj_command_points_[i].velocities[5] *180/M_PI;
+        if (number_joint_==7)
+            kinova_angle_command_[i].Actuator7 = traj_command_points_[i].velocities[6] *180/M_PI;
     }
     // replace last velocity command (which is zero) to previous non-zero value, trying to drive robot moving a forward to get closer to the goal.
     kinova_angle_command_[traj_command_points_.size()-1] = kinova_angle_command_[traj_command_points_.size()-2];
@@ -204,6 +206,7 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         joint_velocity_msg.joint4 = kinova_angle_command_[traj_command_points_index_].Actuator4;
         joint_velocity_msg.joint5 = kinova_angle_command_[traj_command_points_index_].Actuator5;
         joint_velocity_msg.joint6 = kinova_angle_command_[traj_command_points_index_].Actuator6;
+        joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_].Actuator7;
 
         // In debug: compare values with topic: follow_joint_trajectory/goal, command
 //        ROS_DEBUG_STREAM_ONCE( std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
@@ -228,6 +231,7 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         joint_velocity_msg.joint4 = 0;
         joint_velocity_msg.joint5 = 0;
         joint_velocity_msg.joint6 = 0;
+        joint_velocity_msg.joint7 = 0;
 
         traj_command_points_.clear();
 
@@ -270,6 +274,8 @@ void JointTrajectoryController::update_state()
         traj_feedback_msg_.desired.velocities[3] = current_joint_command.Actuators.Actuator4 *M_PI/180;
         traj_feedback_msg_.desired.velocities[4] = current_joint_command.Actuators.Actuator5 *M_PI/180;
         traj_feedback_msg_.desired.velocities[5] = current_joint_command.Actuators.Actuator6 *M_PI/180;
+        if (number_joint_==7)
+          traj_feedback_msg_.desired.velocities[5] = current_joint_command.Actuators.Actuator7 *M_PI/180;
 
         traj_feedback_msg_.actual.positions[0] = current_joint_angles.Actuator1 *M_PI/180;
         traj_feedback_msg_.actual.positions[1] = current_joint_angles.Actuator2 *M_PI/180;
@@ -277,6 +283,8 @@ void JointTrajectoryController::update_state()
         traj_feedback_msg_.actual.positions[3] = current_joint_angles.Actuator4 *M_PI/180;
         traj_feedback_msg_.actual.positions[4] = current_joint_angles.Actuator5 *M_PI/180;
         traj_feedback_msg_.actual.positions[5] = current_joint_angles.Actuator6 *M_PI/180;
+        if (number_joint_==7)
+          traj_feedback_msg_.actual.positions[5] = current_joint_angles.Actuator7 *M_PI/180;
 
         traj_feedback_msg_.actual.velocities[0] = current_joint_velocity.Actuator1 *M_PI/180;
         traj_feedback_msg_.actual.velocities[1] = current_joint_velocity.Actuator2 *M_PI/180;
@@ -284,6 +292,8 @@ void JointTrajectoryController::update_state()
         traj_feedback_msg_.actual.velocities[3] = current_joint_velocity.Actuator4 *M_PI/180;
         traj_feedback_msg_.actual.velocities[4] = current_joint_velocity.Actuator5 *M_PI/180;
         traj_feedback_msg_.actual.velocities[5] = current_joint_velocity.Actuator6 *M_PI/180;
+        if (number_joint_==7)
+          traj_feedback_msg_.actual.velocities[5] = current_joint_velocity.Actuator7 *M_PI/180;
 
         for (size_t j = 0; j<joint_names_.size(); j++)
         {

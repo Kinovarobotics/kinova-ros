@@ -9,6 +9,7 @@ The previous ROS release, which mainly developed for jaco arm will be named as "
 
 ### new in release 1.2.0
 
+- Gazebo support
 - MoveIt! support
 - Restructured URDF files
 - Support for 7 dof robot
@@ -39,9 +40,13 @@ The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
 
 The package may work with other configurations as well, but it has only been tested for the one recommended above. 
 
+## Gazebo 
+#### new in release 1.2.0
+The wiki page for Gazebo is available [here] (https://github.com/Kinovarobotics/kinova-ros/wiki/Gazebo)
+
 ## MoveIt!
 #### new in release 1.2.0
-The readme for MoveIt! support is available [here](/kinova_moveit)
+The wiki page for MoveIt! is available [here](https://github.com/Kinovarobotics/kinova-ros/wiki/MoveIt)
 
 ## file system
  - kinova_bringup: launch file to start kinova_driver and apply some configurations

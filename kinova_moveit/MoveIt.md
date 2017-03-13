@@ -41,7 +41,7 @@ config folders can be found at ```kinova-ros/kinova_moveit/robot_configs/```
 ### Move groups
 The robots have been setup to use two move groups - 1) arm 2) gripper
 
-![alt text](jaco_move_groups.png)
+[[images/jaco_move_groups.png]]
 
 # Interacting with Robot using MoveIt RViz plugin
 
@@ -51,8 +51,10 @@ Easiest way to start moving the robot with MoveIt is with the moveIt! rviz plugi
 You can choose launch MoveIt! with a virtual robot, useful for visualization and testing.
 Or you can choose to launch MoveIt! with the kinova_driver node which controls the actual
 robot.
+
+You can also launch MoveIt with Gazebo and ros_control.
  
-#### With virtual robot  
+#### With virtual robot (MoveIt Fake Controller) 
 ```
 roslaunch robot_name_moveit_config robot_name_virtual_robot_demo.launch
 ```
@@ -95,13 +97,17 @@ Launches the -
 
 This configuration will move the actual robot, so be careful before you execute your trajectories.
 
+#### With Gazebo and ros_control
+
+This is explained in the Gazebo wiki [here] (https://github.com/Kinovarobotics/kinova-ros/wiki/Gazebo) 
+
 ### RViz MoveIt Plugin
 
 The image below shows the RViz window with the MoveIt! plugin. You can move the robot's end-effector
 using the interactive markers (marked in the image by a red rectangle). While you move the end-effector
 MoveIt! runs inverse kinematics to update the joint positions while you drag the marker.
 
-![alt text](jaco_rviz_moveIt.png)
+[[images/jaco_rviz_moveIt.png]]
 
 ### Setting Start and Goal poses
 

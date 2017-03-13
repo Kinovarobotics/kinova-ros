@@ -36,7 +36,7 @@ if __name__ == '__main__':
 		if (interactive == True):        
 			nb = raw_input('Testing torque control, press return, n to skip')
 		if (nb != 'n' and nb != 'N'):		
-			publishTorqueCmd([0,0,0,0,0,0,0], duration_sec, prefix)			
+			publishTorqueCmd([5,0,0,0,0,0,0], duration_sec, prefix)			
 			rospy.sleep(1)
 
 		#test cartesian srv

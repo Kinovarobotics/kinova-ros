@@ -598,8 +598,15 @@ void KinovaArm::publishJointAngles(void)
 
 
     // Joint torques (effort)
-    // NOTE: Currently invalid.
     KinovaAngles joint_tqs;
+    bool gravity_comp;
+    node_handle_.param("torque_parameters/publish_torque_with_gravity_compensation", gravity_comp, false);
+    if (gravity_comp==true)
+      kinova_comm_.getGravityCompensatedTorques(joint_tqs);
+    else
+      kinova_comm_.getJointTorques(joint_tqs);
+    joint_torque_publisher_.publish(joint_tqs.constructAnglesMsg());
+
     joint_state.effort.resize(joint_total_number_);
     joint_state.effort[0] = joint_tqs.Actuator1;
     joint_state.effort[1] = joint_tqs.Actuator2;
@@ -690,25 +697,12 @@ void KinovaArm::publishFingerPosition(void)
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
-void KinovaArm::publishTorques()
-{
-    KinovaAngles torques;
-    bool gravity_comp;
-    node_handle_.param("torque_parameters/publish_torque_with_gravity_compensation", gravity_comp, false);
-    if (gravity_comp==true)
-      kinova_comm_.getGravityCompensatedTorques(torques);
-    else
-      kinova_comm_.getJointTorques(torques);
-    joint_torque_publisher_.publish(torques.constructAnglesMsg());
-}
-
 void KinovaArm::statusTimer(const ros::TimerEvent&)
 {
     publishJointAngles();
     publishToolPosition();
     publishToolWrench();
-    publishFingerPosition();
-    publishTorques();
+    publishFingerPosition();   
 }
 
 }  // namespace kinova
