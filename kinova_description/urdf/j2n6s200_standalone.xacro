@@ -47,6 +47,6 @@
 
   <property name="robot_root" value="root" />
 
-  <xacro:j2n6s300  base_parent="${robot_root}"/>
+  <xacro:j2n6s200  base_parent="${robot_root}"/>
 
 </robot>
