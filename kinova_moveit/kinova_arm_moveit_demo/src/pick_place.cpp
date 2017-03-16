@@ -264,6 +264,10 @@ void PickPlace::add_obstacle()
 
     pub_co_.publish(co_);
     planning_scene_msg_.world.collision_objects.push_back(co_);
+
+    planning_scene_msg_.is_diff = true;
+    pub_planning_scene_diff_.publish(planning_scene_msg_);
+    ros::WallDuration(0.1).sleep();
 }
 
 void PickPlace::add_complex_obstacle()
@@ -693,12 +697,14 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
             group.execute(my_plan);
         }
     }
+    ros::WallDuration(1.0).sleep();
 }
 
 
 bool PickPlace::my_pick()
 {    
     clear_workscene();
+    ros::WallDuration(1.0).sleep();
     build_workscene();
     ros::WallDuration(1.0).sleep();
 
@@ -718,8 +724,7 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Joint space motion planing without obstacle");
     ROS_INFO_STREAM("Demonstrates moving robot from one joint position to another");
-    ROS_INFO_STREAM("Press any key to move to start pose ...");
-    std::cin >> pause_;
+    ROS_INFO_STREAM("Planning to go to start pose ...");
     group_->setJointValueTarget(start_joint_);    
     evaluate_plan(*group_);
 

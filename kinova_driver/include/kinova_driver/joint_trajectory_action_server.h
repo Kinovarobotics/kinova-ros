@@ -28,6 +28,8 @@ namespace kinova
         ros::Timer watchdog_timer_;
 
         bool has_active_goal_;
+        bool first_fb_;
+        ros::Time start_time_;
         FJTAS::GoalHandle active_goal_;
         trajectory_msgs::JointTrajectory current_traj_;
         control_msgs::FollowJointTrajectoryFeedbackConstPtr last_controller_state_;
