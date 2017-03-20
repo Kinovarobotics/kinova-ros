@@ -759,8 +759,7 @@ bool PickPlace::my_pick()
     group_->setJointValueTarget(pregrasp_joint_);
     evaluate_plan(*group_);
 
-    ROS_INFO_STREAM("Planning to come back to start position ...");
-    std::cin >> pause_;
+    ROS_INFO_STREAM("Planning to come back to start position ...");    
     group_->setJointValueTarget(start_joint_);
     evaluate_plan(*group_);
 
@@ -817,7 +816,7 @@ bool PickPlace::my_pick()
     build_workscene();
     add_target();
     add_complex_obstacle();
-    ros::WallDuration(0.1).sleep();
+    ros::WallDuration(1.0).sleep();
 
     //ROS_INFO_STREAM("Planning to go to start position ...");
     //group_->setPoseTarget(start_pose_);
