@@ -1,4 +1,6 @@
-#include <pick_place.h>
+// Pick place modified to test MoveIt! and Kinova robot accuracy
+
+#include <test_accuracy.h>
 #include <ros/console.h>
 
 #include <tf_conversions/tf_eigen.h>
@@ -86,6 +88,12 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 
     // pick process
     result_ = false;
+    passwd* pw = getpwuid(getuid());
+    std::string path(pw->pw_dir);
+    //open file
+    path = path + "/test_accuracy_results.txt";
+    o_file_.open(path.c_str());
+    ROS_INFO_STREAM("Results written to "<<path);
     my_pick();
 }
 
@@ -264,10 +272,6 @@ void PickPlace::add_obstacle()
 
     pub_co_.publish(co_);
     planning_scene_msg_.world.collision_objects.push_back(co_);
-
-    planning_scene_msg_.is_diff = true;
-    pub_planning_scene_diff_.publish(planning_scene_msg_);
-    ros::WallDuration(0.1).sleep();
 }
 
 void PickPlace::add_complex_obstacle()
@@ -426,7 +430,7 @@ void PickPlace::define_cartesian_pose()
     start_pose_.pose.orientation.x = q.x();
     start_pose_.pose.orientation.y = q.y();
     start_pose_.pose.orientation.z = q.z();
-    start_pose_.pose.orientation.w = q.w();
+    start_pose_.pose.orientation.w = q.w();   
 
     // define grasp pose
     grasp_pose_.header.frame_id = "root";
@@ -441,7 +445,7 @@ void PickPlace::define_cartesian_pose()
     grasp_pose_.pose.orientation.x = q.x();
     grasp_pose_.pose.orientation.y = q.y();
     grasp_pose_.pose.orientation.z = q.z();
-    grasp_pose_.pose.orientation.w = q.w();
+    grasp_pose_.pose.orientation.w = q.w();   
 
     // generate_pregrasp_pose(double dist, double azimuth, double polar, double rot_gripper_z)
     grasp_pose_= generate_gripper_align_pose(grasp_pose_, 0.03999, M_PI/4, M_PI/2, M_PI);
@@ -666,8 +670,9 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
             std::cout << "plan success at attemp: " << count << std::endl;
 
             replan = false;
-            std::cout << "please input e to execute the plan, r to replan, others to skip: ";
-            std::cin >> pause_;
+            //std::cout << "please input e to execute the plan, r to replan, others to skip: ";
+            //std::cin >> pause_;
+            pause_ = 'e';
             ros::WallDuration(0.5).sleep();
             if (pause_ == "r" || pause_ == "R" )
             {
@@ -690,22 +695,98 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
     {        
         if (pause_ == "e" || pause_ == "E")
         {
-            group.execute(my_plan);
+            group.execute(my_plan);            
         }
     }
     ros::WallDuration(1.0).sleep();
+    evaluate_move_accuracy();
 }
 
+void PickPlace::evaluate_move_accuracy()
+{
+    robot_state::RobotState target_state =	group_->getJointValueTarget();
+    target_state.update();
+    //group_->getcurrentstate does not give the correct values
+    robot_state::RobotState current_state(target_state);
+    //geting state from joint state message
+    std::string topic;
+    if (robot_connected_)
+    {
+        topic = "/" + robot_type_ + "_driver/out/joint_state";
+    }
+    else
+    {
+        topic = "/" + robot_type_ + "/joint_states"; //for gazebo
+    }
+    sensor_msgs::JointStateConstPtr msg = ros::topic::waitForMessage<sensor_msgs::JointState>(topic, ros::Duration(1.0));
+    for (int i =0;i<joint_names_.size();i++)
+    {
+        current_state.setJointPositions(joint_names_[i].c_str(), &(msg->position[i]) );
+    }
+    current_state.update();
+    Eigen::Affine3d transform = current_state.getGlobalLinkTransform (robot_type_ + "_end_effector");
+    geometry_msgs::Pose feeback_pose;
+    tf::poseEigenToMsg(transform,feeback_pose);
+
+    transform = target_state.getGlobalLinkTransform (robot_type_ + "_end_effector");
+    geometry_msgs::Pose target_state_pose;
+    tf::poseEigenToMsg(transform,target_state_pose);
+
+
+    std::string error_out,joints_out,torques_out;
+    error_out.clear();
+    joints_out.clear();
+    torques_out.clear();
+    o_file_<<std::endl<<std::endl<<"**********************New trajectory***************************"<<std::endl;
+    //geometry_msgs::PoseStampedConstPtr pose_robot = ros::topic::waitForMessage<geometry_msgs::PoseStamped>("/tf", ros::Duration(1.0));
+
+    if (cartesian_move_)
+    {
+        //Cartesian error
+
+        //geometry_msgs::PoseStamped target_pose = group_->getPoseTarget(robot_type_ + "_end_effector");
+        //geometry_msgs::PoseStamped current_pose = group_->getCurrentPose (robot_type_ + "_end_effector");
+        o_file_<<"Target - "<<std::endl<<target_state_pose;//target_pose.pose;
+        o_file_<<"Feedback Moveit - "<<std::endl<<feeback_pose;
+        if (robot_connected_)
+        {
+            topic = "/" + robot_type_ + "_driver/out/tool_pose";
+            geometry_msgs::PoseStampedConstPtr pose_robot = ros::topic::waitForMessage<geometry_msgs::PoseStamped>(topic, ros::Duration(1.0));
+            o_file_<<"Feedback Robot - "<<std::endl<<pose_robot->pose;
+        }
+        o_file_<<"Error --- x = "<<fabs(target_state_pose.position.x - feeback_pose.position.x)<<
+                         ", y = "<<fabs(target_state_pose.position.y - feeback_pose.position.y)<<
+                         ", z = "<<fabs(target_state_pose.position.z - feeback_pose.position.z)<<std::endl;
+
+    }
+    {
+        for (int i =0;i<joint_names_.size();i++)
+        {
+            double target = *target_state.getJointPositions (joint_names_[i])*180/3.1415;
+            double current = msg->position[i]*180/3.1415;
+            double torque = msg->effort[i];
+            double error = fabs(target - current);
+            error = fmod(error, 360);
+            if (error>180)
+                error = fabs(error-360);
+            joints_out = joints_out + joint_names_[i]+ " Target=" + boost::lexical_cast<std::string>(target) + " Feedback=" + boost::lexical_cast<std::string>(current) + " ";
+            error_out = error_out + boost::lexical_cast<std::string>(error) + " ";
+            torques_out = torques_out + boost::lexical_cast<std::string>(torque) + " ";
+        }
+        o_file_<<joints_out<<std::endl<<std::endl<<"Joints Error ----"<<error_out<<std::endl<<"Joints Torques -----"<<torques_out<<std::endl;
+
+    }
+}
 
 bool PickPlace::my_pick()
 {    
     clear_workscene();
-    ros::WallDuration(1.0).sleep();
     build_workscene();
+    cartesian_move_ = false;
     ros::WallDuration(1.0).sleep();
 
-    ROS_INFO_STREAM("Press any key to send robot to home position ...");
-    std::cin >> pause_;
+    //ROS_INFO_STREAM("Press any key to send robot to home position ...");
+    //std::cin >> pause_;
      group_->clearPathConstraints();
     group_->setNamedTarget("Home");
     evaluate_plan(*group_);
@@ -720,7 +801,7 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Joint space motion planing without obstacle");
     ROS_INFO_STREAM("Demonstrates moving robot from one joint position to another");
-    ROS_INFO_STREAM("Planning to go to start pose ...");
+
     group_->setJointValueTarget(start_joint_);    
     evaluate_plan(*group_);
 
@@ -728,6 +809,7 @@ bool PickPlace::my_pick()
     group_->setJointValueTarget(pregrasp_joint_);
     evaluate_plan(*group_);
 
+    /*
     ROS_INFO_STREAM("Approaching grasp position ...");
     group_->setJointValueTarget(grasp_joint_);
     evaluate_plan(*group_);
@@ -738,6 +820,7 @@ bool PickPlace::my_pick()
     ROS_INFO_STREAM("Planning to go to retract position ...");
     group_->setJointValueTarget(postgrasp_joint_);
     evaluate_plan(*group_);
+    */
 
     ROS_INFO_STREAM("Planning to go to start position ...");
     group_->setJointValueTarget(start_joint_);
@@ -750,6 +833,7 @@ bool PickPlace::my_pick()
     ///////////////////////////////////////////////////////////
     //// joint space with obstacle
     ///////////////////////////////////////////////////////////
+    /*
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("*************************");
@@ -766,45 +850,44 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Releasing gripper ...");
     gripper_action(0.0); // full open
-
+    */
     ///////////////////////////////////////////////////////////
     //// Cartesian space without obstacle
-    ///////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////    
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("Motion planning in cartesian space without obstacles ...");
     clear_workscene();
     build_workscene();
+    cartesian_move_=true;
+    o_file_<<std::endl<<"Cartesian Move"<<std::endl;
     add_target();
     ros::WallDuration(0.1).sleep();
 
-    ROS_INFO_STREAM("Press any key to move to start pose ...");
-    std::cin >> pause_;
-    group_->setPoseTarget(start_pose_);
+    group_->setJointValueTarget(start_pose_);
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Planning to go to pre-grasp position ...");
-    group_->setPoseTarget(pregrasp_pose_);
+    group_->setJointValueTarget(pregrasp_pose_);
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Approaching grasp position ...");
-    group_->setPoseTarget(grasp_pose_);
+    group_->setJointValueTarget(grasp_pose_);
     evaluate_plan(*group_);
 
-    ROS_INFO_STREAM("Grasping ...");
     add_attached_obstacle();
     gripper_action(0.75*FINGER_MAX); // partially close  
 
     ROS_INFO_STREAM("Planning to return to start position  ...");
-    group_->setPoseTarget(start_pose_);
+    group_->setJointValueTarget(start_pose_);
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Releasing gripper ...");
 
     gripper_action(0.0); // full open
 
-
+    /*
     ///////////////////////////////////////////////////////////
     //// Cartesian space with obstacle
     ///////////////////////////////////////////////////////////
@@ -890,7 +973,8 @@ bool PickPlace::my_pick()
 //        boost::mutex::scoped_lock lock_state(mutex_state_);
 //        geometry_msgs::PoseStamped copy_pose = current_pose_;
 //    }
-
+    */
+    o_file_.close();
     clear_workscene();
     ROS_INFO_STREAM("Press any key to quit ...");
     std::cin >> pause_;
