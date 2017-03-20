@@ -169,6 +169,7 @@ void JointTrajectoryActionController::goalCBFollow(FJTAS::GoalHandle gh)
     gh.setAccepted();
     active_goal_ = gh;
     has_active_goal_ = true;
+    first_fb_ = true;
     ROS_INFO("Joint_trajectory_action_server accepted goal!");
 
 
@@ -209,9 +210,15 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
     if (current_traj_.points.empty())
         return;
 
-//    ROS_WARN_STREAM_ONCE("now is: " << now << "; current_traj_.header.stamp is: " << current_traj_.header.stamp <<    "; current_traj_.points[0].time_from_start is: " << current_traj_.points[0].time_from_start << "; msg->header.stamp is: " << msg->header.stamp);
-//    if (now < current_traj_.header.stamp + current_traj_.points[0].time_from_start)
-    if (now < msg->header.stamp + current_traj_.points[0].time_from_start)
+    //joint trajectory message seems to have header.stamp = 0
+    // using first feedback msg as guide for starting timestamp
+    if (first_fb_)
+    {
+        start_time_ = msg->header.stamp;
+        first_fb_ = false;
+    }
+
+    if (now - start_time_ < current_traj_.points[0].time_from_start)
     {
         return;
     }
@@ -223,37 +230,42 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
     }
 
     int last = current_traj_.points.size() - 1;
-    ros::Time end_time = msg->header.stamp + current_traj_.points[last].time_from_start;
+    ros::Time end_time = start_time_ + current_traj_.points[last].time_from_start;
 
-    // Checks that we have ended inside the goal constraints
-    bool inside_goal_constraints = true;
-    for (size_t i = 0; i < msg->joint_names.size() && inside_goal_constraints; ++i)
+    if (end_time - now < ros::Duration(goal_time_constraint_))
     {
-        double abs_error = fabs(msg->error.positions[i]);
-        double goal_constraint = goal_constraints_[msg->joint_names[i]];
-        if (goal_constraint >= 0 && abs_error > goal_constraint)
-            inside_goal_constraints = false;
-        // It's important to be stopped if that's desired.
-        if ( !(msg->desired.velocities.empty()) && (fabs(msg->desired.velocities[i]) < 1e-6) )
+        // Checks that we have ended inside the goal constraints
+        bool inside_goal_constraints = true;
+        for (size_t i = 0; i < msg->joint_names.size() && inside_goal_constraints; ++i)
         {
-            if (fabs(msg->actual.velocities[i]) > stopped_velocity_tolerance_)
+            // computing error from goal pose
+            double abs_error = fabs(msg->actual.positions[i] - current_traj_.points[last].positions[i]);
+            double goal_constraint = goal_constraints_[msg->joint_names[i]];
+            if (goal_constraint >= 0 && abs_error > goal_constraint)
                 inside_goal_constraints = false;
+            // It's important to be stopped if that's desired.
+            if ( !(msg->desired.velocities.empty()) && (fabs(msg->desired.velocities[i]) < 1e-6) )
+            {
+                if (fabs(msg->actual.velocities[i]) > stopped_velocity_tolerance_)
+                    inside_goal_constraints = false;
+            }
         }
-    }
-    if (inside_goal_constraints)
-    {
-        active_goal_.setSucceeded();
-        has_active_goal_ = false;
-    }
-    else if (now < end_time + ros::Duration(goal_time_constraint_))
-    {
-        // Still have some time left to make it.
-    }
-    else
-    {
-        ROS_WARN("Aborting because we wound up outside the goal constraints");
-        active_goal_.setAborted();
-        has_active_goal_ = false;
+        if (inside_goal_constraints)
+        {
+            active_goal_.setSucceeded();
+            has_active_goal_ = false;
+            first_fb_ = true;
+        }
+        else if (now - end_time < ros::Duration(goal_time_constraint_))
+        {
+            // Still have some time left to make it.
+        }
+        else
+        {
+            ROS_WARN("Aborting because we wound up outside the goal constraints");
+            active_goal_.setAborted();
+            has_active_goal_ = false;
+        }
     }
 }
 

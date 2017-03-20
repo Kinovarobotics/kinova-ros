@@ -25,7 +25,7 @@ def moveJoint (jointcmds,prefix,nbJoints):
   jointCmd = JointTrajectory()  
   point = JointTrajectoryPoint()
   jointCmd.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.0);  
-  point.time_from_start = rospy.Duration.from_sec(10.0)
+  point.time_from_start = rospy.Duration.from_sec(5.0)
   for i in range(0, nbJoints):
     jointCmd.joint_names.append(prefix +'_joint_'+str(i+1))
     point.positions.append(jointcmds[i])
@@ -66,13 +66,13 @@ if __name__ == '__main__':
     rospy.init_node('move_robot_using_trajectory_msg')		
     prefix, nbJoints, nbfingers = argumentParser(None)    
     #allow gazebo to launch
-    rospy.sleep(5)
+    rospy.sleep(1)
 
     if (nbJoints==6):
       #home robots
       moveJoint ([0.0,2.9,1.3,4.2,1.4,0.0],prefix,nbJoints)
     else:
-      moveJoint ([0.0,2.9,0.0,1.3,4.2,4.4,0.0],prefix,nbJoints)
+      moveJoint ([0.0,2.9,0.0,1.3,4.2,1.4,0.0],prefix,nbJoints)
 
     moveFingers ([1,1,1],prefix,nbfingers)
   except rospy.ROSInterruptException:

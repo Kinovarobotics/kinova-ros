@@ -1,7 +1,7 @@
 j2n7s300:
   effort_finger_trajectory_controller:
     constraints:
-      goal_time: 20.0
+      goal_time: 1.0
       j2n7s300_joint_finger_1:
         goal: 0.02
         trajectory: 0.05
@@ -35,7 +35,7 @@ j2n7s300:
     type: effort_controllers/JointTrajectoryController
   effort_joint_trajectory_controller:
     constraints:
-      goal_time: 20.0
+      goal_time: 1.0
       j2n7s300_joint_1:
         goal: 0.02
         trajectory: 0.05
@@ -83,7 +83,7 @@ j2n7s300:
         d: 0
         i: 0
         i_clamp: 10
-        p: 500
+        p: 200
       j2n7s300_joint_6:
         d: 0
         i: 0
@@ -157,7 +157,7 @@ j2n7s300:
     pid:
       d: 0
       i: 0
-      p: 500
+      p: 200
     type: effort_controllers/JointPositionController
   joint_6_position_controller:
     joint: j2n7s300_joint_6
