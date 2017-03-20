@@ -1,7 +1,7 @@
 import yaml
 
 robots = ['j2n6s300', 'm1n6s300', 'm1n6s200', 'j2n7s300', 'j2s6s300', 'j2s7s300']
-joint_p = [5000,5000,5000,500,500,500,500]
+joint_p = [5000,5000,5000,500,200,500,500]
 joint_i = [0,0,0,0,0,0,0]
 joint_d = [0,0,0,0,0,0,0]
 finger_p = [10,10,10]
@@ -13,6 +13,9 @@ for robot_name in robots:
   fingers = int(robot_name[5])
   robot_joints = []
   finger_joints = []
+
+  if (dof ==7):
+    joints_p = [5000,5000,500,500,200,500,500]
 
   for i in range(1,dof+1):  
     robot_joints.append(robot_name + '_joint_' + str(i))
@@ -46,7 +49,7 @@ for robot_name in robots:
     i = i + 1
   joints = {'joints': joints}
   gains = {'gains': gains}
-  constraints_dic = {  'goal_time': 20.0,
+  constraints_dic = {  'goal_time': 1.0,
                          'stopped_velocity_tolerance': 0.02}                   			              
   constraints_dic.update(constraints)              
   constraints_dic = {'constraints': constraints_dic}
@@ -78,7 +81,7 @@ for robot_name in robots:
     i = i + 1
   joints = {'joints': joints}
   gains = {'gains': gains}
-  constraints_dic = {  'goal_time': 20.0,
+  constraints_dic = {  'goal_time': 1.0,
                          'stopped_velocity_tolerance': 0.02}                   			              
   constraints_dic.update(constraints)              
   constraints_dic = {'constraints': constraints_dic}
