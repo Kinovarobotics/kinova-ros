@@ -41,7 +41,7 @@
     <property name="link_1_mesh_no" value="1" />
     <property name="link_2_mesh_no" value="6" />
     <property name="link_3_mesh_no" value="7" />
-    <property name="link_4_mesh_no" value="4" />
+    <property name="link_4_mesh_no" value="3" />
     <property name="link_5_mesh_no" value="8" />
     <property name="link_6_mesh_no" value="9" />
     <property name="link_7_mesh_no" value="55" />
