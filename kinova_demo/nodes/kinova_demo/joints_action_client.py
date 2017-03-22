@@ -166,7 +166,8 @@ if __name__ == '__main__':
             positions = []  # Get rid of static analysis warning that doesn't see the exit()
             sys.exit() 
         else:
-	    positions = [float(n) for n in joint_degree]           
+            for i in range(0,arm_joint_number):
+              positions[i] = joint_degree[i]               
 
         result = joint_angle_client(positions)
 

@@ -8,7 +8,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     kinova_comm_(kinova_comm),
     nh_(n)
 {
-    ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
 
     ros::NodeHandle pn("~");
     std::string robot_type;
@@ -53,12 +53,12 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     // counter in the timer to publish joint velocity command: pub_joint_vel()
     traj_command_points_index_ = 0;
 
-    ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
 }
 
 JointTrajectoryController::~JointTrajectoryController()
 {
-    ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
     ROS_WARN("destruction entered!");
     {
         boost::mutex::scoped_lock terminate_lock(terminate_thread_mutex_);
@@ -73,14 +73,14 @@ JointTrajectoryController::~JointTrajectoryController()
     thread_update_state_->join();
     delete thread_update_state_;
 
-    ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
 }
 
 
 
 void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectoryConstPtr &traj_msg)
 {
-    ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
 
     bool command_abort = false;
 
@@ -188,7 +188,7 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
     time_pub_joint_vel_ = ros::Time::now();
     timer_pub_joint_vel_.start();
 
-    ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
 }
 
 
@@ -242,7 +242,7 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 
 void JointTrajectoryController::update_state()
 {
-    ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get in: " << __PRETTY_FUNCTION__);
 
     ros::Rate update_rate(10);
     previous_pub_ = ros::Time::now();
@@ -305,5 +305,5 @@ void JointTrajectoryController::update_state()
         previous_pub_ = ros::Time::now();
         update_rate.sleep();
     }
-    ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
+    //ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
 }

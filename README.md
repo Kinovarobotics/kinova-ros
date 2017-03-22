@@ -96,7 +96,7 @@ roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_r
 roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=j2n6s300 kinova_robotName:=right kinova_robotSerial:=PJ00000001030703133
 '''
 
-These parameters are optional and can be dropped of only one robot is connected.
+These parameters are optional and can be dropped off when only one robot is connected.
 
 **use_urdf** specifies whether the kinematic solution is provided by the URDF model. THis is recommended and the default option.
 
@@ -236,6 +236,8 @@ Gravity compensation is done by default in the robot's base. This means that if 
 can be refered to as 'gravity compensated mode', the robot can me moved around freely by manually pushing its joints. You can try out this mode by using the command (for a j2s7300)
 
 rosrun kinova_demo gravity_compensated_mode.py j2s7300 
+
+This command moves the robot to candle-like pose, sets torques to zero, and then starts torque control mode. It publishes torque commands as [0,0,0,0,0,0], so the robot can be moved by pushing on individual joints.
 
 It is posible to publish torque with or without gravity compensation by setting the parameter -
 
