@@ -63,7 +63,7 @@ The wiki page for MoveIt! is available [here](https://github.com/Kinovarobotics/
 To make kinova-ros part of your workspace, follow these steps (assuming your workspace is setup following the standard conventions):
 
     cd ~/catkin_ws/src
-    git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
+    git clone https://github.com/Kinovarobotics/kinova-ros.git -b release-1.2
     cd ~/catkin_ws
     catkin_make
 
@@ -110,34 +110,34 @@ Node `kinova_tf_updater` will be activated to publish frames, and the frames are
 according the classic D-H converntion(frame may not locat at joints). Even you are not able to visulize
 the robot properly in Rviz, you are able to observe the D-H frames in Rviz.
 
-*eg*: `roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200 use_urdf:=true`
+*eg*: `roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4s200 use_urdf:=true`
 
 If the robot is not able to move after boot, please try to home the arm by either pressing *home* button on the joystick or calling rosservice in the **ROS service commands** below.
 
 ### Joint position control
 Joint position control can be realized by calling KinovaComm::setJointAngles() in customized node, or you may simply call the node `joints_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The joint position can be commanded by `{degree | radian}`, relative or absolute value by option `-r`. The following code will drive the 4th joint of a 4DOF mico robot rotate +10 degree (not to 10 degree), and print additional information about the joint position.
 
-*eg*: `rosrun kinova_demo joints_action_client.py -v -r m1n4a200 degree -- 0 0 0 10`
+*eg*: `rosrun kinova_demo joints_action_client.py -v -r m1n4s200 degree -- 0 0 0 10`
 
 Joint position can be observed by echoing two topics:
 `/'${kinova_robotType}_driver'/out/joint_angles` (in degree) and 
 `/'${kinova_robotType}_driver'/out/state/position` (in radians including finger information)
 
- *eg*: `rostopic echo -c /m1n4a200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
+ *eg*: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
 
 
  Another way to control joint position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
-  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200
-  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4a200
+  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4s200
+  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4s200
   - open Rviz: rosrun rviz rviz
-  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Joint/update*
+  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4s200_interactive_control_Joint/update*
   - Now a ring should appear at each joint location, and you can move the robot by drag the rings.
 
 
 ### Cartesian position control
 Cartesian position control can be realized by calling KinovaComm::setCartesianPosition() in customized node, or you may simply call the node `pose_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of position command can be by `{mq | mdeg | mrad}`, which refers to meter&Quaternion, meter&degree and meter&radian. The unit of position is always meter, and the unit of orientation is different. Degree and radian are regarding to Euler Angles in XYZ order. Please be aware that the length of parameters are different when use Quaternion and Euler Angles. With the option `-v` on, positions in other unit format are printed for convenience. The following code will drive a mico robot to move along +x axis for 1cm and rotate hand for +10 degree along hand axis. The last second *10* will be ignored since 4DOF robot cannot rotate along y axis.
 
-*eg*: `rosrun kinova_demo pose_action_client.py -v -r m1n4a200 mdeg -- 0.01 0 0 0 10 10`
+*eg*: `rosrun kinova_demo pose_action_client.py -v -r m1n4s200 mdeg -- 0.01 0 0 0 10 10`
 
 The Cartesian coordinate of robot root frame is defined by the following rules:
 - origin is the intersection point of the bottom plane of the base and cylinder center line.    
@@ -150,10 +150,10 @@ In addition, the wrench of end-effector is published via topic: `/'${kinova_robo
 
 
  Another way to control Cartesian position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
-  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4a200
-  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4a200
+  - launch the drivers: roslaunch kinova_bringup kinova_robot.launch kinova_robotType:=m1n4s200
+  - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4s200
   - open Rviz: rosrun rviz rviz
-  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4a200_interactive_control_Cart/update*
+  - On left plane of Rviz, *Add* *InteractiveMarkers*, click on the right of *Updated Topic* of added interactive marker, and select the topic */m1n4s200_interactive_control_Cart/update*
   - Now a cubic with 3 axis (translation) and 3 rings(rotation) should appear at the end-effector, and you can move the robot by drag the axis or rings.
 
 #### new in release 1.2.0
@@ -166,18 +166,18 @@ The service *ClearTrajectories* can be used to clear the trajectory buffer in th
 ### Finger position control
 Cartesian position control can be realized by calling KinovaComm::setFingerPositions() in customized node, or you may simply call the node `fingers_action_client.py` in the kinova_demo package. Help information is availabe with `-h` option. The unit of finger command can be by `{turn | mm | percent}`, which refers to turn of motor, milimeter and percentage. The finger is essentially controlled by `turn`, and the rest units are propotional to `turn` for convenience. The value 0 indicates fully open, while *finger_maxTurn* represents a fully close. The value of *finger_maxTurn* may vary due to many factors. A proper reference value for finger turn will be 0 (fully-open) to 6400 (fully-close)  If necessary, please modify this variable in the code. With the option `-v` on, positions in other unit format are printed for convenience. The following code fully close the fingers.
 
-*eg*: `rosrun kinova_demo fingers_action_client.py m1n4a200 percent -- 100 100 `
+*eg*: `rosrun kinova_demo fingers_action_client.py m1n4s200 percent -- 100 100 `
 
 The finger position is published via topic: `/'${kinova_robotType}_driver'/out/finger_position`
 
 ### Velocity Control (joint space and Cartesian space)
 The user have access to both joint velocity and Cartesian velocity (linear velocity and angular velocity). The joint velocity control can be realized by publishing to topic  `/'${kinova_robotType}_driver'/in/joint_velocity`. The following command can move the 4th joint of a mico robot at a rate of approximate 10 degree/second. Please be aware that the publishing rate **dose** effect the motion speed much.
 
-*eg*: `rostopic pub -r 100 /m1n4a200_driver/in/joint_velocity kinova_msgs/JointVelocity "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 10.0}" ` 
+*eg*: `rostopic pub -r 100 /m1n4s200_driver/in/joint_velocity kinova_msgs/JointVelocity "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 10.0}" ` 
 
 For Cartesian linear velocity, the unit is meter/second. Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]". The unit is radian/second.  An example is given below:
 
-*eg*: `rostopic pub -r 100 /m1n4a200_driver/in/cartesian_velocity kinova_msgs/PoseVelocity "{twist_linear_x: 0.0, twist_linear_y: 0.0, twist_linear_z: 0.0, twist_angular_x: 0.0, twist_angular_y: 0.0, twist_angular_z: 10.0}" `
+*eg*: `rostopic pub -r 100 /m1n4s200_driver/in/cartesian_velocity kinova_msgs/PoseVelocity "{twist_linear_x: 0.0, twist_linear_y: 0.0, twist_linear_z: 0.0, twist_angular_x: 0.0, twist_angular_y: 0.0, twist_angular_z: 10.0}" `
 
 The motion will stop once the publish on the topic is finished. Please be caution when use velocity control as it is a continuous motion unless you stopped it.
 
