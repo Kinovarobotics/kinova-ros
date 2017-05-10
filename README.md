@@ -23,7 +23,7 @@ To make kinova-ros part of your workspace, follow these steps (assuming your wor
 
     cd ~/catkin_ws/src
     git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
-    cd ~/catkin
+    cd ~/catkin_ws
     catkin_make
 
 To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
