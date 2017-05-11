@@ -1,0 +1,10 @@
+# Goal
+std_msgs/Header header
+KinovaTrajectory[] trajectoryPoint
+---
+# Result
+geometry_msgs/PoseStamped pose
+---
+# Feedback message
+geometry_msgs/PoseStamped pose
+int32 completionPercentage
