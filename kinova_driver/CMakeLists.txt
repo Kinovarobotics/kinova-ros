@@ -96,13 +96,6 @@ target_link_libraries(kinova_interactive_control ${catkin_LIBRARIES} kinova_driv
 ## Install ##
 #############
 
-install(PROGRAMS
-  test/angle_action_client.py
-  test/finger_action_client.py
-  test/pose_action_client.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
 # Copy over Kinova .so binary blobs to /usr/lib
 install(FILES
   lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.CommLayerUbuntu.so
@@ -131,10 +124,11 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-install(FILES
-  launch/jaco_arm.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+# install(FILES
+#   # myfile1
+#   # myfile2
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
 
 #############
 ## Testing ##
