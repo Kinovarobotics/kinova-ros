@@ -1,6 +1,6 @@
 # IMPORTANT
 
-kinova-driver release 1.2.0.
+kinova-driver release 1.2.1.
 
 For quicker bug-fixes and updates a beta version of the branch is added. Use this if you would like to use latest code.
 To contribute fixes please add pull requests to this beta branch.
