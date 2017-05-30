@@ -62,14 +62,17 @@ class KinovaComm
  public:
     KinovaComm(const ros::NodeHandle& node_handle,
              boost::recursive_mutex& api_mutex,
-             const bool is_movement_on_start);
+             const bool is_movement_on_start,
+             const std::string & kinova_robotType);
     ~KinovaComm();
+
+    // %Tag(general functions)
+
 
     void stopAPI();
     void startAPI();
     bool isStopped();
-    void startForceControl();
-    void stopForceControl();
+
     int robotType() const;
     void getQuickStatus(QuickStatus &quick_status);
     void getConfig(ClientConfigurations &config);
@@ -80,22 +83,59 @@ class KinovaComm
     void getSensorsInfo(SensorsInfo &sensor_Info); //voltage, current, temperatue and accelerometers
     void getForcesInfo(ForcesInfo &force_Info); // joint torque and end-effector wrench
     void getGripperStatus(Gripper &gripper_status); // most complete information of each fingers, including model, motion, force, limits, etc.
+    void homeArm(void);
+    bool isHomed(void);
+    void initFingers(void);
+    void setEndEffectorOffset(unsigned int status, float x, float y, float z);
+    void getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
+
+    // %EndTag(general functions)
+
+
+    // %Tag(Angular Control)%
 
     void setAngularControl();
     void getAngularCommand(AngularPosition &angular_command);
     void getJointAngles(KinovaAngles &angles);
-    void setJointAngles(const KinovaAngles &angles, int timeout = 0, bool push = true);
+    void setJointAngles(const KinovaAngles &angles, double speedJoint123 = 20,
+                        double speedJoint4567 = 20, int timeout = 0, bool push = true);
     void getJointVelocities(KinovaAngles &vels);
-    void setJointVelocities(const AngularInfo& joint_vel);
+    void setJointVelocities(const AngularInfo& joint_vel);    
     void getJointAccelerations(AngularAcceleration &joint_acc);
     void getJointTorques(KinovaAngles &tqs);
-    void getJointCurrent(AngularPosition &anguler_current);
-    void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
+    void getJointCurrent(AngularPosition &anguler_current);    
     void printAngles(const KinovaAngles &angles);
 
-    void setCartesianControl();
+    // %EndTag(Angular Control)%
+
+
+    // %Tag(Torque control)%
+
+    //!1 for Torque control enabled
+    void SetTorqueControlState(int state);
+    void setJointTorques(float joint_torque[]);
+    void setZeroTorque();
+    void getGravityCompensatedTorques(KinovaAngles &torques);
+
+    //Set torque parameters
+    void setRobotCOMParam(GRAVITY_TYPE type, std::vector<float> params);
+    void setJointTorqueMinMax(AngularInfo &min, AngularInfo &max);
+    void setPayload(std::vector<float> payload);
+    void setToquesControlSafetyFactor(float factor);
+    int sendCartesianForceCommand(float force_cmd[COMMAND_SIZE]);
+    int runCOMParameterEstimation(ROBOT_TYPE type);
+    //%EndTag(Torque control)%
+
+
+    // %Tag(Cartesian Control)%
+
+    void setCartesianControl();    
     void getCartesianCommand(CartesianPosition &cartesian_command);
     void getCartesianPosition(KinovaPose &position);
+
+    //! \brief send Pose command to robot
+    //! \arg position - Pose command
+    //! \arg push - If true clears previous trajectories
     void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = true);
     void setCartesianVelocities(const CartesianInfo &velocities);
     float getMaxTranslationVelocity(void);
@@ -114,22 +154,39 @@ class KinovaComm
     int numFingers() const;
     void getFingerPositions(FingerAngles &fingers);
     void setFingerPositions(const FingerAngles &fingers, int timeout = 0, bool push = true);
-    void printFingers(const FingersPosition &fingers);
+    void printFingers(const FingersPosition &fingers);   
 
-    void homeArm(void);
-    bool isHomed(void);
-    void initFingers(void);
-    void setEndEffectorOffset(unsigned int status, float x, float y, float z);
-    void getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
+    //Cartesian Admittance Control
+    void startForceControl();
+    void stopForceControl();
+
+    //!Avoid self collisions in Inverse Kinematics.
+    //!Null space is used if available, else Cartesian command is modified
+    int SelfCollisionAvoidanceInCartesianMode(int state);
+
+    //!Avoid Singularities in Inverse Kinematics
+    //!Null space is used if available, else Cartesian command is modified
+    int SingularityAvoidanceInCartesianMode(int state);
+
+    //7 dof API
+    //! Activates/deactivates control mode where robot moves in null space using the joystick
+    int SetRedundantJointNullSpaceMotion(int state);
+
+    //!Resolve redundancy for 7 dof robot using Least square solution
+    int SetRedundancyResolutionToleastSquares(int state);
+
+     // %EndTag(Cartesian Control)%
+
 
  private:
     boost::recursive_mutex& api_mutex_;
     kinova::KinovaAPI kinova_api_;
     bool is_software_stop_;
     int num_fingers_;
+    int num_joints_;
     int robot_type_;
     int motion_command_type_;
-
+    KinovaDevice devices_list_[MAX_KINOVA_DEVICE];
 };
 
 }  // namespace kinova

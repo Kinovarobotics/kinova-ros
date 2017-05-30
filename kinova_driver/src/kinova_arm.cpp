@@ -49,6 +49,37 @@ namespace kinova
 KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const std::string &kinova_robotType)
     : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType)
 {
+    for (int i=0;i<COMMAND_SIZE;i++)
+    {
+      l_joint_torque_[i] = 0;
+      l_force_cmd_[i] = 0;
+    }
+
+    //multiple arms
+    if (node_handle_.hasParam("/kinova_robots"))
+    {
+        XmlRpc::XmlRpcValue robot_list;
+        node_handle_.getParam("/kinova_robots", robot_list);
+        if (robot_list.getType() != XmlRpc::XmlRpcValue::TypeArray)
+        {
+          ROS_ERROR("Parameter controller_list should be specified as an array");
+          return;
+        }
+        robots_.resize(robot_list.size());
+        for (int i = 0; i < robot_list.size(); ++i)
+        {
+          if (!robot_list[i].hasMember("name") || !robot_list[i].hasMember("serial"))
+          {
+            ROS_ERROR_STREAM("Name and serial must be specifed for each robot");
+            continue;
+          }
+
+          robots_[i].name = std::string(robot_list[i]["name"]);
+          robots_[i].name = std::string(robot_list[i]["type"]);
+          robots_[i].name = std::string(robot_list[i]["serial"]);
+        }
+    }
+
     /* Set up parameters for different robot type */
     // example for a kinova_robotType: j2n6s300
 
@@ -73,10 +104,29 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     if (robot_category_=='j') // jaco robot
     {
         // special parameters for jaco
+        if (arm_joint_number_ == 6)
+        {
+            if (wrist_type_ == 'n')
+                robot_type_ = JACOV2_6DOF_SERVICE;
+            else
+                robot_type_ = SPHERICAL_6DOF_SERVICE;
+        }
+        else if (arm_joint_number_ == 4)
+        {
+            robot_type_ = JACOV2_4DOF_SERVICE;
+        }
+        else if (arm_joint_number_ == 7)
+        {
+            robot_type_ = SPHERICAL_7DOF_SERVICE;
+        }
     }
     else if (robot_category_ == 'm') // mico robot
     {
         // special parameters for mico
+        if (arm_joint_number_ == 6)
+            robot_type_ = MICO_6DOF_SERVICE;
+        else if (arm_joint_number_ == 4)
+            robot_type_ = MICO_4DOF_SERVICE;
     }
     else if (robot_category_ == 'r') // roco robot
     {
@@ -119,20 +169,42 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &KinovaArm::homeArmServiceCallback, this);
+    add_trajectory_ = node_handle_.advertiseService("in/add_pose_to_Cartesian_trajectory",
+                      &KinovaArm::addCartesianPoseToTrajectory, this);
+    clear_trajectories_ = node_handle_.advertiseService("in/clear_trajectories",
+                          &KinovaArm::clearTrajectoriesServiceCallback, this);
 
     set_force_control_params_service_ = node_handle_.advertiseService("in/set_force_control_params", &KinovaArm::setForceControlParamsCallback, this);
     start_force_control_service_ = node_handle_.advertiseService("in/start_force_control", &KinovaArm::startForceControlCallback, this);
     stop_force_control_service_ = node_handle_.advertiseService("in/stop_force_control", &KinovaArm::stopForceControlCallback, this);
-    
+    set_actuator_torques_to_zero_ = node_handle_.advertiseService(
+                "in/set_zero_torques", &KinovaArm::setJointTorquesToZeroService, this);
+    run_COM_parameter_estimation_service_ = node_handle_.advertiseService(
+                "in/run_COM_parameters_estimation",
+                &KinovaArm::runCOMParameterEstimationService,this);
+
     set_end_effector_offset_service_ = node_handle_.advertiseService("in/set_end_effector_offset",
         &KinovaArm::setEndEffectorOffsetCallback, this);
 
+    start_null_space_service_ = node_handle_.advertiseService("in/set_null_space_mode_state", &KinovaArm::ActivateNullSpaceModeCallback, this);
+    set_torque_control_mode_service_ = node_handle_.advertiseService("in/set_torque_control_mode", &KinovaArm::setTorqueControlModeService, this);
+    set_torque_control_parameters_service_ = node_handle_.advertiseService
+            ("in/set_torque_control_parameters",
+             &KinovaArm::setTorqueControlParametersService,this);
+
     /* Set up Publishers */
-    joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_angles", 2);
-    joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>("out/joint_state", 2);
-    tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>("out/tool_pose", 2);
-    tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>("out/tool_wrench", 2);
-    finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>("out/finger_position", 2);
+    joint_angles_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>
+            ("out/joint_angles", 2);
+    joint_torque_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>
+            ("out/joint_torques", 2);
+    joint_state_publisher_ = node_handle_.advertise<sensor_msgs::JointState>
+            ("out/joint_state", 2);
+    tool_position_publisher_ = node_handle_.advertise<geometry_msgs::PoseStamped>
+            ("out/tool_pose", 2);
+    tool_wrench_publisher_ = node_handle_.advertise<geometry_msgs::WrenchStamped>
+            ("out/tool_wrench", 2);
+    finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>
+            ("out/finger_position", 2);
 
     // Publish last command for relative motion (read current position cause arm drop)
     joint_command_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_command", 2);
@@ -140,9 +212,13 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
 
     /* Set up Subscribers*/
     joint_velocity_subscriber_ = node_handle_.subscribe("in/joint_velocity", 1,
-                                                      &KinovaArm::jointVelocityCallback, this);
+                                 &KinovaArm::jointVelocityCallback, this);
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
-                                                          &KinovaArm::cartesianVelocityCallback, this);
+                                     &KinovaArm::cartesianVelocityCallback, this);
+    joint_torque_subscriber_ = node_handle_.subscribe("in/joint_torque", 1,
+                               &KinovaArm::jointTorqueSubscriberCallback, this);
+    cartesian_force_subscriber_ = node_handle_.subscribe("in/cartesian_force", 1,
+                                  &KinovaArm::forceSubscriberCallback, this);
 
     node_handle_.param<double>("status_interval_seconds", status_interval_seconds_, 0.1);
 
@@ -172,6 +248,59 @@ bool KinovaArm::homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinov
     return true;
 }
 
+bool KinovaArm::ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req, kinova_msgs::SetNullSpaceModeState::Response &res)
+{
+    kinova_comm_.SetRedundantJointNullSpaceMotion(req.state);
+}
+
+bool KinovaArm::setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::Request &req, kinova_msgs::SetTorqueControlMode::Response &res)
+{
+    kinova_comm_.SetTorqueControlState(req.state);
+}
+
+bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res)
+{    
+    float safetyFactor;
+    node_handle_.param<float>("torque_parameters/safety_factor", safetyFactor,1.0);
+    kinova_comm_.setToquesControlSafetyFactor(safetyFactor);
+
+    std::vector<float> payload;
+    if (node_handle_.getParam("payload", payload))
+    {
+        kinova_comm_.setPayload(payload);
+    }
+
+    std::vector<float> min_torque, max_torque;
+    if (node_handle_.getParam("torque_parameters/torque_min", min_torque)
+          && node_handle_.getParam("torque_parameters/torque_max", max_torque))
+    {
+        AngularInfo min_torque_info,max_torque_info;
+
+        //since fist 7 members of the struct are float we assume no padding
+        //and use float pointer to access struct elements
+        float *min_torque_actuator = &(min_torque_info.Actuator1);
+        float *max_torque_actuator = &(max_torque_info.Actuator1);
+        for (int i = 0; i<min_torque.size(); i++)
+        {
+            min_torque_actuator[i] = min_torque.at(i);
+            max_torque_actuator[i] = max_torque.at(i);            
+        }
+        kinova_comm_.setJointTorqueMinMax(min_torque_info,max_torque_info);
+    }
+
+    std::vector<float> com_parameters;
+    if (node_handle_.getParam("torque_parameters/com_parameters", com_parameters))
+    {
+        bool use_estimated_COM;
+        node_handle_.param("torque_parameters/use_estimated_COM_parameters",
+                              use_estimated_COM,true);
+        if (use_estimated_COM == true)
+            kinova_comm_.setRobotCOMParam(OPTIMAL,com_parameters);
+        else
+            kinova_comm_.setRobotCOMParam(MANUAL_INPUT,com_parameters);
+
+    }
+}
 
 void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& joint_vel)
 {
@@ -183,9 +312,41 @@ void KinovaArm::jointVelocityCallback(const kinova_msgs::JointVelocityConstPtr& 
         joint_velocities_.Actuator4 = joint_vel->joint4;
         joint_velocities_.Actuator5 = joint_vel->joint5;
         joint_velocities_.Actuator6 = joint_vel->joint6;
+        joint_velocities_.Actuator7 = joint_vel->joint7;
 
         kinova_comm_.setJointVelocities(joint_velocities_);
+    }
+}
 
+void KinovaArm::jointTorqueSubscriberCallback(const kinova_msgs::JointTorqueConstPtr& joint_torque)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        l_joint_torque_[0] = joint_torque->joint1;
+        l_joint_torque_[1] = joint_torque->joint2;
+        l_joint_torque_[2] = joint_torque->joint3;
+        l_joint_torque_[3] = joint_torque->joint4;
+        l_joint_torque_[4] = joint_torque->joint5;
+        l_joint_torque_[5] = joint_torque->joint6;
+        l_joint_torque_[6] = joint_torque->joint7;
+
+        kinova_comm_.setJointTorques(l_joint_torque_);
+
+    }
+}
+
+void KinovaArm::forceSubscriberCallback(const kinova_msgs::CartesianForceConstPtr& force)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        l_force_cmd_[0] = force->force_x;
+        l_force_cmd_[1] = force->force_y;
+        l_force_cmd_[2] = force->force_z;
+        l_force_cmd_[3] = force->torque_x;
+        l_force_cmd_[4] = force->torque_y;
+        l_force_cmd_[5] = force->torque_z;
+
+        kinova_comm_.sendCartesianForceCommand(l_force_cmd_);
     }
 }
 
@@ -218,7 +379,29 @@ bool KinovaArm::startServiceCallback(kinova_msgs::Start::Request &req, kinova_ms
     return true;
 }
 
-bool KinovaArm::setForceControlParamsCallback(kinova_msgs::SetForceControlParams::Request &req, kinova_msgs::SetForceControlParams::Response &res)
+bool KinovaArm::addCartesianPoseToTrajectory(kinova_msgs::AddPoseToCartesianTrajectory::Request &req,
+                            kinova_msgs::AddPoseToCartesianTrajectory::Response &res)
+{
+    KinovaPose pose;
+    pose.X = req.X;
+    pose.Y = req.Y;
+    pose.Z = req.Z;
+    pose.ThetaX = req.ThetaX;
+    pose.ThetaY = req.ThetaY;
+    pose.ThetaZ = req.ThetaZ;
+    kinova_comm_.setCartesianPosition(pose,false);
+}
+
+bool KinovaArm::clearTrajectoriesServiceCallback(
+        kinova_msgs::ClearTrajectories::Request &req,
+        kinova_msgs::ClearTrajectories::Response &res)
+{
+    kinova_comm_.eraseAllTrajectories();
+}
+
+bool KinovaArm::setForceControlParamsCallback(
+        kinova_msgs::SetForceControlParams::Request &req,
+        kinova_msgs::SetForceControlParams::Response &res)
 {
     CartesianInfo inertia, damping, force_min, force_max;
     inertia.X      = req.inertia_linear.x;
@@ -268,6 +451,20 @@ bool KinovaArm::stopForceControlCallback(kinova_msgs::Stop::Request &req, kinova
     return true;
 }
 
+bool KinovaArm::setJointTorquesToZeroService(kinova_msgs::ZeroTorques::Request &req,
+                                             kinova_msgs::ZeroTorques::Response &res)
+{
+    kinova_comm_.setZeroTorque();
+    return true;
+}
+
+bool KinovaArm::runCOMParameterEstimationService(
+        kinova_msgs::RunCOMParametersEstimation::Request &req,
+        kinova_msgs::RunCOMParametersEstimation::Response &res)
+{
+    kinova_comm_.runCOMParameterEstimation(robot_type_);
+}
+
 bool KinovaArm::setEndEffectorOffsetCallback(kinova_msgs::SetEndEffectorOffset::Request &req, kinova_msgs::SetEndEffectorOffset::Response &res)
 {
     kinova_comm_.setEndEffectorOffset(req.status, req.offset.x, req.offset.y, req.offset.z);
@@ -308,9 +505,9 @@ void KinovaArm::publishJointAngles(void)
     FingerAngles fingers;
     kinova_comm_.getFingerPositions(fingers);
 
-    if (arm_joint_number_ != 4 && arm_joint_number_ != 6)
+    if (arm_joint_number_ != 4 && arm_joint_number_ != 6 && arm_joint_number_ != 7)
     {
-         ROS_WARN_ONCE("The joint_state publisher only supports 4DOF and 6DOF for now.: %d", arm_joint_number_);
+         ROS_WARN_ONCE("The joint_state publisher only supports 4, 6 and 7 DOF for now.: %d", arm_joint_number_);
     }
 
     // Query arm for current joint angles
@@ -332,22 +529,26 @@ void KinovaArm::publishJointAngles(void)
     joint_state.position[1] = kinova_angles.joint2 * M_PI/180;
     joint_state.position[2] = kinova_angles.joint3 * M_PI/180;
     joint_state.position[3] = kinova_angles.joint4 * M_PI/180;
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.position[4] = kinova_angles.joint5 * M_PI/180;
         joint_state.position[5] = kinova_angles.joint6 * M_PI/180;
     }
+    if (arm_joint_number_ == 7)
+    {
+         joint_state.position[6] = kinova_angles.joint7 * M_PI/180;
+    }    
 
     if(finger_number_==2)
     {
-        joint_state.position[joint_total_number_-2] = 0;
-        joint_state.position[joint_total_number_-1] = 0;
+        joint_state.position[joint_total_number_-2] = fingers.Finger1/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-1] = fingers.Finger2/6800*80*M_PI/180;
     }
     else if(finger_number_==3)
     {
-        joint_state.position[joint_total_number_-3] = 0;
-        joint_state.position[joint_total_number_-2] = 0;
-        joint_state.position[joint_total_number_-1] = 0;
+        joint_state.position[joint_total_number_-3] = fingers.Finger1/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-2] = fingers.Finger2/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-1] = fingers.Finger3/6800*80*M_PI/180;
     }
 
 
@@ -372,10 +573,14 @@ void KinovaArm::publishJointAngles(void)
         joint_state.velocity[joint_total_number_-1] = 0;
     }
 
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.velocity[4] = current_vels.Actuator5;
         joint_state.velocity[5] = current_vels.Actuator6;
+    }
+    if (arm_joint_number_ == 7)
+    {
+        joint_state.velocity[6] = current_vels.Actuator7;
     }
 
 //    ROS_DEBUG_THROTTLE(0.1,
@@ -393,8 +598,15 @@ void KinovaArm::publishJointAngles(void)
 
 
     // Joint torques (effort)
-    // NOTE: Currently invalid.
     KinovaAngles joint_tqs;
+    bool gravity_comp;
+    node_handle_.param("torque_parameters/publish_torque_with_gravity_compensation", gravity_comp, false);
+    if (gravity_comp==true)
+      kinova_comm_.getGravityCompensatedTorques(joint_tqs);
+    else
+      kinova_comm_.getJointTorques(joint_tqs);
+    joint_torque_publisher_.publish(joint_tqs.constructAnglesMsg());
+
     joint_state.effort.resize(joint_total_number_);
     joint_state.effort[0] = joint_tqs.Actuator1;
     joint_state.effort[1] = joint_tqs.Actuator2;
@@ -412,10 +624,14 @@ void KinovaArm::publishJointAngles(void)
         joint_state.effort[joint_total_number_-2] = 0;
         joint_state.effort[joint_total_number_-1] = 0;
     }
-    if (arm_joint_number_ == 6)
+    if (arm_joint_number_ >= 6)
     {
         joint_state.effort[4] = joint_tqs.Actuator5;
         joint_state.effort[5] = joint_tqs.Actuator6;
+    }
+    if (arm_joint_number_ == 7)
+    {
+        joint_state.effort[6] = joint_tqs.Actuator7;
     }
 
     joint_angles_publisher_.publish(kinova_angles);
@@ -481,13 +697,12 @@ void KinovaArm::publishFingerPosition(void)
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
-
 void KinovaArm::statusTimer(const ros::TimerEvent&)
 {
     publishJointAngles();
     publishToolPosition();
     publishToolWrench();
-    publishFingerPosition();
+    publishFingerPosition();   
 }
 
 }  // namespace kinova

@@ -36,6 +36,15 @@
     </collision>     
   </link>
 
+  <!-- for gazebo -->
+  <link name="world"/>
+  
+  <joint name="connect_root_and_world" type="fixed">
+    <child link="root" />
+    <parent link="world" />
+    <origin xyz="0 0 0" rpy="0 0 0" />    
+  </joint> 
+
   <property name="robot_root" value="root" />
 
   <xacro:m1n4s200  base_parent="${robot_root}"/>

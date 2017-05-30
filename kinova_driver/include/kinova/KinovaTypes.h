@@ -2,6 +2,38 @@
 #define KINOVA_TYPE_H_
 
 /**
+ * @brief All robot type
+ */
+#define ROBOT_CONFIG_ERROR			255
+#define ROBOT_CONFIG_GENERIC_ROBOT		4
+#define ROBOT_CONFIG_JACOV1_ASSISTIVE     	0
+#define ROBOT_CONFIG_MICO_6DOF_SERVICE 		1
+#define ROBOT_CONFIG_MICO_4DOF_SERVICE 		2
+#define ROBOT_CONFIG_JACOV2_6DOF_SERVICE 	3
+#define ROBOT_CONFIG_JACOV2_4DOF_SERVICE 	4
+#define ROBOT_CONFIG_MICO_6DOF_ASSISTIVE	5
+#define ROBOT_CONFIG_JACOV2_6DOF_ASSISTIVE	6
+#define ROBOT_CONFIG_SPHERICAL_6DOF_SERVICE	7
+#define ROBOT_CONFIG_SPHERICAL_7DOF_SERVICE	8
+
+enum RobotTypeEnum
+{
+    eRobotType_Error                  = 255,
+    eRobotType_GenericRobot           = 4,
+    eRobotType_JACOV1_Service         = 0,
+    eRobotType_Mico6Dof_Service       = 1,
+    eRobotType_Mico4Dof_Service       = 2,
+    eRobotType_JacoV2_6Dof_Service    = 3,
+    //eRobotType_JacoV2_4Dof_Service    = 4, duplicate
+    eRobotType_Mico_6DOF_Assistive    = 5,
+    eRobotType_JacoV2_6DOF_Assistive  = 6,
+    eRobotType_Spherical_6DOF_Service = 7,
+    eRobotType_Spherical_7DOF_Service = 8
+};
+
+
+#define MAXACTUATORNUMBER 7
+/**
  * @file KinovaTypes.h
  * @brief This file contains all data structures and all data type(enum and typedef) that you'll need to use this API.
  */
@@ -168,6 +200,12 @@ enum PERIPHERAL_TYPE
 	PERIPHERAL_TYPE_ACTUATOR_BIG_19NM = 101,       /*!< A big 19 Newton*Meter rotary actuator. */
 	PERIPHERAL_TYPE_ACTUATOR_BIG_37NM = 102,       /*!< A big 37 Newton*Meter rotary actuator. */
 	PERIPHERAL_TYPE_ACTUATOR_SMALL_7NM = 103,      /*!< A small 7 Newton*Meter rotary actuator. */
+	PERIPHERAL_TYPE_ACTUATOR_K75_SINUS = 104,
+	PERIPHERAL_TYPE_ACTUATOR_K75PLUS_SINUS = 105,
+	PERIPHERAL_TYPE_ACTUATOR_K58_SINUS = 106,
+	PERIPHERAL_TYPE_ACTUATOR_A58_SINUS_AURIS = 107,
+	PERIPHERAL_TYPE_ACTUATOR_A75PLUS_SINUS_AURIS = 108,
+	PERIPHERAL_TYPE_ACTUATOR_A75_SINUS_AURIS = 109,
 	PERIPHERAL_TYPE_LINEAR_ACTUATOR_GENERIC = 200, /*!< A generic linear actuator. */
 	PERIPHERAL_TYPE_LINEAR_ACTUATOR_120N = 201,    /*!< A 120 Newton(finger) linear actuator. */
 	PERIPHERAL_TYPE_JOYSTICK = 300,                /*!< A generic joystick. */
@@ -185,6 +223,10 @@ enum HAND_MODE
 	HAND_NOMOVEMENT, /*!< Fingers will not move. */
 	POSITION_MODE,   /*!< Fingers will move using position control. */
 	VELOCITY_MODE,   /*!< Fingers will move using velocity control. */
+	NO_FINGER,
+	ONE_FINGER,
+	TWO_FINGERS,
+	THREE_FINGERS,
 };
 
 /**
@@ -337,6 +379,27 @@ enum RETRACT_TYPE
 	 RETRACT_ERROR = 25000
 };
 
+/** @brief This data structure holds the Ethernet Config of the robot
+*  \struct EthernetConfiguration KinovaTypes.h "Definition"
+*/
+struct EthernetConfiguration
+{
+  unsigned char IPAddress[4];
+  unsigned char MacAddress[6];
+  unsigned short PortNumber;
+  unsigned char Subnet[4];
+  unsigned char Gateway[4];
+};
+
+struct SdkEthernetConfiguration
+{
+  unsigned int IPAddress;
+  unsigned int Subnet;
+  unsigned short CommandPortNumber;
+  unsigned short DiscoverPortNumber;
+  unsigned short RobotPortNumber;
+};
+
 /** @brief This data structure holds values in an angular(joint by joint) control context. As an example struct could contains position, temperature, torque, ...
  *  \struct AngularInfo KinovaTypes.h "Definition"
  */
@@ -384,6 +447,13 @@ struct AngularInfo
 	 */
 	float Actuator6;
 
+	/**
+	* As an example if the current control mode is angular position the unit will be degree but if the control mode is angular velocity
+	* then the unit will be degree per second.
+	* @brief This is the value related to the actuator #7. Unit depends on the context it's been used.
+	*/
+	float Actuator7;
+
 
 	/**
 	 * This method will initialises all the values to 0
@@ -396,6 +466,7 @@ struct AngularInfo
 		Actuator4 = 0.0f;
 		Actuator5 = 0.0f;
 		Actuator6 = 0.0f;
+		Actuator7 = 0.0f;
 	}
 };
 
@@ -525,6 +596,11 @@ struct SensorsInfo
 	float ActuatorTemp6;
 
 	/**
+	* @brief This is the value read by the temperature sensor on the actuator 7. Unit is C°.
+	*/
+	float ActuatorTemp7;
+
+	/**
 	 * @brief This is the value read by the temperature sensor on the finger 1. Unit is C°.
 	 */
 	float FingerTemp1;
@@ -556,6 +632,7 @@ struct SensorsInfo
 		ActuatorTemp4 = 0.0f;
 		ActuatorTemp5 = 0.0f;
 		ActuatorTemp6 = 0.0f;
+		ActuatorTemp7 = 0.0f;
 		FingerTemp1   = 0.0f;
 		FingerTemp2   = 0.0f;
 		FingerTemp3   = 0.0f;
@@ -866,6 +943,14 @@ struct JoystickCommand
 	}
 };
 
+struct RobotIdentity
+{
+  char SerialNumber[STRING_LENGTH];
+  char Model[STRING_LENGTH];
+  unsigned int CodeVersion;
+  int RobotType;
+};
+
 /**
  * @brief This structure holds informations relative to the client.
  * It is mostly used for rehab clients. As an example, if you need to modify the max velocity or the retract position,
@@ -999,10 +1084,11 @@ struct ClientConfigurations
 
 	int TorqueSensorsEnable;
 
+  int FrameType;
 	/**
 	 * @brief Not used for now.
 	 */
-	int Expansion[196];
+	int Expansion[195];
 };
 
 /**
@@ -1268,6 +1354,28 @@ enum  ControlFunctionalityTypeEnum
 	 * @brief Add a point to the advance GOTO's trajectory 1.
 	 */
 	CF_AdvanceGOTO_Add_1 = 48,
+
+	CF_AdvanceGOTO_2 = 49,
+	CF_AdvanceGOTO_3 = 50,
+	CF_AdvanceGOTO_4 = 51,
+	CF_AdvanceGOTO_5 = 52,
+	CF_AdvanceGOTO_Clear_2 = 53,
+	CF_AdvanceGOTO_Clear_3 = 54,
+	CF_AdvanceGOTO_Clear_4 = 55,
+	CF_AdvanceGOTO_Clear_5 = 56,
+	CF_AdvanceGOTO_add_2 = 57,
+	CF_AdvanceGOTO_add_3 = 58,
+	CF_AdvanceGOTO_add_4 = 59,
+	CF_AdvanceGOTO_add_5 = 60,
+
+	CF_IncreaseSpasmLevel = 61,
+	CF_DecreaseSpasmLevel = 62,
+
+        CF_CycleDown_ModeA_list = 63,
+        CF_CycleDown_ModeB_list = 64,
+
+        CF_Theta7_Positive = 65,
+        CF_Theta7_Negative = 66
 };
 
 /**
@@ -1728,6 +1836,11 @@ struct ForcesInfo
 	 * @brief That contains the torque of the actuator 6.
 	 */
 	float Actuator6;
+
+	/**
+	* @brief That contains the torque of the actuator 7.
+	*/
+	float Actuator7;
 
 	/**
 	 * @brief That contains the force applied by the robotical arm on the X axis.
@@ -2322,7 +2435,7 @@ struct GeneralInformations
 	/**
 	 * @brief Actual control increment from the actuators.
 	 */
-	float ControlIncrement[6];
+	float ControlIncrement[MAXACTUATORNUMBER];
 
 	/**
 	 * @brief Actual control increment from the fingers
@@ -2347,7 +2460,7 @@ struct GeneralInformations
 	/**
 	 * @brief An array of all the connected peripheral.
 	 */
-	float ActuatorsTemperatures[6];
+	float ActuatorsTemperatures[MAXACTUATORNUMBER];
 
 	/**
 	 * @brief An array that contains the fingers's temperature.
@@ -2362,7 +2475,7 @@ struct GeneralInformations
 	/**
 	 * @brief An array that contains communication errors of all actuators.
 	 */
-	int ActuatorsCommErrors[6];
+	int ActuatorsCommErrors[MAXACTUATORNUMBER];
 
 	/**
 	 * @brief An array that contains communication errors of all fingers.
@@ -2505,6 +2618,24 @@ struct AngularAcceleration
 	float Actuator6_Z;
 
 	/**
+	* Acceleration on X axis of the joint #7. Unit is G.
+	* @brief Acceleration on X axis of the joint #7. Unit is G.
+	*/
+	float Actuator7_X;
+
+	/**
+	* Acceleration on Y axis of the joint #7. Unit is G.
+	* @brief Acceleration on Y axis of the joint #7. Unit is G.
+	*/
+	float Actuator7_Y;
+
+	/**
+	* Acceleration on Z axis of the joint #7. Unit is G.
+	* @brief Acceleration on Z axis of the joint #7. Unit is G.
+	*/
+	float Actuator7_Z;
+
+	/**
 	 * This method will initialises all the values to 0
 	 */
 	void InitStruct()
@@ -2527,6 +2658,9 @@ struct AngularAcceleration
 		Actuator6_X = 0.0f;
 		Actuator6_Y = 0.0f;
 		Actuator6_Z = 0.0f;
+		Actuator7_X = 0.0f;
+		Actuator7_Y = 0.0f;
+		Actuator7_Z = 0.0f;
 	}
 };
 
@@ -2578,7 +2712,8 @@ enum ROBOT_TYPE
 	JACOV2_4DOF_SERVICE = 4,
 	MICO_6DOF_ASSISTIVE = 5,
 	JACOV2_6DOF_ASSISTIVE = 6,
-
+	SPHERICAL_6DOF_SERVICE = 7,
+    SPHERICAL_7DOF_SERVICE = 8,
 	ROBOT_ERROR = 255,
 	GENERIC_ROBOT = 254
 };

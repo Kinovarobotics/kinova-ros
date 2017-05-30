@@ -20,9 +20,10 @@ generate_dynamic_reconfigure_options(
 
 link_directories(${PROJECT_SOURCE_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 
+# export library to other packages
 catkin_package(
   INCLUDE_DIRS include
-#  LIBRARIES kinova_driver
+  LIBRARIES kinova_driver
   CATKIN_DEPENDS actionlib actionlib_msgs geometry_msgs kinova_msgs roscpp rospy sensor_msgs std_msgs tf interactive_markers visualization_msgs
 #  DEPENDS system_lib
 )
@@ -55,6 +56,8 @@ add_library(kinova_driver
   src/kinova_joint_angles_action.cpp
   src/kinova_fingers_action.cpp
   src/kinova_ros_types.cpp
+  src/kinova_joint_trajectory_controller.cpp
+  include/kinova_driver/kinova_joint_trajectory_controller.h
   include/kinova_driver/kinova_joint_angles_action.h
   include/kinova_driver/kinova_api.h
   include/kinova_driver/kinova_arm.h
@@ -62,14 +65,32 @@ add_library(kinova_driver
   include/kinova_driver/kinova_fingers_action.h
   include/kinova_driver/kinova_tool_pose_action.h
   include/kinova_driver/kinova_ros_types.h
-  include/kinova/Kinova.API.CommLayerUbuntu.h
-  include/kinova/Kinova.API.UsbCommandLayerUbuntu.h
+  include/kinova/Kinova.API.USBCommLayerUbuntu.h
+  include/kinova/Kinova.API.USBCommandLayerUbuntu.h
   include/kinova/KinovaTypes.h
 )
 
 add_executable(kinova_arm_driver
   src/nodes/kinova_arm_driver.cpp
 )
+
+add_executable(joint_trajectory_action_server 
+  src/joint_trajectory_action/joint_trajectory_action_server.cpp
+  include/kinova_driver/joint_trajectory_action_server.h)
+target_link_libraries(joint_trajectory_action_server 
+  ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
+install(TARGETS joint_trajectory_action_server 
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+add_dependencies(joint_trajectory_action_server ${catkin_EXPORTED_TARGETS})
+
+add_executable(gripper_command_action_server 
+  src/joint_trajectory_action/gripper_command_action_server.cpp 
+  include/kinova_driver/gripper_command_action_server.h)
+target_link_libraries(gripper_command_action_server 
+  ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${kinova_driver_LIBRARIES})
+install(TARGETS gripper_command_action_server 
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+add_dependencies(gripper_command_action_server ${catkin_EXPORTED_TARGETS})
 
 add_executable(kinova_tf_updater
   src/kinova_ros_types.cpp
@@ -96,17 +117,12 @@ target_link_libraries(kinova_interactive_control ${catkin_LIBRARIES} kinova_driv
 ## Install ##
 #############
 
-install(PROGRAMS
-  test/angle_action_client.py
-  test/finger_action_client.py
-  test/pose_action_client.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
 # Copy over Kinova .so binary blobs to /usr/lib
 install(FILES
-  lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.CommLayerUbuntu.so
-  lib/${CMAKE_LIBRARY_ARCHITECTURE}/Kinova.API.USBCommandLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/USBCommLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/USBCommandLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/EthCommLayerUbuntu.so
+  lib/${CMAKE_LIBRARY_ARCHITECTURE}/EthCommandLayerUbuntu.so
   DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
@@ -131,10 +147,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
-install(FILES
-  launch/jaco_arm.launch
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
+#  install(FILES
+## myfile1
+## myfile2
+#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 
 #############
 ## Testing ##

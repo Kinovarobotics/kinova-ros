@@ -15,10 +15,12 @@
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
+<xacro:include filename="$(find kinova_description)/urdf/kinova_inertial.xacro" />
+
 
     <property name="J_PI" value="3.1415926535897931" />
 
-    <xacro:macro name="kinova_armlink" params="link_name link_mesh">
+    <xacro:macro name="kinova_armlink" params="link_name link_mesh ring_mesh:=ring_big use_ring_mesh:=false mesh_no">
         <link name="${link_name}">
             <visual>
                 <geometry>
@@ -29,24 +31,50 @@
                     <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
                 </material>
             </visual>
+
+	    <!-- Adding ring to the model -->	
+	         <xacro:if value="${use_ring_mesh}">
+	           <visual>
+                <geometry>
+                    <mesh
+                        filename="package://kinova_description/meshes/${ring_mesh}.STL"/>
+                </geometry>              
+             </visual>
+	    </xacro:if>
+
             <collision>
                 <geometry>
                     <mesh
                         filename="package://kinova_description/meshes/${link_mesh}.dae"/>
                 </geometry>
             </collision>
-        </link>
+						<xacro:kinova_inertial mesh_no="${mesh_no}"/>	
+      </link>			
+		  	
     </xacro:macro>
 
-    <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit">
+  <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit fixed:=false">
     <joint name="${joint_name}" type="${type}">
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
+        <dynamics damping="0.0" friction="0.0"/>
      </joint>
-    </xacro:macro>
+   <xacro:unless value="${fixed}">
+     <transmission name="${joint_name}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${joint_name}">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${joint_name}_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>160</mechanicalReduction>
+        </actuator>
+     </transmission>
+     </xacro:unless>
+  </xacro:macro>
 
 
     <xacro:macro name="kinova_virtual_link" params="link_name">
@@ -69,7 +97,7 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="30" velocity="0.35" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
@@ -77,23 +105,36 @@
 
     <xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">
 
-        <xacro:kinova_armlink link_name="${prefix}_link_finger_${finger_number}" link_mesh="finger_proximal"/>
-        <joint name="${prefix}_joint_finger_${finger_number}" type="revolute">
+        <xacro:kinova_armlink link_name="${prefix}link_finger_${finger_number}" link_mesh="finger_proximal" mesh_no="57"/>
+
+        <joint name="${prefix}joint_finger_${finger_number}" type="revolute">
             <parent link="${hand}"/>
-            <child link="${prefix}_link_finger_${finger_number}"/>
+            <child link="${prefix}link_finger_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="30" velocity="5"/>
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>						
         </joint>
+		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
+					<type>transmission_interface/SimpleTransmission</type>
+					<joint name="${prefix}joint_finger_${finger_number}">
+					  <hardwareInterface>EffortJointInterface</hardwareInterface>
+					</joint>
+					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
+					<hardwareInterface>EffortJointInterface</hardwareInterface>
+					<mechanicalReduction>1</mechanicalReduction>
+					</actuator>
+		    </transmission>
+				
+        
 
-        <xacro:kinova_armlink link_name="${prefix}_link_finger_tip_${finger_number}" link_mesh="finger_distal"/>
-        <joint name="${prefix}_joint_finger_tip_${finger_number}" type="fixed">
-            <parent link="${prefix}_link_finger_${finger_number}"/>
-            <child link="${prefix}_link_finger_tip_${finger_number}"/>
+        <xacro:kinova_armlink link_name="${prefix}link_finger_tip_${finger_number}" link_mesh="finger_distal" mesh_no="58"/>
+        
+        <joint name="${prefix}joint_finger_tip_${finger_number}" type="fixed">
+            <parent link="${prefix}link_finger_${finger_number}"/>
+            <child link="${prefix}link_finger_tip_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
-            <limit lower="0" upper="2" effort="30" velocity="5"/>
-            <mimic joint="${J_PI/180*40}" multiplier="1.0" offset="0.0"/>
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>        
         </joint>
 
     </xacro:macro>
