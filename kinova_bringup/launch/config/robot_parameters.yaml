@@ -10,7 +10,7 @@ jointSpeedLimitParameter2: 20
 # payload: [COM COMx COMy COMz]
 #payload: [0, 0, 0, 0]
 
-connection_type: USB #Ethernet
+connection_type: USB #Ethernet 
 
 # Ethernet connection parameters
 ethernet: {
@@ -32,5 +32,5 @@ torque_parameters: {
     # safety_factor: 1,
     # COM parameters
     # order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
-    com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]
+    # com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]
 }

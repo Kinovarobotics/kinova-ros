@@ -9,6 +9,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="use_trajectory_controller" default="true"/>
+  <arg name="is7dof" default="false"/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -33,6 +34,7 @@
     <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
     <arg name="kinova_robotType" value="$(arg kinova_robotType)"/>
     <arg name="use_trajectory_controller" value="$(arg use_trajectory_controller)"/>
+    <arg name="is7dof" value="$(arg is7dof)"/>
   </include>
 
   <!-- rqt launch file -->

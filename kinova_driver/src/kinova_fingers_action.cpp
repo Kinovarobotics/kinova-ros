@@ -112,20 +112,20 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
         {
             ros::spinOnce();
 
-            if (action_server_.isPreemptRequested() || !ros::ok())
+	    if (arm_comm_.isStopped())
+            {
+                result.fingers = current_finger_positions.constructFingersMsg();
+                action_server_.setAborted(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
+                return;
+            }
+            else if (action_server_.isPreemptRequested() || !ros::ok())
             {
                 result.fingers = current_finger_positions.constructFingersMsg();
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
                 ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
-                return;
-            }
-            else if (arm_comm_.isStopped())
-            {
-                result.fingers = current_finger_positions.constructFingersMsg();
-                action_server_.setAborted(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
 
@@ -151,10 +151,18 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
             {
                 // Check if the full stall condition has been meet
                 result.fingers = current_finger_positions.constructFingersMsg();
-                arm_comm_.stopAPI();
-                arm_comm_.startAPI();
+ 		if (!arm_comm_.isStopped())
+                {
+                	arm_comm_.stopAPI();
+                	arm_comm_.startAPI();
+		}
+		//why preemted, if the robot is stalled, trajectory/action failed!
+                /*
                 action_server_.setPreempted(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
+                */
+                action_server_.setAborted(result);
+                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
                 return;
             }
 

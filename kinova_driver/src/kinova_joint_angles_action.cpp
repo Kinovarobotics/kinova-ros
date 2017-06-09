@@ -107,21 +107,20 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
         while (true)
         {
             ros::spinOnce();
-
-            if (action_server_.isPreemptRequested() || !ros::ok())
+	    if (arm_comm_.isStopped())
+            {
+                result.angles = current_joint_angles.constructAnglesMsg();
+                action_server_.setAborted(result);
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
+                return;
+            }
+            else if (action_server_.isPreemptRequested() || !ros::ok())
             {
                 result.angles = current_joint_angles.constructAnglesMsg();
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
-                return;
-            }
-            else if (arm_comm_.isStopped())
-            {
-                result.angles = current_joint_angles.constructAnglesMsg();
-                action_server_.setAborted(result);
-                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
 
@@ -148,8 +147,11 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
             {
                 // Check if the full stall condition has been meet
                 result.angles = current_joint_angles.constructAnglesMsg();
-                arm_comm_.stopAPI();
-                arm_comm_.startAPI();
+                if (!arm_comm_.isStopped())
+                {
+                	arm_comm_.stopAPI();
+                	arm_comm_.startAPI();
+		}
                 //why preemted, if the robot is stalled, trajectory/action failed!
                 /*
                 action_server_.setPreempted(result);

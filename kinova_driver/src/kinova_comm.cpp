@@ -1427,8 +1427,9 @@ void KinovaComm::homeArm(void)
     startAPI();
 
     ROS_INFO("Homing the arm");
+    kinova_api_.moveHome();
 
-    JoystickCommand mycommand;
+    /*JoystickCommand mycommand;
     mycommand.InitStruct();
     // In api mapping(observing with Jacosoft), home button is ButtonValue[2].
     mycommand.ButtonValue[2] = 1;
@@ -1450,7 +1451,7 @@ void KinovaComm::homeArm(void)
 
     mycommand.ButtonValue[2] = 0;
     kinova_api_.sendJoystickCommand(mycommand);
-    ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");
+    ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");*/
 
 }
 
