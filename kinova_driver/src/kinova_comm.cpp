@@ -1383,7 +1383,7 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
 
     kinova_angular.Position.Actuators = joint_angles.Actuators;
 
-    result = kinova_api_.sendAdvanceTrajectory(kinova_angular);
+    result = kinova_api_.sendBasicTrajectory(kinova_angular);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
