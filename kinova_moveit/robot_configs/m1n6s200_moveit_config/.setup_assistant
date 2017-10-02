@@ -7,4 +7,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: David Watkins
     author_email: davidwatkins@cs.columbia.edu
-    generated_timestamp: 1504122935
+    generated_timestamp: 1506131352

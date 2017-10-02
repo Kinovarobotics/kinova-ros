@@ -11,3 +11,7 @@ controller_list:
     joints:
       - m1n6s200_joint_finger_1
       - m1n6s200_joint_finger_2
+
+initial:
+  - group: arm
+    pose: home

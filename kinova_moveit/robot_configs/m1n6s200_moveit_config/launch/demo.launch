@@ -16,7 +16,7 @@
   It also provides a GUI to move the simulated robot around "manually".
   This corresponds to moving around the real robot without the use of MoveIt.
   -->
-  <arg name="use_gui" default="false" />
+  <arg name="use_gui" default="true" />
 
   <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
   <include file="$(find m1n6s200_moveit_config)/launch/planning_context.launch">
@@ -30,7 +30,6 @@
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <param name="/use_gui" value="$(arg use_gui)"/>
     <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
-    <remap from="/joint_states" to="/m1n6s200_driver/out/joint_state" />
   </node>
 
   <!-- Given the published joint states, publish tf for the robot links -->

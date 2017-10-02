@@ -20,7 +20,7 @@
         <link name="m1n6s300_link_finger_tip_2" />
         <link name="m1n6s300_link_finger_3" />
         <link name="m1n6s300_link_finger_tip_3" />
-				<joint name="m1n6s300_joint_finger_1" />
+		<joint name="m1n6s300_joint_finger_1" />
         <joint name="m1n6s300_joint_finger_2" />
         <joint name="m1n6s300_joint_finger_3" />
     </group>
