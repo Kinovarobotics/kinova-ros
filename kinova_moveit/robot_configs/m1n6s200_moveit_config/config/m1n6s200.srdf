@@ -23,12 +23,12 @@
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="home" group="arm">
-        <joint name="m1n6s200_joint_1" value="3.1415" />
-        <joint name="m1n6s200_joint_2" value="3.0264" />
-        <joint name="m1n6s200_joint_3" value="1.1852" />
-        <joint name="m1n6s200_joint_4" value="-2.1404" />
-        <joint name="m1n6s200_joint_5" value="1.9332" />
-        <joint name="m1n6s200_joint_6" value="0.9321" />
+        <joint name="m1n6s200_joint_1" value="4.7980511" />
+        <joint name="m1n6s200_joint_2" value="3.05593" />
+        <joint name="m1n6s200_joint_3" value="1.3773" />
+        <joint name="m1n6s200_joint_4" value="4.24353" />
+        <joint name="m1n6s200_joint_5" value="1.469646" />
+        <joint name="m1n6s200_joint_6" value="1.306617" />
     </group_state>
     <group_state name="vertical" group="arm">
         <joint name="m1n6s200_joint_1" value="3.1415" />
@@ -57,7 +57,7 @@
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="end_effector" parent_link="m1n6s200_end_effector" group="gripper" parent_group="arm" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="world_frame_fixed_joint" type="fixed" parent_frame="world_frame" child_link="root" />
+    <virtual_joint name="virtual_joint" type="planar" parent_frame="world" child_link="root" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="m1n6s200_end_effector" link2="m1n6s200_link_1" reason="Never" />
     <disable_collisions link1="m1n6s200_end_effector" link2="m1n6s200_link_2" reason="Never" />
