@@ -1,4 +1,30 @@
-# IMPORTANT
+# Contents
+- [Important](#important)
+- [Kinova-ROS](#kinova-ros)
+  - [Supported versions](#supported-versions)
+  - [Gazebo](#gazebo)
+  - [MoveIt!](#moveit)
+  - [File System](#file-system)
+  - [Installation](#installation)
+  - [How to use the stack](#how-to-use-the-stack)
+      - [Launch driver](#launch-driver)
+      - [Joint position control](#joint-position-control)
+      - [Cartesian position control](#cartesian-position-control)
+      - [Finger position control](#finger-position-control)
+      - [Velocity control for joint space and Cartesian space](#velocity-control-for-joint-space-and-cartesian-space)
+      - [ROS Service commands](#ros-service-commands)
+      - [Cartesian admittance mode](#cartesian-admittance-mode)
+      - [Support for 7 dof spherical wrist robot](#support-for-7-dof-spherical-wrist-robot)
+      - [Torque control](#torque-control)
+  - [Ethernet connection](#ethernet-connection)
+  - [Parameters](#parameters)
+  - [rqt GUI for robot status](#rqt-gui-for-robot-status)
+  - [New in this release](#new-in-this-release)
+  - [Notes and Limitations](#notes-and-limitations)
+  - [Report a Bug](#report-a-bug)
+
+
+# Important
 
 kinova-driver release 1.2.1.
 
@@ -44,7 +70,7 @@ for all robots:
   - ClearTrajectories
   - SetTorqueControlMode
 
-# KINOVA-ROS
+# Kinova-ROS
 
 The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides wide support of Kinova products, there are many bug fixes, improvements and new features as well. The stack is developed above the Kinova C++ API functions, which communicate with the DSP inside robot base. 
 
@@ -87,7 +113,7 @@ sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 
 ## How to use the stack
 
-### launch driver
+### Launch driver
 `kinova_robot.launch` in kinova_bringup folder launches the essential drivers and configurations for kinova robots. kinova_robot.launch has three arguments:
 
 **kinova_robotType** specifies which robot type is used. For better supporting wider range of robot configurations,  *robot type* is defined by a `char[8]`, in the format of: `[{j|m|r|c}{1|2}{s|n}{4|6|7}{s|a}{2|3}{0}{0}]`. *Robot category* `{j|m|r|c}` refers to *jaco*, *mico*, *roco* and *customized*, *version* is `{1|2}` for now, *wrist type* `{s|n}` can be spherical or *non-spherical*, *Degree of Freedom* is possible to be `{4|6|7}`, *robot mode* `{s|a}` can be in *service* or *assistive*, *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. Last two positions are *undifined* and *reserved* for further features.
@@ -188,7 +214,7 @@ Cartesian position control can be realized by calling KinovaComm::setFingerPosit
 
 The finger position is published via topic: `/'${kinova_robotType}_driver'/out/finger_position`
 
-### Velocity Control (joint space and Cartesian space)
+### Velocity Control for joint space and Cartesian space
 The user has access to both joint velocity and Cartesian velocity (linear velocity and angular velocity). The joint velocity control can be realized by publishing to topic  `/'${kinova_robotType}_driver'/in/joint_velocity`. The following command can move the 4th joint of a mico robot at a rate of approximate 10 degree/second. Please be aware that the publishing rate **does** affect the speed of motion.
 
 **eg**: `rostopic pub -r 100 /m1n4s200_driver/in/joint_velocity kinova_msgs/JointVelocity "{joint1: 0.0, joint2: 0.0, joint3: 0.0, joint4: 10.0}" ` 
@@ -212,8 +238,9 @@ User can also enable and disable the ROS motion command via rosservice
 `/'${kinova_robotType}_driver'/in/start`
 and `/'${kinova_robotType}_driver'/in/stop`. When `stop` is called, robot command from ROS will not drive the robot until `start` is called. However, joystick still has the control during this phase.
 
-### Cartesian Admittance mode (User can control the robot by manually guiding it by hand) 
-The admittance force control can be actived by command 
+### Cartesian Admittance mode 
+This lets the user control the robot by manually guiding it by hand 
+The admittance force control can be actived by the command  
 `rosservice call /'${kinova_robotType}_driver'/in/start_force_control` and disabled by `rosservice call /'${kinova_robotType}_driver'/in/stop_force_control`. The user can move the robot by appling force/torque to the end-effector/joints. When there is a Cartesian/joint position command, the result motion will be a combination of both force and position commands.
 
 #### Re-calibrate torque sensors
@@ -328,7 +355,7 @@ torque_parameters:
   COM parameters, order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
   
 
-## GUI for robot status - rqt
+## rqt GUI for robot status 
 ROS provides a flexible GUI tool to interact with nodes/robots - **rqt**. You can use this
 tool to see topics published by the node - robot position, velocity, torque, etc. 
 You can also launch services like AddPoseToCartesianTrajectory.
@@ -341,7 +368,7 @@ Monitoring topics
 
 Other plugins in rqt can similarly be used for quick interation with the robot.
 
-## What's new in this release 
+## New in this release 
 ### New in release 1.2.0
 
 - MoveIt! support
