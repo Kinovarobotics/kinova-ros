@@ -369,7 +369,7 @@ Monitoring topics
 Other plugins in rqt can similarly be used for quick interation with the robot.
 
 ## New in this release 
-### New in release 1.2.0
+#### New in release 1.2.0
 
 - MoveIt! support
 - Restructured URDF files
@@ -393,7 +393,7 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
   - SetTorqueControlMode
 
 
-### Comparison to JACO-ROS
+#### Comparison to JACO-ROS
 
 - Migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
 - Apply kinova_RobotType for widely support
