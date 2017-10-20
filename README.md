@@ -34,7 +34,7 @@ To contribute fixes please add pull requests to this beta branch.
 The previous ROS release, which mainly developed for jaco arm will be named as **jaco-ros** and the previous **master** branch is renamed as **jaco-ros-master** branch. Users can keep both **jaco-ros** and new release **kinova-ros** as two parallel stacks. However, further updates and support will only be available on "kinova-ros".
 
 =======
-### new in release 1.2.1
+#### new in release 1.2.1
 A few bug fix:
 specific to 7 dof robot:
 - PID controller parameters for the 7 dof robot with spherical wrist (before, the Gazebo model was unstable when launched)
@@ -47,7 +47,7 @@ for all robots:
 - commented out the COM parameters all set to zero in kinova_bringup/launch/config/robot_parameters.yaml, or else the robot does not compensate gravity accurately when switched to admittance or torque mode. These COM parameters can be commented out if the user wants to change the default COM parameters, but by default, we take for granted that the user wants to use the parameters already implemented in the robot.
 - change the order conditions are checked in the kinova_joint_angles_action.cpp, kinova_tool_pose_action.cpp and kinova_fingers_action.cpp to insure that the robot does not accept new goals after having been stopped (emergency stop). See issue #92 for more details. 
 
-### new in release 1.2.0
+#### new in release 1.2.0
 - Gazebo support
 - MoveIt! support
 - Restructured URDF files
