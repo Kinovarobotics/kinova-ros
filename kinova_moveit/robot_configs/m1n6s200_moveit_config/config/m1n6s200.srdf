@@ -10,11 +10,17 @@
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="arm">
-        <chain base_link="root" tip_link="m1n6s200_link_6" />
+        <!--<chain base_link="root" tip_link="m1n6s200_link_5" />-->
+        <joint name="m1n6s200_joint_1" />
+        <joint name="m1n6s200_joint_2" />
+        <joint name="m1n6s200_joint_3" />
+        <joint name="m1n6s200_joint_4" />
+        <joint name="m1n6s200_joint_5" />
+        <joint name="m1n6s200_joint_6" />
+
     </group>
     <group name="gripper">
         <link name="m1n6s200_link_6" />
-        <link name="m1n6s200_end_effector" />
         <link name="m1n6s200_link_finger_1" />
         <link name="m1n6s200_link_finger_tip_1" />
         <link name="m1n6s200_link_finger_2" />
@@ -27,7 +33,7 @@
         <joint name="m1n6s200_joint_3" value="1.3773" />
         <joint name="m1n6s200_joint_4" value="4.24353" />
         <joint name="m1n6s200_joint_5" value="1.469646" />
-        <!--<joint name="m1n6s200_joint_6" value="1.306617" />-->
+        <joint name="m1n6s200_joint_6" value="1.306617" />
     </group_state>
     <group_state name="vertical" group="arm">
         <joint name="m1n6s200_joint_1" value="3.1415" />
@@ -35,7 +41,7 @@
         <joint name="m1n6s200_joint_3" value="3.1415" />
         <joint name="m1n6s200_joint_4" value="3.1415" />
         <joint name="m1n6s200_joint_5" value="3.1415" />
-        <!--<joint name="m1n6s200_joint_6" value="3.1415" />-->
+        <joint name="m1n6s200_joint_6" value="3.1415" />
     </group_state>
     <group_state name="close" group="gripper">
         <joint name="m1n6s200_joint_finger_1" value="1.2" />
@@ -51,10 +57,10 @@
         <joint name="m1n6s200_joint_3" value="0.581" />
         <joint name="m1n6s200_joint_4" value="-1.6088" />
         <joint name="m1n6s200_joint_5" value="0.0903" />
-        <!--<joint name="m1n6s200_joint_6" value="1.741" />-->
+        <joint name="m1n6s200_joint_6" value="1.741" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="end_effector" parent_link="m1n6s200_link_6" group="gripper" />
+    <end_effector name="end_effector" parent_link="m1n6s200_end_effector" group="gripper" />
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="world_frame_fixed_joint" type="fixed" parent_frame="world_frame" child_link="root" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

@@ -18,7 +18,7 @@
 <xacro:include filename="$(find kinova_description)/urdf/kinova_inertial.xacro" />
 
 
-    <property name="J_PI" value="3.1415926535897931" />
+    <xacro:property name="J_PI" value="3.1415926535897931" />
 
     <xacro:macro name="kinova_armlink" params="link_name link_mesh ring_mesh:=ring_big use_ring_mesh:=false mesh_no">
         <link name="${link_name}">
@@ -103,41 +103,7 @@
     </xacro:macro>
 
 
-    <xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">
 
-        <xacro:kinova_armlink link_name="${prefix}link_finger_${finger_number}" link_mesh="finger_proximal" mesh_no="57"/>
-
-        <joint name="${prefix}joint_finger_${finger_number}" type="revolute">
-            <parent link="${hand}"/>
-            <child link="${prefix}link_finger_${finger_number}"/>
-            <axis xyz="0 0 1"/>
-            <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="2000" velocity="1"/>						
-        </joint>
-		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
-					<type>transmission_interface/SimpleTransmission</type>
-					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>EffortJointInterface</hardwareInterface>
-					</joint>
-					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>EffortJointInterface</hardwareInterface>
-					<mechanicalReduction>1</mechanicalReduction>
-					</actuator>
-		    </transmission>
-				
-        
-
-        <xacro:kinova_armlink link_name="${prefix}link_finger_tip_${finger_number}" link_mesh="finger_distal" mesh_no="58"/>
-        
-        <joint name="${prefix}joint_finger_tip_${finger_number}" type="fixed">
-            <parent link="${prefix}link_finger_${finger_number}"/>
-            <child link="${prefix}link_finger_tip_${finger_number}"/>
-            <axis xyz="0 0 1"/>
-            <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
-            <limit lower="0" upper="2" effort="2000" velocity="1"/>        
-        </joint>
-
-    </xacro:macro>
 
    
 </root>

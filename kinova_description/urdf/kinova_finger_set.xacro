@@ -33,10 +33,86 @@
 
     <xacro:macro name="kinova_2fingers" params="link_hand prefix">
 
-        <!-- finger1 Rot := Ry((1/2)*Pi) . Rx(Pi) . Rz(-52.8*((1/180)*Pi)) -->
-        <xacro:kinova_finger prefix="${prefix}" finger_number="1" hand="${link_hand}" finger_origin_xyz="-0.0025 0.03095 -0.11482" finger_origin_rpy="-1.570796327 .649262481663582 1.57079632679490"/>
-        <!-- finger2 Rot := Ry((1/2)*Pi) . Rz(-52.8*((1/180)*Pi))  -->
-        <xacro:kinova_finger prefix="${prefix}" finger_number="2" hand="${link_hand}" finger_origin_xyz="-0.0025 -0.03095 -0.11482" finger_origin_rpy="-1.570796327 .649262481663582 -1.57079632679490"/>
+                <!-- FINGER 1 -->
+                <!--<xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">-->
+
+                    <!-- finger1 Rot := Ry((1/2)*Pi) . Rx(Pi) . Rz(-52.8*((1/180)*Pi)) -->
+                    <!--<xacro:kinova_finger prefix="${prefix}" finger_number="1" hand="${link_hand}" finger_origin_xyz="-0.0025 0.03095 -0.11482" finger_origin_rpy="-1.570796327 .649262481663582 1.57079632679490"/>-->
+
+                    <xacro:kinova_armlink link_name="${prefix}link_finger_1" link_mesh="finger_proximal" mesh_no="57"/>
+
+                    <joint name="${prefix}joint_finger_1" type="revolute">
+                        <parent link="${link_hand}"/>
+                        <child link="${prefix}link_finger_1"/>
+                        <axis xyz="0 0 1"/>
+                        <origin xyz="-0.0025 0.03095 -0.11482" rpy="-1.570796327 .649262481663582 1.57079632679490"/>
+                        <limit lower="0" upper="2" effort="2000" velocity="1"/>
+                    </joint>
+                        <transmission name="${prefix}joint_finger_1_trans">
+                                <type>transmission_interface/SimpleTransmission</type>
+                                <joint name="${prefix}joint_finger_1">
+                                  <hardwareInterface>EffortJointInterface</hardwareInterface>
+                                </joint>
+                                <actuator name="${prefix}joint_finger_1_actuator">
+                                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                                <mechanicalReduction>1</mechanicalReduction>
+                                </actuator>
+                        </transmission>
+
+
+
+                    <xacro:kinova_armlink link_name="${prefix}link_finger_tip_1" link_mesh="finger_distal" mesh_no="58"/>
+
+                    <joint name="${prefix}joint_finger_tip_1" type="fixed">
+                        <parent link="${prefix}link_finger_1"/>
+                        <child link="${prefix}link_finger_tip_1"/>
+                        <axis xyz="0 0 1"/>
+                        <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
+                        <limit lower="0" upper="2" effort="2000" velocity="1"/>
+                    </joint>
+
+                <!--</xacro:macro>-->
+
+                <!-- FINGER 2 -->
+               <!--<xacro:macro name="kinova_finger" params="prefix finger_number hand finger_origin_xyz finger_origin_rpy">-->
+
+                    <!-- finger2 Rot := Ry((1/2)*Pi) . Rz(-52.8*((1/180)*Pi))  -->
+                    <!--<xacro:kinova_finger prefix="${prefix}" finger_number="2" hand="${link_hand}" finger_origin_xyz="-0.0025 -0.03095 -0.11482" finger_origin_rpy="-1.570796327 .649262481663582 -1.57079632679490"/>-->
+
+                    <xacro:kinova_armlink link_name="${prefix}link_finger_2" link_mesh="finger_proximal" mesh_no="57"/>
+
+                    <joint name="${prefix}joint_finger_2" type="revolute">
+                        <parent link="${link_hand}"/>
+                        <child link="${prefix}link_finger_2"/>
+                        <axis xyz="0 0 1"/>
+                        <mimic joint="${prefix}joint_finger_1" multiplier="1"/>
+                        <origin xyz="-0.0025 -0.03095 -0.11482" rpy="-1.570796327 .649262481663582 -1.57079632679490"/>
+                        <limit lower="0" upper="2" effort="2000" velocity="1"/>
+                    </joint>
+                        <transmission name="${prefix}joint_finger_2_trans">
+                                <type>transmission_interface/SimpleTransmission</type>
+                                <joint name="${prefix}joint_finger_2">
+                                  <hardwareInterface>EffortJointInterface</hardwareInterface>
+                                </joint>
+                                <actuator name="${prefix}joint_finger_2_actuator">
+                                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                                <mechanicalReduction>1</mechanicalReduction>
+                                </actuator>
+                        </transmission>
+
+
+
+                    <xacro:kinova_armlink link_name="${prefix}link_finger_tip_2" link_mesh="finger_distal" mesh_no="58"/>
+
+                    <joint name="${prefix}joint_finger_tip_2" type="fixed">
+                        <parent link="${prefix}link_finger_2"/>
+                        <child link="${prefix}link_finger_tip_2"/>
+                        <axis xyz="0 0 1"/>
+                        <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
+                        <limit lower="0" upper="2" effort="2000" velocity="1"/>
+                    </joint>
+
+                <!--</xacro:macro>-->
         
     </xacro:macro>
 
