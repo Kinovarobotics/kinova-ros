@@ -231,16 +231,26 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
 
     int last = current_traj_.points.size() - 1;
     ros::Time end_time = start_time_ + current_traj_.points[last].time_from_start;
+    ros::Duration time_remaining = end_time - now;
+    ros::Duration time_elapsed = now - start_time_;
+    ros::Duration expected_total_trajectory_time = end_time - start_time_;
 
-    if (end_time - now < ros::Duration(goal_time_constraint_))
+    // Making sure trajectory has twice as long to correct and add 3 seconds to buffer
+    ros::Duration maximum_total_trajectory_time = ros::Duration(expected_total_trajectory_time.toSec() * 2 + 3);
+
+    if (time_elapsed > expected_total_trajectory_time)
     {
+        ROS_DEBUG_STREAM("Goal time constraint: " << goal_time_constraint_ << " Conditional: " << (end_time - now) );
+        ROS_DEBUG_STREAM("time_remaining " << time_remaining << " end_time * 3 " << ros::Time(end_time.sec * 3));
         // Checks that we have ended inside the goal constraints
         bool inside_goal_constraints = true;
+        bool still_running = false;
         for (size_t i = 0; i < msg->joint_names.size() && inside_goal_constraints; ++i)
         {
             // computing error from goal pose
             double abs_error = fabs(msg->actual.positions[i] - current_traj_.points[last].positions[i]);
             double goal_constraint = goal_constraints_[msg->joint_names[i]];
+            ROS_DEBUG_STREAM("Goal constraint: " << goal_constraint);
             if (goal_constraint >= 0 && abs_error > goal_constraint)
                 inside_goal_constraints = false;
             // It's important to be stopped if that's desired.
@@ -249,20 +259,37 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
                 if (fabs(msg->actual.velocities[i]) > stopped_velocity_tolerance_)
                     inside_goal_constraints = false;
             }
+
+            // Check if the trajectory controller is still publishing non-zero actual velocities
+            for(int i = 0; i < msg->actual.velocities.size(); ++i) {
+                if(fabs(msg->actual.velocities[i]) >= 1e-6) {
+                    ROS_DEBUG_STREAM("Joint " << (i+1) << " actual velocity > 1e-6 at " << msg->actual.velocities[i]);
+                    still_running = true;
+                    inside_goal_constraints = false;
+                } else {
+                    ROS_DEBUG_STREAM("Joint " << (i+1) << " actual velocity < 1e-6 at " << msg->actual.velocities[i]);
+                }
+            }
         }
         if (inside_goal_constraints)
         {
+            ROS_INFO("Successfully executed trajectory");
             active_goal_.setSucceeded();
             has_active_goal_ = false;
             first_fb_ = true;
         }
-        else if (now - end_time < ros::Duration(goal_time_constraint_))
+        else if(time_elapsed > maximum_total_trajectory_time) {
+            ROS_WARN_STREAM("Aborting because we took 2 times the length of the trajectory command, still_running: " << still_running);
+            active_goal_.setAborted();
+            has_active_goal_ = false;
+        }
+        else if (time_elapsed < expected_total_trajectory_time || still_running)
         {
             // Still have some time left to make it.
         }
         else
         {
-            ROS_WARN("Aborting because we wound up outside the goal constraints");
+            ROS_WARN_STREAM("Aborting because we wound up outside the goal constraints and not still running: " << still_running);
             active_goal_.setAborted();
             has_active_goal_ = false;
         }

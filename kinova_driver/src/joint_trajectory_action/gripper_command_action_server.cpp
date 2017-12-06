@@ -134,7 +134,7 @@ void GripperCommandActionController::goalCBFollow(GCAS::GoalHandle gh)
         return;
     }
 
-    bool finished_before_timeout = action_client_set_finger_->waitForResult(ros::Duration(20.0));
+    bool finished_before_timeout = action_client_set_finger_->waitForResult(ros::Duration(5.0));
 
     if(has_active_goal_) {
         ROS_INFO("Forced success on gripper command. FIX ME. ");

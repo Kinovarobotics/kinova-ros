@@ -84,6 +84,9 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
 
     bool command_abort = false;
 
+    timer_pub_joint_vel_.stop();
+    traj_command_points_index_ = 0;
+
 //    // if receive new command, clear all trajectory and stop api
 //    kinova_comm_.stopAPI();
 //    if(!kinova_comm_.isStopped())
@@ -205,6 +208,45 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 
     kinova_msgs::JointVelocity joint_velocity_msg;
 
+    double distance_to_goal = 0.0;
+    std::vector<double> final_goal_joint_position = traj_command_points_[traj_command_points_.size() - 1].positions;
+    std::vector<double> current_positions = traj_feedback_msg_.actual.positions;
+    std::vector<double> velocities;
+    velocities.resize(final_goal_joint_position.size());
+
+    bool is_close_enough = true;
+    double EPSILON = 0.002;
+//    std::vector<double> current_velocities = kinova_angle_command_[traj_command_points_index_];
+
+    for(int i = 0; i < final_goal_joint_position.size(); ++i) {
+        double correct_current_position = fmod(traj_feedback_msg_.actual.positions[i], 2*M_PI);
+        if(correct_current_position < 0.0)
+            correct_current_position += 2 * M_PI;
+        double correct_final_position = fmod(traj_command_points_[traj_command_points_.size() - 1].positions[i], 2 * M_PI);
+        if(correct_final_position < 0.0)
+            correct_final_position += 2 * M_PI;
+        double difference = correct_current_position - correct_final_position;
+
+        double difference_clockwise, difference_counter_clockwise;
+        if(difference > 0) {
+            difference_clockwise = difference;
+            difference_counter_clockwise = 2 * M_PI - difference;
+        } else {
+            difference_clockwise = 2 * M_PI + difference;
+            difference_counter_clockwise = -difference;
+        }
+
+        double absolute_error = std::min(difference_clockwise, difference_counter_clockwise);
+        if(absolute_error > EPSILON) {
+            is_close_enough = false;
+            velocities[i] = difference_counter_clockwise < difference_clockwise ? 0.8 : -0.8;
+        } else {
+            velocities[i] = 0.0;
+        }
+
+        ROS_INFO_STREAM("Joint " << (i+1) << " current position: " << correct_current_position << " absolute error: " << absolute_error << " final goal position: " << correct_final_position);
+    }
+
     if (traj_command_points_index_ <  kinova_angle_command_.size() && ros::ok())
     {
         joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_].Actuator1;
@@ -216,12 +258,20 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_].Actuator7;
 
         // In debug: compare values with topic: follow_joint_trajectory/goal, command
-//        ROS_DEBUG_STREAM_ONCE( std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
+//        ROS_INFO_STREAM(  std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint2: " << joint_velocity_msg.joint2 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint3: " << joint_velocity_msg.joint3 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint4: " << joint_velocity_msg.joint4 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint5: " << joint_velocity_msg.joint5 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 );
+//                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint7: " << joint_velocity_msg.joint7 * M_PI/180 );
+//
+//        ROS_INFO_STREAM(  std::endl <<" joint_velocity_msg.joint1: " << velocities[0] <<
+//                          std::endl <<" joint_velocity_msg.joint2: " << velocities[1] <<
+//                          std::endl <<" joint_velocity_msg.joint3: " << velocities[2] <<
+//                          std::endl <<" joint_velocity_msg.joint4: " << velocities[3] <<
+//                          std::endl <<" joint_velocity_msg.joint5: " << velocities[4] <<
+//                          std::endl <<" joint_velocity_msg.joint6: " << velocities[5] );
 
         pub_joint_velocity_.publish(joint_velocity_msg);
 
@@ -230,8 +280,30 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
             ROS_INFO_STREAM("Moved to point " << traj_command_points_index_++);
         }
     }
+    else if (!is_close_enough) // We finished the trajectory but still offset
+    {
+        ROS_INFO_STREAM("Correcting for position by moving joints 0.8");
+//        ROS_INFO_STREAM(  std::endl <<" joint_velocity_msg.joint1: " << velocities[0] <<
+//                            std::endl <<" joint_velocity_msg.joint2: " << velocities[1] <<
+//                            std::endl <<" joint_velocity_msg.joint3: " << velocities[2] <<
+//                            std::endl <<" joint_velocity_msg.joint4: " << velocities[3] <<
+//                            std::endl <<" joint_velocity_msg.joint5: " << velocities[4] <<
+//                            std::endl <<" joint_velocity_msg.joint6: " << velocities[5] );
+
+        joint_velocity_msg.joint1 = velocities[0];
+        joint_velocity_msg.joint2 = velocities[1];
+        joint_velocity_msg.joint3 = velocities[2];
+        joint_velocity_msg.joint4 = velocities[3];
+        joint_velocity_msg.joint5 = velocities[4];
+        joint_velocity_msg.joint6 = velocities[5];
+        //TODO: If you get a 7 dof arm fix me pls
+        joint_velocity_msg.joint7 = 0.0;
+
+        pub_joint_velocity_.publish(joint_velocity_msg);
+    }
     else // if come accross all the points, then stop timer.
     {
+        ROS_INFO("Successfully executed command and position is within error");
         joint_velocity_msg.joint1 = 0;
         joint_velocity_msg.joint2 = 0;
         joint_velocity_msg.joint3 = 0;
