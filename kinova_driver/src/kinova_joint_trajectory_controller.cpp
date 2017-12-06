@@ -14,7 +14,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     std::string robot_type;
     nh_.param<std::string>("robot_name",prefix_,"j2n6s300");
     nh_.param<std::string>("robot_type",robot_type,"j2n6s300");
-    number_joint_ =robot_type[3] - '0';
+    number_joint_ = robot_type[3] - '0';
 
     // Display debug information in teminal
     if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
@@ -100,6 +100,10 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
 
     traj_command_points_ = traj_msg->points;
     ROS_INFO_STREAM("Trajectory controller Receive trajectory with points number: " << traj_command_points_.size());
+    if(traj_command_points_.size() == 0) {
+        ROS_INFO_STREAM("Exiting commandCB");
+        return;
+    }
 
     // Map the index in joint_names and the msg
     std::vector<int> lookup(number_joint_, -1);

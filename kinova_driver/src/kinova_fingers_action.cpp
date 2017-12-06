@@ -61,7 +61,8 @@ KinovaFingersActionServer::KinovaFingersActionServer(KinovaComm &arm_comm, const
     node_handle_.param<double>("stall_threshold", stall_threshold_, 1.0);
     node_handle_.param<double>("rate_hz", rate_hz_, 10.0);
     node_handle_.param<double>("tolerance", tolerance, 6400.0*0.01);
-    tolerance_ = static_cast<float>(tolerance);
+//    node_handle_.param<double>("tolerance", tolerance, 6400.0*0.1);
+//    tolerance_ = 640.0; //static_cast<float>(tolerance);
 
     action_server_.start();
 }
@@ -74,11 +75,19 @@ KinovaFingersActionServer::~KinovaFingersActionServer()
 
 void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPositionGoalConstPtr &goal)
 {
+    kinova_msgs::FingerPosition finger_position;
+    finger_position.finger1 = goal->fingers.finger1;
+    finger_position.finger2 = goal->fingers.finger2;
+    finger_position.finger3 = goal->fingers.finger3;
+
     if ((arm_comm_.numFingers() < 3) && (goal->fingers.finger3 != 0.0))
     {
         ROS_WARN("Detected that the third finger command was non-zero even though there "
                  "are only two fingers on the gripper. The goal for the third finger "
-                 "should be set to zero or you make experience delays in action results.");
+                 "should be set to zero or you make experience delays in action results."
+                 "Forced finger3 value to zero. ");
+
+        finger_position.finger3 = 0.0;
     }
 
     kinova_msgs::SetFingersPositionFeedback feedback;
@@ -97,26 +106,32 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
             ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
             action_server_.setAborted(result);
             return;
+        } else {
+            ROS_INFO("Arm is not stopped");
         }
 
         last_nonstall_time_ = current_time;
         last_nonstall_finger_positions_ = current_finger_positions;
 
-        FingerAngles target(goal->fingers);
+        FingerAngles target(finger_position);
         arm_comm_.setFingerPositions(target);
+
+        ROS_INFO_STREAM("Target finger angles " << target.Finger1 << ", " << target.Finger2 << ", " << target.Finger3);
 
         // Loop until the action completed, is preempted, or fails in some way.
         // timeout is left to the caller since the timeout may greatly depend on
         // the context of the movement.
+        int iteration = 0;
         while (true)
         {
+            ROS_INFO_STREAM("Iteration " << iteration++);
             ros::spinOnce();
 
-	    if (arm_comm_.isStopped())
+	        if (arm_comm_.isStopped())
             {
                 result.fingers = current_finger_positions.constructFingersMsg();
                 action_server_.setAborted(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
                 return;
             }
             else if (action_server_.isPreemptRequested() || !ros::ok())
@@ -125,47 +140,54 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
                 arm_comm_.stopAPI();
                 arm_comm_.startAPI();
                 action_server_.setPreempted(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
+                ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 return;
             }
 
             arm_comm_.getFingerPositions(current_finger_positions);
             current_time = ros::Time::now();
             feedback.fingers = current_finger_positions.constructFingersMsg();
-//            action_server_.publishFeedback(feedback);
+            action_server_.publishFeedback(feedback); // TODO: Why was this commented out?
+
             if (target.isCloseToOther(current_finger_positions, tolerance_))
             {
                 // Check if the action has succeeeded
                 result.fingers = current_finger_positions.constructFingersMsg();
                 action_server_.setSucceeded(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
+                ROS_INFO_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setSucceeded ");
                 return;
             }
             else if (!last_nonstall_finger_positions_.isCloseToOther(current_finger_positions, stall_threshold_))
             {
                 // Check if we are outside of a potential stall condition
+                ROS_INFO_STREAM("Check if we are outside of a potential stall condition: ");
+                ROS_INFO_STREAM("Current Time: " << current_time << " vs Last Nonstall Time: " << last_nonstall_time_);
+                ROS_INFO_STREAM("Current finger positions: (" << current_finger_positions.Finger1 << " " << current_finger_positions.Finger2 << " " << current_finger_positions.Finger3  << ") vs Last Nonstall Finger Positions (" << last_nonstall_finger_positions_.Finger1 << " " << last_nonstall_finger_positions_.Finger2 << " " << last_nonstall_finger_positions_.Finger3);
+
                 last_nonstall_time_ = current_time;
                 last_nonstall_finger_positions_ = current_finger_positions;
             }
             else if ((current_time - last_nonstall_time_).toSec() > stall_interval_seconds_)
             {
+                ROS_INFO_STREAM("Check if the full stall condition has been meet");
                 // Check if the full stall condition has been meet
                 result.fingers = current_finger_positions.constructFingersMsg();
- 		if (!arm_comm_.isStopped())
+ 		        if (!arm_comm_.isStopped())
                 {
-                	arm_comm_.stopAPI();
-                	arm_comm_.startAPI();
-		}
-		//why preemted, if the robot is stalled, trajectory/action failed!
+                    arm_comm_.stopAPI();
+                    arm_comm_.startAPI();
+                }
+                //why preemted, if the robot is stalled, trajectory/action failed!
                 /*
                 action_server_.setPreempted(result);
                 ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setPreempted ");
                 */
                 action_server_.setAborted(result);
-                ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
+                ROS_INFO_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", Trajectory command failed ");
                 return;
             }
 
+            ROS_INFO_STREAM("----------------------------------------------------");
             ros::Rate(rate_hz_).sleep();
         }
     }
@@ -174,7 +196,7 @@ void KinovaFingersActionServer::actionCallback(const kinova_msgs::SetFingersPosi
         result.fingers = current_finger_positions.constructFingersMsg();
         ROS_ERROR_STREAM(e.what());
         action_server_.setAborted(result);
-        ROS_DEBUG_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
+        ROS_WARN_STREAM(__PRETTY_FUNCTION__ << ": LINE " << __LINE__ << ", setAborted ");
     }
 }
 

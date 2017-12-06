@@ -14,7 +14,7 @@ namespace kinova
     class GripperCommandActionController
     {
         typedef actionlib::ActionServer<control_msgs::GripperCommandAction> GCAS;
-        typedef actionlib::ActionClient<kinova_msgs::SetFingersPositionAction> SFPAC;
+        typedef actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction> SFPAC;
 
     public:
         GripperCommandActionController(ros::NodeHandle &n, std::string &robot_name);

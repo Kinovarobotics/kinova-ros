@@ -13,10 +13,13 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
     address = "/" + robot_name + "_gripper/gripper_command";
 
     action_server_gripper_command_.reset(
-                new GCAS(nh_, address, boost::bind(
-                             &GripperCommandActionController::goalCBFollow, this, _1),
-                         boost::bind(&GripperCommandActionController::cancelCBFollow,
-                                     this, _1), false));
+        new GCAS(nh_,
+                 address,
+                 boost::bind(&GripperCommandActionController::goalCBFollow, this, _1),
+                 boost::bind(&GripperCommandActionController::cancelCBFollow,  this, _1),
+                 false
+        )
+    );
     address = "/" + robot_name + "_driver/fingers_action/finger_positions";
     action_client_set_finger_.reset(new SFPAC(nh_, address));
 
@@ -26,7 +29,13 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
     nh_.param("finger_max_turn_", finger_max_turn_, 6400.0);
     nh_.param("finger_conv_ratio_", finger_conv_ratio_, 1.4 / 6400.0);
 
-    gripper_joint_num_ = 3;
+    gripper_joint_num_ = robot_name[5] - '0'; //m1n6s<gripper_count>00 -> integer
+    if(gripper_joint_num_ != 2 && gripper_joint_num_ != 3) {
+        ROS_ERROR_STREAM("Incorrect number of fingers, must be 2 or 3 but found " << gripper_joint_num_);
+        exit(1);
+    } else {
+        ROS_INFO_STREAM("Found " << gripper_joint_num_ << " fingers");
+    }
     gripper_joint_names_.resize(gripper_joint_num_);
 
     for (uint i = 0; i<gripper_joint_names_.size(); i++)
@@ -53,7 +62,7 @@ GripperCommandActionController::GripperCommandActionController(ros::NodeHandle &
 
 
     action_server_gripper_command_->start();
-    action_client_set_finger_->waitForActionServerToStart();
+    action_client_set_finger_->waitForServer();
     ROS_INFO("Start Gripper_Command_Trajectory_Action server!");
 
 }
@@ -115,10 +124,23 @@ void GripperCommandActionController::goalCBFollow(GCAS::GoalHandle gh)
     else
         goal.fingers.finger3 = 0.0;
 
+    ROS_INFO("Gripper_command_action_server published goal via command publisher!");
+
     if(action_client_set_finger_->isServerConnected())
         action_client_set_finger_->sendGoal(goal);
+    else {
+        ROS_ERROR("Gripper_command_action_server is not connected to action_client_set_finger");
+        gh.setAborted();
+        return;
+    }
 
-    ROS_INFO("Gripper_command_action_server published goal via command publisher!");
+    bool finished_before_timeout = action_client_set_finger_->waitForResult(ros::Duration(20.0));
+
+    if(has_active_goal_) {
+        ROS_INFO("Forced success on gripper command. FIX ME. ");
+        gh.setSucceeded();
+        has_active_goal_ = false;
+    }
 }
 
 
@@ -149,11 +171,18 @@ void GripperCommandActionController::controllerStateCB(const kinova_msgs::Finger
     double abs_error2 = fabs(active_goal_.getGoal()->command.position - msg->finger2 * finger_conv_ratio_);
     double abs_error3 = fabs(active_goal_.getGoal()->command.position - msg->finger3 * finger_conv_ratio_);
 
-    if (abs_error1<gripper_command_goal_constraint_  && abs_error2<gripper_command_goal_constraint_ && abs_error3<gripper_command_goal_constraint_)
+    if(gripper_joint_num_ == 2 && abs_error1<gripper_command_goal_constraint_  && abs_error2<gripper_command_goal_constraint_) {
+        ROS_INFO("Gripper command goal succeeded!");
+        active_goal_.setSucceeded();
+        has_active_goal_ = false;
+    }
+    else if (abs_error1<gripper_command_goal_constraint_  && abs_error2<gripper_command_goal_constraint_ && abs_error3<gripper_command_goal_constraint_)
     {
         ROS_INFO("Gripper command goal succeeded!");
         active_goal_.setSucceeded();
         has_active_goal_ = false;
+    } else {
+        ROS_INFO_STREAM("Gripper command not yet succeeded! Current position: ("<<msg->finger1 * finger_conv_ratio_<<", "<<msg->finger2 * finger_conv_ratio_<<", "<<msg->finger3 * finger_conv_ratio_<<") Goal: ("<<active_goal_.getGoal()->command.position<<") Constrant: "<<gripper_command_goal_constraint_);
     }
 }
 
