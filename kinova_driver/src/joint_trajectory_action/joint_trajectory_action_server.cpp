@@ -236,7 +236,7 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
     ros::Duration expected_total_trajectory_time = end_time - start_time_;
 
     // Making sure trajectory has twice as long to correct and add 3 seconds to buffer
-    ros::Duration maximum_total_trajectory_time = ros::Duration(expected_total_trajectory_time.toSec() * 2 + 3);
+    ros::Duration maximum_total_trajectory_time = ros::Duration(expected_total_trajectory_time.toSec() * 3 + 3);
 
     if (time_elapsed > expected_total_trajectory_time)
     {
@@ -279,7 +279,7 @@ void JointTrajectoryActionController::controllerStateCB(const control_msgs::Foll
             first_fb_ = true;
         }
         else if(time_elapsed > maximum_total_trajectory_time) {
-            ROS_WARN_STREAM("Aborting because we took 2 times the length of the trajectory command, still_running: " << still_running);
+            ROS_WARN_STREAM("Aborting because we took 3 times the length of the trajectory command (" << maximum_total_trajectory_time << " seconds), still_running: " << still_running);
             active_goal_.setAborted();
             has_active_goal_ = false;
         }
