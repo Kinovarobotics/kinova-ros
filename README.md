@@ -115,6 +115,7 @@ To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/
 sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 ```
 
+
 ## How to use the stack
 
 ### Launch driver
