@@ -1,0 +1,10 @@
+<launch>
+  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+  <arg name="moveit_controller_manager"
+       default="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
+  <param name="moveit_controller_manager"
+         value="$(arg moveit_controller_manager)"/>  
+
+ <!-- The rest of the params are specific to this plugin -->
+  <rosparam file="$(find j2s7s300_moveit_config)/config/controllers_ros_control.yaml"/>
+</launch>

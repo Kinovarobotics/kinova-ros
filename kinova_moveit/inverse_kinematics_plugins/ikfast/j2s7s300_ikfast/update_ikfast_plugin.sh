@@ -1,0 +1,1 @@
+rosrun moveit_ikfast create_ikfast_moveit_plugin.py j2s7s300 robot_arm j2s7s300_ikfast /home/soli/catkin_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast/src/j2s7s300_robot_arm_ikfast_solver.cpp

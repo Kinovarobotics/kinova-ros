@@ -1,0 +1,71 @@
+{
+  "keys": {}, 
+  "groups": {
+    "pluginmanager": {
+      "keys": {
+        "running-plugins": {
+          "type": "repr", 
+          "repr": "{u'rqt_publisher/Publisher': [1]}"
+        }
+      }, 
+      "groups": {
+        "plugin__rqt_publisher__Publisher__1": {
+          "keys": {}, 
+          "groups": {
+            "dock_widget__PublisherWidget": {
+              "keys": {
+                "dockable": {
+                  "type": "repr", 
+                  "repr": "True"
+                }, 
+                "parent": {
+                  "type": "repr", 
+                  "repr": "None"
+                }, 
+                "dock_widget_title": {
+                  "type": "repr", 
+                  "repr": "u'Message Publisher'"
+                }
+              }, 
+              "groups": {}
+            }, 
+            "plugin": {
+              "keys": {
+                "publishers": {
+                  "type": "repr", 
+                  "repr": "u\"[{'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_1_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_1_position_controller/command/data': '3.5'}, 'publisher_id': 0, 'counter': 122538}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_2_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_2_position_controller/command/data': '3.1'}, 'publisher_id': 1, 'counter': 123100}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_3_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_3_position_controller/command/data': '3.1415'}, 'publisher_id': 2, 'counter': 121638}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_4_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_4_position_controller/command/data': '3.1415'}, 'publisher_id': 3, 'counter': 120828}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_5_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_5_position_controller/command/data': '3.1415'}, 'publisher_id': 4, 'counter': 120077}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/joint_6_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/joint_6_position_controller/command/data': '0'}, 'publisher_id': 5, 'counter': 118962}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/finger_1_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/finger_1_position_controller/command/data': '0'}, 'publisher_id': 6, 'counter': 5988}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/finger_2_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/finger_2_position_controller/command/data': '0'}, 'publisher_id': 7, 'counter': 5938}, {'type_name': 'std_msgs/Float64', 'topic_name': '/j2n6s300/finger_3_position_controller/command', 'enabled': False, 'rate': 100.0, 'expressions': {u'/j2n6s300/finger_3_position_controller/command/data': '1'}, 'publisher_id': 8, 'counter': 5886}]\""
+                }
+              }, 
+              "groups": {}
+            }
+          }
+        }
+      }
+    }, 
+    "mainwindow": {
+      "keys": {
+        "geometry": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('01d9d0cb0001000000000041000000180000077f0000043700000041000000180000077f00000437000000010000')", 
+          "pretty-print": "     A     7 A     7   "
+        }, 
+        "state": {
+          "type": "repr(QByteArray.hex)", 
+          "repr(QByteArray.hex)": "QtCore.QByteArray('000000ff00000000fd00000001000000030000073f000003f1fc0100000009fb00000044007200710074005f00670072006100700068005f005f0052006f007300470072006100700068005f005f0031005f005f0052006f007300470072006100700068005500690100000000000003390000000000000000fb00000072007200710074005f0073006500720076006900630065005f00630061006c006c00650072005f005f005300650072007600690063006500430061006c006c00650072005f005f0031005f005f005300650072007600690063006500430061006c006c0065007200570069006400670065007401000000000000073f0000000000000000fb00000058007200710074005f007000750062006c00690073006800650072005f005f005000750062006c00690073006800650072005f005f0031005f005f005000750062006c0069007300680065007200570069006400670065007401000000000000073f0000026600fffffffb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0031005f005f0054006f00700069006300570069006400670065007401000000000000073f0000000000000000fb0000004c007200710074005f0074006f007000690063005f005f0054006f0070006900630050006c007500670069006e005f005f0032005f005f0054006f007000690063005700690064006700650074010000036c000001570000000000000000fb00000042007200710074005f007300720076005f005f00530065007200760069006300650073005f005f0031005f005f006d0065007300730061006700650073002e0075006901000003480000025d0000000000000000fb00000062007200710074005f0072006f0062006f0074005f006d006f006e00690074006f0072005f005f0052006f0062006f0074004d006f006e00690074006f0072005f005f0031005f005f0052006f0062006f00740020004d006f006e00690074006f00720100000000000003dd0000000000000000fb00000062006a0073006b005f007200710074005f0070006c007500670069006e0073005f005f0048006900730074006f006700720061006d0050006c006f0074005f005f0031005f005f00440061007400610050006c006f007400570069006400670065007401000005110000022e0000000000000000fb00000042007200710074005f006d00730067005f005f004d0065007300730061006700650073005f005f0031005f005f006d0065007300730061006700650073002e0075006901000004d80000026700000000000000000000073f0000000000000004000000040000000800000008fc00000001000000030000000100000036004d0069006e0069006d0069007a006500640044006f0063006b00570069006400670065007400730054006f006f006c0062006100720000000000ffffffff0000000000000000')", 
+          "pretty-print": "                 Drqt_graph__RosGraph__1__RosGraphUi          rrqt_service_caller__ServiceCaller__1__ServiceCallerWidget          Xrqt_publisher__Publisher__1__PublisherWidget          Lrqt_topic__TopicPlugin__1__TopicWidget          Lrqt_topic__TopicPlugin__2__TopicWidget          Brqt_srv__Services__1__messages.ui          brqt_robot_monitor__RobotMonitor__1__Robot Monitor          bjsk_rqt_plugins__HistogramPlot__1__DataPlotWidget          Brqt_msg__Messages__1__messages.ui                            6MinimizedDockWidgetsToolbar        "
+        }
+      }, 
+      "groups": {
+        "toolbar_areas": {
+          "keys": {
+            "MinimizedDockWidgetsToolbar": {
+              "type": "repr", 
+              "repr": "8"
+            }
+          }, 
+          "groups": {}
+        }
+      }
+    }
+  }
+}

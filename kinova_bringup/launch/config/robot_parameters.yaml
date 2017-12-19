@@ -1,0 +1,36 @@
+# Set this parameter to use a specific arm on your system    --> 
+# serial_number: PJ00000001030703130
+
+# Joint speed limit for joints 1, 2, 3
+jointSpeedLimitParameter1: 10
+
+# Joint speed limit for joints 4, 5, 6
+jointSpeedLimitParameter2: 20
+
+# payload: [COM COMx COMy COMz]
+#payload: [0, 0, 0, 0]
+
+connection_type: USB #Ethernet 
+
+# Ethernet connection parameters
+ethernet: {
+  local_machine_IP: 192.168.100.100,
+  subnet_mask: 255.255.255.0,
+  local_cmd_port: 25000,
+  local_broadcast_port: 25025
+}
+
+#Torque control parameters
+#Do not change these parameters unless you want to change torque control behavior
+torque_parameters: {
+      publish_torque_with_gravity_compensation: false,
+      use_estimated_COM_parameters: false,
+    # if torque min/max sepecified, all min/max values need to be specified
+    #  torque_min: [80, 80, 80, 80, 80, 80, 80],
+    #  torque_max: [90, 90, 90, 90, 90, 90, 90],
+    # Decides velocity threshold at which robot switches torque to position control (between 0 and 1)
+    # safety_factor: 1,
+    # COM parameters
+    # order [m1,m2,...,m7,x1,x2,...,x7,y1,y2,...y7,z1,z2,...z7]
+    # com_parameters: [0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0, 0,0,0,0,0,0,0]
+}

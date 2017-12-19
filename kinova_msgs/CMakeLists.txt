@@ -17,8 +17,10 @@ add_message_files(
   FingerPosition.msg
   JointAngles.msg
   JointVelocity.msg
+  JointTorque.msg
   KinovaPose.msg
   PoseVelocity.msg
+  CartesianForce.msg
 )
 
 add_service_files(
@@ -28,6 +30,13 @@ add_service_files(
   HomeArm.srv
   SetForceControlParams.srv
   SetEndEffectorOffset.srv
+  SetNullSpaceModeState.srv
+  SetTorqueControlMode.srv
+  SetTorqueControlParameters.srv
+  ClearTrajectories.srv
+  ZeroTorques.srv
+  AddPoseToCartesianTrajectory.srv
+  RunCOMParametersEstimation.srv
 )
 
 add_action_files(DIRECTORY action

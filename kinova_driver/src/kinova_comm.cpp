@@ -48,20 +48,47 @@
 #include <string>
 #include <vector>
 #include <tf/tf.h>
+#include <arpa/inet.h>
 
 namespace kinova
 {
 
 KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
                    boost::recursive_mutex &api_mutex,
-                   const bool is_movement_on_start)
+                   const bool is_movement_on_start,
+                   const std::string &kinova_robotType)
     : is_software_stop_(false), api_mutex_(api_mutex)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
     int result = NO_ERROR_KINOVA;
 
-    // Get the serial number parameter for the arm we wish to connec to
+    //initialize kinova api functions
+    std::string api_type;
+    node_handle.param<std::string>("connection_type", api_type, "USB");
+    if (api_type == "USB")
+      kinova_api_.initializeKinovaAPIFunctions(USB);
+    else
+      kinova_api_.initializeKinovaAPIFunctions(ETHERNET);
+
+
+    //Set ethernet parameters
+    EthernetCommConfig ethernet_settings;
+    std::string local_IP,subnet_mask;
+    int local_cmd_port,local_bcast_port;
+    node_handle.getParam("ethernet/local_machine_IP", local_IP);
+    node_handle.getParam("ethernet/subnet_mask", subnet_mask);
+    node_handle.getParam("ethernet/local_cmd_port", local_cmd_port);
+    node_handle.getParam("ethernet/local_broadcast_port", local_bcast_port);
+    ethernet_settings.localCmdport = local_cmd_port;
+    ethernet_settings.localBcastPort = local_bcast_port;
+    ethernet_settings.localIpAddress = inet_addr(local_IP.c_str());
+    ethernet_settings.subnetMask = inet_addr(subnet_mask.c_str());
+    ethernet_settings.rxTimeOutInMs = 1000;
+    ethernet_settings.robotIpAddress = inet_addr("192.168.100.11");
+    ethernet_settings.robotPort = 55000;
+
+    // Get the serial number parameter for the arm we wish to connect to
     std::string serial_number = "";
     node_handle.getParam("serial_number", serial_number);
 
@@ -72,24 +99,32 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         throw KinovaCommException("Could not get the Kinova API version", result);
     }
 
-    ROS_INFO_STREAM("Initializing Kinova API (header version: " << COMMAND_LAYER_VERSION << ", library version: "
-                    << api_version[0] << "." << api_version[1] << "." << api_version[2] << ")");
+    ROS_INFO_STREAM("Initializing Kinova "<< api_type.c_str()
+                    << " API (header version: " << COMMAND_LAYER_VERSION
+                    << ", library version: " << api_version[0] << "."
+                                             << api_version[1] << "." << api_version[2] << ")");
 
-    result = kinova_api_.initAPI();
+    if (api_type == "USB"){
+      result = kinova_api_.initAPI();
+    }
+    else{
+        result =kinova_api_.initEthernetAPI(ethernet_settings);
+    }
+
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not initialize Kinova API", result);
     }
 
-    KinovaDevice devices_list[MAX_KINOVA_DEVICE];
+    result = kinova_api_.refresDevicesList();
+
     result = NO_ERROR_KINOVA;
-    kinova_api_.getDevices(devices_list, result);
+    int devices_count = kinova_api_.getDevices(devices_list_, result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get devices list", result);
     }
 
-    int devices_count = kinova_api_.getDeviceCount(result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not get devices list count.", result);
@@ -99,10 +134,10 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     for (int device_i = 0; device_i < devices_count; device_i++)
     {
         // If no device is specified, just use the first available device
-        if ((serial_number == "")
-            || (std::strcmp(serial_number.c_str(), devices_list[device_i].SerialNumber) == 0))
+        if (serial_number == "" || serial_number == "not_set" ||
+            std::strcmp(serial_number.c_str(), devices_list_[device_i].SerialNumber) == 0)
         {
-            result = kinova_api_.setActiveDevice(devices_list[device_i]);
+            result = kinova_api_.setActiveDevice(devices_list_[device_i]);
             if (result != NO_ERROR_KINOVA)
             {
                 throw KinovaCommException("Could not set the active device", result);
@@ -122,28 +157,10 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
             getQuickStatus(quick_status);
 
             robot_type_ = quick_status.RobotType;
-            switch (robot_type_) {
-                case 0:
-                case 3:
-                case 4:
-                case 6:
-                case 7:
-                    num_fingers_ = 3;
-                    break;
-                case 1:
-                case 2:
-                case 5:
-                    num_fingers_ = 3; // Mico (case 1,2,5) may equipped with 3-finger gripper as well.
-                    break;
-                default:
-                    ROS_ERROR("Unknown robot type: %d", quick_status.RobotType);
-                    throw KinovaCommException("Could not recognize the type of the arm", quick_status.RobotType);
-                    break;
-            };
 
             ROS_INFO_STREAM("Found " << devices_count << " device(s), using device at index " << device_i
                             << " (model: " << configuration.Model
-                            << ", serial number: " << devices_list[device_i].SerialNumber
+                            << ", serial number: " << devices_list_[device_i].SerialNumber
                             << ", code version: " << general_info.CodeVersion
                             << ", code revision: " << general_info.CodeRevision << ")");
 
@@ -159,11 +176,28 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         throw KinovaCommException("Could not find the specified arm", 0);
     }
 
+    //find the number of joints and fingers of the arm using robotType passed from arm node
+    num_joints_ = kinova_robotType[3]-'0';
+    num_fingers_ = kinova_robotType[5]-'0';
+
     // On a cold boot the arm may not respond to commands from the API right away.
     // This kick-starts the Control API so that it's ready to go.
     startAPI();
     stopAPI();
     startAPI();
+
+    //Set robot to use manual COM parameters
+    bool use_estimated_COM;
+    node_handle.param("torque_parameters/use_estimated_COM_parameters",
+                          use_estimated_COM,true);
+    if (use_estimated_COM == true)
+        kinova_api_.setGravityType(OPTIMAL);
+    else
+        kinova_api_.setGravityType(MANUAL_INPUT);
+
+    //Set torque safety factor to 1
+    kinova_api_.setTorqueSafetyFactor(1);
+
 
     // Set the angular velocity of each of the joints to zero
     TrajectoryPoint kinova_velocity;
@@ -516,7 +550,7 @@ void KinovaComm::getJointAngles(KinovaAngles &angles)
  * @param timeout default value 0.0, not used.
  * @param push default true, errase all trajectory before request motion..
  */
-void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool push)
+void KinovaComm::setJointAngles(const KinovaAngles &angles, double speedJoint123, double speedJoint4567, int timeout, bool push)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
 
@@ -551,6 +585,9 @@ void KinovaComm::setJointAngles(const KinovaAngles &angles, int timeout, bool pu
     kinova_joint.Position.Delay = 0.0;
     kinova_joint.Position.Type = ANGULAR_POSITION;
     kinova_joint.Position.Actuators = angles;
+    kinova_joint.Limitations.speedParameter1 = speedJoint123;
+    kinova_joint.Limitations.speedParameter2 = speedJoint4567;
+    kinova_joint.LimitationsActive = 1;
 
     result = kinova_api_.sendAdvanceTrajectory(kinova_joint);
     if (result != NO_ERROR_KINOVA)
@@ -578,6 +615,15 @@ void KinovaComm::getJointVelocities(KinovaAngles &vels)
     }
 
     vels = KinovaAngles(kinova_vels.Actuators);
+
+    //velocities reported back by firmware seem to be half of actual value
+    vels.Actuator1 = vels.Actuator1*2;
+    vels.Actuator2 = vels.Actuator2*2;
+    vels.Actuator3 = vels.Actuator3*2;
+    vels.Actuator4 = vels.Actuator4*2;
+    vels.Actuator5 = vels.Actuator5*2;
+    vels.Actuator6 = vels.Actuator6*2;
+    vels.Actuator7 = vels.Actuator7*2;
 }
 
 
@@ -613,6 +659,51 @@ void KinovaComm::setJointVelocities(const AngularInfo &joint_vel)
         throw KinovaCommException("Could not send advanced joint velocity trajectory", result);
     }
 }
+
+void KinovaComm::setJointTorques(float joint_torque[])
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The joint torques could not be set because the arm is stopped");
+        return;
+    }
+
+    //memset(&joint_torque, 0, sizeof(joint_torque));  // zero structure
+
+    //startAPI();
+    //ROS_INFO("Torque %f %f %f %f %f %f %f ", joint_torque[0],joint_torque[1],joint_torque[2],
+     //       joint_torque[3],joint_torque[4],joint_torque[5],joint_torque[6]);
+    int result = kinova_api_.sendAngularTorqueCommand(joint_torque);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send joint torques", result);
+    }
+}
+
+int KinovaComm::sendCartesianForceCommand(float force_cmd[COMMAND_SIZE])
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    if (isStopped())
+    {
+        ROS_INFO("The force cmd could not be set because the arm is stopped");
+        return 0;
+    }
+
+    //memset(&joint_torque, 0, sizeof(joint_torque));  // zero structure
+
+    //startAPI();
+    //ROS_INFO("Force %f %f %f %f %f %f", force_cmd[0],force_cmd[1],force_cmd[2],
+     //       force_cmd[3],force_cmd[4],force_cmd[5]);
+    int result = kinova_api_.sendCartesianForceCommand(force_cmd);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send force cmd", result);
+    }
+    return result;
+}
+
 
 
 /**
@@ -650,6 +741,21 @@ void KinovaComm::getJointTorques(KinovaAngles &tqs)
     tqs = KinovaAngles(kinova_tqs.Actuators);
 }
 
+void KinovaComm::getGravityCompensatedTorques(KinovaAngles &tqs)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    AngularPosition kinova_tqs;
+    memset(&kinova_tqs, 0, sizeof(kinova_tqs));  // zero structure
+
+    int result = kinova_api_.getAngularForceGravityFree(kinova_tqs);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get the joint torques", result);
+    }
+
+    tqs = KinovaAngles(kinova_tqs.Actuators);
+}
+
 
 /**
  * @brief This function returns the current that each actuator consume on the main supply.
@@ -666,6 +772,25 @@ void KinovaComm::getJointCurrent(AngularPosition &anguler_current)
     }
 }
 
+/**
+  *@brief Set zero torque for all joints
+ */
+void KinovaComm::setZeroTorque()
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int actuator_address[] = {16,17,18,19,20,21,25};
+    int result;
+    for (int i=0;i<num_joints_;i++)
+    {
+        result = kinova_api_.setTorqueZero(actuator_address[i]);
+    }
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set zero torques", result);
+    }
+    ROS_WARN("Torques for all joints set to zero");
+}
+
 
 /**
  * @brief This function set the angular torque's maximum and minimum values.
@@ -675,12 +800,120 @@ void KinovaComm::getJointCurrent(AngularPosition &anguler_current)
 void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
 {
     boost::recursive_mutex::scoped_lock lock(api_mutex_);
-    memset(&min, 0, sizeof(min));
-    memset(&max, 0, sizeof(max));
+    ROS_INFO("Setting min torues - %f %f %f %f %f %f %f", min.Actuator1,
+              min.Actuator2,min.Actuator3,min.Actuator4,min.Actuator5,
+              min.Actuator6,min.Actuator7);
+    ROS_INFO("Setting max torues - %f %f %f %f %f %f %f", max.Actuator1,
+              max.Actuator2,max.Actuator3,max.Actuator4,max.Actuator5,
+              max.Actuator6,max.Actuator7);
+
     int result = kinova_api_.setAngularTorqueMinMax(min, max);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set the limits for joint torques", result);
+    }
+}
+
+/**
+ * @brief setPayload
+ * @param payload Array - Mass, COMx, COMy, COMz
+ */
+void KinovaComm::setPayload(std::vector<float> payload)
+{
+    float payload_[4];
+    std::copy(payload.begin(), payload.end(), payload_);
+    ROS_INFO("Payload set to - %f %f %f %f", payload_[0],payload_[1],
+            payload_[2],payload_[3]);
+    int result = kinova_api_.setGravityPayload(payload_);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the gravity payload", result);
+    }
+}
+
+/**
+ * @brief Safety factor defines a velocity threshold at which torque control switches to position control
+ * @param factor between 0 and 1
+ */
+void KinovaComm::setToquesControlSafetyFactor(float factor)
+{
+    ROS_INFO("Setting torque safety factor to %f", factor);
+    int result = kinova_api_.setTorqueSafetyFactor(factor);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set torque safety factor", result);
+    }
+}
+
+/** @brief Sets COM and COMxyz for all links
+  * @arg command[42] - {m1,m2..m7,x1,x2,..x7,y1,y2,...,y7,z1,z2,...z7}
+//! */
+void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
+{
+    float com_parameters[GRAVITY_PARAM_SIZE];
+    memset(&com_parameters, 0, sizeof(com_parameters));
+    std::ostringstream com_params;
+    com_params<<"Setting COM parameters to ";
+    for (int i=0; i<params.size(); i++)
+    {
+        com_parameters[i] = params[i];
+        com_params<<params[i]<<", ";
+    }
+    ROS_INFO_STREAM(com_params.str());
+    int result;
+    if (type == MANUAL_INPUT)
+        result = kinova_api_.setGravityManualInputParam(com_parameters);
+    else
+        result = kinova_api_.setGravityOptimalZParam(com_parameters);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the COM parameters", result);
+    }
+}
+
+/**
+* @brief This function is used to run a sequence to estimate the optimal gravity parameters when the robot is
+* standing (Z).
+
+The arm must be in Trajectory-Position mode before to launch the procedure.
+
+Before using this procedure, you should make sure that the torque sensors are well calibrated. This procedure is
+explained in the user guide and in the Advanced Specification Guide.
+
+When the program is launched, the robot will execute a trajectory. The user must remain alert and turn off the
+robot if something wrong occurs (for example if the robot collides with an object). When the program ends, it will
+output the parameters in the console and in a text file named “ParametersOptimal_Z.txt” in the program folder.
+These parameters can then be sent as input to the function SetOptimalZParam().
+*
+* @param type The robot type
+* @param OptimalzParam The result of the sequence
+*/
+int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
+{
+    float COMparams[GRAVITY_PARAM_SIZE];
+    memset(&COMparams[0],0,sizeof(COMparams));
+    int result;
+    if(type == SPHERICAL_7DOF_SERVICE)
+    {
+        ROS_INFO("Running 7 dof robot COM estimation sequence");
+        result = kinova_api_.runGravityZEstimationSequence7DOF(type,COMparams);
+    }
+    else
+    {
+        double params[OPTIMAL_Z_PARAM_SIZE];
+        ROS_INFO("Running COM estimation sequence");
+        result = kinova_api_.runGravityZEstimationSequence(type,params);
+        for (int i=0;i<OPTIMAL_Z_PARAM_SIZE;i++)
+            COMparams[i] = (float)params[i];
+    }
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not launch COM parameter estimation sequence", result);
+    }
+    result = kinova_api_.setGravityOptimalZParam(COMparams);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set COM Parameters", result);
     }
 }
 
@@ -691,13 +924,15 @@ void KinovaComm::setJointTorqueMinMax(AngularInfo &min, AngularInfo &max)
  */
 void KinovaComm::printAngles(const KinovaAngles &angles)
 {
-    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f \n",
+    ROS_INFO("Joint angles (deg) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f, J7: %f \n",
              angles.Actuator1, angles.Actuator2, angles.Actuator3,
-             angles.Actuator4, angles.Actuator5, angles.Actuator6);
+             angles.Actuator4, angles.Actuator5, angles.Actuator6,
+             angles.Actuator7);
 
-    ROS_INFO("Joint angles (rad) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f",
+    ROS_INFO("Joint angles (rad) -- J1: %f, J2: %f J3: %f, J4: %f, J5: %f, J6: %f, J7: %f \n",
              angles.Actuator1/180.0*M_PI, angles.Actuator2/180.0*M_PI, angles.Actuator3/180.0*M_PI,
-             angles.Actuator4/180.0*M_PI, angles.Actuator5/180.0*M_PI, angles.Actuator6/180.0*M_PI);
+             angles.Actuator4/180.0*M_PI, angles.Actuator5/180.0*M_PI, angles.Actuator6/180.0*M_PI,
+             angles.Actuator7/180.0*M_PI);
 }
 
 
@@ -1148,7 +1383,7 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
 
     kinova_angular.Position.Actuators = joint_angles.Actuators;
 
-    result = kinova_api_.sendAdvanceTrajectory(kinova_angular);
+    result = kinova_api_.sendBasicTrajectory(kinova_angular);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not send advanced finger trajectory", result);
@@ -1192,8 +1427,9 @@ void KinovaComm::homeArm(void)
     startAPI();
 
     ROS_INFO("Homing the arm");
+    kinova_api_.moveHome();
 
-    JoystickCommand mycommand;
+    /*JoystickCommand mycommand;
     mycommand.InitStruct();
     // In api mapping(observing with Jacosoft), home button is ButtonValue[2].
     mycommand.ButtonValue[2] = 1;
@@ -1205,7 +1441,7 @@ void KinovaComm::homeArm(void)
         // if (myhome.isCloseToOther(KinovaAngles(currentAngles.Actuators), angle_tolerance))
         if(isHomed())
         {
-            ROS_INFO(" haha Arm is in \"home\" position");
+            ROS_INFO("Arm is in \"home\" position");
             // release home button.
             mycommand.ButtonValue[2] = 0;
             kinova_api_.sendJoystickCommand(mycommand);
@@ -1215,7 +1451,7 @@ void KinovaComm::homeArm(void)
 
     mycommand.ButtonValue[2] = 0;
     kinova_api_.sendJoystickCommand(mycommand);
-    ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");
+    ROS_WARN("Homing arm timer out! If the arm is not in home position yet, please re-run home arm.");*/
 
 }
 
@@ -1297,6 +1533,62 @@ void KinovaComm::getEndEffectorOffset(unsigned int &status, float &x, float &y, 
     {
         throw KinovaCommException("Could not get current end effector offset.", result);
     }
+}
+
+void KinovaComm::SetTorqueControlState(int state)
+{
+    int result;
+    if (state)
+    {
+        ROS_INFO("Switching to torque control");
+        result = kinova_api_.switchTrajectoryTorque(TORQUE);
+    }
+    else
+    {
+        ROS_INFO("Switching to position control");
+        result = kinova_api_.switchTrajectoryTorque(POSITION);
+    }
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the torque control state", result);
+    }
+}
+
+int KinovaComm::SelfCollisionAvoidanceInCartesianMode(int state)
+{
+    int result = kinova_api_.ActivateCollisionAutomaticAvoidance(state);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the self collision avoidance in cartesian mode", result);
+    }
+}
+
+int KinovaComm::SingularityAvoidanceInCartesianMode(int state)
+{
+    int result = kinova_api_.ActivateSingularityAutomaticAvoidance(state);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set the singularity avoidance in cartesian mode", result);
+    }
+}
+
+int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
+{
+    ROS_INFO("Setting null space mode to %d",state);
+    int result;
+    if (state)
+        result = kinova_api_.StartRedundantJointNullSpaceMotion();
+    else
+        result = kinova_api_.StopRedundantJointNullSpaceMotion();
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not set redundant joint null space mode", result);
+    }
+}
+
+int KinovaComm::SetRedundancyResolutionToleastSquares(int state)
+{
+    //Not Available in API
 }
 
 
