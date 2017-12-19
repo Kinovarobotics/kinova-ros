@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: kinova_description
+    relative_path: urdf/j2n6s300_standalone.xacro
+  SRDF:
+    relative_path: config/j2n6s300.srdf
+  CONFIG:
+    generated_timestamp: 1483655994

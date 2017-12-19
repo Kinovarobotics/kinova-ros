@@ -1,0 +1,54 @@
+<launch>
+  <arg name="kinova_robotType" default="j2n6s300"/>
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>  
+  <arg name="use_trajectory_controller" default="true"/>
+  <arg name="is7dof" default="false"/>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find kinova_control)/config/$(arg kinova_robotName)_control.yaml" command="load"/>
+ 
+  <group unless="$(arg use_trajectory_controller)">
+    <group unless="$(arg is7dof)">
+      <!-- load the joint by joint position controllers -->  
+      <node name="$(arg kinova_robotName)_joints_controller" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="$(arg kinova_robotName)" 
+       args="joint_1_position_controller joint_2_position_controller  
+               joint_3_position_controller joint_4_position_controller
+               joint_5_position_controller joint_6_position_controller 
+               finger_2_position_controller finger_1_position_controller 
+               finger_3_position_controller
+               joint_state_controller"/> 
+    </group>
+    <group if="$(arg is7dof)">
+      <!-- load the joint by joint position controllers -->  
+      <node name="$(arg kinova_robotName)_joints_controller" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="$(arg kinova_robotName)" 
+       args="joint_1_position_controller joint_2_position_controller  
+               joint_3_position_controller joint_4_position_controller
+               joint_5_position_controller joint_6_position_controller joint_7_position_controller
+               finger_2_position_controller finger_1_position_controller 
+               finger_3_position_controller
+               joint_state_controller"/> 
+    </group>
+  </group>
+
+  <group if="$(arg use_trajectory_controller)">
+    <!-- Effort Joint trajectory controller-->
+    <node name="$(arg kinova_robotName)_trajectory_controller" pkg="controller_manager" type="spawner" 
+      output="screen" ns="$(arg kinova_robotName)" 
+      args="effort_joint_trajectory_controller
+      effort_finger_trajectory_controller    
+      joint_state_controller"/>    
+  </group>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="false" output="screen">    
+    <remap from="/joint_states" to="/$(arg kinova_robotName)/joint_states"/>    
+  </node>
+  
+  <node name="command_robot_home_pose" pkg="kinova_control" type="move_robot.py"
+        respawn="false" output="screen" args="$(arg kinova_robotType)">       
+  </node>
+ 
+</launch>

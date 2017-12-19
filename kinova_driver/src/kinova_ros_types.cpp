@@ -217,7 +217,7 @@ bool valid_kinovaRobotType(const std::string &kinova_RobotType)
         // check dof
         if ((kinova_RobotType[3]!='4') && (kinova_RobotType[3]!='6') && (kinova_RobotType[3]!='7'))
         {
-            ROS_ERROR("degree of freedom error.");
+            ROS_WARN("Number of expected joints for standard robot configurations is 4, 6, 7");
             return false;
         }
 
@@ -410,9 +410,9 @@ bool KinovaPose::isCloseToOther(const KinovaPose &other, float position_toleranc
 }
 
 /**
- * @brief KinovaAngles[Actuator1 ... Actuator6] stores 6 joint values in degrees
+ * @brief KinovaAngles[Actuator1 ... Actuator7] stores 7 joint values in degrees
  *
- * KinovaAngles[Actuator1 ... Actuator6] can go beyond the range of [0 360]
+ * KinovaAngles[Actuator1 ... Actuator7] can go beyond the range of [0 360]
  *
  * @param angles in degrees
  */
@@ -425,10 +425,11 @@ KinovaAngles::KinovaAngles(const kinova_msgs::JointAngles &angles)
     Actuator4 = angles.joint4;
     Actuator5 = angles.joint5;
     Actuator6 = angles.joint6;
+    Actuator7 = angles.joint7;
 }
 
 /**
- * @brief KinovaAngles[Actuator1 ... Actuator6] stores 6 joint values in degrees
+ * @brief KinovaAngles[Actuator1 ... Actuator7] stores 7 joint values in degrees
  * @param angles in degrees
  */
 KinovaAngles::KinovaAngles(const AngularInfo &angles)
@@ -439,6 +440,7 @@ KinovaAngles::KinovaAngles(const AngularInfo &angles)
     Actuator4 = angles.Actuator4;
     Actuator5 = angles.Actuator5;
     Actuator6 = angles.Actuator6;
+    Actuator7 = angles.Actuator7;
 }
 
 /**
@@ -454,6 +456,7 @@ kinova_msgs::JointAngles KinovaAngles::constructAnglesMsg()
     angles.joint4 = Actuator4;
     angles.joint5 = Actuator5;
     angles.joint6 = Actuator6;
+    angles.joint7 = Actuator7;
     return angles;
 }
 
@@ -485,7 +488,10 @@ bool KinovaAngles::isCloseToOther(const KinovaAngles &other, float tolerance) co
                         areValuesClose(fmod(Actuator5, 360.0), fmod(other.Actuator5, 360.0) + 360, tolerance));
     status = status && (areValuesClose(fmod(Actuator6, 360.0), fmod(other.Actuator6, 360.0), tolerance) ||
                         areValuesClose(fmod(Actuator6, 360.0) + 360, fmod(other.Actuator6, 360.0), tolerance) ||
-                        areValuesClose(fmod(Actuator6, 360.0), fmod(other.Actuator6, 360.0) + 360, tolerance));
+                        areValuesClose(fmod(Actuator6, 360.0), fmod(other.Actuator7, 360.0) + 360, tolerance));
+    status = status && (areValuesClose(fmod(Actuator7, 360.0), fmod(other.Actuator7, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator7, 360.0) + 360, fmod(other.Actuator6, 360.0), tolerance) ||
+                        areValuesClose(fmod(Actuator7, 360.0), fmod(other.Actuator7, 360.0) + 360, tolerance));
 
     return status;
 }

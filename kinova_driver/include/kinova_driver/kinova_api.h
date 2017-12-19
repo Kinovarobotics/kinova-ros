@@ -14,24 +14,39 @@
 
 #include <iostream>
 
-#include "kinova/Kinova.API.UsbCommandLayerUbuntu.h"
+#include "kinova/Kinova.API.USBCommandLayerUbuntu.h"
+#include "kinova/Kinova.API.EthCommandLayerUbuntu.h"
 #include "kinova/KinovaTypes.h"
 
 
 namespace kinova
 {
 
-#define KINOVA_USB_LIBRARY  "Kinova.API.USBCommandLayerUbuntu.so"
-#define KINOVA_COMM_LIBRARY "Kinova.API.CommLayerUbuntu.so"
+#define KINOVA_USB_LIBRARY  "USBCommandLayerUbuntu.so"
+#define KINOVA_COMM_USB_LIBRARY "USBCommLayerUbuntu.so"
+
+#define KINOVA_ETH_LIBRARY  "EthCommandLayerUbuntu.so"
+#define KINOVA_COMM_ETH_LIBRARY "EthCommLayerUbuntu.so"
+
+
+enum KinovaAPIType {
+    USB = 0,
+    ETHERNET
+};
 
 class KinovaAPI
 {
 public:
-    KinovaAPI(void);
-
+    KinovaAPI(){}
+    int initializeKinovaAPIFunctions(KinovaAPIType connection_type);
+    int loadLibraries(const char *API_command_lib, const char *kinova_comm_lib);
     // %Tag(general function)%
 
     int (*initAPI)(void);
+
+    //note - there is already an Ethernet_initAPI()
+    //this one is also needed to init ethernet connection
+    int (*initEthernetAPI)(EthernetCommConfig & config);
     int (*closeAPI)(void);
     int (*startControlAPI)();
     int (*stopControlAPI)();
@@ -59,7 +74,7 @@ public:
     int (*getForcesInfo)(ForcesInfo &);
     int (*getSensorsInfo)(SensorsInfo &);
     int (*getGripperStatus)(Gripper &);
-    int (*getCommandVelocity)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]);
+    int (*getCommandVelocity)(float[CARTESIAN_SIZE], float[MAX_ACTUATORS]);    
 
     // %EndTag(general function)%
 
@@ -72,8 +87,7 @@ public:
     int (*getAngularVelocity)(AngularPosition &);
     int (*getAngularAcceleration)(AngularAcceleration &);
 
-    int (*getAngularForce)(AngularPosition &);
-    int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
+    int (*getAngularForce)(AngularPosition &);    
 
     int (*getAngularCurrent)(AngularPosition &);
     int (*getAngularCurrentMotor)(AngularPosition &);
@@ -105,6 +119,24 @@ public:
     int (*getProtectionZone)(ZoneList &);
     int (*setProtectionZone)(ZoneList);
 
+
+    //! 7 dof - Enables control mode where robot moves in null space using the joystick
+    int (*StartRedundantJointNullSpaceMotion)();
+
+    //! 7 dof - Disables control mode where robot moves in null space using the joystick
+    int (*StopRedundantJointNullSpaceMotion)();
+
+    //! Only works for 7 dof for now - Activate(state =1) or deactivates (state =0) the
+    //!  avoidance of robot self-collisions
+    int (*ActivateCollisionAutomaticAvoidance)(int state);
+
+    //! Only works for 7 dof for now - Activates (state =1) or deactivates (state =0)
+    //! the automatic avoidance of robot singularities (but the fitness function stays active).
+    int (*ActivateSingularityAutomaticAvoidance)(int state);
+
+    //! 7 dof - Activates (state =1) or deactivates (state =0)  the fitness function 7 dof robot
+    int (*ActivateAutoNullSpaceMotionCartesian)(int state);
+
     // %EndTag(tool cartesian)%
 
 
@@ -116,7 +148,25 @@ public:
     // %EndTag(pre-defined)%
 
 
+    //%Tag(Torque control)%
 
+    int (*switchTrajectoryTorque)(GENERALCONTROL_TYPE);
+    int (*sendAngularTorqueCommand)(float[COMMAND_SIZE]);
+    int (*setTorqueZero)(int actuator_address);
+    int (*sendCartesianForceCommand)(float[COMMAND_SIZE]);
+
+    //Torque Parameters
+    int (*setAngularTorqueMinMax)(AngularInfo, AngularInfo);
+    int (*setTorqueSafetyFactor)(float);
+
+    //! @brief Sets COM and COMxyz for all links
+    //! @arg command[42] - {m1,m2..m7,x1,x2,..x7,y1,y2,...,y7,z1,z2,...z7}
+    int (*setGravityManualInputParam)(float command[GRAVITY_PARAM_SIZE]);
+    int (*runGravityZEstimationSequence)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]);
+    int (*runGravityZEstimationSequence7DOF)(ROBOT_TYPE type,
+                                   float OptimalzParam[OPTIMAL_Z_PARAM_SIZE_7DOF]);
+     int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);
+    //%EndTag(Torque control)%
 
 
     // The following APIs are not wrapped in kinova_comm, users should call kinova_api with extra caution.
@@ -147,14 +197,12 @@ public:
 
     int (*setActuatorPIDFilter)(int, float, float, float);
     int (*setAngularInertiaDamping)(AngularInfo, AngularInfo);
-    int (*getAngularForceGravityFree)(AngularPosition &);
-    int (*sendAngularTorqueCommand)(float[COMMAND_SIZE]);
+    int (*getAngularForceGravityFree)(AngularPosition &);    
     int (*getAngularTorqueCommand)(float[COMMAND_SIZE]);
     int (*getAngularTorqueGravityEstimation)(float[COMMAND_SIZE]);
     int (*setTorqueActuatorGain)(float[COMMAND_SIZE]);
     int (*setTorqueActuatorDamping)(float[COMMAND_SIZE]);
-    int (*setTorqueCommandMax)(float[COMMAND_SIZE]);
-    int (*setTorqueSafetyFactor)(float);
+    int (*setTorqueCommandMax)(float[COMMAND_SIZE]);    
     int (*setTorqueRateLimiter)(float[COMMAND_SIZE]);
     int (*setTorqueFeedCurrent)(float[COMMAND_SIZE]);
     int (*setTorqueFeedVelocity)(float[COMMAND_SIZE]);
@@ -167,23 +215,26 @@ public:
     int (*setTorqueFilterError)(float[COMMAND_SIZE]);
     int (*setTorqueFilterControlEffort)(float[COMMAND_SIZE]);
 
-    int (*sendCartesianForceCommand)(float[COMMAND_SIZE]);
     int (*setGravityVector)(float[GRAVITY_VECTOR_SIZE]);
-    int (*setGravityOptimalZParam)(float[GRAVITY_PARAM_SIZE]);
-    int (*setGravityManualInputParam)(float[GRAVITY_PARAM_SIZE]);
     int (*setGravityType)(GRAVITY_TYPE);
-    int (*switchTrajectoryTorque)(GENERALCONTROL_TYPE);
     int (*setSwitchThreshold)(float[COMMAND_SIZE]);
     int (*setPositionLimitDistance)(float[COMMAND_SIZE]);
     int (*setGravityPayload)(float[GRAVITY_PAYLOAD_SIZE]);
     int (*setTorqueVibrationController)(float);
     int (*setTorqueRobotProtection)(int);
-    int (*runGravityZEstimationSequence)(ROBOT_TYPE, double[OPTIMAL_Z_PARAM_SIZE]);
+
     int (*getTrajectoryTorqueMode)(int &);
     int (*setTorqueInactivityType)(int);
 
     // %EndTag(experimental)%
 
+  private:
+    KinovaAPIType API_type_;
+    void *API_command_lib_;
+    void *kinova_comm_lib_;
+
+    void* initCommandLayerFunction(const char* name);
+    void* initCommLayerFunction(const char* name);
 };
 
 

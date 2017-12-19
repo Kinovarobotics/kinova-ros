@@ -11,7 +11,7 @@
 #include "kinova_driver/kinova_tool_pose_action.h"
 #include "kinova_driver/kinova_joint_angles_action.h"
 #include "kinova_driver/kinova_fingers_action.h"
-
+#include "kinova_driver/kinova_joint_trajectory_controller.h"
 
 int main(int argc, char **argv)
 {
@@ -39,12 +39,12 @@ int main(int argc, char **argv)
     {
         try
         {
-            kinova::KinovaComm comm(nh, api_mutex, is_first_init);
+            kinova::KinovaComm comm(nh, api_mutex, is_first_init,kinova_robotType);
             kinova::KinovaArm kinova_arm(comm, nh, kinova_robotType);
             kinova::KinovaPoseActionServer pose_server(comm, nh, kinova_robotType);
             kinova::KinovaAnglesActionServer angles_server(comm, nh);
             kinova::KinovaFingersActionServer fingers_server(comm, nh);
-
+            kinova::JointTrajectoryController joint_trajectory_controller(comm, nh);
             ros::spin();
         }
         catch(const std::exception& e)

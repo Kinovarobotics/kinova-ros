@@ -61,6 +61,8 @@ class KinovaKinematics
     int finger_number_;
     int joint_total_number_;
 
+    //base frame for robot
+    std::string baseFrame;
 
     /* Robot Length Values (Meters) */
     double D1_;         // base to elbow
@@ -69,6 +71,7 @@ class KinovaKinematics
     double D4_;         // frist wrist length
     double D5_;         // second wrist length
     double D6_;         // wrist to center of hand
+    double D7_;
     double e2_;         // offset of joint
     double wrist_deg_;  // wrist bend degree
 
