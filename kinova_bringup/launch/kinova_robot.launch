@@ -16,9 +16,8 @@
   </node>
     
   <group unless="$(arg use_urdf)">
-    <node name="$(arg kinova_robotName)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node" args="$(arg kinova_robotType)">
-      <remap from="/$(arg kinova_robotName)_tf_updater/in/joint_angles" to="/$(arg kinova_robotName)_driver/out/joint_angles"/>
-      <param name="base_frame" value="root"/>
+    <node name="$(arg kinova_robotType)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node" args="$(arg kinova_robotType)">
+      <remap from="$(arg kinova_robotType)_tf_updater/in/joint_angles" to="$(arg kinova_robotType)_driver/out/joint_angles"/>
     </node>
   </group>
 
@@ -27,7 +26,7 @@
     <node name="$(arg kinova_robotName)_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">
-      <remap from="joint_states" to="/$(arg kinova_robotName)_driver/out/joint_state"/>
+      <remap from="joint_states" to="$(arg kinova_robotType)_driver/out/joint_state"/>
     </node>
   </group>
 
