@@ -3,16 +3,16 @@
 
 <root xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
-    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
 	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
 	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
-    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
-    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+	xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
 	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
-    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
-    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro">
 
 <xacro:include filename="$(find kinova_description)/urdf/kinova_inertial.xacro" />
@@ -32,13 +32,13 @@
                 </material>
             </visual>
 
-	    <!-- Adding ring to the model -->	
+	    <!-- Adding ring to the model -->
 	         <xacro:if value="${use_ring_mesh}">
 	           <visual>
                 <geometry>
                     <mesh
                         filename="package://kinova_description/meshes/${ring_mesh}.STL"/>
-                </geometry>              
+                </geometry>
              </visual>
 	    </xacro:if>
 
@@ -48,9 +48,9 @@
                         filename="package://kinova_description/meshes/${link_mesh}.dae"/>
                 </geometry>
             </collision>
-						<xacro:kinova_inertial mesh_no="${mesh_no}"/>	
-      </link>			
-		  	
+						<xacro:kinova_inertial mesh_no="${mesh_no}"/>
+      </link>
+
     </xacro:macro>
 
   <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit fixed:=false">
@@ -79,16 +79,16 @@
 
     <xacro:macro name="kinova_virtual_link" params="link_name">
         <link name="${link_name}">
-            <visual>
+            <!--visual>
                 <geometry>
-                    <box size = "0 0 0"/>
+                    <box size = "0.01 0.01 0.01"/>
                 </geometry>
             </visual>
             <collision>
                 <geometry>
-                    <box size = "0 0 0"/>
+                    <box size = "0.01 0.01 0.01"/>
                 </geometry>
-            </collision>
+            </collision-->
         </link>
     </xacro:macro>
 
@@ -112,7 +112,7 @@
             <child link="${prefix}link_finger_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="2000" velocity="1"/>						
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>
         </joint>
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
@@ -124,20 +124,20 @@
 					<mechanicalReduction>1</mechanicalReduction>
 					</actuator>
 		    </transmission>
-				
-        
+
+
 
         <xacro:kinova_armlink link_name="${prefix}link_finger_tip_${finger_number}" link_mesh="finger_distal" mesh_no="58"/>
-        
+
         <joint name="${prefix}joint_finger_tip_${finger_number}" type="fixed">
             <parent link="${prefix}link_finger_${finger_number}"/>
             <child link="${prefix}link_finger_tip_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
-            <limit lower="0" upper="2" effort="2000" velocity="1"/>        
+            <limit lower="0" upper="2" effort="2000" velocity="1"/>
         </joint>
 
     </xacro:macro>
 
-   
+
 </root>

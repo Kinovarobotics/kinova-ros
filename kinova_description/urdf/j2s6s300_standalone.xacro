@@ -4,16 +4,16 @@
 
 <robot xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
-    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
 	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
 	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
-    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
-    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+	xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
 	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
-    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
-    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro" name="j2s6s300">
 
 
@@ -23,7 +23,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/>
+        <box size = "0.01 0.01 0.01"/>
       </geometry>
     <!--<material name="Black" /> -->
     </visual>
@@ -31,19 +31,19 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/> 
+        <box size = "0.01 0.01 0.01"/>
       </geometry>
-    </collision>     
+    </collision>
   </link>
 
   <!-- for gazebo -->
   <link name="world"/>
-  
+
   <joint name="connect_root_and_world" type="fixed">
     <child link="root" />
     <parent link="world" />
-    <origin xyz="0 0 0" rpy="0 0 0" />    
-  </joint> 
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
 
   <xacro:property name="robot_root" value="root" />
 

@@ -4,16 +4,16 @@
 
 <robot xmlns:xi="http://www.w3.org/2001/XInclude"
 	xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
-    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+	xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
 	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
 	xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
-    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
-    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+	xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+	xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
 	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
 	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
-    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
-    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+	xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+	xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
 	xmlns:xacro="http://ros.org/wiki/xacro" name="j2s6a300">
 
 
@@ -23,17 +23,17 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/>
+        <box size = "0.01 0.01 0.01"/>
       </geometry>
-    
+
     </visual>
 
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/> 
+        <box size = "0.01 0.01 0.01"/>
       </geometry>
-    </collision>     
+    </collision>
   </link>
 
 	<link name="left_arm_mount">
@@ -45,14 +45,14 @@
 	 <joint name="left_arm_attach" type="fixed">
     <child link="left_arm_mount" />
     <parent link="root" />
-    <origin xyz="-0.2 0 0" rpy="0 0 1.5707" />   
+    <origin xyz="-0.2 0 0" rpy="0 0 1.5707" />
   </joint>
 
   <joint name="right_arm_attach" type="fixed">
     <child link="right_arm_mount" />
     <parent link="root" />
-    <origin xyz="0.2 0 0" rpy="0 0 1.5707" />    
-  </joint> 
+    <origin xyz="0.2 0 0" rpy="0 0 1.5707" />
+  </joint>
 
   <xacro:j2n6s300  base_parent="left_arm_mount" prefix="left"/>
 
