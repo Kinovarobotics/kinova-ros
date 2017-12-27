@@ -659,7 +659,8 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &gr
             plan_time = 20+count*10;
             ROS_INFO("Setting plan time to %f sec", plan_time);
             group.setPlanningTime(plan_time);
-            result_ = group.plan(my_plan);
+            moveit::planning_interface::MoveItErrorCode ret = group.plan(my_plan);
+            result_ = static_cast<bool>(ret);
             std::cout << "at attemp: " << count << std::endl;
             ros::WallDuration(0.1).sleep();
         }
