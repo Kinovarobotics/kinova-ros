@@ -1,6 +1,6 @@
 #include <pick_place.h>
 #include <ros/console.h>
-
+#include <moveit/move_group_interface/move_group_interface.h>
 #include <tf_conversions/tf_eigen.h>
 
 const double FINGER_MAX = 6400;
@@ -655,7 +655,9 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
             plan_time = 20+count*10;
             ROS_INFO("Setting plan time to %f sec", plan_time);
             group.setPlanningTime(plan_time);
-            result_ = group.plan(my_plan);
+            moveit::planning_interface::MoveItErrorCode plan_result;
+            plan_result = group.plan(my_plan);
+            result_ = plan_result.SUCCESS;
             std::cout << "at attemp: " << count << std::endl;
             ros::WallDuration(0.1).sleep();
         }
