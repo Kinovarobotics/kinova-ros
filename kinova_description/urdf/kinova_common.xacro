@@ -73,9 +73,7 @@
         <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
-     </xacro:unless>
-  </xacro:macro>
-
+ 
 <transmission name="${prefix}_joint_2_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="${prefix}_joint_2">
@@ -130,6 +128,8 @@
         <mechanicalReduction>110</mechanicalReduction>
         </actuator>
      </transmission>
+    </xacro:unless>
+  </xacro:macro>
 
 
     <xacro:macro name="kinova_virtual_link" params="link_name">
