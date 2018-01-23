@@ -653,13 +653,13 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
 
         // try to find a success plan.
         double plan_time;
-        while (result_  == false && count < 5)
+        while (result_ == false && count < 5)
         {            
             count++;
             plan_time = 20+count*10;
             ROS_INFO("Setting plan time to %f sec", plan_time);
             group.setPlanningTime(plan_time);
-            result_ = group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS;
+            result_ = group.plan(my_plan);
             std::cout << "at attemp: " << count << std::endl;
             ros::WallDuration(0.1).sleep();
         }

@@ -19,22 +19,22 @@
 
   <xacro:include filename="$(find kinova_description)/urdf/j2n6s300.xacro"/>
 
- <link name="root">
-   <visual>
-     <origin xyz="0 0 0" rpy="0 0 0" />
-     <geometry>
-       <box size = "0.00001 0.00001 0.00001"/>
-     </geometry>
-   <!--<material name="Black" /> -->
-   </visual>
+  <link name="root">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size = "0 0 0"/>
+      </geometry>
+    <!--<material name="Black" /> -->
+    </visual>
 
-   <collision>
-     <origin xyz="0 0 0" rpy="0 0 0" />
-     <geometry>
-       <box size = "0.00001 0.00001 0.00001"/>
-     </geometry>
-   </collision>
- </link>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size = "0 0 0"/> 
+      </geometry>
+    </collision>     
+  </link>
 
   <!-- for gazebo -->
   <link name="world"/>
