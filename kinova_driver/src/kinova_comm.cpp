@@ -865,7 +865,7 @@ void KinovaComm::setRobotCOMParam(GRAVITY_TYPE type,std::vector<float> params)
         result = kinova_api_.setGravityManualInputParam(com_parameters);
     else
         result = kinova_api_.setGravityOptimalZParam(com_parameters);
-    if (result != NO_ERROR_KINOVA)
+    if (result != NO_ERROR_KINOVA || result==2005)
     {
         throw KinovaCommException("Could not set the COM parameters", result);
     }
@@ -911,7 +911,7 @@ int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
         throw KinovaCommException("Could not launch COM parameter estimation sequence", result);
     }
     result = kinova_api_.setGravityOptimalZParam(COMparams);
-    if (result != NO_ERROR_KINOVA)
+    if (result != NO_ERROR_KINOVA || result == 2005)
     {
         throw KinovaCommException("Could not set COM Parameters", result);
     }
