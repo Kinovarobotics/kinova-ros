@@ -219,7 +219,7 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 //                          std::endl <<" joint_velocity_msg.joint5: " << joint_velocity_msg.joint5 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 );
 
-        pub_joint_velocity_.publish(joint_velocity_msg);
+        //pub_joint_velocity_.publish(joint_velocity_msg);
 
         if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
         {
