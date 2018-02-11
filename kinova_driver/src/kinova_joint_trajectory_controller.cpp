@@ -26,7 +26,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
     pub_joint_feedback_ = nh_.advertise<control_msgs::FollowJointTrajectoryFeedback>("trajectory_controller/state", 1);
     pub_joint_velocity_ = pn.advertise<kinova_msgs::JointVelocity>("in/joint_velocity", 2);
 
-    traj_frame_id_ = "root";   
+    traj_frame_id_ = "world";   
     joint_names_.resize(number_joint_);
     //std::cout << "joint names in feedback of trajectory state are: " << std::endl;
     for (uint i = 0; i<joint_names_.size(); i++)
@@ -201,43 +201,42 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 
     kinova_msgs::JointVelocity joint_velocity_msg;
 
-    if (traj_command_points_index_ <  kinova_angle_command_.size() && ros::ok())
+    KinovaAngles current_joint_angles;
+
+    kinova_comm_.getJointAngles(current_joint_angles);
+
+    std::vector<double> cur_joint_position(7);
+    
+    cur_joint_position[0] = current_joint_angles.Actuator1;
+    cur_joint_position[1] = current_joint_angles.Actuator2;
+    cur_joint_position[2] = current_joint_angles.Actuator3;
+    cur_joint_position[3] = current_joint_angles.Actuator4;
+    cur_joint_position[4] = current_joint_angles.Actuator5;
+    cur_joint_position[5] = current_joint_angles.Actuator6;
+    cur_joint_position[6] = current_joint_angles.Actuator7;
+
+    bool is_at_goal = true;
+    double EPSILON_GOAL = 0.005; // TODO set this with rosparam
+    double dist_from_goal;
+    for ( int i=0; i<cur_joint_position.size(); ++i )
     {
-        joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_].Actuator1;
-        joint_velocity_msg.joint2 = kinova_angle_command_[traj_command_points_index_].Actuator2;
-        joint_velocity_msg.joint3 = kinova_angle_command_[traj_command_points_index_].Actuator3;
-        joint_velocity_msg.joint4 = kinova_angle_command_[traj_command_points_index_].Actuator4;
-        joint_velocity_msg.joint5 = kinova_angle_command_[traj_command_points_index_].Actuator5;
-        joint_velocity_msg.joint6 = kinova_angle_command_[traj_command_points_index_].Actuator6;
-        joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_].Actuator7;
+        //double test = 3.0%1.0
+        dist_from_goal = -(fmod((cur_joint_position[i] - goal[i] + M_PI), (2.0*M_PI)) - M_PI);
 
-        // In debug: compare values with topic: follow_joint_trajectory/goal, command
-//        ROS_DEBUG_STREAM_ONCE( std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint2: " << joint_velocity_msg.joint2 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint3: " << joint_velocity_msg.joint3 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint4: " << joint_velocity_msg.joint4 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint5: " << joint_velocity_msg.joint5 * M_PI/180 <<
-//                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 );
-
-        pub_joint_velocity_.publish(joint_velocity_msg);
-
-        if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
+        if( fabs(dist_from_goal) >= EPSILON_GOAL )	
         {
-            ROS_INFO_STREAM("Moved to point " << traj_command_points_index_++);
+            is_at_goal = false;
+            break;
         }
+    }
+    if (!is_at_goal && ros::ok())
+    {
+        //pass
     }
     else // if come accross all the points, then stop timer.
     {
-        joint_velocity_msg.joint1 = 0;
-        joint_velocity_msg.joint2 = 0;
-        joint_velocity_msg.joint3 = 0;
-        joint_velocity_msg.joint4 = 0;
-        joint_velocity_msg.joint5 = 0;
-        joint_velocity_msg.joint6 = 0;
-        joint_velocity_msg.joint7 = 0;
 
         traj_command_points_.clear();
-
         traj_command_points_index_ = 0;
         timer_pub_joint_vel_.stop();
     }
