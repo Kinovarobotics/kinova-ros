@@ -220,10 +220,32 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
     double dist_from_goal;
     for ( int i=0; i<cur_joint_position.size(); ++i )
     {
+<<<<<<< HEAD
         //double test = 3.0%1.0
         dist_from_goal = -(fmod((cur_joint_position[i] - goal[i] + M_PI), (2.0*M_PI)) - M_PI);
 
         if( fabs(dist_from_goal) >= EPSILON_GOAL )	
+=======
+        joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_].Actuator1;
+        joint_velocity_msg.joint2 = kinova_angle_command_[traj_command_points_index_].Actuator2;
+        joint_velocity_msg.joint3 = kinova_angle_command_[traj_command_points_index_].Actuator3;
+        joint_velocity_msg.joint4 = kinova_angle_command_[traj_command_points_index_].Actuator4;
+        joint_velocity_msg.joint5 = kinova_angle_command_[traj_command_points_index_].Actuator5;
+        joint_velocity_msg.joint6 = kinova_angle_command_[traj_command_points_index_].Actuator6;
+        joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_].Actuator7;
+
+        // In debug: compare values with topic: follow_joint_trajectory/goal, command
+//        ROS_DEBUG_STREAM_ONCE( std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint2: " << joint_velocity_msg.joint2 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint3: " << joint_velocity_msg.joint3 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint4: " << joint_velocity_msg.joint4 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint5: " << joint_velocity_msg.joint5 * M_PI/180 <<
+//                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 );
+
+        //pub_joint_velocity_.publish(joint_velocity_msg);
+
+        if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
+>>>>>>> steve-dev-temp
         {
             is_at_goal = false;
             break;
