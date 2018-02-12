@@ -220,12 +220,6 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
     double dist_from_goal;
     for ( int i=0; i<cur_joint_position.size(); ++i )
     {
-<<<<<<< HEAD
-        //double test = 3.0%1.0
-        dist_from_goal = -(fmod((cur_joint_position[i] - goal[i] + M_PI), (2.0*M_PI)) - M_PI);
-
-        if( fabs(dist_from_goal) >= EPSILON_GOAL )	
-=======
         joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_].Actuator1;
         joint_velocity_msg.joint2 = kinova_angle_command_[traj_command_points_index_].Actuator2;
         joint_velocity_msg.joint3 = kinova_angle_command_[traj_command_points_index_].Actuator3;
@@ -245,7 +239,6 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         //pub_joint_velocity_.publish(joint_velocity_msg);
 
         if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
->>>>>>> steve-dev-temp
         {
             is_at_goal = false;
             break;
