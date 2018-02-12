@@ -65,8 +65,8 @@
     <property name="joint_2_axis_xyz" value="0 0 1" />
     <property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
     <property name="joint_2_origin_rpy" value="-${J_PI/2} 0 ${J_PI}" />
-    <property name="joint_2_lower_limit" value="${30/180*J_PI}" />
-    <property name="joint_2_upper_limit" value="${330/180*J_PI}" />
+    <property name="joint_2_lower_limit" value="${47/180*J_PI}" />
+    <property name="joint_2_upper_limit" value="${313/180*J_PI}" />
 
     <property name="joint_3" value="joint_3" />
     <property name="joint_3_type" value="continuous" />
@@ -97,8 +97,8 @@
     <property name="joint_6_axis_xyz" value="0 0 1" />
     <property name="joint_6_origin_xyz" value="0 0 -0.10375" />
     <property name="joint_6_origin_rpy" value="${J_PI/2} 0 ${J_PI}" />
-    <property name="joint_6_lower_limit" value="${30/180*J_PI}" />
-    <property name="joint_6_upper_limit" value="${330/180*J_PI}" />
+    <property name="joint_6_lower_limit" value="${65/180*J_PI}" />
+    <property name="joint_6_upper_limit" value="${295/180*J_PI}" />
 
     <property name="joint_7" value="joint_7" />
     <property name="joint_7_type" value="continuous" />
