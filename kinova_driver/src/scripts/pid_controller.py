@@ -28,13 +28,13 @@ import actionlib
 
 roslib.load_manifest('kinova_demo')
 
-PREFIX = 'j2s7s300_driver'
+#PREFIX = 'j2s7s300_driver'
 
-GOAL_EPSILON = 0.005 #if all joints are less than epsilon at goal, then complete, goal is achieved
+GOAL_EPSILON = 0.005 #if all joints are less than epsilon at goal, then complete, goal is achieved. Update as you wish depending on the compromise between accuracy and speed you want to achieve
 START_EPSILON = 0.1 #if all joints are less than epsilon at start, the trajectory can begin (prevents jumping)
 START_MAX_DIST = 0.5 #if ANY joint is greater than start max distance, throw an error
 
-MAX_CMD_VEL = 35.0 #Maximum commanded velocity
+MAX_CMD_VEL = 35.0 #Maximum commanded velocity in degree per second
 
 class PIDController(object):
     """
@@ -61,7 +61,7 @@ class PIDController(object):
         sim_flag 				  - flag for if in simulation or not
     """
 
-    def __init__(self):
+    def __init__(self, prefix):
         """
         Setup of the ROS node. Publishing computed torques happens at 100Hz.
         """
@@ -72,24 +72,26 @@ class PIDController(object):
         self.target_index = 0
         self.step_size = 1
         self.time_points = None
+	self.prefix=prefix + '_driver'
+	self.numjoint=int(prefix[3])
 
         # ----- Controller Setup ----- #
 
         # stores maximum COMMANDED joint torques
-        self.max_cmd = MAX_CMD_VEL * np.eye(7)
+        self.max_cmd = MAX_CMD_VEL * np.eye(self.numjoint)
         # stores current COMMANDED joint torques
-        self.cmd = np.eye(7)
+        self.cmd = np.eye(self.numjoint)
         # stores current joint MEASURED joint torques
-        self.joint_torques = np.zeros((7, 1))
+        self.joint_torques = np.zeros((self.numjoint, 1))
 
-        # P, I, D gains
-        p_gain = 60.0
-        i_gain = 0
-        d_gain = 20.0
-        self.P = p_gain * np.eye(7)
-        self.I = i_gain * np.eye(7)
-        self.D = d_gain * np.eye(7)
-        self.controller = pid.PID(self.P, self.I, self.D, 0, 0)
+        # P, I, D gains. Update as you wish depending on the compromise between accuracy and speed you want to achieve
+        p_gain = 60.0*1.5
+        i_gain = 0.2
+        d_gain = 20.0*1.5
+        self.P = p_gain * np.eye(self.numjoint)
+        self.I = i_gain * np.eye(self.numjoint)
+        self.D = d_gain * np.eye(self.numjoint)
+        self.controller = pid.PID(self.P, self.I, self.D, 0, 0, self.numjoint)
 
         self.joint_sub = None
         self.is_shutdown = False
@@ -106,7 +108,7 @@ class PIDController(object):
 
 
     @staticmethod
-    def process_traj_msg(traj):
+    def process_traj_msg(traj, num_joint):
         """ Process the trajectory message into two numpy arrays of positional waypoints
         and time points associated with each positional point
         """
@@ -114,7 +116,7 @@ class PIDController(object):
         time_points = np.empty(num_points)
         time_points[:] = np.nan
 
-        trajectory = np.empty((num_points,7))
+        trajectory = np.empty((num_points,num_joint))
         trajectory[:] = np.nan
         for idx, point in enumerate(traj.points):
             trajectory[idx,:] = point.positions
@@ -128,25 +130,25 @@ class PIDController(object):
         rospy.loginfo("Loading trajectory into controller")
 
         # start subscriber to joint_angles
-        self.joint_sub = rospy.Subscriber(PREFIX + '/out/joint_angles',
+        self.joint_sub = rospy.Subscriber(self.prefix + '/out/joint_angles',
                          kinova_msgs.msg.JointAngles,
                          self.joint_angles_callback, queue_size=1)
 
 
         #TODO create process traj method
-        self.trajectory, self.time_points = PIDController.process_traj_msg(traj)        
+        self.trajectory, self.time_points = PIDController.process_traj_msg(traj, self.numjoint)        
 
         # ---- Trajectory Setup ---- #
 
         # total time for trajectory
         self.trajectory_time = self.time_points[-1]
 
-        self.start = self.trajectory[0].reshape((7, 1))
-        self.goal = self.trajectory[-1].reshape((7, 1))
+        self.start = self.trajectory[0].reshape((self.numjoint, 1))
+        self.goal = self.trajectory[-1].reshape((self.numjoint, 1))
         print "self.start", self.start
         print "self.goal", self.goal
 
-        self.target_pos = self.trajectory[0].reshape((7, 1))
+        self.target_pos = self.trajectory[0].reshape((self.numjoint, 1))
         self.target_index = 0
 
         # track if you have gotten to start/goal of path
@@ -172,10 +174,17 @@ class PIDController(object):
         appropriate torque command to move the robot to the target
         """
         # read the current joint angles from the robot
-        curr_pos = np.array(
-            [msg.joint1, msg.joint2, msg.joint3, msg.joint4, msg.joint5,
-             msg.joint6, msg.joint7]).reshape((7, 1))
-
+        if self.numjoint==7:
+        	curr_pos = np.array(
+            	[msg.joint1, msg.joint2, msg.joint3, msg.joint4, msg.joint5,
+             	msg.joint6, msg.joint7]).reshape((7, 1))
+	elif self.numjoint==6:
+		curr_pos = np.array(
+            	[msg.joint1, msg.joint2, msg.joint3, msg.joint4, msg.joint5,
+             	msg.joint6]).reshape((6, 1))
+   	elif self.numjoint==4:
+		curr_pos = np.array(
+            	[msg.joint1, msg.joint2, msg.joint3, msg.joint4]).reshape((4, 1))
         rospy.loginfo_throttle(5, "current joint angles: {}".format(curr_pos))
         # convert to radians
         curr_pos = curr_pos * (np.pi / 180.0)
@@ -192,7 +201,7 @@ class PIDController(object):
 
         #TODO change references to torque to velocity - I believe its just velocity
         # check if each angular torque is within set limits
-        for i in range(7):
+        for i in range(self.numjoint):
             if self.cmd[i][i] > self.max_cmd[i][i]:
                 self.cmd[i][i] = self.max_cmd[i][i]
             if self.cmd[i][i] < -self.max_cmd[i][i]:
@@ -226,7 +235,7 @@ class PIDController(object):
                 self.reached_start = True
                 self.path_start_T = time.time()
             else:
-                self.target_pos = self.start.reshape((7, 1))
+                self.target_pos = self.start.reshape((self.numjoint, 1))
         
         else:
             t = time.time() - self.path_start_T
@@ -262,7 +271,7 @@ class PIDController(object):
             diff = delta_p * (time - prev_t) / delta_t
             target_pos = diff + prev_p
 
-        return np.array(target_pos).reshape((7, 1))
+        return np.array(target_pos).reshape((self.numjoint, 1))
 
     def fix_joint_angles(self, trajectory):
         #TODO is off by pi an issue with openRAVE or kinova? 
@@ -270,7 +279,7 @@ class PIDController(object):
         trajectory = trajectory.copy()
         for dof in trajectory:
             dof[2] -= np.pi
-        return trajectory[:,:7]
+        return trajectory[:,:self.numjoint]
     
     @staticmethod
     def shortest_angular_distance(angle1, angle2):
