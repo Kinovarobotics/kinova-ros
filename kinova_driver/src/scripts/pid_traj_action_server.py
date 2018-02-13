@@ -14,6 +14,7 @@ import actionlib_tutorials.msg
 import control_msgs.msg
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import kinova_msgs
+import argparse
 
 
 class JointTrajectoryAction(object):
@@ -21,12 +22,14 @@ class JointTrajectoryAction(object):
     _feedback = control_msgs.msg.FollowJointTrajectoryFeedback()
     _result = control_msgs.msg.FollowJointTrajectoryResult()
 
-    def __init__(self, name):
+    def __init__(self, name, args):
         self._action_name = name
-        self._as = actionlib.SimpleActionServer('/j2s7s300/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
-        self._feedback_sub = rospy.Subscriber('/j2s7s300_driver/trajectory_controller/state', control_msgs.msg.FollowJointTrajectoryFeedback, self.feedback_cb)
-        self._controller = pid_controller.PIDController()
-        self._vel_pub = rospy.Publisher('/j2s7s300_driver/in/joint_velocity',
+	self.numjoint=int(args[3])
+	self._robot_name=args
+        self._as = actionlib.SimpleActionServer('/' + self._robot_name + '/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
+        self._feedback_sub = rospy.Subscriber('/' + self._robot_name + '_driver/trajectory_controller/state', control_msgs.msg.FollowJointTrajectoryFeedback, self.feedback_cb)
+        self._controller = pid_controller.PIDController(self._robot_name)
+        self._vel_pub = rospy.Publisher('/' + self._robot_name + '_driver/in/joint_velocity',
                                        kinova_msgs.msg.JointVelocity,
                                        queue_size=1)
         self._as.start()
@@ -74,7 +77,7 @@ class JointTrajectoryAction(object):
                 break
 
             rospy.loginfo_throttle(5,"publishing command: {}".format(self._controller.cmd))
-            self._vel_pub.publish(ros_utils.cmd_to_JointVelocityMsg(self._controller.cmd))
+            self._vel_pub.publish(ros_utils.cmd_to_JointVelocityMsg(self._controller.cmd, self.numjoint))
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
@@ -103,7 +106,10 @@ class JointTrajectoryAction(object):
         self._controller.is_shutdown = False
         rospy.loginfo("Action server goal request complete")
 
+
 if __name__ == '__main__':
     rospy.init_node('follow_joint_trajectory')
-    server = JointTrajectoryAction(rospy.get_name())
+    name=rospy.get_name()
+    kinova_robotType=name[1:9]
+    server = JointTrajectoryAction(rospy.get_name(),kinova_robotType)
     rospy.spin()
