@@ -76,7 +76,7 @@ class PID(object):
     $ p_{error} = p_{target} - p_{state} $.
     """
 
-    def __init__(self, p_gain, i_gain, d_gain, i_min, i_max):
+    def __init__(self, p_gain, i_gain, d_gain, i_min, i_max, num_joint):
         """Constructor, zeros out Pid values when created and
         initialize Pid-gains and integral term limits. All gains are 
 		7x7 matrices.
@@ -89,16 +89,17 @@ class PID(object):
           i_max      The integral upper limit.
         """
         self.set_gains(p_gain, i_gain, d_gain, i_min, i_max)
+	self.num_joint=num_joint;
         self.reset()
 
     def reset(self):
         """  Reset the state of this PID controller """
-        self._p_error_last = np.zeros((7,1)) # Save position state for derivative
+        self._p_error_last = np.zeros((self.num_joint,1)) # Save position state for derivative
                                  # state calculation.
-        self._p_error = np.zeros((7,1))  # Position error.
-        self._d_error = np.zeros((7,1))  # Derivative error.
-        self._i_error = np.zeros((7,1))  # Integator error.
-        self._cmd = np.zeros((7,7))  # Command to send.
+        self._p_error = np.zeros((self.num_joint,1))  # Position error.
+        self._d_error = np.zeros((self.num_joint,1))  # Derivative error.
+        self._i_error = np.zeros((self.num_joint,1))  # Integator error.
+        self._cmd = np.zeros((self.num_joint,self.num_joint))  # Command to send.
         self._last_time = None # Used for automatic calculation of dt.
         
     def set_gains(self, p_gain, i_gain, d_gain, i_min, i_max): 
@@ -204,7 +205,7 @@ class PID(object):
         self._p_error = p_error
 
         if dt == 0 or math.isnan(dt) or math.isinf(dt):
-            return np.zeros((7,7)) # TODO or shold it be 0.0??
+            return np.zeros((self.num_joint,self.num_joint)) # TODO or shold it be 0.0??
 
         # Calculate proportional contribution to command
         p_term = self._p_gain * self._p_error
@@ -249,7 +250,7 @@ if __name__ == "__main__":
     I = np.zeros((7,7))
     D = np.eye(7)
 
-    controller = PID(P, I, D, -1.0, 1.0)
+    controller = PID(P, I, D, -1.0, 1.0, 7)
     print controller
 	
     error = np.array([1,2,3,4,5,6,7]).reshape((7,1))
