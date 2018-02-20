@@ -127,7 +127,7 @@ sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 - *Degree of Freedom* is possible to be `{4|6|7}`
 - *robot mode* `{s|a}` can be in *service* or *assistive*
 - *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. 
-- The last two positions are *undifined* and *reserved* for further features.
+- The last two positions are *undefined* and *reserved* for further features.
 
 **eg**: `j2n6s300` (default value) refers to *jaco v2 6DOF service 3 fingers*. Please be aware that not all options are valided for different robot types.
 
