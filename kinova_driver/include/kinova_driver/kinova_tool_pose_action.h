@@ -63,7 +63,7 @@ namespace kinova
 class KinovaPoseActionServer
 {
  public:
-    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n, const std::string &kinova_robotType);
+    KinovaPoseActionServer(KinovaComm &, const ros::NodeHandle &n, const std::string &kinova_robotType, const std::string &kinova_robotName);
     ~KinovaPoseActionServer();
 
     void actionCallback(const kinova_msgs::ArmPoseGoalConstPtr &);
@@ -71,6 +71,7 @@ class KinovaPoseActionServer
  private:
     ros::NodeHandle node_handle_;
     std::string kinova_robotType_;
+    std::string kinova_robotName_;
     KinovaComm &arm_comm_;
     actionlib::SimpleActionServer<kinova_msgs::ArmPoseAction> action_server_;
     tf::TransformListener listener;
@@ -91,4 +92,3 @@ class KinovaPoseActionServer
 
 }  // namespace kinova
 #endif  // KINOVA_DRIVER_KINOVA_POSE_ACTION_H_s
-
