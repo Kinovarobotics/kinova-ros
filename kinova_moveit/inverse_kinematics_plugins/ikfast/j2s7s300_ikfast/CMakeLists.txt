@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(j2s7s300_ikfast)
 
-set (CMAKE_CXX_STANDARD 11)
+add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
