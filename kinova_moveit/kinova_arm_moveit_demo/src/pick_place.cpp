@@ -638,8 +638,9 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &gr
 {
     bool replan = true;
     int count = 0;
-
+  
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+
 
     while (replan == true && ros::ok())
     {

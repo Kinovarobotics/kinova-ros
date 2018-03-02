@@ -645,6 +645,7 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &gr
 
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
+
     while (replan == true && ros::ok())
     {
         // reset flag for replan

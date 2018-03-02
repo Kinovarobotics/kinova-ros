@@ -53,10 +53,11 @@
 namespace kinova
 {
 
-KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh, const std::string &kinova_robotType)
+KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::NodeHandle &nh, const std::string &kinova_robotType, const std::string &kinova_robotName)
     : arm_comm_(arm_comm),
       node_handle_(nh, "pose_action"),
       kinova_robotType_(kinova_robotType),
+      kinova_robotName_(kinova_robotName),
       action_server_(node_handle_, "tool_pose",
                      boost::bind(&KinovaPoseActionServer::actionCallback, this, _1), false)
 {
@@ -69,7 +70,7 @@ KinovaPoseActionServer::KinovaPoseActionServer(KinovaComm &arm_comm, const ros::
     node_handle_.param<double>("EulerAngle_tolerance", EulerAngle_tolerance, 2.0*M_PI/180);
 
     //    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
-    tf_prefix_ = kinova_robotType_ + "_";
+    tf_prefix_ = kinova_robotName_ + "_";
 
     position_tolerance_ = static_cast<float>(position_tolerance);
     EulerAngle_tolerance_ = static_cast<float>(EulerAngle_tolerance);

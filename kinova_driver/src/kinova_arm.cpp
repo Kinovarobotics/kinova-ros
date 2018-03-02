@@ -12,7 +12,7 @@
 #include <kinova_driver/kinova_ros_types.h>
 
 
-namespace 
+namespace
 {
     /// \brief Convert Kinova-specific angle degree variations (0..180, 360-181) to
     ///        a more regular representation (0..180, -180..0).
@@ -46,8 +46,8 @@ namespace
 namespace kinova
 {
 
-KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const std::string &kinova_robotType)
-    : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType)
+KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const std::string &kinova_robotType, const std::string &kinova_robotName)
+    : kinova_comm_(arm), node_handle_(nodeHandle), kinova_robotType_(kinova_robotType), kinova_robotName_(kinova_robotName)
 {
     for (int i=0;i<COMMAND_SIZE;i++)
     {
@@ -90,7 +90,7 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     }
 
 //    tf_prefix_ = kinova_robotType_ + "_" + boost::lexical_cast<string>(same_type_index); // in case of multiple same_type robots
-    tf_prefix_ = kinova_robotType_ + "_";
+    tf_prefix_ = kinova_robotName_ + "_";
 
     // Maximum number of joints on Kinova-like robots:
     robot_category_ = kinova_robotType_[0];
@@ -259,7 +259,7 @@ bool KinovaArm::setTorqueControlModeService(kinova_msgs::SetTorqueControlMode::R
 }
 
 bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlParameters::Request &req, kinova_msgs::SetTorqueControlParameters::Response &res)
-{    
+{
     float safetyFactor;
     node_handle_.param<float>("torque_parameters/safety_factor", safetyFactor,1.0);
     kinova_comm_.setToquesControlSafetyFactor(safetyFactor);
@@ -283,7 +283,7 @@ bool KinovaArm::setTorqueControlParametersService(kinova_msgs::SetTorqueControlP
         for (int i = 0; i<min_torque.size(); i++)
         {
             min_torque_actuator[i] = min_torque.at(i);
-            max_torque_actuator[i] = max_torque.at(i);            
+            max_torque_actuator[i] = max_torque.at(i);
         }
         kinova_comm_.setJointTorqueMinMax(min_torque_info,max_torque_info);
     }
@@ -537,7 +537,7 @@ void KinovaArm::publishJointAngles(void)
     if (arm_joint_number_ == 7)
     {
          joint_state.position[6] = kinova_angles.joint7 * M_PI/180;
-    }    
+    }
 
     if(finger_number_==2)
     {
@@ -702,7 +702,7 @@ void KinovaArm::statusTimer(const ros::TimerEvent&)
     publishJointAngles();
     publishToolPosition();
     publishToolWrench();
-    publishFingerPosition();   
+    publishFingerPosition();
 }
 
 }  // namespace kinova
