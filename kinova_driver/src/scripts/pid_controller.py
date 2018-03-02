@@ -51,7 +51,6 @@ class PIDController(object):
 
     Subscribes to:
         /j2s7s300_driver/out/joint_angles	- Jaco sensed joint angles
-        /j2s7s300_driver/out/joint_torques	- Jaco sensed joint torques
 
     Publishes to:
         /j2s7s300_driver/in/joint_velocity	- Jaco commanded joint velocities
@@ -63,7 +62,7 @@ class PIDController(object):
 
     def __init__(self):
         """
-        Setup of the ROS node. Publishing computed torques happens at 100Hz.
+        Setup of the ROS node. Publishing computed commands happens at 100Hz.
         """
 
         self.reached_start = False
@@ -75,12 +74,10 @@ class PIDController(object):
 
         # ----- Controller Setup ----- #
 
-        # stores maximum COMMANDED joint torques
+        # stores maximum COMMANDED joint velocity
         self.max_cmd = MAX_CMD_VEL * np.eye(7)
-        # stores current COMMANDED joint torques
+        # stores current COMMANDED joint velocity
         self.cmd = np.eye(7)
-        # stores current joint MEASURED joint torques
-        self.joint_torques = np.zeros((7, 1))
 
         # P, I, D gains
         p_gain = 60.0
@@ -132,8 +129,6 @@ class PIDController(object):
                          kinova_msgs.msg.JointAngles,
                          self.joint_angles_callback, queue_size=1)
 
-
-        #TODO create process traj method
         self.trajectory, self.time_points = PIDController.process_traj_msg(traj)        
 
         # ---- Trajectory Setup ---- #
@@ -159,7 +154,7 @@ class PIDController(object):
 
     def update(self, pos):
         """
-        Return a control torque based on PID control
+        Return a control velocity based on PID control
         """
         error = PIDController.shortest_angular_distance(self.target_pos, pos)
         #rospy.loginfo_throttle(5,"Updating PID error: {}".format(self.controller))
@@ -169,7 +164,7 @@ class PIDController(object):
     def joint_angles_callback(self, msg):
         """
         Reads the latest position of the robot and sets an
-        appropriate torque command to move the robot to the target
+        appropriate command to move the robot to the target
         """
         # read the current joint angles from the robot
         curr_pos = np.array(
@@ -190,8 +185,6 @@ class PIDController(object):
         # update cmd from PID based on current position
         self.cmd = self.update(curr_pos)
 
-        #TODO change references to torque to velocity - I believe its just velocity
-        # check if each angular torque is within set limits
         for i in range(7):
             if self.cmd[i][i] > self.max_cmd[i][i]:
                 self.cmd[i][i] = self.max_cmd[i][i]
@@ -209,7 +202,7 @@ class PIDController(object):
         # check if the arm is at the start of the path to execute
         if not self.reached_start:
             dist_from_start = PIDController.shortest_angular_distance(curr_pos, self.start)
-            dist_from_start = np.abs(dist_from_start) #TODO this waas fabs but my version of numpy doeesnt have fabs
+            dist_from_start = np.abs(dist_from_start)
             rospy.loginfo_throttle(1,"not reached start, current distance: {}".format(dist_from_start))
 
             # if all joints are close enough, robot is at start
@@ -233,7 +226,6 @@ class PIDController(object):
             self.target_pos = self.interpolate_trajectory(t)
 
             if not self.reached_goal:
-                #TODO add a timeout if the goal is taking too long
                 dist_from_goal = PIDController.shortest_angular_distance(curr_pos, self.goal)
                 rospy.loginfo_throttle(5, "Not reached goal current distance: {}".format(np.abs(dist_from_goal)))
 
@@ -263,14 +255,6 @@ class PIDController(object):
             target_pos = diff + prev_p
 
         return np.array(target_pos).reshape((7, 1))
-
-    def fix_joint_angles(self, trajectory):
-        #TODO is off by pi an issue with openRAVE or kinova? 
-        # should I fix for kinova as well? TBD
-        trajectory = trajectory.copy()
-        for dof in trajectory:
-            dof[2] -= np.pi
-        return trajectory[:,:7]
     
     @staticmethod
     def shortest_angular_distance(angle1, angle2):
