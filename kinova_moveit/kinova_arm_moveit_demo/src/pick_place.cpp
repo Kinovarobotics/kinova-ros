@@ -15,11 +15,11 @@ tf::Quaternion EulerZYZ_to_Quaternion(double tz1, double ty, double tz2)
     tf::Matrix3x3 rot_temp;
     rot.setIdentity();
 
-    rot_temp.setEulerZYX(tz1, 0.0, 0.0);
+    rot_temp.setEulerYPR(tz1, 0.0, 0.0);
     rot *= rot_temp;
-    rot_temp.setEulerZYX(0.0, ty, 0.0);
+    rot_temp.setEulerYPR(0.0, ty, 0.0);
     rot *= rot_temp;
-    rot_temp.setEulerZYX(tz2, 0.0, 0.0);
+    rot_temp.setEulerYPR(tz2, 0.0, 0.0);
     rot *= rot_temp;
     rot.getRotation(q);
     return q;
@@ -173,12 +173,12 @@ void PickPlace::clear_workscene()
     // remove table
     co_.id = "table";
     co_.operation = moveit_msgs::CollisionObject::REMOVE;
-    pub_co_.publish(co_);  
+    pub_co_.publish(co_);
 
     // remove target
     co_.id = "target_cylinder";
     co_.operation = moveit_msgs::CollisionObject::REMOVE;
-    pub_co_.publish(co_);  
+    pub_co_.publish(co_);
 
     //remove attached target
     aco_.object.operation = moveit_msgs::CollisionObject::REMOVE;
@@ -199,7 +199,7 @@ void PickPlace::build_workscene()
     // remove table
     co_.id = "table";
     co_.operation = moveit_msgs::CollisionObject::REMOVE;
-    pub_co_.publish(co_);    
+    pub_co_.publish(co_);
 
     // add table
     co_.primitives.resize(1);
@@ -271,7 +271,7 @@ void PickPlace::add_obstacle()
 }
 
 void PickPlace::add_complex_obstacle()
-{    
+{
     clear_obstacle();
 
     // add obstacle between robot and object
@@ -639,18 +639,18 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
     bool replan = true;
     int count = 0;
 
-    moveit::planning_interface::MoveGroup::Plan my_plan;            
+    moveit::planning_interface::MoveGroup::Plan my_plan;
 
     while (replan == true && ros::ok())
     {
         // reset flag for replan
         count = 0;
-        result_ = false;        
+        result_ = false;
 
         // try to find a success plan.
         double plan_time;
         while (result_ == false && count < 5)
-        {            
+        {
             count++;
             plan_time = 20+count*10;
             ROS_INFO("Setting plan time to %f sec", plan_time);
@@ -687,7 +687,7 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
     }
 
     if(result_ == true)
-    {        
+    {
         if (pause_ == "e" || pause_ == "E")
         {
             group.execute(my_plan);
@@ -698,7 +698,7 @@ void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
 
 
 bool PickPlace::my_pick()
-{    
+{
     clear_workscene();
     ros::WallDuration(1.0).sleep();
     build_workscene();
@@ -710,7 +710,7 @@ bool PickPlace::my_pick()
     group_->setNamedTarget("Home");
     evaluate_plan(*group_);
 
-    ros::WallDuration(1.0).sleep();   
+    ros::WallDuration(1.0).sleep();
     gripper_group_->setNamedTarget("Open");
     gripper_group_->move();
 
@@ -721,7 +721,7 @@ bool PickPlace::my_pick()
     ROS_INFO_STREAM("Joint space motion planing without obstacle");
     ROS_INFO_STREAM("Demonstrates moving robot from one joint position to another");
     ROS_INFO_STREAM("Planning to go to start pose ...");
-    group_->setJointValueTarget(start_joint_);    
+    group_->setJointValueTarget(start_joint_);
     evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Planning to go to pre-grasp joint pose ...");
@@ -759,7 +759,7 @@ bool PickPlace::my_pick()
     group_->setJointValueTarget(pregrasp_joint_);
     evaluate_plan(*group_);
 
-    ROS_INFO_STREAM("Planning to come back to start position ...");    
+    ROS_INFO_STREAM("Planning to come back to start position ...");
     group_->setJointValueTarget(start_joint_);
     evaluate_plan(*group_);
 
@@ -793,7 +793,7 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Grasping ...");
     add_attached_obstacle();
-    gripper_action(0.75*FINGER_MAX); // partially close  
+    gripper_action(0.75*FINGER_MAX); // partially close
 
     ROS_INFO_STREAM("Planning to return to start position  ...");
     group_->setPoseTarget(start_pose_);
@@ -812,7 +812,7 @@ bool PickPlace::my_pick()
     ROS_INFO_STREAM("*************************");
     ROS_INFO_STREAM("Press any key to start motion plan in cartesian space with obstacle ...");
     std::cin >> pause_;
-    clear_workscene();    
+    clear_workscene();
     build_workscene();
     add_target();
     add_complex_obstacle();
@@ -829,7 +829,7 @@ bool PickPlace::my_pick()
 
     ROS_INFO_STREAM("Planning to go to grasp position ...");
     group_->setPoseTarget(grasp_pose_);
-    evaluate_plan(*group_);    
+    evaluate_plan(*group_);
 
     ROS_INFO_STREAM("Press any key to grasp ...");
     std::cin >> pause_;
@@ -846,7 +846,7 @@ bool PickPlace::my_pick()
     ROS_INFO_STREAM("Press any key to start motion planning with orientation constrains ...");
     ROS_INFO_STREAM("Constraints are setup so that the robot keeps the target vertical");
     std::cin >> pause_;
-    clear_workscene();    
+    clear_workscene();
     build_workscene();
     add_target();
 
