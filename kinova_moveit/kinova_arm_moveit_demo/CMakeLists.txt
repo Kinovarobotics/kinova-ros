@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(kinova_arm_moveit_demo)
 
+add_compile_options(-std=c++11)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -18,12 +20,12 @@ find_package(Boost REQUIRED system filesystem date_time thread)
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS 
+  CATKIN_DEPENDS
     moveit_core
     moveit_ros_planning_interface
     interactive_markers
 )
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 find_package(kinova_driver REQUIRED)
 
