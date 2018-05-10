@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   // Note that we are just planning, not asking move_group 
   // to actually move the robot.
   moveit::planning_interface::MoveGroup::Plan my_plan;
-  bool success = group.plan(my_plan);
+  bool success = static_cast<bool>(group.plan(my_plan));
 
   ROS_INFO("Visualizing plan 1 (pose goal) %s",success?"":"FAILED");    
   /* Sleep to give Rviz time to visualize the plan. */
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
   // space goal and visualize the plan.
   group_variable_values[5] = -1.0;
   group.setJointValueTarget(group_variable_values);
-  success = group.plan(my_plan);
+  success = static_cast<bool>(group.plan(my_plan));
 
   ROS_INFO("Visualizing plan 2 (joint space goal) %s",success?"":"FAILED");
   /* Sleep to give Rviz time to visualize the plan. */
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
   // Now we will plan to the earlier pose target from the new 
   // start state that we have just created.
   group.setPoseTarget(target_pose1);
-  success = group.plan(my_plan);
+  success = static_cast<bool>(group.plan(my_plan));
 
   ROS_INFO("Visualizing plan 3 (constraints) %s",success?"":"FAILED");
   /* Sleep to give Rviz time to visualize the plan. */
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
   // Now when we plan a trajectory it will avoid the obstacle
   group.setStartState(*group.getCurrentState());
   group.setPoseTarget(target_pose1);
-  success = group.plan(my_plan);
+  success = static_cast<bool>(group.plan(my_plan));
 
   ROS_INFO("Visualizing plan 5 (pose goal move around box) %s",
     success?"":"FAILED");
