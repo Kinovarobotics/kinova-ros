@@ -52,7 +52,7 @@ import numpy as np
 
 
 class PID(object):
-    """ A basic adapted pid class for 7Dof robot.
+    """ A basic adapted pid class for 6Dof robot.
 
     This class implements a generic structure that can be used to
     create a wide range of pid controllers. It can function
@@ -79,7 +79,7 @@ class PID(object):
     def __init__(self, p_gain, i_gain, d_gain, i_min, i_max):
         """Constructor, zeros out Pid values when created and
         initialize Pid-gains and integral term limits. All gains are 
-		7x7 matrices.
+		6x6 matrices.
 
         Parameters:
           p_gain     The proportional gain.
@@ -93,12 +93,12 @@ class PID(object):
 
     def reset(self):
         """  Reset the state of this PID controller """
-        self._p_error_last = np.zeros((7,1)) # Save position state for derivative
+        self._p_error_last = np.zeros((6,1)) # Save position state for derivative
                                  # state calculation.
-        self._p_error = np.zeros((7,1))  # Position error.
-        self._d_error = np.zeros((7,1))  # Derivative error.
-        self._i_error = np.zeros((7,1))  # Integator error.
-        self._cmd = np.zeros((7,7))  # Command to send.
+        self._p_error = np.zeros((6,1))  # Position error.
+        self._d_error = np.zeros((6,1))  # Derivative error.
+        self._i_error = np.zeros((6,1))  # Integator error.
+        self._cmd = np.zeros((6,6))  # Command to send.
         self._last_time = None # Used for automatic calculation of dt.
         
     def set_gains(self, p_gain, i_gain, d_gain, i_min, i_max): 
@@ -204,7 +204,7 @@ class PID(object):
         self._p_error = p_error
 
         if dt == 0 or math.isnan(dt) or math.isinf(dt):
-            return np.zeros((7,7)) # TODO or shold it be 0.0??
+            return np.zeros((6,6)) # TODO or shold it be 0.0??
 
         # Calculate proportional contribution to command
         p_term = self._p_gain * self._p_error
@@ -245,17 +245,17 @@ class PID(object):
         return self._cmd
 
 if __name__ == "__main__":
-    P = np.eye(7)
-    I = np.zeros((7,7))
-    D = np.eye(7)
+    P = np.eye(6)
+    I = np.zeros((6,6))
+    D = np.eye(6)
 
     controller = PID(P, I, D, -1.0, 1.0)
     print controller
 	
-    error = np.array([1,2,3,4,5,6,7]).reshape((7,1))
+    error = np.array([1,2,3,4,5,6]).reshape((6,1))
     controller.update_PID(error)
 
-    error = np.array([-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7]).reshape((7,1))
+    error = np.array([-0.1,-0.2,-0.3,-0.4,-0.5,-0.6]).reshape((6,1))
     controller.update_PID(error)
 
 

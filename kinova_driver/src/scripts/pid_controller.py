@@ -28,13 +28,13 @@ import actionlib
 
 roslib.load_manifest('kinova_demo')
 
-PREFIX = 'j2s7s300_driver'
+PREFIX = 'm1n6s300_driver'
 
-GOAL_EPSILON = 0.005 #if all joints are less than epsilon at goal, then complete, goal is achieved
+GOAL_EPSILON = 0.007 #if all joints are less than epsilon at goal, then complete, goal is achieved
 START_EPSILON = 0.1 #if all joints are less than epsilon at start, the trajectory can begin (prevents jumping)
 START_MAX_DIST = 0.5 #if ANY joint is greater than start max distance, throw an error
 
-MAX_CMD_VEL = 35.0 #Maximum commanded velocity
+MAX_CMD_VEL = 50.0 #Maximum commanded velocity
 
 class PIDController(object):
     """
@@ -75,17 +75,17 @@ class PIDController(object):
         # ----- Controller Setup ----- #
 
         # stores maximum COMMANDED joint velocity
-        self.max_cmd = MAX_CMD_VEL * np.eye(7)
+        self.max_cmd = MAX_CMD_VEL * np.eye(6)
         # stores current COMMANDED joint velocity
-        self.cmd = np.eye(7)
+        self.cmd = np.eye(6)
 
         # P, I, D gains
-        p_gain = 60.0
+        p_gain = 100.0
         i_gain = 0
         d_gain = 20.0
-        self.P = p_gain * np.eye(7)
-        self.I = i_gain * np.eye(7)
-        self.D = d_gain * np.eye(7)
+        self.P = p_gain * np.eye(6)
+        self.I = i_gain * np.eye(6)
+        self.D = d_gain * np.eye(6)
         self.controller = pid.PID(self.P, self.I, self.D, 0, 0)
 
         self.joint_sub = None
@@ -111,7 +111,7 @@ class PIDController(object):
         time_points = np.empty(num_points)
         time_points[:] = np.nan
 
-        trajectory = np.empty((num_points,7))
+        trajectory = np.empty((num_points,6))
         trajectory[:] = np.nan
         for idx, point in enumerate(traj.points):
             trajectory[idx,:] = point.positions
@@ -136,12 +136,12 @@ class PIDController(object):
         # total time for trajectory
         self.trajectory_time = self.time_points[-1]
 
-        self.start = self.trajectory[0].reshape((7, 1))
-        self.goal = self.trajectory[-1].reshape((7, 1))
+        self.start = self.trajectory[0].reshape((6, 1))
+        self.goal = self.trajectory[-1].reshape((6, 1))
         print "self.start", self.start
         print "self.goal", self.goal
 
-        self.target_pos = self.trajectory[0].reshape((7, 1))
+        self.target_pos = self.trajectory[0].reshape((6, 1))
         self.target_index = 0
 
         # track if you have gotten to start/goal of path
@@ -169,7 +169,7 @@ class PIDController(object):
         # read the current joint angles from the robot
         curr_pos = np.array(
             [msg.joint1, msg.joint2, msg.joint3, msg.joint4, msg.joint5,
-             msg.joint6, msg.joint7]).reshape((7, 1))
+             msg.joint6]).reshape((6, 1))
 
         rospy.loginfo_throttle(5, "current joint angles: {}".format(curr_pos))
         # convert to radians
@@ -185,7 +185,7 @@ class PIDController(object):
         # update cmd from PID based on current position
         self.cmd = self.update(curr_pos)
 
-        for i in range(7):
+        for i in range(6):
             if self.cmd[i][i] > self.max_cmd[i][i]:
                 self.cmd[i][i] = self.max_cmd[i][i]
             if self.cmd[i][i] < -self.max_cmd[i][i]:
@@ -219,7 +219,7 @@ class PIDController(object):
                 self.reached_start = True
                 self.path_start_T = time.time()
             else:
-                self.target_pos = self.start.reshape((7, 1))
+                self.target_pos = self.start.reshape((6, 1))
         
         else:
             t = time.time() - self.path_start_T
@@ -254,7 +254,7 @@ class PIDController(object):
             diff = delta_p * (time - prev_t) / delta_t
             target_pos = diff + prev_p
 
-        return np.array(target_pos).reshape((7, 1))
+        return np.array(target_pos).reshape((6, 1))
     
     @staticmethod
     def shortest_angular_distance(angle1, angle2):

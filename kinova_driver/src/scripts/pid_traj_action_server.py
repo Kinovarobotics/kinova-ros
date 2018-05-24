@@ -22,11 +22,14 @@ class JointTrajectoryAction(object):
     _result = control_msgs.msg.FollowJointTrajectoryResult()
 
     def __init__(self, name):
+        rospy.loginfo("Joint Trajectory initialize start with name: {}*******************************************".format(name))
         self._action_name = name
-        self._as = actionlib.SimpleActionServer('/j2s7s300/follow_joint_trajectory', control_msgs.msg.FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
-        self._feedback_sub = rospy.Subscriber('/j2s7s300_driver/trajectory_controller/state', control_msgs.msg.FollowJointTrajectoryFeedback, self.feedback_cb)
+
+        self._as = actionlib.SimpleActionServer("/m1n6s300/follow_joint_trajectory", control_msgs.msg.FollowJointTrajectoryAction, execute_cb=self.execute_cb, auto_start = False)
+        rospy.loginfo("/m1ns6s300/follow_joint_trajectory is up")
+        self._feedback_sub = rospy.Subscriber('/m1ns6s300_driver/trajectory_controller/state', control_msgs.msg.FollowJointTrajectoryFeedback, self.feedback_cb)
         self._controller = pid_controller.PIDController()
-        self._vel_pub = rospy.Publisher('/j2s7s300_driver/in/joint_velocity',
+        self._vel_pub = rospy.Publisher('/m1n6s300_driver/in/joint_velocity',
                                        kinova_msgs.msg.JointVelocity,
                                        queue_size=1)
         self._as.start()
@@ -46,13 +49,6 @@ class JointTrajectoryAction(object):
         Execute the trajectory, stop if premted, report success when done
         goal: a :control_msgs.msg.FollowJointTrajectoryActionGoal: message containing the trajectory and tolerance info
         """
-        #TODO use the tolerance variables available:
-        # g = control_msgs.msg.FollowJointTrajectoryGoal()
-        # g.trajectory
-        # g.goal_time_tolerance
-        # g.goal_tolerance
-        # g.path_tolerance
-    
         # The trajectory execution is true unless set false
         success = True
                 
@@ -73,7 +69,7 @@ class JointTrajectoryAction(object):
                 self._as.set_preempted()
                 break
 
-            rospy.loginfo_throttle(5,"publishing command: {}".format(self._controller.cmd))
+            rospy.loginfo_throttle(1,"publishing command: {}".format(self._controller.cmd))
             self._vel_pub.publish(ros_utils.cmd_to_JointVelocityMsg(self._controller.cmd))
 
             # check that preempt has not been requested by the client
