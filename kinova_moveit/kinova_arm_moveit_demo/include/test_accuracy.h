@@ -12,7 +12,7 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_state/conversions.h>
 
-#include <moveit/move_group_interface/move_group.h>
+#include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_interface/planning_interface.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
@@ -49,8 +49,8 @@ namespace kinova
         // open&close fingers: gripper_group_.plan not alway have a solution
         actionlib::SimpleActionClient<kinova_msgs::SetFingersPositionAction>* finger_client_;
 
-        moveit::planning_interface::MoveGroup* group_;
-        moveit::planning_interface::MoveGroup* gripper_group_;
+        moveit::planning_interface::MoveGroupInterface* group_;
+        moveit::planning_interface::MoveGroupInterface* gripper_group_;
         robot_model::RobotModelPtr robot_model_;
 //        robot_state::RobotStatePtr robot_state_;
 
@@ -127,7 +127,7 @@ namespace kinova
         // TODO: use Kinova inverse kinematic solution instead of from ROS.
         void getInvK(geometry_msgs::Pose &eef_pose, std::vector<double> &joint_value);
         void check_collision();
-        void evaluate_plan(moveit::planning_interface::MoveGroup &group);
+        void evaluate_plan(moveit::planning_interface::MoveGroupInterface &group);
         bool gripper_action(double gripper_rad);
         void evaluate_move_accuracy();
     };
