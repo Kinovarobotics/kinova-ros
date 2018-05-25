@@ -3,6 +3,9 @@
   <param name="/pick_place_demo/arm/solve_type" value="Manipulation2" />
   <param name="/pick_place_demo/arm/kinematics_solver_timeout" value="0.05" />
 
+  <!-- By default, we launch an RViz instance -->
+  <arg name="gui" default="true"/>
+
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
   <!-- Allow user to specify database location -->
@@ -40,15 +43,15 @@
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
-    <arg name="joint_states_ns" value="/j2s7s300_driver/out/joint_state"/> 
-    <arg name="controller_manager" value="j2s7s300"/> 
+    <arg name="joint_states_ns" value="/j2s7s300_driver/out/joint_state"/>
+    <arg name="controller_manager" value="j2s7s300"/>
   </include>
 
-  <!-- kinova-driver Controller parameters-->   
+  <!-- kinova-driver Controller parameters-->
   <rosparam file="$(find j2s7s300_moveit_config)/config/controllers.yaml"/>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
-  <include file="$(find j2s7s300_moveit_config)/launch/moveit_rviz.launch">
+  <include file="$(find j2s7s300_moveit_config)/launch/moveit_rviz.launch" if="$(arg gui)">
     <arg name="config" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
