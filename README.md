@@ -174,7 +174,7 @@ Joint position can be observed by echoing two topics:
 `/'${kinova_robotType}_driver'/out/joint_angles` (in degree) and 
 `/'${kinova_robotType}_driver'/out/state/position` (in radians including finger information)
 
- **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
+ **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names, velocity and effort information.
 
 
  Another way to control joint position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
