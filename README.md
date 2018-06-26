@@ -427,9 +427,7 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
 ## Notes and Limitations
 1. Force/torque control is only for advanced users. Please use caution when using force/torque control api functions.
 
-2. The ``joint_state`` topic currently reports only the arm position and
-velocity. Effort is a placeholder for future compatibility. Depending on your
-firmware version velocity values can be wrong. 
+2. The ``joint_state`` topic currently reports the joint Position Velocity and Effort. Depending on your firmware version velocity values can be wrong. 
 
 3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
