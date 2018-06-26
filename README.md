@@ -174,7 +174,7 @@ Joint position can be observed by echoing two topics:
 `/'${kinova_robotType}_driver'/out/joint_angles` (in degree) and 
 `/'${kinova_robotType}_driver'/out/state/position` (in radians including finger information)
 
- **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names, velocity and effort information.
+ **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names (rad), position, velocity (rad/s) and effort (Nm) information.
 
 
  Another way to control joint position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
@@ -427,7 +427,7 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
 ## Notes and Limitations
 1. Force/torque control is only for advanced users. Please use caution when using force/torque control api functions.
 
-2. The ``joint_state`` topic currently reports the joint Position Velocity and Effort. Depending on your firmware version velocity values can be wrong. 
+2. The ``joint_state`` topic currently reports the joint Names, Position,Velocity and Effort. Depending on your firmware version velocity values can be wrong. 
 
 3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
