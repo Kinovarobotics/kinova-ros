@@ -63,17 +63,72 @@
         <dynamics damping="0.0" friction="0.0"/>
      </joint>
    <xacro:unless value="${fixed}">
-     <transmission name="${joint_name}_trans">
+     <transmission name="${prefix}_joint_1_trans">
         <type>transmission_interface/SimpleTransmission</type>
-        <joint name="${joint_name}">
+        <joint name="${prefix}_joint_1">
           <hardwareInterface>EffortJointInterface</hardwareInterface>
         </joint>
-        <actuator name="${joint_name}_actuator">
+        <actuator name="${prefix}_joint_1_actuator">
           <hardwareInterface>EffortJointInterface</hardwareInterface>
         <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
-     </xacro:unless>
+ 
+<transmission name="${prefix}_joint_2_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}_joint_2">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}_joint_2_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>160</mechanicalReduction>
+        </actuator>
+     </transmission>
+
+     <transmission name="${prefix}_joint_3_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}_joint_3">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}_joint_3_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>160</mechanicalReduction>
+        </actuator>
+     </transmission>
+
+     <transmission name="${prefix}_joint_4_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}_joint_4">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}_joint_4_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>110</mechanicalReduction>
+        </actuator>
+     </transmission>
+
+     <transmission name="${prefix}_joint_5_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}_joint_5">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}_joint_5_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>110</mechanicalReduction>
+        </actuator>
+     </transmission>
+
+     <transmission name="${prefix}_joint_6_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}_joint_6">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}_joint_6_actuator">
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>110</mechanicalReduction>
+        </actuator>
+     </transmission>
+    </xacro:unless>
   </xacro:macro>
 
 
@@ -81,12 +136,12 @@
         <link name="${link_name}">
             <visual>
                 <geometry>
-                    <box size = "0 0 0"/>
+                    <box size = "0.00001 0.00001 0.00001"/>
                 </geometry>
             </visual>
             <collision>
                 <geometry>
-                    <box size = "0 0 0"/>
+                    <box size = "0.00001 0.00001 0.00001"/>
                 </geometry>
             </collision>
         </link>
