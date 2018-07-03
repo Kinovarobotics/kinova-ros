@@ -98,7 +98,7 @@
   <!-- wrist = 4 -->
   <xacro:unless value="${mesh_no-4}">
     <inertial>
-        <mass value="0.4104" />
+        <mass value="0.426367" />
         <origin xyz="0 -0.037 -0.0642" />
         <xacro:inertia_cylinder height="0.02"  radius = "0.04" mass="0.4104"/>  
     </inertial>  
@@ -160,7 +160,7 @@
   <!-- hand 3 finger = 55 -->
   <xacro:unless value="${mesh_no - 55}">
     <inertial>
-        <mass value="0.8977" />
+        <mass value="0.99" />
         <origin xyz="0 0 -0.06" />
         <xacro:inertia_cylinder height="0.03"  radius = "0.04" mass="0.8977"/>  
     </inertial> 

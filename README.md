@@ -127,7 +127,7 @@ sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 - *Degree of Freedom* is possible to be `{4|6|7}`
 - *robot mode* `{s|a}` can be in *service* or *assistive*
 - *robot hand* `{2|3}` may equipped with *2 fingers* or *3 fingers* gripper. 
-- The last two positions are *undifined* and *reserved* for further features.
+- The last two positions are *undefined* and *reserved* for further features.
 
 **eg**: `j2n6s300` (default value) refers to *jaco v2 6DOF service 3 fingers*. Please be aware that not all options are valided for different robot types.
 
@@ -174,7 +174,7 @@ Joint position can be observed by echoing two topics:
 `/'${kinova_robotType}_driver'/out/joint_angles` (in degree) and 
 `/'${kinova_robotType}_driver'/out/state/position` (in radians including finger information)
 
- **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names, velocity and effort information. However, the effort is a place holder for further verstion.
+ **eg**: `rostopic echo -c /m1n4s200_driver/out/joint_state` will print out joint names (rad), position, velocity (rad/s) and effort (Nm) information.
 
 
  Another way to control joint position is to use interactive markers in Rviz. Please follow the steps below to active interactive control:
@@ -427,9 +427,7 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
 ## Notes and Limitations
 1. Force/torque control is only for advanced users. Please use caution when using force/torque control api functions.
 
-2. The ``joint_state`` topic currently reports only the arm position and
-velocity. Effort is a placeholder for future compatibility. Depending on your
-firmware version velocity values can be wrong. 
+2. The ``joint_state`` topic currently reports the joint Names, Position,Velocity and Effort. Depending on your firmware version velocity values can be wrong. 
 
 3. When updating the firmware on the arm (e.g., using Jacosoft) the serial number will be set to "Not set" which will cause multiple arms to be unusable. The solution is to make sure that the serial number is reset after updating the arm firmware.
 
