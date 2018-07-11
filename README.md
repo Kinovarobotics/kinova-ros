@@ -182,12 +182,7 @@ Joint position can be observed by echoing two topics:
   - start the node of interactive conrol: rosrun kinova_driver kinova_interactive_control m1n4s200
   - open Rviz: rosrun rviz rviz
 
-  - On left plane of Rviz, **Add** **InteractiveMarkers**, click on the right of **Updated Topic** of the added interactive marker, and select the topic */m1n4s200_interactive_control_Joint/update*
-  - Now a ring should appear at each joint location, and you can move the robot by dragging the rings.
-
-
-
-### Cartesian position control
+  - On left plane of Rviz, **Add** **InteractiveMarkers**, click on the right of **Updated Topic** of the added interactive marker, and select t 
 Cartesian position control can be realized by calling KinovaComm::setCartesianPosition() in customized node. Alternatively, you may simply call the node `pose_action_client.py` in the kinova_demo package. Help information is availabe with the `-h` option. The unit of position command can be specified by `{mq | mdeg | mrad}`, which refers to meter&Quaternion, meter&degree and meter&radian. The unit of position is always meter, and the unit of orientation is different. Degree and radian are in relation to Euler Angles in XYZ order. Please be aware that the length of parameters are different when using Quaternion and Euler Angles. With the option `-v` on, positions in other unit formats are printed for convenience. The following code will drive a mico robot to move along +x axis for 1cm and rotate the hand for +10 degree along hand axis. The last second **10** will be ignored since a 4DOF robot cannot rotate along the y axis.
 
 **eg**: `rosrun kinova_demo pose_action_client.py -v -r m1n4s200 mdeg -- 0.01 0 0 0 10 10`
@@ -197,6 +192,8 @@ The Cartesian coordinate of robot root frame is defined by the following rules:
 - +x axis is directing to the left when facing the base panel (where power switch and cable socket locate).
 - +y axis is towards to user when facing the base panel.
 - +z axis is upwards when robot is standing on a flat surface.
+
+The kinova_tool_pose_action (action server called by `pose_action_client.py`) will send Cartesian position commands to the robot and the inverse kinematics will be handled within the robot. **Important** The inverse kinematics algorithm that is implemented within Kinova robots is programmed to automatically avoid singularities and self-collisions. To perform those avoidance, the algorithm will restrict access to some parts of the robot's workspace. It may happen that the Cartesian pose goal you send cannot be reached by the robot, although it belongs to the robot's workspace. For more details on why this can happen, and what can you do to avoid this situation, please see the Q & A in issue #149. As a rule of thumb, if you are not able to reach the pose you are commanding in `pose_action_client.py` by moving your Kinova robot with the Kinova joystick, the robot will not be able to reach this same pose with the action server either. If you do not want to use the robot's IK solver, you can always use MoveIt instead. 
 
 The current Cartesian position is published via topic: `/'${kinova_robotType}_driver'/out/tool_pose`
 In addition, the wrench of end-effector is published via topic: `/'${kinova_robotType}_driver'/out/tool_wrench`
