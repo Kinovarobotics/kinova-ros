@@ -43,6 +43,6 @@
     <arg name="kinova_robotType" value="$(arg kinova_robotName)"/>
   </include> 
   -->
-
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find urdf_tutorial)/urdf.rviz" />
 </launch>
 

@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   // Note that we are just planning, not asking move_group 
   // to actually move the robot.
   moveit::planning_interface::MoveGroup::Plan my_plan;
-  bool success = group.plan(my_plan);
+  auto success = group.plan(my_plan);
 
   ROS_INFO("Visualizing plan 1 (pose goal) %s",success?"":"FAILED");    
   /* Sleep to give Rviz time to visualize the plan. */

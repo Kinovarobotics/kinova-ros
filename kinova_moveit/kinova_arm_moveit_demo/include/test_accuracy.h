@@ -77,7 +77,7 @@ namespace kinova
         bool use_KinovaInK_;
 
         // check some process if success.
-        bool result_;
+        moveit::planning_interface::MoveItErrorCode result_;
         // wait for user input to continue: cin >> pause_;
         std::string pause_;
         std::string robot_type_;

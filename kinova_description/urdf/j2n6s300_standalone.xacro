@@ -23,7 +23,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/>
+        <box size = "0.001 0.001 0.001"/>
       </geometry>
     <!--<material name="Black" /> -->
     </visual>
@@ -31,7 +31,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/> 
+        <box size = "0.001 0.001 0.001"/> 
       </geometry>
     </collision>     
   </link>
