@@ -185,6 +185,8 @@ Joint position can be observed by echoing two topics:
   - On left plane of Rviz, **Add** **InteractiveMarkers**, click on the right of **Updated Topic** of the added interactive marker, and select t 
 Cartesian position control can be realized by calling KinovaComm::setCartesianPosition() in customized node. Alternatively, you may simply call the node `pose_action_client.py` in the kinova_demo package. Help information is availabe with the `-h` option. The unit of position command can be specified by `{mq | mdeg | mrad}`, which refers to meter&Quaternion, meter&degree and meter&radian. The unit of position is always meter, and the unit of orientation is different. Degree and radian are in relation to Euler Angles in XYZ order. Please be aware that the length of parameters are different when using Quaternion and Euler Angles. With the option `-v` on, positions in other unit formats are printed for convenience. The following code will drive a mico robot to move along +x axis for 1cm and rotate the hand for +10 degree along hand axis. The last second **10** will be ignored since a 4DOF robot cannot rotate along the y axis.
 
+### Cartesian position control
+
 **eg**: `rosrun kinova_demo pose_action_client.py -v -r m1n4s200 mdeg -- 0.01 0 0 0 10 10`
 
 The Cartesian coordinate of robot root frame is defined by the following rules:
