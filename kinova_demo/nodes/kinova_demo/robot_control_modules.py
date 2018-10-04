@@ -163,8 +163,8 @@ def publishCatesianVelocityCommands(cartVel, duration_sec, prefix):
 	poseVelCmd.twist_linear_y = cartVel[1];
 	poseVelCmd.twist_linear_z = cartVel[2];
 	poseVelCmd.twist_angular_x = cartVel[3];
-	poseVelCmd.twist_angular_x = cartVel[4];
-	poseVelCmd.twist_angular_x = cartVel[5];
+	poseVelCmd.twist_angular_y = cartVel[4];
+	poseVelCmd.twist_angular_z = cartVel[5];
 	count = 0	
 	rate = rospy.Rate(100)
 	while (count < 100*duration_sec):
