@@ -1,5 +1,5 @@
-# Table of Contents
-- [Important](#important)
+# Table of Contents 
+- [Important](#important) 
 - [Kinova-ROS](#kinova-ros)
   - [Supported versions](#supported-versions)
   - [Gazebo](#gazebo)
