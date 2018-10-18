@@ -10,7 +10,7 @@
 
   <!-- The semantic description that corresponds to the URDF -->
   <param name="$(arg robot_description)_semantic" textfile="$(find j2s6s300_moveit_config)/config/j2s6s300.srdf" />
-  
+
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
     <rosparam command="load" file="$(find j2s6s300_moveit_config)/config/joint_limits.yaml"/>
@@ -20,5 +20,5 @@
   <group ns="$(arg robot_description)_kinematics">
     <rosparam command="load" file="$(find j2s6s300_moveit_config)/config/kinematics.yaml"/>
   </group>
-  
+
 </launch>

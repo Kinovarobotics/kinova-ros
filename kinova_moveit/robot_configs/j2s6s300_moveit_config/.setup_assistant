@@ -7,4 +7,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: samuel hovington
     author_email: shovington@kinova.ca
-    generated_timestamp: 1539200576
+    generated_timestamp: 1539804391
