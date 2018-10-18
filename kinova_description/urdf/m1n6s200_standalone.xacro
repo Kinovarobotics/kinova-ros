@@ -45,7 +45,7 @@
     <origin xyz="0 0 0" rpy="0 0 0" />    
   </joint> 
 
-  <property name="robot_root" value="root" />
+  <xacro:property name="robot_root" value="root" />
 
   <xacro:m1n6s200  base_parent="${robot_root}"/>
 

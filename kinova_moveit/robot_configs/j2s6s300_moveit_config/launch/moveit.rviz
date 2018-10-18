@@ -1,0 +1,389 @@
+Panels:
+  - Class: rviz/Displays
+    Help Height: 84
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /MotionPlanning1
+        - /TF1
+        - /TF1/Frames1
+      Splitter Ratio: 0.74256
+    Tree Height: 332
+  - Class: rviz/Help
+    Name: Help
+  - Class: rviz/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: moveit_rviz_plugin/MotionPlanning
+      Enabled: true
+      Move Group Namespace: ""
+      MoveIt_Goal_Tolerance: 0
+      MoveIt_Planning_Attempts: 10
+      MoveIt_Planning_Time: 5
+      MoveIt_Use_Constraint_Aware_IK: true
+      MoveIt_Warehouse_Host: 127.0.0.1
+      MoveIt_Warehouse_Port: 33829
+      MoveIt_Workspace:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Size:
+          X: 2
+          Y: 2
+          Z: 2
+      Name: MotionPlanning
+      Planned Path:
+        Color Enabled: false
+        Interrupt Display: false
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          j2s6s300_end_effector:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          root:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+        Loop Animation: true
+        Robot Alpha: 0.5
+        Robot Color: 150; 50; 150
+        Show Robot Collision: false
+        Show Robot Visual: true
+        Show Trail: false
+        State Display Time: 0.05 s
+        Trail Step Size: 1
+        Trajectory Topic: move_group/display_planned_path
+      Planning Metrics:
+        Payload: 1
+        Show Joint Torques: false
+        Show Manipulability: false
+        Show Manipulability Index: false
+        Show Weight Limit: false
+        TextHeight: 0.08
+      Planning Request:
+        Colliding Link Color: 255; 0; 0
+        Goal State Alpha: 1
+        Goal State Color: 250; 128; 0
+        Interactive Marker Size: 0
+        Joint Violation Color: 255; 0; 255
+        Planning Group: arm
+        Query Goal State: true
+        Query Start State: false
+        Show Workspace: false
+        Start State Alpha: 1
+        Start State Color: 0; 255; 0
+      Planning Scene Topic: move_group/monitored_planning_scene
+      Robot Description: robot_description
+      Scene Geometry:
+        Scene Alpha: 1
+        Scene Color: 50; 230; 50
+        Scene Display Time: 0.2
+        Show Scene Geometry: true
+        Voxel Coloring: Z-Axis
+        Voxel Rendering: Occupied Voxels
+      Scene Robot:
+        Attached Body Color: 150; 50; 150
+        Links:
+          All Links Enabled: true
+          Expand Joint Details: false
+          Expand Link Details: false
+          Expand Tree: false
+          Link Tree Style: Links in Alphabetic Order
+          j2s6s300_end_effector:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_4:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_5:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_6:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_base:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_1:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_2:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          j2s6s300_link_finger_tip_3:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          root:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+        Robot Alpha: 0.5
+        Show Robot Collision: false
+        Show Robot Visual: true
+      Value: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        j2s6s300_end_effector:
+          Value: true
+        j2s6s300_link_1:
+          Value: false
+        j2s6s300_link_2:
+          Value: false
+        j2s6s300_link_3:
+          Value: false
+        j2s6s300_link_4:
+          Value: false
+        j2s6s300_link_5:
+          Value: false
+        j2s6s300_link_6:
+          Value: false
+        j2s6s300_link_base:
+          Value: false
+        j2s6s300_link_finger_1:
+          Value: false
+        j2s6s300_link_finger_2:
+          Value: false
+        j2s6s300_link_finger_3:
+          Value: false
+        j2s6s300_link_finger_tip_1:
+          Value: false
+        j2s6s300_link_finger_tip_2:
+          Value: false
+        j2s6s300_link_finger_tip_3:
+          Value: false
+        root:
+          Value: false
+        world:
+          Value: false
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          root:
+            j2s6s300_link_base:
+              j2s6s300_link_1:
+                j2s6s300_link_2:
+                  j2s6s300_link_3:
+                    j2s6s300_link_4:
+                      j2s6s300_link_5:
+                        j2s6s300_link_6:
+                          j2s6s300_end_effector:
+                            {}
+                          j2s6s300_link_finger_1:
+                            j2s6s300_link_finger_tip_1:
+                              {}
+                          j2s6s300_link_finger_2:
+                            j2s6s300_link_finger_tip_2:
+                              {}
+                          j2s6s300_link_finger_3:
+                            j2s6s300_link_finger_tip_3:
+                              {}
+      Update Interval: 0
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: world
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz/Interact
+      Hide Inactive Objects: true
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+  Value: true
+  Views:
+    Current:
+      Class: rviz/XYOrbit
+      Distance: 2.56152
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0.113567
+        Y: 0.10592
+        Z: 2.23518e-07
+      Name: Current View
+      Near Clip Distance: 0.01
+      Pitch: 1.4148
+      Target Frame: world
+      Value: XYOrbit (rviz)
+      Yaw: 0.0267762
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1028
+  Help:
+    collapsed: false
+  Hide Left Dock: false
+  Hide Right Dock: false
+  MotionPlanning:
+    collapsed: false
+  MotionPlanning - Slider:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000100000000000002a2000003befc0200000007fb000000100044006900730070006c0061007900730100000028000001e1000000dd00fffffffb0000000800480065006c00700000000342000000bb0000007600fffffffb0000000a0056006900650077007300000003b0000000b0000000b000fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000020f000001d7000001cc00ffffff0000047c000003be00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Views:
+    collapsed: false
+  Width: 1828
+  X: 82
+  Y: 14

@@ -22,13 +22,13 @@
     <!-- Import all Gazebo-customization elements -->
     <xacro:include filename="$(find kinova_description)/urdf/kinova.gazebo" />
 
-    <property name="link_base_mesh" value="base" />
-    <property name="link_1_mesh" value="shoulder" />
-    <property name="link_2_mesh" value="arm" />
-    <property name="link_3_mesh" value="forearm" />
-    <property name="link_4_mesh" value="wrist" />
-    <property name="link_5_mesh" value="wrist" />
-    <property name="link_6_mesh" value="hand_3finger" />
+    <xacro:property name="link_base_mesh" value="base" />
+    <xacro:property name="link_1_mesh" value="shoulder" />
+    <xacro:property name="link_2_mesh" value="arm" />
+    <xacro:property name="link_3_mesh" value="forearm" />
+    <xacro:property name="link_4_mesh" value="wrist" />
+    <xacro:property name="link_5_mesh" value="wrist" />
+    <xacro:property name="link_6_mesh" value="hand_3finger" />
 
     <!--Used for conditional arguments for setting inertial parameters
         base 0, shoulder 1, arm 2, forearm 3, wrist 4, arm_mico 5,
@@ -36,73 +36,73 @@
         fore_arm_mico 10,
         hand 3 finger 55, hand_2finger 56, finger_proximal 57, finger_distal 58 
     -->
-    <property name="link_base_mesh_no" value="0" />
-    <property name="link_1_mesh_no" value="1" />
-    <property name="link_2_mesh_no" value="2" />
-    <property name="link_3_mesh_no" value="3" />
-    <property name="link_4_mesh_no" value="4" />
-    <property name="link_5_mesh_no" value="4" />
-    <property name="link_6_mesh_no" value="55" />
+    <xacro:property name="link_base_mesh_no" value="0" />
+    <xacro:property name="link_1_mesh_no" value="1" />
+    <xacro:property name="link_2_mesh_no" value="2" />
+    <xacro:property name="link_3_mesh_no" value="3" />
+    <xacro:property name="link_4_mesh_no" value="4" />
+    <xacro:property name="link_5_mesh_no" value="4" />
+    <xacro:property name="link_6_mesh_no" value="55" />
 
-    <property name="joint_base" value="joint_base" />
-    <property name="joint_base_type" value="fixed" />
-    <property name="joint_base_axis_xyz" value="0 0 0" />
-    <property name="joint_base_origin_xyz" value="0 0 0" />
-    <property name="joint_base_origin_rpy" value="0 0 0" />
+    <xacro:property name="joint_base" value="joint_base" />
+    <xacro:property name="joint_base_type" value="fixed" />
+    <xacro:property name="joint_base_axis_xyz" value="0 0 0" />
+    <xacro:property name="joint_base_origin_xyz" value="0 0 0" />
+    <xacro:property name="joint_base_origin_rpy" value="0 0 0" />
 
-    <property name="joint_1" value="joint_1" />
-    <property name="joint_1_type" value="continuous" />
-    <property name="joint_1_axis_xyz" value="0 0 1" />
-    <property name="joint_1_origin_xyz" value="0 0 0.15675" />
-    <property name="joint_1_origin_rpy" value="0 ${J_PI} 0" />
-    <property name="joint_1_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_1_upper_limit" value="${2*J_PI}" />
+    <xacro:property name="joint_1" value="joint_1" />
+    <xacro:property name="joint_1_type" value="continuous" />
+    <xacro:property name="joint_1_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_1_origin_xyz" value="0 0 0.15675" />
+    <xacro:property name="joint_1_origin_rpy" value="0 ${J_PI} 0" />
+    <xacro:property name="joint_1_lower_limit" value="${-2*J_PI}" />
+    <xacro:property name="joint_1_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_2" value="joint_2" />
-    <property name="joint_2_type" value="revolute" />
-    <property name="joint_2_axis_xyz" value="0 0 1" />
-    <property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
-    <property name="joint_2_origin_rpy" value="-${J_PI/2} 0 ${J_PI}" />
-    <property name="joint_2_lower_limit" value="${47/180*J_PI}" />
-    <property name="joint_2_upper_limit" value="${313/180*J_PI}" />
+    <xacro:property name="joint_2" value="joint_2" />
+    <xacro:property name="joint_2_type" value="revolute" />
+    <xacro:property name="joint_2_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_2_origin_xyz" value="0 0.0016 -0.11875" />
+    <xacro:property name="joint_2_origin_rpy" value="-${J_PI/2} 0 ${J_PI}" />
+    <xacro:property name="joint_2_lower_limit" value="${47/180*J_PI}" />
+    <xacro:property name="joint_2_upper_limit" value="${313/180*J_PI}" />
 
-    <property name="joint_3" value="joint_3" />
-    <property name="joint_3_type" value="revolute" />
-    <property name="joint_3_axis_xyz" value="0 0 1" />
-    <property name="joint_3_origin_xyz" value="0 -0.410 0" />
-    <property name="joint_3_origin_rpy" value="0 ${J_PI} 0" />
-    <property name="joint_3_lower_limit" value="${19/180*J_PI}" />
-    <property name="joint_3_upper_limit" value="${341/180*J_PI}" />
+    <xacro:property name="joint_3" value="joint_3" />
+    <xacro:property name="joint_3_type" value="revolute" />
+    <xacro:property name="joint_3_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_3_origin_xyz" value="0 -0.410 0" />
+    <xacro:property name="joint_3_origin_rpy" value="0 ${J_PI} 0" />
+    <xacro:property name="joint_3_lower_limit" value="${19/180*J_PI}" />
+    <xacro:property name="joint_3_upper_limit" value="${341/180*J_PI}" />
 
-    <property name="joint_4" value="joint_4" />
-    <property name="joint_4_type" value="continuous" />
-    <property name="joint_4_axis_xyz" value="0 0 1" />
-    <property name="joint_4_origin_xyz" value="0 0.2073 -0.0114" />
-    <property name="joint_4_origin_rpy" value="-${J_PI/2} 0 ${J_PI}" />
-    <property name="joint_4_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_4_upper_limit" value="${2*J_PI}" />
+    <xacro:property name="joint_4" value="joint_4" />
+    <xacro:property name="joint_4_type" value="continuous" />
+    <xacro:property name="joint_4_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_4_origin_xyz" value="0 0.2073 -0.0114" />
+    <xacro:property name="joint_4_origin_rpy" value="-${J_PI/2} 0 ${J_PI}" />
+    <xacro:property name="joint_4_lower_limit" value="${-2*J_PI}" />
+    <xacro:property name="joint_4_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_5" value="joint_5" />
-    <property name="joint_5_type" value="continuous" />
-    <property name="joint_5_axis_xyz" value="0 0 1" />
-    <property name="joint_5_origin_xyz" value="0 -0.03703 -0.06414" />
-    <property name="joint_5_origin_rpy" value="${J_PI/3} 0 ${J_PI}" />
-    <property name="joint_5_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_5_upper_limit" value="${2*J_PI}" />
+    <xacro:property name="joint_5" value="joint_5" />
+    <xacro:property name="joint_5_type" value="continuous" />
+    <xacro:property name="joint_5_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_5_origin_xyz" value="0 -0.03703 -0.06414" />
+    <xacro:property name="joint_5_origin_rpy" value="${J_PI/3} 0 ${J_PI}" />
+    <xacro:property name="joint_5_lower_limit" value="${-2*J_PI}" />
+    <xacro:property name="joint_5_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_6" value="joint_6" />
-    <property name="joint_6_type" value="continuous" />
-    <property name="joint_6_axis_xyz" value="0 0 1" />
-    <property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
-    <property name="joint_6_origin_rpy" value="${J_PI/3} 0 ${J_PI}" />
-    <property name="joint_6_lower_limit" value="${-2*J_PI}" />
-    <property name="joint_6_upper_limit" value="${2*J_PI}" />
+    <xacro:property name="joint_6" value="joint_6" />
+    <xacro:property name="joint_6_type" value="continuous" />
+    <xacro:property name="joint_6_axis_xyz" value="0 0 1" />
+    <xacro:property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
+    <xacro:property name="joint_6_origin_rpy" value="${J_PI/3} 0 ${J_PI}" />
+    <xacro:property name="joint_6_lower_limit" value="${-2*J_PI}" />
+    <xacro:property name="joint_6_upper_limit" value="${2*J_PI}" />
 
-    <property name="joint_end_effector" value="end_effector_offset" />
-    <property name="joint_end_effector_type" value="fixed" />
-    <property name="joint_end_effector_axis_xyz" value="0 0 0" />
-    <property name="joint_end_effector_origin_xyz" value="0 0 -0.1600" />
-    <property name="joint_end_effector_origin_rpy" value="${J_PI} 0 0" />
+    <xacro:property name="joint_end_effector" value="end_effector_offset" />
+    <xacro:property name="joint_end_effector_type" value="fixed" />
+    <xacro:property name="joint_end_effector_axis_xyz" value="0 0 0" />
+    <xacro:property name="joint_end_effector_origin_xyz" value="0 0 -0.1600" />
+    <xacro:property name="joint_end_effector_origin_rpy" value="${J_PI} 0 ${J_PI/2}" />
 
 
 
