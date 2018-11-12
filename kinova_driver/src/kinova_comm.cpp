@@ -1031,7 +1031,7 @@ void KinovaComm::getCartesianPosition(KinovaPose &position)
  * In KinovaPose, orientation is expressed in Euler-XYZ convention (Rot=Rx*Ry*Rz). However, in ROS by default using Euler-ZYX. tf::Matrix3x3 EulerYPR = Rz(tz)*Ry(ty)*Rx(tx)
  * @param pose target pose of robot [X,Y,Z, ThetaX, ThetaY, ThetaZ], unit in meter and radians.
  * @param timeout default 0.0, not used.
- * @param push default true, errase all trajectory before request motion..
+ * @param push default false, does not erase previous trajectory point before new motion. If you want to erase all trajectory before request motion, set to true..
  */
 void KinovaComm::setCartesianPosition(const KinovaPose &pose, int timeout, bool push)
 {
