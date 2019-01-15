@@ -203,6 +203,18 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 
     if (traj_command_points_index_ <  kinova_angle_command_.size() && ros::ok())
     {
+        bool last_pass_for_this_point = false;
+        ros::Duration time_from_timer_start = (ros::Time::now() - time_pub_joint_vel_);
+
+        // If we're overshooting
+        if ((time_from_timer_start >= traj_command_points_[traj_command_points_index_].time_from_start))
+        {
+            // Go to next point
+            ROS_INFO_STREAM("Overshoot by " << (time_from_timer_start - traj_command_points_[traj_command_points_index_].time_from_start).toSec()*1000 << " milliseconds, next point.");
+            traj_command_points_index_++;
+            last_pass_for_this_point = true;
+        }
+
         joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_].Actuator1;
         joint_velocity_msg.joint2 = kinova_angle_command_[traj_command_points_index_].Actuator2;
         joint_velocity_msg.joint3 = kinova_angle_command_[traj_command_points_index_].Actuator3;
@@ -210,6 +222,24 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         joint_velocity_msg.joint5 = kinova_angle_command_[traj_command_points_index_].Actuator5;
         joint_velocity_msg.joint6 = kinova_angle_command_[traj_command_points_index_].Actuator6;
         joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_].Actuator7;
+
+        // If time left for this traj point is less than timer precision (10ms), adjust speed to not overshoot the point
+        if ( (traj_command_points_[traj_command_points_index_].time_from_start - time_from_timer_start).toSec() < 0.01) 
+        {
+            float adjust_factor = 0.01/(traj_command_points_[traj_command_points_index_].time_from_start - time_from_timer_start).toSec(); //adjust_factor<1
+            joint_velocity_msg.joint1 *= adjust_factor;
+            joint_velocity_msg.joint2 *= adjust_factor;
+            joint_velocity_msg.joint3 *= adjust_factor;
+            joint_velocity_msg.joint4 *= adjust_factor;
+            joint_velocity_msg.joint5 *= adjust_factor;
+            joint_velocity_msg.joint6 *= adjust_factor;
+            joint_velocity_msg.joint7 *= adjust_factor;
+            traj_command_points_index_++;
+            last_pass_for_this_point = true;
+        }
+
+        // Send trajectory point to driver
+        pub_joint_velocity_.publish(joint_velocity_msg);
 
         // In debug: compare values with topic: follow_joint_trajectory/goal, command
 //        ROS_DEBUG_STREAM_ONCE( std::endl <<" joint_velocity_msg.joint1: " << joint_velocity_msg.joint1 * M_PI/180 <<
@@ -219,11 +249,9 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 //                          std::endl <<" joint_velocity_msg.joint5: " << joint_velocity_msg.joint5 * M_PI/180 <<
 //                          std::endl <<" joint_velocity_msg.joint6: " << joint_velocity_msg.joint6 * M_PI/180 );
 
-        pub_joint_velocity_.publish(joint_velocity_msg);
-
-        if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
+        if (last_pass_for_this_point)
         {
-            ROS_INFO_STREAM("Moved to point " << traj_command_points_index_++);
+            ROS_INFO_STREAM("Moved to point " << traj_command_points_index_ - 1);
         }
     }
     else // if come accross all the points, then stop timer.
