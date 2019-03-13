@@ -364,8 +364,7 @@ bool IKFastKinematicsPlugin::initialize(const std::string &robot_description,
   {
     ROS_DEBUG_NAMED("ikfast","Link %s",link->name.c_str());
     link_names_.push_back(link->name);
-    //boost::shared_ptr<urdf::Joint> joint = link->parent_joint;
-    auto joint = link->parent_joint;
+    urdf::JointSharedPtr joint = link->parent_joint;
     if(joint)
     {
       if (joint->type != urdf::Joint::UNKNOWN && joint->type != urdf::Joint::FIXED)
