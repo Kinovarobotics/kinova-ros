@@ -46,12 +46,12 @@
     <group_state name="Open" group="gripper">
         <joint name="j2n6s300_joint_finger_1" value="0.2" />
         <joint name="j2n6s300_joint_finger_2" value="0.2" />
-        <joint name="j2n6s300_joint_finger_3" value="0.2" />        
+        <joint name="j2n6s300_joint_finger_3" value="0.2" />
     </group_state>
     <group_state name="Close" group="gripper">
         <joint name="j2n6s300_joint_finger_1" value="1.2" />
         <joint name="j2n6s300_joint_finger_2" value="1.2" />
-        <joint name="j2n6s300_joint_finger_3" value="1.2" />       
+        <joint name="j2n6s300_joint_finger_3" value="1.2" />
     </group_state>
     <group_state name="Vertical" group="arm">
         <joint name="j2n6s300_joint_1" value="3.1415" />
