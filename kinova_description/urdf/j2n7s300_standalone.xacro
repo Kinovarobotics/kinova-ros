@@ -21,15 +21,6 @@
 
   <link name="root"/>
 
-  <!-- for gazebo -->
-  <link name="world"/>
-  
-  <joint name="connect_root_and_world" type="fixed">
-    <child link="root" />
-    <parent link="world" />
-    <origin xyz="0 0 0" rpy="0 0 0" />    
-  </joint> 
-
   <xacro:property name="robot_root" value="root" />
 
   <xacro:j2n7s300  base_parent="${robot_root}"/>
