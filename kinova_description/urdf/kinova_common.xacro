@@ -37,7 +37,7 @@
 	           <visual>
                 <geometry>
                     <mesh
-                        filename="package://kinova_description/meshes/${ring_mesh}.STL"/>
+                        filename="package://kinova_description/meshes/${ring_mesh}.dae"/>
                 </geometry>              
              </visual>
 	    </xacro:if>
