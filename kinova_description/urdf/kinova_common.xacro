@@ -78,18 +78,7 @@
 
 
     <xacro:macro name="kinova_virtual_link" params="link_name">
-        <link name="${link_name}">
-            <visual>
-                <geometry>
-                    <box size = "0 0 0"/>
-                </geometry>
-            </visual>
-            <collision>
-                <geometry>
-                    <box size = "0 0 0"/>
-                </geometry>
-            </collision>
-        </link>
+        <link name="${link_name}"/>
     </xacro:macro>
 
     <xacro:macro name="kinova_virtual_joint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit">
