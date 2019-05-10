@@ -4,7 +4,7 @@
 
 <xacro:macro name="gazebo_config" params="robot_namespace">
 
-    <!-- ros_control plugin -->  
+    <!-- ros_control plugin -->
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         <robotNamespace>${robot_namespace}</robotNamespace>
