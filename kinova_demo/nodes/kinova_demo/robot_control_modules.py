@@ -13,7 +13,6 @@ from kinova_msgs.srv import *
 from sensor_msgs.msg import JointState
 import argparse
 
-
 def argumentParser(argument):
     """ Argument parser """
     parser = argparse.ArgumentParser(description='Drive robot joint to command position')
