@@ -104,7 +104,7 @@
     <parent link="j2s6s200_link_base"/>
     <child link="j2s6s200_link_1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30.5" lower="-6.28318530718" upper="6.28318530718" velocity="2"/>
+    <limit effort="30.5" lower="-6.28318530718" upper="6.28318530718" velocity="0.984365697"/>
     <origin rpy="0 3.14159265359 0" xyz="0 0 0.15675"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -147,7 +147,7 @@
     <parent link="j2s6s200_link_1"/>
     <child link="j2s6s200_link_2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30.5" lower="0.820304748437" upper="5.46288055874" velocity="2"/>
+    <limit effort="30.5" lower="0.820304748437" upper="5.46288055874" velocity="0.984365697"/>
     <origin rpy="-1.57079632679 0 3.14159265359" xyz="0 0.0016 -0.11875"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -190,7 +190,7 @@
     <parent link="j2s6s200_link_2"/>
     <child link="j2s6s200_link_3"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30.5" lower="0.331612557879" upper="5.9515727493" velocity="2"/>
+    <limit effort="30.5" lower="0.331612557879" upper="5.9515727493" velocity="0.984365697"/>
     <origin rpy="0 3.14159265359 0" xyz="0 -0.410 0"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -233,7 +233,7 @@
     <parent link="j2s6s200_link_3"/>
     <child link="j2s6s200_link_4"/>
     <axis xyz="0 0 1"/>
-    <limit effort="6.8" lower="-6.28318530718" upper="6.28318530718" velocity="2"/>
+    <limit effort="6.8" lower="-6.28318530718" upper="6.28318530718" velocity="1.570796326"/>
     <origin rpy="-1.57079632679 0 3.14159265359" xyz="0 0.2073 -0.0114"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -276,7 +276,7 @@
     <parent link="j2s6s200_link_4"/>
     <child link="j2s6s200_link_5"/>
     <axis xyz="0 0 1"/>
-    <limit effort="6.8" lower="0.523598775598" upper="5.75958653158" velocity="2"/>
+    <limit effort="6.8" lower="0.523598775598" upper="5.75958653158" velocity="1.570796326"/>
     <origin rpy="1.57079632679 0 3.14159265359" xyz="0 0 -0.10375"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -319,7 +319,7 @@
     <parent link="j2s6s200_link_5"/>
     <child link="j2s6s200_link_6"/>
     <axis xyz="0 0 1"/>
-    <limit effort="6.8" lower="-6.28318530718" upper="6.28318530718" velocity="2"/>
+    <limit effort="6.8" lower="-6.28318530718" upper="6.28318530718" velocity="1.570796326"/>
     <origin rpy="-1.57079632679 0 3.14159265359" xyz="0 0.10375 0"/>
     <dynamics damping="0.0" friction="0.0"/>
   </joint>
@@ -366,7 +366,7 @@
     <child link="j2s6s200_link_finger_1"/>
     <axis xyz="0 0 1"/>
     <origin rpy="-1.570796327 .649262481663582 1.57079632679490" xyz="-0.0025 0.03095 -0.11482"/>
-    <limit effort="2000" lower="0" upper="2" velocity="1"/>
+    <limit effort="25" lower="0" upper="2" velocity="1"/>
   </joint>
   <transmission name="j2s6s200_joint_finger_1_trans">
     <type>transmission_interface/SimpleTransmission</type>
@@ -430,7 +430,7 @@
     <child link="j2s6s200_link_finger_2"/>
     <axis xyz="0 0 1"/>
     <origin rpy="-1.570796327 .649262481663582 -1.57079632679490" xyz="-0.0025 -0.03095 -0.11482"/>
-    <limit effort="2000" lower="0" upper="2" velocity="1"/>
+    <limit effort="25" lower="0" upper="2" velocity="1"/>
   </joint>
   <transmission name="j2s6s200_joint_finger_2_trans">
     <type>transmission_interface/SimpleTransmission</type>
