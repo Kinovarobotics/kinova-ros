@@ -1,0 +1,37 @@
+<launch>
+
+  <arg name="use_urdf" default="true"/>
+  <arg name="kinova_robotType" default="j2s6s200" />
+  <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
+	<arg name="kinova_robotSerial" default="not_set" />
+
+  <arg name="use_trajectory_controller" default="true"/>
+  <arg name="is7dof" default="false"/>
+
+  <!-- If the node handles multiple robots uncomment this and configure /config/multiple_robots.yaml" -->
+	<rosparam file="$(find kinova_bringup)/launch/config/multiple_robots.yaml" command="load" />
+
+  <node name="$(arg kinova_robotName)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
+    <rosparam file="$(find kinova_bringup)/launch/config/robot_parameters.yaml" command="load" />
+    <param name="serial_number" value="$(arg kinova_robotSerial)" />   
+    <param name="robot_name" value="$(arg kinova_robotName)" />   
+    <param name="robot_type" value="$(arg kinova_robotType)" />   
+  </node>
+    
+  <group unless="$(arg use_urdf)">
+    <node name="$(arg kinova_robotName)_tf_updater" pkg="kinova_driver" type="kinova_tf_updater" output="screen" cwd="node" args="$(arg kinova_robotType)">
+      <remap from="/$(arg kinova_robotName)_tf_updater/in/joint_angles" to="/$(arg kinova_robotName)_driver/out/joint_angles"/>
+      <param name="base_frame" value="root"/>
+    </node>
+  </group>
+
+  <group if="$(arg use_urdf)">
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
+    <node name="$(arg kinova_robotName)_state_publisher"
+           pkg="robot_state_publisher"
+          type="robot_state_publisher">
+      <remap from="joint_states" to="/$(arg kinova_robotName)_driver/out/joint_state"/>
+    </node>
+  </group>
+
+</launch>
