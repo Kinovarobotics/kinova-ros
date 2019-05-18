@@ -52,3 +52,5 @@ kvh_driver/src/kvh_driver/
 
 # Python
 *.pyc
+
+\.vscode/
