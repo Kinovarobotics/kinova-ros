@@ -7,6 +7,7 @@ from __future__ import print_function
 import csv
 import numpy as np
 import rospy
+import time
 from robot_control_modules import argumentParser, joint_position_client
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
@@ -87,6 +88,7 @@ if __name__ == '__main__':
         nb = raw_input('Starting SEED playback, press return to start, n to skip')
         if (nb != 'n' and nb != 'N'):
             joint_position_client(np.rad2deg(seed_q_mat[0]), prefix)
+            time.sleep(0.5)
             pub.publish(msg_trajectory)
 
         # Play trajectory
@@ -94,6 +96,7 @@ if __name__ == '__main__':
         nb = raw_input('Starting trajectory playback, press return to start, n to skip')
         if (nb != 'n' and nb != 'N'):
             joint_position_client(np.rad2deg(q_mat[0]), prefix)
+            time.sleep(0.5)
             pub.publish(msg_trajectory)
 
         print('Done!')
