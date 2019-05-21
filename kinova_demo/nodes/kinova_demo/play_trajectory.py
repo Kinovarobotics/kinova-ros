@@ -11,7 +11,7 @@ from robot_control_modules import argumentParser, joint_position_client
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 DEBUG = False  # { True, False }
-PATH = '/home/henrique/Documents/kinova/trajectories'
+PATH = '/home/henrique/Robots/kinova/trajectories'
 
 
 def new_trajectory_msg(t, q_mat, qdot_mat):

@@ -37,7 +37,7 @@ def joint_position_client(angle_set, prefix):
     goal.angles.joint4 = angle_set[3]
     goal.angles.joint5 = angle_set[4]
     goal.angles.joint6 = angle_set[5]
-    goal.angles.joint7 = angle_set[6]
+    # goal.angles.joint7 = angle_set[6]
 
     client.send_goal(goal)
 
