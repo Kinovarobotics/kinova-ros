@@ -27,6 +27,7 @@ def new_trajectory_msg(t, q_mat, qdot_mat):
     for i in range(len(t)):
         point = JointTrajectoryPoint()
         point.positions = q_mat[i, :6]
+        # point.positions[0] += np.pi
         point.velocities = qdot_mat[i, :6]
         point.time_from_start = rospy.Duration(t[i])
         msg_trajectory.points.append(point)
