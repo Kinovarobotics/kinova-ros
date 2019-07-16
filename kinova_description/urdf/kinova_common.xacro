@@ -13,7 +13,7 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro">
+	xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find kinova_description)/urdf/kinova_inertial.xacro" />
 
@@ -66,10 +66,10 @@
      <transmission name="${joint_name}_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="${joint_name}">
-          <hardwareInterface>EffortJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="${joint_name}_actuator">
-          <hardwareInterface>EffortJointInterface</hardwareInterface>
+          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
@@ -106,10 +106,10 @@
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
 					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>EffortJointInterface</hardwareInterface>
+					  <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 					</joint>
 					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>EffortJointInterface</hardwareInterface>
+					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 					<mechanicalReduction>1</mechanicalReduction>
 					</actuator>
 		    </transmission>

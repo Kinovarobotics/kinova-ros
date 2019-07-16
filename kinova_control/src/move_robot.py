@@ -4,7 +4,9 @@
 import rospy
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
+from std_srvs.srv import Empty
 import argparse
+import time
 
 def argumentParser(argument):
   """ Argument parser """
@@ -66,7 +68,12 @@ if __name__ == '__main__':
     rospy.init_node('move_robot_using_trajectory_msg')		
     prefix, nbJoints, nbfingers = argumentParser(None)    
     #allow gazebo to launch
-    rospy.sleep(1)
+    time.sleep(5)
+
+    # Unpause the physics
+    rospy.wait_for_service('/gazebo/unpause_physics')
+    unpause_gazebo = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
+    resp = unpause_gazebo()
 
     if (nbJoints==6):
       #home robots

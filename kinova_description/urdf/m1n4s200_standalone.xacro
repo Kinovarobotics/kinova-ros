@@ -14,12 +14,21 @@
 	xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
     xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
     xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
-	xmlns:xacro="http://ros.org/wiki/xacro" name="m1n4s200">
+	xmlns:xacro="http://www.ros.org/wiki/xacro" name="m1n4s200">
 
 
   <xacro:include filename="$(find kinova_description)/urdf/m1n4s200.xacro"/>
 
   <link name="root"/>
+
+  <!-- for gazebo -->
+  <link name="world"/>
+  
+  <joint name="connect_root_and_world" type="fixed">
+    <child link="root" />
+    <parent link="world" />
+    <origin xyz="0 0 0" rpy="0 0 0" />    
+  </joint> 
 
   <xacro:property name="robot_root" value="root" />
 
