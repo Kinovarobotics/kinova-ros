@@ -66,10 +66,10 @@
      <transmission name="${joint_name}_trans">
         <type>transmission_interface/SimpleTransmission</type>
         <joint name="${joint_name}">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
         </joint>
         <actuator name="${joint_name}_actuator">
-          <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+          <hardwareInterface>EffortJointInterface</hardwareInterface>
         <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
@@ -106,10 +106,10 @@
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
 					<joint name="${prefix}joint_finger_${finger_number}">
-					  <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+					  <hardwareInterface>EffortJointInterface</hardwareInterface>
 					</joint>
 					<actuator name="${prefix}joint_finger_${finger_number}_actuator">
-					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+					<hardwareInterface>EffortJointInterface</hardwareInterface>
 					<mechanicalReduction>1</mechanicalReduction>
 					</actuator>
 		    </transmission>
