@@ -21,7 +21,7 @@
 
     <!-- Import all Gazebo-customization elements -->
     <xacro:include filename="$(find kinova_description)/urdf/kinova.gazebo" />
-  
+
     <xacro:property name="link_base_mesh" value="base" />
     <xacro:property name="link_1_mesh" value="shoulder" />
     <xacro:property name="link_2_mesh" value="arm_half_1" />
@@ -35,7 +35,7 @@
         base 0, shoulder 1, arm 2, forearm 3, wrist 4, arm_mico 5,
         arm_half1 (7dof)	6, arm_half2 (7dof) 7, wrist_spherical_1  8, wrist_spherical_2  9
         fore_arm_mico 10,
-        hand 3 finger 55, hand_2finger 56, finger_proximal 57, finger_distal 58 
+        hand 3 finger 55, hand_2finger 56, finger_proximal 57, finger_distal 58
     -->
     <xacro:property name="link_base_mesh_no" value="0" />
     <xacro:property name="link_1_mesh_no" value="1" />
@@ -119,7 +119,7 @@
     <xacro:macro name="j2n7s300" params="base_parent prefix:=j2n7s300">
 
         <xacro:gazebo_config robot_namespace="${prefix}"/>
-    
+
         <xacro:kinova_armlink link_name="${prefix}_link_base" link_mesh="${link_base_mesh}" mesh_no="${link_base_mesh_no}"/>
         <xacro:kinova_armjoint joint_name="${prefix}_joint_base" type="${joint_base_type}" parent="${base_parent}" child="${prefix}_link_base" joint_axis_xyz="${joint_base_axis_xyz}" joint_origin_xyz="${joint_base_origin_xyz}" joint_origin_rpy="${joint_base_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0" fixed="true"/>
 
@@ -142,14 +142,14 @@
         <xacro:kinova_armjoint joint_name="${prefix}_joint_6" type="${joint_6_type}" parent="${prefix}_link_5" child="${prefix}_link_6" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_lower_limit="${joint_6_lower_limit}" joint_upper_limit="${joint_6_upper_limit}"/>
 
         <xacro:kinova_armlink link_name="${prefix}_link_7" link_mesh="${link_7_mesh}" use_ring_mesh="true" ring_mesh="ring_small" mesh_no="${link_7_mesh_no}"/>
-        <xacro:kinova_armjoint joint_name="${prefix}_joint_7" type="${joint_7_type}" parent="${prefix}_link_6" child="${prefix}_link_7" joint_axis_xyz="${joint_7_axis_xyz}" joint_origin_xyz="${joint_7_origin_xyz}" joint_origin_rpy="${joint_7_origin_rpy}" joint_lower_limit="${joint_7_lower_limit}" joint_upper_limit="${joint_7_upper_limit}"/>    
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_7" type="${joint_7_type}" parent="${prefix}_link_6" child="${prefix}_link_7" joint_axis_xyz="${joint_7_axis_xyz}" joint_origin_xyz="${joint_7_origin_xyz}" joint_origin_rpy="${joint_7_origin_rpy}" joint_lower_limit="${joint_7_lower_limit}" joint_upper_limit="${joint_7_upper_limit}"/>
 
         <xacro:kinova_virtual_link link_name="${prefix}_end_effector"/>
-        <xacro:kinova_virtual_joint joint_name="${prefix}_joint_end_effector" type="${joint_end_effector_type}" parent="${prefix}_link_7" child="${prefix}_end_effector" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>    
+        <xacro:kinova_virtual_joint joint_name="${prefix}_joint_end_effector" type="${joint_end_effector_type}" parent="${prefix}_link_7" child="${prefix}_end_effector" joint_axis_xyz="${joint_end_effector_axis_xyz}" joint_origin_xyz="${joint_end_effector_origin_xyz}" joint_origin_rpy="${joint_end_effector_origin_rpy}" joint_lower_limit="0" joint_upper_limit="0"/>
 
         <xacro:kinova_3fingers link_hand="${prefix}_link_7" prefix="${prefix}_"/>
     </xacro:macro>
 
-    
-    
+
+
 </root>

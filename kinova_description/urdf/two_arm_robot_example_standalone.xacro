@@ -25,15 +25,15 @@
       <geometry>
         <box size = "0 0 0"/>
       </geometry>
-    
+
     </visual>
 
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <box size = "0 0 0"/> 
+        <box size = "0 0 0"/>
       </geometry>
-    </collision>     
+    </collision>
   </link>
 
 	<link name="left_arm_mount">
@@ -45,14 +45,14 @@
 	 <joint name="left_arm_attach" type="fixed">
     <child link="left_arm_mount" />
     <parent link="root" />
-    <origin xyz="-0.2 0 0" rpy="0 0 1.5707" />   
+    <origin xyz="-0.2 0 0" rpy="0 0 1.5707" />
   </joint>
 
   <joint name="right_arm_attach" type="fixed">
     <child link="right_arm_mount" />
     <parent link="root" />
-    <origin xyz="0.2 0 0" rpy="0 0 1.5707" />    
-  </joint> 
+    <origin xyz="0.2 0 0" rpy="0 0 1.5707" />
+  </joint>
 
   <xacro:j2n6s300  base_parent="left_arm_mount" prefix="left"/>
 
