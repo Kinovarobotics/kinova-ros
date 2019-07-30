@@ -546,8 +546,8 @@ void KinovaArm::publishJointAngles(void)
     if(finger_number_==2)
     {
         // proximal phalanges
-        joint_state.position[joint_total_number_-4] = fingers.Finger1/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-3] = fingers.Finger2/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-4] = fingers.Finger1 * M_PI/180;
+        joint_state.position[joint_total_number_-3] = fingers.Finger2 * M_PI/180;
         // distal phalanges
         joint_state.position[joint_total_number_-2] = 0;
         joint_state.position[joint_total_number_-1] = 0;
@@ -555,9 +555,9 @@ void KinovaArm::publishJointAngles(void)
     else if(finger_number_==3)
     {
         // proximal phalanges
-        joint_state.position[joint_total_number_-6] = fingers.Finger1/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-5] = fingers.Finger2/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-4] = fingers.Finger3/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-6] = fingers.Finger1 * M_PI/180;
+        joint_state.position[joint_total_number_-5] = fingers.Finger2 * M_PI/180;
+        joint_state.position[joint_total_number_-4] = fingers.Finger3 * M_PI/180;
         // distal phalanges
         joint_state.position[joint_total_number_-3] = 0;
         joint_state.position[joint_total_number_-2] = 0;
