@@ -16,7 +16,8 @@
                joint_3_position_controller joint_4_position_controller
                joint_5_position_controller joint_6_position_controller 
                finger_2_position_controller finger_1_position_controller 
-               finger_3_position_controller
+               finger_3_position_controller finger_tip_1_position_controller
+               finger_tip_2_position_controller finger_tip_3_position_controller
                joint_state_controller"/> 
     </group>
     <group if="$(arg is7dof)">
@@ -27,7 +28,8 @@
                joint_3_position_controller joint_4_position_controller
                joint_5_position_controller joint_6_position_controller joint_7_position_controller
                finger_2_position_controller finger_1_position_controller 
-               finger_3_position_controller
+               finger_3_position_controller finger_tip_1_position_controller
+               finger_tip_2_position_controller finger_tip_3_position_controller
                joint_state_controller"/> 
     </group>
   </group>
@@ -38,6 +40,9 @@
       output="screen" ns="$(arg kinova_robotName)" 
       args="effort_joint_trajectory_controller
       effort_finger_trajectory_controller    
+      finger_tip_1_position_controller
+      finger_tip_2_position_controller 
+      finger_tip_3_position_controller
       joint_state_controller"/>    
   </group>
 
