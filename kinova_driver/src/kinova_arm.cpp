@@ -137,22 +137,15 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
         // special parameters for custom robot or other cases
     }
 
-
-    if (finger_number_==3)
+    bool is_jaco_v1_fingers = false;
+    node_handle_.getParam("use_jaco_v1_fingers", is_jaco_v1_fingers);
+    if (is_jaco_v1_fingers)
     {
-        // finger_angle_conv_ratio used to display finger position properly in Rviz
-        // Approximative conversion ratio from finger position (0..6400) to joint angle
-        // in radians (0.. 1.4) for 3 finger hand
-        finger_conv_ratio_= 1.4 / 6400.0;
+        finger_conv_ratio_= 1.4;
     }
-    else if(finger_number_==2)
+    else 
     {
-        // the two finger hand may different
-        finger_conv_ratio_= 1.4 / 6400.0;
-    }
-    else
-    {
-        // no fingers
+        finger_conv_ratio_= 80.0 / 6800.0;
     }
 
     for (int i = 0; i<arm_joint_number_; i++)
@@ -546,8 +539,8 @@ void KinovaArm::publishJointAngles(void)
     if(finger_number_==2)
     {
         // proximal phalanges
-        joint_state.position[joint_total_number_-4] = fingers.Finger1/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-3] = fingers.Finger2/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-4] = fingers.Finger1 * finger_conv_ratio_ * M_PI/180;
+        joint_state.position[joint_total_number_-3] = fingers.Finger2 * finger_conv_ratio_ * M_PI/180;
         // distal phalanges
         joint_state.position[joint_total_number_-2] = 0;
         joint_state.position[joint_total_number_-1] = 0;
@@ -555,9 +548,9 @@ void KinovaArm::publishJointAngles(void)
     else if(finger_number_==3)
     {
         // proximal phalanges
-        joint_state.position[joint_total_number_-6] = fingers.Finger1/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-5] = fingers.Finger2/6800*80*M_PI/180;
-        joint_state.position[joint_total_number_-4] = fingers.Finger3/6800*80*M_PI/180;
+        joint_state.position[joint_total_number_-6] = fingers.Finger1 * finger_conv_ratio_ * M_PI/180;
+        joint_state.position[joint_total_number_-5] = fingers.Finger2 * finger_conv_ratio_ * M_PI/180;
+        joint_state.position[joint_total_number_-4] = fingers.Finger3 * finger_conv_ratio_ * M_PI/180;
         // distal phalanges
         joint_state.position[joint_total_number_-3] = 0;
         joint_state.position[joint_total_number_-2] = 0;
