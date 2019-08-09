@@ -125,6 +125,16 @@
             <origin xyz="0.044 -0.003 0" rpy="0 0 0"/>
             <limit lower="0" upper="2" effort="2000" velocity="1"/>
         </joint>
+        <transmission name="${prefix}joint_finger_tip_${finger_number}_trans">
+					<type>transmission_interface/SimpleTransmission</type>
+					<joint name="${prefix}joint_finger_tip_${finger_number}">
+					  <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+					</joint>
+					<actuator name="${prefix}joint_finger_tip_${finger_number}_actuator">
+					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+					<mechanicalReduction>1</mechanicalReduction>
+					</actuator>
+        </transmission>
 
     </xacro:macro>
 

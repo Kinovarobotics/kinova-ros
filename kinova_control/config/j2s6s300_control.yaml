@@ -115,6 +115,27 @@ j2s6s300:
       i: 0
       p: 10
     type: effort_controllers/JointPositionController
+  finger_tip_1_position_controller:
+    joint: j2s6s300_joint_finger_tip_1
+    pid:
+      d: 0
+      i: 0
+      p: 0.5
+    type: effort_controllers/JointPositionController
+  finger_tip_2_position_controller:
+    joint: j2s6s300_joint_finger_tip_2
+    pid:
+      d: 0
+      i: 0
+      p: 0.5
+    type: effort_controllers/JointPositionController
+  finger_tip_3_position_controller:
+    joint: j2s6s300_joint_finger_tip_3
+    pid:
+      d: 0
+      i: 0
+      p: 0.5
+    type: effort_controllers/JointPositionController
   joint_1_position_controller:
     joint: j2s6s300_joint_1
     pid:

@@ -14,11 +14,8 @@
     </group>
     <group name="gripper">
         <link name="j2s6s300_link_finger_1" />
-        <link name="j2s6s300_link_finger_tip_1" />
         <link name="j2s6s300_link_finger_2" />
-        <link name="j2s6s300_link_finger_tip_2" />
         <link name="j2s6s300_link_finger_3" />
-        <link name="j2s6s300_link_finger_tip_3" />
         <link name="j2s6s300_end_effector" />
         <joint name="j2s6s300_joint_finger_1" />
         <joint name="j2s6s300_joint_finger_2" />
