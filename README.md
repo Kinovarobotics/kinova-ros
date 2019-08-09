@@ -27,12 +27,15 @@
 
 # Important
 
-kinova-driver release 1.2.1.
+This repository contains source code and configuration files to support the Jaco, Jaco2 and Mico arms in ROS.
 
-For quicker bug-fixes and updates a beta version of the branch has been added. Use this if you would like to use the latest code.
-To contribute fixes please add pull requests to this beta branch.
+This repository doesn't support the Gen3 arm in ROS. Have a look at the [ros_kortex repository](https://github.com/Kinovarobotics/ros_kortex) for Gen3 ROS support!
 
-The previous ROS release, which mainly developed for jaco arm will be named as **jaco-ros** and the previous **master** branch is renamed as **jaco-ros-master** branch. Users can keep both **jaco-ros** and new release **kinova-ros** as two parallel stacks. However, further updates and support will only be available on "kinova-ros".
+
+# Supported versions
+The master and kinetic-devel branches have been tested with ROS Kinetic and Ubuntu 16.04 64 bits.
+
+You can checkout the [indigo-devel](https://github.com/Kinovarobotics/kinova-ros/tree/indigo-devel) for ROS Indigo and Ubuntu 14.04 support, but the branch is no longer maintained. 
 
 =======
 #### New in release 1.2.1
@@ -76,12 +79,7 @@ For all robots:
 
 # Kinova-ROS
 
-The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms, and it is built to support further kinova products as well. Besides wide support of Kinova products, there are many bug fixes, improvements and new features as well. The stack is developed above the Kinova C++ API functions, which communicate with the DSP inside robot base. 
-
-## Supported versions
-The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
-
-The package may work with other configurations as well, but it has only been tested for the one recommended above. 
+The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JACO2 and MICO robotic manipulator arms. Besides wide support of Kinova products, there are many bug fixes, improvements and new features as well. The stack is developed above the Kinova C++ API functions, which communicate with the DSP inside robot base. 
 
 ## Gazebo 
 #### New in release 1.2.0
@@ -406,25 +404,6 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
   - ClearTrajectories
   - SetTorqueControlMode
 
-
-#### Comparison to JACO-ROS
-
-- Migrate from jaco to kinova in the scope of: file names, class names, function names, data type, node, topic, etc.
-- Apply kinova_RobotType for widely support
-- Re-define JointAngles for consistence
-- Updated API version with new features
-- Create transform between different Euler Angle definitions in DSP and ROS
-- Criteron check when if reach the goal
-- URDF models for all robotTypes
-- Interactive for joint control
-- New message for KinovaPose
-- More options for actionlibs arguments, etc.
-- Relative motion control
-- Kinematic solution to be consistant with robot base code.
-- Fix joint offset bug for joint2 and joint6
-- Fix joint velocity control and position velocity control
-
-
 ## Notes and Limitations
 1. Force/torque control is only for advanced users. Please use caution when using force/torque control api functions.
 
@@ -439,5 +418,3 @@ Other plugins in rqt can similarly be used for quick interation with the robot.
 
 ## Report a Bug
 Any bugs, issues or suggestions may be sent to support@kinova.ca
-
-
