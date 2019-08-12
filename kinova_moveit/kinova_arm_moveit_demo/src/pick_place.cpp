@@ -57,8 +57,8 @@ PickPlace::PickPlace(ros::NodeHandle &nh):
 //    robot_state::RobotState& robot_state = planning_scene_->getCurrentStateNonConst();
 //    const robot_state::JointModelGroup *joint_model_group = robot_state.getJointModelGroup("arm");
 
-    group_ = new moveit::planning_interface::MoveGroup("arm");
-    gripper_group_ = new moveit::planning_interface::MoveGroup("gripper");
+    group_ = new moveit::planning_interface::MoveGroupInterface("arm");
+    gripper_group_ = new moveit::planning_interface::MoveGroupInterface("gripper");
 
     group_->setEndEffectorLink(robot_type_ + "_end_effector");
 
@@ -634,12 +634,12 @@ void PickPlace::check_constrain()
     }
 }
 
-void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroup &group)
+void PickPlace::evaluate_plan(moveit::planning_interface::MoveGroupInterface &group)
 {
     bool replan = true;
     int count = 0;
 
-    moveit::planning_interface::MoveGroup::Plan my_plan;
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
 
     while (replan == true && ros::ok())
     {

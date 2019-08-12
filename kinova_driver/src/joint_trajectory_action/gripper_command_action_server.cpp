@@ -179,7 +179,7 @@ int main(int argc, char** argv)
 
     kinova::GripperCommandActionController gcac(node,robot_name);
 
-    ros::spin();
+    ros::waitForShutdown();
     return 0;
 }
 
