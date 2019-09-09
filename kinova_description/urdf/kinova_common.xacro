@@ -53,12 +53,12 @@
 
     </xacro:macro>
 
-  <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit fixed:=false">
+  <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit joint_velocity_limit joint_torque_limit fixed:=false">
     <joint name="${joint_name}" type="${type}">
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
-        <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <dynamics damping="0.0" friction="0.0"/>
      </joint>
