@@ -101,7 +101,7 @@
             <child link="${prefix}link_finger_${finger_number}"/>
             <axis xyz="0 0 1"/>
             <origin xyz="${finger_origin_xyz}" rpy="${finger_origin_rpy}"/>
-            <limit lower="0" upper="2" effort="2000" velocity="1"/>
+            <limit lower="0" upper="1.51" effort="2000" velocity="1"/>
         </joint>
 		    <transmission name="${prefix}joint_finger_${finger_number}_trans">
 					<type>transmission_interface/SimpleTransmission</type>
