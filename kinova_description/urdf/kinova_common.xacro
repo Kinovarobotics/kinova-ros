@@ -60,9 +60,6 @@
         <axis xyz="${joint_axis_xyz}"/>
         <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
-        <sensor name="${joint_name}_torque_sensor" type="force_torque">
-          <update_rate>30</update_rate>
-        </sensor>
         <dynamics damping="0.0" friction="0.0"/>
      </joint>
    <xacro:unless value="${fixed}">
