@@ -73,6 +73,17 @@
         <mechanicalReduction>160</mechanicalReduction>
         </actuator>
      </transmission>
+     <!--For torque sensing in simulation-->
+     <gazebo reference="${joint_name}">
+        <provideFeedback>true</provideFeedback>
+      </gazebo>
+      <gazebo>
+        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+          <updateRate>30.0</updateRate>
+          <topicName>${joint_name}_ft_sensor_topic</topicName>
+          <jointName>${joint_name}</jointName>
+        </plugin>
+      </gazebo>
      </xacro:unless>
   </xacro:macro>
 
