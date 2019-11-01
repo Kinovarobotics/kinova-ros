@@ -20,6 +20,7 @@ add_message_files(
   JointTorque.msg
   KinovaPose.msg
   PoseVelocity.msg
+  PoseVelocityWithFingers.msg
   CartesianForce.msg
 )
 

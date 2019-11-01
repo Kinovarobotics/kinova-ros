@@ -1,0 +1,7 @@
+float32 twist_linear_x
+float32 twist_linear_y
+float32 twist_linear_z
+float32 twist_angular_x
+float32 twist_angular_y
+float32 twist_angular_z
+float32 fingers_closure_percentage
