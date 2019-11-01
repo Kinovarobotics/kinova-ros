@@ -5,6 +5,7 @@
   <arg name="kinova_robotName" default="$(arg kinova_robotType)"/>
 	<arg name="kinova_robotSerial" default="not_set" />
 	<arg name="use_jaco_v1_fingers" default="false" />
+	<arg name="feedback_publish_rate" default="0.1" />
 
   <!-- If the node handles multiple robots uncomment this and configure /config/multiple_robots.yaml" -->
 	<rosparam file="$(find kinova_bringup)/launch/config/multiple_robots.yaml" command="load" />
@@ -15,6 +16,7 @@
     <param name="robot_name" value="$(arg kinova_robotName)" />   
     <param name="robot_type" value="$(arg kinova_robotType)" />   
     <param name="use_jaco_v1_fingers" value="$(arg use_jaco_v1_fingers)" />   
+    <param name="status_interval_seconds" value="$(arg feedback_publish_rate)" />
   </node>
     
   <group unless="$(arg use_urdf)">
