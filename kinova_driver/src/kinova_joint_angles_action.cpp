@@ -179,10 +179,6 @@ void KinovaAnglesActionServer::actionCallback(const kinova_msgs::ArmJointAnglesG
     KinovaPose pose;
     arm_comm_.getCartesianPosition(pose);
     arm_comm_.setCartesianPosition(pose, 0, false);
-
-    // CartesianInfo zero_twist;
-    // zero_twist.InitStruct();
-    // arm_comm_.setCartesianVelocities(zero_twist);
 }
 
 }  // namespace kinova
