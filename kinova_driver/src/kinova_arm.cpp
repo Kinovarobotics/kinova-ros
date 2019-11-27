@@ -212,6 +212,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
                                  &KinovaArm::jointVelocityCallback, this);
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
                                      &KinovaArm::cartesianVelocityCallback, this);
+    cartesian_velocity_with_fingers_subscriber_ = node_handle_.subscribe("in/cartesian_velocity_with_fingers", 1,
+                                     &KinovaArm::cartesianVelocityWithFingersCallback, this);                                     
     joint_torque_subscriber_ = node_handle_.subscribe("in/joint_torque", 1,
                                &KinovaArm::jointTorqueSubscriberCallback, this);
     cartesian_force_subscriber_ = node_handle_.subscribe("in/cartesian_force", 1,
@@ -482,6 +484,44 @@ void KinovaArm::cartesianVelocityCallback(const kinova_msgs::PoseVelocityConstPt
 
         // orientation velocity of cartesian_velocities_ is based on twist.angular
         kinova_comm_.setCartesianVelocities(cartesian_velocities_);
+    }
+}
+
+void KinovaArm::cartesianVelocityWithFingersCallback(const kinova_msgs::PoseVelocityWithFingersConstPtr& cartesian_vel_with_fingers)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        cartesian_velocities_.X = cartesian_vel_with_fingers->twist_linear_x;
+        cartesian_velocities_.Y = cartesian_vel_with_fingers->twist_linear_y;
+        cartesian_velocities_.Z = cartesian_vel_with_fingers->twist_linear_z;
+        cartesian_velocities_.ThetaX = cartesian_vel_with_fingers->twist_angular_x;
+        cartesian_velocities_.ThetaY = cartesian_vel_with_fingers->twist_angular_y;
+        cartesian_velocities_.ThetaZ = cartesian_vel_with_fingers->twist_angular_z;
+
+        float finger_max_turn = 6800.0; // position units
+        float fingers_closure_percentage = cartesian_vel_with_fingers->fingers_closure_percentage;
+
+        // If the arm moves in velocity, the fingers will too no matter what
+        // We need to see if the fingers have reached the correct position, and if not, set the Fingers command accordingly to match the command
+        FingerAngles fingers;
+        kinova_comm_.getFingerPositions(fingers);
+        float error = fingers_closure_percentage / 100.0 * finger_max_turn - fingers.Finger1; 
+        ROS_INFO("%3.3f", error);
+        float kp = 2.0; // tried that, it works
+        float command = 0.0;
+        if (fabs(error) > 20.0) // arbitrary position units
+        {
+            command = kp * error;
+        } 
+
+
+        // Set command and send to kinova_comm
+        fingers.Finger1 = command;
+        fingers.Finger2 = command;
+        fingers.Finger3 = command;
+
+        // orientation velocity of cartesian_velocities_ is based on twist.angular
+        kinova_comm_.setCartesianVelocitiesWithFingers(cartesian_velocities_, fingers);
     }
 }
 
