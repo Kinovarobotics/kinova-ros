@@ -4,6 +4,7 @@
   <arg name="use_trajectory_controller" default="true"/>
   <arg name="is7dof" default="false"/>
   <arg name="has2finger" default="false"/><!-- if false: 3 finger, true: 2 finger -->
+  <arg name="description_name" default="robot_description"/><!-- allows remapping of robot_description into a namespace -->
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find kinova_control)/config/$(arg kinova_robotName)_control.yaml" command="load"/>
@@ -72,9 +73,10 @@
   </group>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
-        respawn="false" output="screen">    
-    <remap from="/joint_states" to="/$(arg kinova_robotName)/joint_states"/>    
+  <node name="$(arg kinova_robotName)_robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="true" output="screen">
+    <remap from="/joint_states" to="/$(arg kinova_robotName)/joint_states"/>
+    <remap from="robot_description" to="$(arg description_name)"/>
   </node>
   
   <node name="command_robot_home_pose" pkg="kinova_control" type="move_robot.py"
