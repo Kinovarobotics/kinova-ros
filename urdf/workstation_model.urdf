@@ -1,0 +1,255 @@
+<robot
+  name="simple_workstation_v2">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-1.6723E-16 0.18 0.46"
+        rpy="0 0 0" />
+      <mass
+        value="1242" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="left_h_link">
+    <inertial>
+      <origin
+        xyz="0 -2.6887E-17 -0.25"
+        rpy="0 0 0" />
+      <mass
+        value="0.8" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/left_h_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/left_h_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="table_to_left_h_joint"
+    type="fixed">
+    <origin
+      xyz="-0.6 -0.9 0"
+      rpy="-1.5708 -6.123E-17 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_h_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_v_link">
+    <inertial>
+      <origin
+        xyz="0 2.7756E-17 0.25"
+        rpy="0 0 0" />
+      <mass
+        value="0.8" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/left_v_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/left_v_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_h_to_left_v_joint"
+    type="fixed">
+    <origin
+      xyz="0.02 0 -0.48"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="left_h_link" />
+    <child
+      link="left_v_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_h_link">
+    <inertial>
+      <origin
+        xyz="-1.1102E-16 0 0.25"
+        rpy="0 0 0" />
+      <mass
+        value="0.8" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/right_h_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/right_h_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="table_to_right_h_joint"
+    type="fixed">
+    <origin
+      xyz="0.6 -0.9 0"
+      rpy="1.5708 6.123E-17 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_h_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_v_link">
+    <inertial>
+      <origin
+        xyz="0 0 0.25"
+        rpy="0 0 0" />
+      <mass
+        value="0.8" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/right_v_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://simple_workstation_v2/meshes/right_v_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_h_to_right_v_joint"
+    type="fixed">
+    <origin
+      xyz="-0.02 0 0.48"
+      rpy="3.1416 -1.5708 0" />
+    <parent
+      link="right_h_link" />
+    <child
+      link="right_v_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
