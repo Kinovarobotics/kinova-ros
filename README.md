@@ -79,10 +79,10 @@ rostopic info /my_gen3/robotiq_2f_85_gripper_controller/gripper_cmd/goal
 Type: control_msgs/GripperCommandActionGoal
 
 Publishers: 
- * /my_gen3/move_group (http://brian-G551JW:38381/)
+ * /my_gen3/move_group
 
 Subscribers: 
- * /gazebo (http://brian-G551JW:42393/)
+ * /gazebo
 
 -------------------------------------------------------------------------------------------
 
