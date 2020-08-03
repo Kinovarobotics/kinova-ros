@@ -14,14 +14,15 @@
 #include "manipulation_class.hpp"
 #include "perception_class.hpp"
 
-int main(int argc, char** argv, string planning_group)
+int main(int argc, char** argv)
 {
   // ros initialization
-  ros::init(argc,argv,"basic_manipulation_and_2d_perception_node");
+  ros::init(argc,argv,"basic_manipulation_and_3d_perception_node");
   ros::NodeHandle nh;
   ros::AsyncSpinner spinner(4);
-  spinner.start();
-  
+  spinner.start();  
+  string planning_group = "manipulator";
+
   // Create manipulation and perception objects
   Manipulation manipulation(nh, planning_group);
   ROS_INFO("planning group is: ", planning_group);
