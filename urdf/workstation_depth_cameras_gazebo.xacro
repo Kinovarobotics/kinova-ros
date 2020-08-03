@@ -47,7 +47,7 @@
           <depthImageTopicName>/left_camera/depth/image_raw</depthImageTopicName>
           <depthImageCameraInfoTopicName>/left_camera/depth/camera_info</depthImageCameraInfoTopicName>
           <pointCloudTopicName>/left_camera/depth/points</pointCloudTopicName>
-          <frameName>table_left_camera_link</frameName>
+          <frameName>"${prefix}left_camera_link"</frameName>
           <pointCloudCutoff>0.5</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
           <distortionK1>0</distortionK1>
