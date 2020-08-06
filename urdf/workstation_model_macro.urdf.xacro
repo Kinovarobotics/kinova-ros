@@ -15,13 +15,16 @@
 
   <xacro:include filename="$(find uml_hri_nerve_pick_and_place)/urdf/workstation_model.urdf.xacro" />
 
+  <xacro:workstation prefix="table_"/>
+
+  <!-- 
   <link name="world" />
 
-  <xacro:workstation prefix="table_"/>
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "table_base_link" />
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
   </joint>
+  -->
 
 </robot>

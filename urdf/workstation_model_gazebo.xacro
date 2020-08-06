@@ -36,6 +36,9 @@
     <gazebo reference="${prefix}left_camera_link">
       <selfCollide>true</selfCollide>
     </gazebo>
+    <gazebo reference="${prefix}left_gazebo_depth_camera">
+      <selfCollide>true</selfCollide>
+    </gazebo>
     <gazebo reference="${prefix}right_horizontal_arm_link">
       <selfCollide>true</selfCollide>
     </gazebo>

@@ -1,0 +1,18 @@
+<!--
+Brian Flynn
+wrist_camera.launch
+
+Create static transforms between "world" and "camera frames" for simulated cameras in gazebo workstation model for 2D and 3D vision
+-->
+
+<launch>
+
+  <!-- This transforms each resulting pointcloud into a global reference frame -->
+  <node name="left_camera_tf_1" pkg="tf" type="static_transform_publisher"
+    args="0.0 0.0 0.0 0.0 0.0 0.0 /world /table_left_gazebo_depth_camera 100" />
+
+  <!-- This transforms each resulting pointcloud into a global reference frame -->
+  <node name="left_camera_tf_2" pkg="tf" type="static_transform_publisher"
+    args="0.0 0.0 0.0 0.0 0.0 0.0 /table_left_gazebo_depth_camera /table_left_camera_link 100" />
+
+</launch>

@@ -26,10 +26,6 @@
   <param name="robot_description"
     command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
 
-  <!-- send robot urdf to param server -->
-  <param name="table_description"
-	command="xacro --inorder '$(find uml_hri_nerve_pick_and_place)/urdf/workstation_model_macro.urdf.xacro'"/>
-
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <!-- For the 6DOF -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" unless="$(arg is7dof)"
@@ -58,10 +54,6 @@
         -J $(arg kinova_robotType)_joint_finger_2 1.0
         -J $(arg kinova_robotType)_joint_finger_3 1.0" />
 
-  <!-- push table_description to factory -->
-  <node name="table_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-	args="-urdf -model table -param table_description -z 0.41" />
-
   <!-- ros_control launch file -->
   <include file="$(find kinova_control)/launch/kinova_control.launch">
     <arg name="kinova_robotName" value="$(arg kinova_robotName)"/>
@@ -76,5 +68,14 @@
     <arg name="kinova_robotType" value="$(arg kinova_robotName)"/>
   </include> 
   -->
+
+  <group ns="workstation" >
+    <!-- workstation_cameras_transforms launch file -->
+    <include file="$(find uml_hri_nerve_pick_and_place)/launch/workstation_gazebo.launch" />
+  </group>
+
+  <node name="table_transform" pkg="tf" type="static_transform_publisher"
+    args="-1.7 -0.45 0.07 -1.5707 0.0 -1.5707 /world /workstation/table_base_link 100" />
+
 </launch>
 

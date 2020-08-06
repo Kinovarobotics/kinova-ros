@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- using namespace workstation to publish joint states for workstation URDF model, need to change parameter so joints line up to known model names -->
+  <param name="tf_prefix" value="workstation" />
+
+  <!-- send robot urdf to param server -->
+  <param name="robot_description"
+	command="xacro --inorder '$(find uml_hri_nerve_pick_and_place)/urdf/workstation_model_macro.urdf.xacro'"/>
+
+  <!-- push table_description to factory -->
+  <node name="table_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model table -param robot_description -z 0.41" />
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+        respawn="false" output="screen" args="-tf_prefix workstation" />
+
+</launch>

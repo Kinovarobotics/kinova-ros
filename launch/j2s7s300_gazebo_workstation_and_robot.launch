@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- previously run separately, new launch file for simplicity: -->
+  <!-- roslaunch uml_hri_nerve_pick_and_place robot_launch.launch kinova_robotType:=j2s7s300 -->
+  <!-- roslaunch uml_hri_nerve_pick_and_place j2s7s300_gazebo_workstation_demo.launch -->
+
+  <!-- j2s7s300 and simulated workstation + cameras configuration and model spawning launch file -->
+  <include file="$(find uml_hri_nerve_pick_and_place)/launch/robot_launch.launch">
+    <arg name="kinova_robotType" value="j2s7s300"/>
+  </include>
+
+  <!-- j2s7s300 gazebo controllers and move_group launch file -->
+  <include file="$(find uml_hri_nerve_pick_and_place)/launch/j2s7s300_gazebo_workstation_demo.launch" />
+
+</launch>
