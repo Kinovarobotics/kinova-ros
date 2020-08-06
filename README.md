@@ -86,7 +86,6 @@ Subscribers:
 
 -------------------------------------------------------------------------------------------
 
-'''  
 gripper control message type info:  
 rosmsg show control_msgs/GripperCommandActionGoal  
 std_msgs/Header header  
@@ -100,7 +99,6 @@ control_msgs/GripperCommandGoal goal
   control_msgs/GripperCommand command  
     float64 position  
     float64 max_effort  
-'''  
 
 
 ### Workstation Camera Topics
