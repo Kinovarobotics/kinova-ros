@@ -53,7 +53,7 @@
     <axis xyz="0 0 0" />
   </joint>
 
-  <!-- PEDESTAL LINK -->
+  <!-- TOP CAMERA LINK -->
   <link name="${prefix}top_camera_link">
     <inertial>
       <origin xyz="0 0 1" rpy="0 0 0" />
@@ -237,6 +237,16 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- Create a virtual joint between left_camera_link and left_gazebo_depth_camera link -->
+  <joint name="${prefix}left_camera_to_left_gazebo_depth_camera_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0" />
+    <parent link="${prefix}left_camera_link" />
+    <child link="${prefix}left_gazebo_depth_camera" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <link name="${prefix}left_gazebo_depth_camera" />
 
   <!-- TABLE TO RIGHT HORIZONTAL ARM JOINT -->
   <joint name="table_to_right_horizontal_arm_joint" type="fixed">

@@ -41,13 +41,13 @@
           <baseline>0.2</baseline>
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>left_camera_ir</cameraName>
-          <imageTopicName>/left_camera/color/image_raw</imageTopicName>
-          <cameraInfoTopicName>/left_camera/color/camera_info</cameraInfoTopicName>
-          <depthImageTopicName>/left_camera/depth/image_raw</depthImageTopicName>
-          <depthImageCameraInfoTopicName>/left_camera/depth/camera_info</depthImageCameraInfoTopicName>
-          <pointCloudTopicName>/left_camera/depth/points</pointCloudTopicName>
-          <frameName>"${prefix}left_camera_link"</frameName>
+          <cameraName>camera_ir</cameraName>
+          <imageTopicName>/camera/color/image_raw</imageTopicName>
+          <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+          <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+          <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+          <frameName>${prefix}left_gazebo_depth_camera</frameName>
           <pointCloudCutoff>0.5</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
           <distortionK1>0</distortionK1>
