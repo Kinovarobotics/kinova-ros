@@ -85,8 +85,9 @@ Subscribers:
  * /gazebo  
 
 -------------------------------------------------------------------------------------------
-```
+
 gripper control message type info:  
+```
 rosmsg show control_msgs/GripperCommandActionGoal  
 std_msgs/Header header  
   uint32 seq  
