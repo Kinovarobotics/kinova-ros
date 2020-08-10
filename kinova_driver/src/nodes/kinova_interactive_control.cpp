@@ -453,7 +453,9 @@ void currentPoseFeedback(const kinova_msgs::KinovaPoseConstPtr pose_command)
 /// \return
 ///
 int main(int argc, char** argv)
-{
+{   
+    ros::init(argc, argv, tf_prefix_+"_interactive_control");
+    ros::NodeHandle nh("~");
     // Retrieve the (non-option) argument:
     if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
     {
@@ -483,8 +485,6 @@ int main(int argc, char** argv)
     finger_number_ = kinova_robotType_[5]-'0';
     joint_total_number_ = arm_joint_number_ + finger_number_;
 
-    ros::init(argc, argv, tf_prefix_+"_interactive_control");
-    ros::NodeHandle nh("~");
     ros::Subscriber armJoint_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/joint_command", 1, &currentJointsFeedback);
     ros::Subscriber armCartesian_sub = nh.subscribe("/"+tf_prefix_+"_driver/out/cartesian_command", 1, &currentPoseFeedback);
 
