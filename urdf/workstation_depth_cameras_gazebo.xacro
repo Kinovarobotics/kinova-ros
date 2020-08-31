@@ -18,13 +18,14 @@
     <!-- LEFT CAMERA -->
     <gazebo reference="${prefix}left_camera_link">
       <sensor type="depth" name="left_camera">
-        <pose frame="${prefix}left_camera_link">-0.0125 0.0 0.0 0.0 0.0 0.0</pose>
+      <!-- <pose frame="${prefix}left_camera_link" 0.0 0.0 0.0 0.0 0.0 0.0</pose> -->
         <update_rate>30.0</update_rate>
-        <camera name="head">
-          <horizontal_fov>1.3962634</horizontal_fov>
+        <camera>
+          <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+          <horizontal_fov>1.50098</horizontal_fov>
           <image>
-            <width>640</width>
-            <height>480</height>
+            <width>1280</width>
+            <height>720</height>
             <format>R8G8B8</format>
           </image>
           <clip>
@@ -37,29 +38,19 @@
             <stddev>0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+        <plugin name="left_camera_plugin" filename="libgazebo_ros_openni_kinect.so">
           <baseline>0.2</baseline>
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>camera_ir</cameraName>
-          <imageTopicName>/camera/color/image_raw</imageTopicName>
-          <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
-          <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
-          <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
-          <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
-          <frameName>${prefix}left_gazebo_depth_camera</frameName>
-          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <cameraName>left_camera</cameraName>
+          <imageTopicName>/left_camera/color/image_raw</imageTopicName>
+          <cameraInfoTopicName>/left_camera/color/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/left_camera/depth/image_raw</depthImageTopicName>
+          <depthImageCameraInfoTopicName>/left_camera/depth/camera_info</depthImageCameraInfoTopicName>
+          <pointCloudTopicName>/left_camera/depth/points</pointCloudTopicName>
+          <frameName>${prefix}left_optical</frameName>
+          <pointCloudCutoff>0.1</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
-          <distortionK1>0</distortionK1>
-          <distortionK2>0</distortionK2>
-          <distortionK3>0</distortionK3>
-          <distortionT1>0</distortionT1>
-          <distortionT2>0</distortionT2>
-          <CxPrime>0</CxPrime>
-          <Cx>0</Cx>
-          <Cy>0</Cy>
-          <focalLength>0</focalLength>
-          <hackBaseline>0</hackBaseline>
         </plugin>
       </sensor>
     </gazebo>
@@ -67,13 +58,13 @@
     <!-- RIGHT CAMERA -->
     <gazebo reference="${prefix}right_camera_link">
       <sensor type="depth" name="right_camera">
-        <pose frame="${prefix}right_camera_link">0.0125 0.0 0.0 0.0 0.0 0.0</pose>
         <update_rate>30.0</update_rate>
-        <camera name="head">
-          <horizontal_fov>1.3962634</horizontal_fov>
+        <camera>
+          <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+          <horizontal_fov>1.50098</horizontal_fov>
           <image>
-            <width>640</width>
-            <height>480</height>
+            <width>1280</width>
+            <height>720</height>
             <format>R8G8B8</format>
           </image>
           <clip>
@@ -86,29 +77,19 @@
             <stddev>0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+        <plugin name="right_camera_plugin" filename="libgazebo_ros_openni_kinect.so">
           <baseline>0.2</baseline>
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>right_camera_ir</cameraName>
+          <cameraName>right_camera</cameraName>
           <imageTopicName>/right_camera/color/image_raw</imageTopicName>
           <cameraInfoTopicName>/right_camera/color/camera_info</cameraInfoTopicName>
           <depthImageTopicName>/right_camera/depth/image_raw</depthImageTopicName>
           <depthImageCameraInfoTopicName>/right_camera/depth/camera_info</depthImageCameraInfoTopicName>
           <pointCloudTopicName>/right_camera/depth/points</pointCloudTopicName>
-          <frameName>table_right_camera_link</frameName>
-          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <frameName>${prefix}right_optical</frameName>
+          <pointCloudCutoff>0.1</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
-          <distortionK1>0</distortionK1>
-          <distortionK2>0</distortionK2>
-          <distortionK3>0</distortionK3>
-          <distortionT1>0</distortionT1>
-          <distortionT2>0</distortionT2>
-          <CxPrime>0</CxPrime>
-          <Cx>0</Cx>
-          <Cy>0</Cy>
-          <focalLength>0</focalLength>
-          <hackBaseline>0</hackBaseline>
         </plugin>
       </sensor>
     </gazebo>
@@ -116,13 +97,13 @@
     <!-- REAR CAMERA -->
     <gazebo reference="${prefix}rear_camera_link">
       <sensor type="depth" name="rear_camera">
-        <pose frame="${prefix}rear_camera_link">-0.0125 0.0 0.0 0.0 0.0 0.0</pose>
         <update_rate>30.0</update_rate>
-        <camera name="head">
-          <horizontal_fov>1.3962634</horizontal_fov>
+        <camera>
+          <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+          <horizontal_fov>1.50098</horizontal_fov>
           <image>
-            <width>640</width>
-            <height>480</height>
+            <width>1280</width>
+            <height>720</height>
             <format>R8G8B8</format>
           </image>
           <clip>
@@ -135,29 +116,19 @@
             <stddev>0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+        <plugin name="rear_camera_plugin" filename="libgazebo_ros_openni_kinect.so">
           <baseline>0.2</baseline>
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>rear_camera_ir</cameraName>
+          <cameraName>rear_camera</cameraName>
           <imageTopicName>/rear_camera/color/image_raw</imageTopicName>
           <cameraInfoTopicName>/rear_camera/color/camera_info</cameraInfoTopicName>
           <depthImageTopicName>/rear_camera/depth/image_raw</depthImageTopicName>
           <depthImageCameraInfoTopicName>/rear_camera/depth/camera_info</depthImageCameraInfoTopicName>
           <pointCloudTopicName>/rear_camera/depth/points</pointCloudTopicName>
-          <frameName>table_rear_camera_link</frameName>
-          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <frameName>${prefix}rear_optical</frameName>
+          <pointCloudCutoff>0.1</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
-          <distortionK1>0</distortionK1>
-          <distortionK2>0</distortionK2>
-          <distortionK3>0</distortionK3>
-          <distortionT1>0</distortionT1>
-          <distortionT2>0</distortionT2>
-          <CxPrime>0</CxPrime>
-          <Cx>0</Cx>
-          <Cy>0</Cy>
-          <focalLength>0</focalLength>
-          <hackBaseline>0</hackBaseline>
         </plugin>
       </sensor>
     </gazebo>
@@ -165,13 +136,13 @@
     <!-- TOP CAMERA -->
     <gazebo reference="${prefix}top_camera_link">
       <sensor type="depth" name="top_camera">
-        <pose frame="${prefix}top_camera_link">-0.0125 0.0 0.0 0.0 0.0 0.0</pose>
         <update_rate>30.0</update_rate>
-        <camera name="head">
-          <horizontal_fov>1.3962634</horizontal_fov>
+        <camera>
+          <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+          <horizontal_fov>1.50098</horizontal_fov>
           <image>
-            <width>640</width>
-            <height>480</height>
+            <width>1280</width>
+            <height>720</height>
             <format>R8G8B8</format>
           </image>
           <clip>
@@ -184,29 +155,19 @@
             <stddev>0.007</stddev>
           </noise>
         </camera>
-        <plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+        <plugin name="top_camera_plugin" filename="libgazebo_ros_openni_kinect.so">
           <baseline>0.2</baseline>
           <alwaysOn>true</alwaysOn>
           <updateRate>0.0</updateRate>
-          <cameraName>top_camera_ir</cameraName>
+          <cameraName>top_camera</cameraName>
           <imageTopicName>/top_camera/color/image_raw</imageTopicName>
           <cameraInfoTopicName>/top_camera/color/camera_info</cameraInfoTopicName>
           <depthImageTopicName>/top_camera/depth/image_raw</depthImageTopicName>
           <depthImageCameraInfoTopicName>/top_camera/depth/camera_info</depthImageCameraInfoTopicName>
           <pointCloudTopicName>/top_camera/depth/points</pointCloudTopicName>
-          <frameName>table_top_camera_link</frameName>
-          <pointCloudCutoff>0.5</pointCloudCutoff>
+          <frameName>${prefix}top_optical</frameName>
+          <pointCloudCutoff>0.1</pointCloudCutoff>
           <pointCloudCutoffMax>10</pointCloudCutoffMax>
-          <distortionK1>0</distortionK1>
-          <distortionK2>0</distortionK2>
-          <distortionK3>0</distortionK3>
-          <distortionT1>0</distortionT1>
-          <distortionT2>0</distortionT2>
-          <CxPrime>0</CxPrime>
-          <Cx>0</Cx>
-          <Cy>0</Cy>
-          <focalLength>0</focalLength>
-          <hackBaseline>0</hackBaseline>
         </plugin>
       </sensor>
     </gazebo>

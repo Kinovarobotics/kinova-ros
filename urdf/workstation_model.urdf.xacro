@@ -23,11 +23,6 @@
 
   <!-- TABLE BASE LINK -->
   <link name="${prefix}base_link">
-    <inertial>
-      <origin xyz="0 0 1" rpy="0 0 0" />
-      <mass value="1" />
-      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
-    </inertial>
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <geometry>
@@ -47,7 +42,7 @@
 
   <!-- TABLE TO TOP CAMERA JOINT -->
   <joint name="table_to_top_camera_joint" type="fixed">
-    <origin xyz="0.0 0.0 1.51" rpy="3.1416 0.0 0.0" />
+    <origin xyz="0.0 0.0 1.5" rpy="0.0 ${pi/2} ${pi/2}" />
     <parent link="${prefix}base_link" />
     <child link="${prefix}top_camera_link" />
     <axis xyz="0 0 0" />
@@ -63,7 +58,7 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <geometry>
-        <box size="0.09 0.025 0.025"/>
+        <box size="0.025 0.09 0.025"/>
       </geometry>
       <material name="">
         <color rgba="0.79216 0.81961 0.93333 1" />
@@ -72,10 +67,21 @@
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <geometry>
-        <box size="0.09 0.025 0.025"/>
+        <box size="0.025 0.09 0.025"/>
       </geometry>
     </collision>
   </link>
+
+  <!-- Create a virtual joint between left_camera_link and left_gazebo_depth_camera link -->
+  <joint name="${prefix}top_camera_to_top_optical_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+    <parent link="${prefix}top_camera_link" />
+    <child link="${prefix}top_optical" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <!-- TOP OPTICAL -->
+  <link name="${prefix}top_optical" />
 
   <!-- TABLE TO PEDESTAL JOINT -->
   <joint name="table_to_pedestal_joint" type="fixed">
@@ -239,14 +245,15 @@
   </link>
 
   <!-- Create a virtual joint between left_camera_link and left_gazebo_depth_camera link -->
-  <joint name="${prefix}left_camera_to_left_gazebo_depth_camera_joint" type="fixed">
-    <origin xyz="0.0 0.0 0.1" rpy="0.0 0.0 0.0" />
+  <joint name="${prefix}left_camera_to_left_optical_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="${-pi/2} 0.0 ${-pi/2}" />
     <parent link="${prefix}left_camera_link" />
-    <child link="${prefix}left_gazebo_depth_camera" />
+    <child link="${prefix}left_optical" />
     <axis xyz="0 0 0" />
   </joint>
 
-  <link name="${prefix}left_gazebo_depth_camera" />
+  <!-- LEFT OPTICAL -->
+  <link name="${prefix}left_optical" />
 
   <!-- TABLE TO RIGHT HORIZONTAL ARM JOINT -->
   <joint name="table_to_right_horizontal_arm_joint" type="fixed">
@@ -312,9 +319,10 @@
     </collision>
   </link>
 
+  <!-- change these values for camera direction -->
   <!-- RIGHT VERTICAL ARM TO RIGHT CAMERA JOINT -->
   <joint name="right_vertical_arm_to_right_camera_joint" type="fixed">
-    <origin xyz="-0.0325 0.0 -0.125" rpy="0.0 0.0 0.0" />
+    <origin xyz="-0.0325 0.0 -0.125" rpy="0.0 0.0 ${pi}" />
     <parent link="${prefix}right_vertical_arm_link" />
     <child link="${prefix}right_camera_link" />
     <axis xyz="0 0 0" />
@@ -343,6 +351,21 @@
       </geometry>
     </collision>
   </link>
+
+  <!-- ${-pi/2} ${pi/2} ${-pi} ${pi} -->
+  <!-- change these values for location of camera frame -->
+  <!-- Create a virtual joint between right_camera_link and right_gazebo_depth_camera link -->
+  <!-- <origin xyz="2.095 0.0 2.075" rpy="0 ${pi} ${pi}" /> OLD_LINE -->
+  <joint name="${prefix}right_camera_to_right_optical_joint" type="fixed">
+    <!-- <origin xyz="0.0 0.0 0.0" rpy="0 0 ${pi}" /> -->
+    <origin xyz="0.0 0.0 0.0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+    <parent link="${prefix}right_camera_link" />
+    <child link="${prefix}right_optical" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <!-- RIGHT OPTICAL -->
+  <link name="${prefix}right_optical" />
 
   <!-- TABLE TO REAR HORIZONTAL ARM JOINT -->
   <joint name="table_to_rear_horizontal_arm_joint" type="fixed">
@@ -410,7 +433,7 @@
 
   <!-- REAR VERTICAL ARM TO REAR CAMERA JOINT -->
   <joint name="rear_vertical_arm_to_rear_camera_joint" type="fixed">
-    <origin xyz="0.0 -0.0325 -0.125" rpy="0.0 0.0 0.0" />
+    <origin xyz="0.0 -0.0325 -0.125" rpy="0.0 0.0 ${-pi/2}" />
     <parent link="${prefix}rear_vertical_arm_link" />
     <child link="${prefix}rear_camera_link" />
     <axis xyz="0 0 0" />
@@ -426,7 +449,7 @@
     <visual>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <geometry>
-        <box size="0.09 0.025 0.025"/>
+        <box size="0.025 0.09 0.025"/>
       </geometry>
       <material name="">
         <color rgba="0.79216 0.81961 0.93333 1" />
@@ -435,10 +458,22 @@
     <collision>
       <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
       <geometry>
-        <box size="0.09 0.025 0.025"/>
+        <box size="0.025 0.09 0.025"/>
       </geometry>
     </collision>
   </link>
 
+    <!-- Create a virtual joint between left_camera_link and left_gazebo_depth_camera link -->
+    <!-- <origin xyz="0.9 -1.945 1.035" rpy="0 ${pi/2} 0" /> X=Z, -Y=Y, Z=X OLD_LINE -->
+  <joint name="${prefix}rear_camera_to_rear_optical_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="${-pi/2} 0.0 ${-pi/2}" /> <!-- X=Z, -Y=Y, Z=X-->
+    <parent link="${prefix}rear_camera_link" />
+    <child link="${prefix}rear_optical" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <!-- REAR OPTICAL -->
+  <link name="${prefix}rear_optical" /> 
+
   </xacro:macro>
-</robot>
+</robot>    

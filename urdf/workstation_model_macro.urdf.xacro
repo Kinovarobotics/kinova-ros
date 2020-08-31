@@ -17,7 +17,7 @@
 
   <xacro:workstation prefix="table_"/>
 
-  <!-- 
+  <!-- This is not required because the "world" link already exists
   <link name="world" />
 
   <joint name="world_joint" type="fixed">
