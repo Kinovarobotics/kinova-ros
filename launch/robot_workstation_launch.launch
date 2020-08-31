@@ -24,10 +24,11 @@
 
   <!-- Load the URDF into the ROS Parameter Server -->
   <param name="robot_description"
-    command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
+    command="$(find xacro)/xacro --inorder '$(find kinova_description)/urdf/$(arg kinova_robotType)_workstation.xacro'" />
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <!-- For the 6DOF -->
+  <!-- -y -0.675 -z 0.8925 old position starting arguments (after robot_description params) -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" unless="$(arg is7dof)"
     args="-urdf -model $(arg kinova_robotName) -param robot_description
         -J $(arg kinova_robotType)_joint_1 0.0

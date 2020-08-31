@@ -45,7 +45,7 @@ git clone -b kinetic-devel https://github.com/Kinovarobotics/ros_kortex.git
 catkin build  
 rosdep install --from-paths src --ignore-src -y  
   
-## Installing kinova_ros package:
+### Installing kinova_ros package:
 (https://github.com/Kinovarobotics/kinova-ros/wiki/Gazebo)  
 As always, checkout the package on Github for more information (click on the wiki link along the top for guides if there are any)  
   
