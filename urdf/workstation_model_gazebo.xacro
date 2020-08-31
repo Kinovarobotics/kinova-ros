@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:gazebo="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz"
+    xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model"
+    xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    xmlns:body="http://playerstage.sourceforge.net/gazebo/xmlschema/#body"
+    xmlns:geom="http://playerstage.sourceforge.net/gazebo/xmlschema/#geom"
+    xmlns:joint="http://playerstage.sourceforge.net/gazebo/xmlschema/#joint"
+    xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+    xmlns:rendering="http://playerstage.sourceforge.net/gazebo/xmlschema/#rendering"
+    xmlns:renderable="http://playerstage.sourceforge.net/gazebo/xmlschema/#renderable"
+    xmlns:physics="http://playerstage.sourceforge.net/gazebo/xmlschema/#physics"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="workstation_gazebo" params="prefix">
+
+    <!-- Table/Pedestal parts -->
+    <gazebo reference="${prefix}base_link" />
+    <gazebo reference="${prefix}pedestal_link" />
+    <gazebo reference="${prefix}mounting_plate_link" />
+
+    <!-- Top Camera parts -->
+    <gazebo reference="${prefix}top_camera_link" />
+    <gazebo reference="${prefix}top_optical" />
+
+    <!-- Left Camera parts -->
+    <gazebo reference="${prefix}left_horizontal_arm_link" />
+    <gazebo reference="${prefix}left_vertical_arm_link" />
+    <gazebo reference="${prefix}left_camera_link" />
+    <gazebo reference="${prefix}left_optical" />
+
+    <!-- Right Camera parts -->
+    <gazebo reference="${prefix}right_horizontal_arm_link" />
+    <gazebo reference="${prefix}right_vertical_arm_link" />
+    <gazebo reference="${prefix}right_camera_link" />
+    <gazebo reference="${prefix}right_optical" />
+
+    <!-- Rear Camera parts -->
+    <gazebo reference="${prefix}rear_horizontal_arm_link" />
+    <gazebo reference="${prefix}rear_vertical_arm_link" />
+    <gazebo reference="${prefix}rear_camera_link" />
+    <gazebo reference="${prefix}rear_optical" />
+
+  </xacro:macro>
+
+</robot>
