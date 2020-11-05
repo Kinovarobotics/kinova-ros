@@ -508,7 +508,6 @@ void KinovaArm::cartesianVelocityWithFingersCallback(const kinova_msgs::PoseVelo
         FingerAngles fingers;
         kinova_comm_.getFingerPositions(fingers);
         float error = fingers_closure_percentage / 100.0 * finger_max_turn - fingers.Finger1; 
-        ROS_INFO("%3.3f", error);
         float kp = 2.0; // tried that, it works
         float command = 0.0;
         if (fabs(error) > 20.0) // arbitrary position units
