@@ -113,6 +113,49 @@ To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/
 sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# compiling with build
+The original build tool:
+   catkin_make 
+
+The newer build tools is catkin build
+catkin clean
+
+catkin config -j 6
+For debug
+catkin  build --force-cmake -DCMAKE_INSTALL_PREFIX=../install -DCATKIN_DEVEL_PREFIX=../devel -DCMAKE_BUILD_TYPE=Debug
+
+For release
+build --force-cmake -DCMAKE_INSTALL_PREFIX=../install -DCATKIN_DEVEL_PREFIX=../devel
+
 ## How to use the stack
 
 ### Launch driver
