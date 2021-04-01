@@ -27,7 +27,7 @@
   </group>
 
   <group if="$(arg use_urdf)">
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
     <node name="$(arg kinova_robotName)_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">
