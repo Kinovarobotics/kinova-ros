@@ -35,6 +35,8 @@ This repository doesn't support the Gen3 arm in ROS. Have a look at the [ros_kor
 # Supported versions
 The master branch has been tested with ROS Kinetic and ROS Melodic.
 
+Support for ROS Noetic has not been planned.
+
 You can checkout the [indigo-devel](https://github.com/Kinovarobotics/kinova-ros/tree/indigo-devel) for ROS Indigo and Ubuntu 14.04 support, but the branch is no longer maintained. 
 
 =======

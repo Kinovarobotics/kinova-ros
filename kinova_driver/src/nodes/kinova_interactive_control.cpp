@@ -454,7 +454,7 @@ void currentPoseFeedback(const kinova_msgs::KinovaPoseConstPtr pose_command)
 ///
 int main(int argc, char** argv)
 {   
-    ros::init(argc, argv, tf_prefix_+"_interactive_control");
+    ros::init(argc, argv, "kinova_interactive_control");
     ros::NodeHandle nh("~");
     // Retrieve the (non-option) argument:
     if ( (argc <= 1) || (argv[argc-1] == NULL) ) // there is NO input...
