@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """Publishes joint trajectory to move robot to given pose"""
 
 import rospy
@@ -83,4 +83,4 @@ if __name__ == '__main__':
 
     moveFingers ([1,1,1],prefix,nbfingers)
   except rospy.ROSInterruptException:
-    print "program interrupted before completion"
+    print("program interrupted before completion")

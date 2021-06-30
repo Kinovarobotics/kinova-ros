@@ -1,10 +1,21 @@
 <launch>
-  <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
-  <arg name="moveit_controller_manager"
-       default="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
-  <param name="moveit_controller_manager"
-         value="$(arg moveit_controller_manager)"/>
+  <arg name="fake_execution" default="false"/>
 
-  <!-- The rest of the params are specific to this plugin -->
-  <rosparam file="$(find j2s6s300_moveit_config)/config/controllers.yaml"/>
+<!-- Fake Arm -->
+  <group if="$(arg fake_execution)">
+    <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+    <param name="moveit_controller_manager" value="moveit_fake_controller_manager/MoveItFakeControllerManager"/>
+
+    <!-- The rest of the params are specific to this plugin -->
+    <rosparam file="$(find j2s6s300_moveit_config)/config/fake_controllers.yaml"/>
+  </group>
+
+<!-- Real Arm -->
+  <group unless="$(arg fake_execution)">
+    <!-- Set the param that trajectory_execution_manager needs to find the controller plugin -->
+    <param name="moveit_controller_manager" value="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
+
+    <!-- The rest of the params are specific to this plugin -->
+    <rosparam file="$(find j2s6s300_moveit_config)/config/controllers.yaml"/>
+  </group>
 </launch>

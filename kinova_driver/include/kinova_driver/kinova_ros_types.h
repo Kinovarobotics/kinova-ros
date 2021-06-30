@@ -95,7 +95,7 @@ class KinovaPose : public CartesianInfo
     geometry_msgs::Pose   constructPoseMsg();
     kinova_msgs::KinovaPose constructKinovaPoseMsg();
     geometry_msgs::Wrench constructWrenchMsg();
-    tf::Quaternion getQuaternion(tf::Quaternion &q);
+    void getQuaternion(tf::Quaternion &q);
 
     bool isCloseToOther(const KinovaPose &, float position_tolerance, float EulerAngle_tolerance) const;
 };

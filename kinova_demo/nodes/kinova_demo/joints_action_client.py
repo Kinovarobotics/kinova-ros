@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """A helper program to test cartesian goals for the JACO and MICO arms."""
 
 import roslib; roslib.load_manifest('kinova_demo')
@@ -53,7 +53,7 @@ def getcurrentJointCommand(prefix_):
     topic_address = '/' + prefix_ + 'driver/out/joint_command'
     rospy.Subscriber(topic_address, kinova_msgs.msg.JointAngles, setcurrentJointCommand)
     rospy.wait_for_message(topic_address, kinova_msgs.msg.JointAngles)
-    print 'position listener obtained message for joint position. '
+    print('position listener obtained message for joint position. ')
 
 
 def setcurrentJointCommand(feedback):

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """A helper program to test gripper goals for the JACO and MICO arms."""
 
 import roslib; roslib.load_manifest('kinova_demo')
@@ -50,7 +50,7 @@ def getCurrentFingerPosition(prefix_):
     topic_address = '/' + prefix_ + 'driver/out/finger_position'
     rospy.Subscriber(topic_address, kinova_msgs.msg.FingerPosition, setCurrentFingerPosition)
     rospy.wait_for_message(topic_address, kinova_msgs.msg.FingerPosition)
-    print 'obtained current finger position '
+    print('obtained current finger position ')
 
 
 def setCurrentFingerPosition(feedback):

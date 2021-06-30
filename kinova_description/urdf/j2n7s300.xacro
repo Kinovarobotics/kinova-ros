@@ -108,6 +108,8 @@
     <xacro:property name="joint_6_axis_xyz" value="0 0 1" />
     <xacro:property name="joint_6_origin_xyz" value="0 -0.03703 -0.06414" />
     <xacro:property name="joint_6_origin_rpy" value="${J_PI/3} 0 ${J_PI}" />
+    <!-- If gripper inverted, use this line instead -->
+    <!-- <xacro:property name="joint_6_origin_rpy" value="$${-J_PI/3} 0 0" /> -->
     <xacro:property name="joint_6_lower_limit" value="${-2*J_PI}" />
     <xacro:property name="joint_6_upper_limit" value="${2*J_PI}" />
     <xacro:property name="joint_6_velocity_limit" value="${48*J_PI/180}" />
