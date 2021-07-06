@@ -8,7 +8,7 @@
 	<arg name="feedback_publish_rate" default="0.1" />
 
   <!-- If the node handles multiple robots uncomment this and configure /config/multiple_robots.yaml" -->
-	<rosparam file="$(find kinova_bringup)/launch/config/multiple_robots.yaml" command="load" />
+	<!-- <rosparam file="$(find kinova_bringup)/launch/config/multiple_robots.yaml" command="load" /> -->
 
   <node name="$(arg kinova_robotName)_driver" pkg="kinova_driver" type="kinova_arm_driver" output="screen" cwd="node" args="$(arg kinova_robotType)">
     <rosparam file="$(find kinova_bringup)/launch/config/robot_parameters.yaml" command="load" />
@@ -27,7 +27,7 @@
   </group>
 
   <group if="$(arg use_urdf)">
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro '$(find kinova_description)/urdf/$(arg kinova_robotType)_standalone.xacro'" />
     <node name="$(arg kinova_robotName)_state_publisher"
            pkg="robot_state_publisher"
           type="robot_state_publisher">

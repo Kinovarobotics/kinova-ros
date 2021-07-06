@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #remove or add the library/libraries for ROS
 import rospy
@@ -33,8 +33,8 @@ if __name__=='__main__':
 			cmd.joint6=-48
 		else:
 			cmd.joint6=0
-		print cmd
-		print torque
+		print(cmd)
+		print(torque)
 			
 		pub.publish(cmd)
 

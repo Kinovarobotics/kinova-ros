@@ -1,3 +1,5 @@
+### This script is used to generate a new set of robots_control.yaml files
+
 import yaml
 
 robots = ['j2n6s300', 'm1n6s300', 'm1n6s200', 'j2n7s300', 'j2s6s300', 'j2s7s300']

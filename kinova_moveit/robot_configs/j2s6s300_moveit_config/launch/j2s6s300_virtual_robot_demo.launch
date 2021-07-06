@@ -3,6 +3,7 @@
   <param name="robot_type" value="j2s6s300" />
   <param name="robot_connected" value="false" />
 	<param name="/pick_place_demo/arm/solve_type" value="Manipulation2" />
+  <param name="/pick_place_demo/arm/kinematics_solver_timeout" value="0.05" />
 
   <!-- By default, we do not start a database (it can be large) -->
   <arg name="db" default="false" />
@@ -17,12 +18,23 @@
     <arg name="load_robot_description" value="true"/>
   </include>
 
-  <!-- If needed, broadcast static tf for robot root -->
-  
+  <!--
+  By default, hide joint_state_publisher's GUI
+
+  MoveIt!'s "demo" mode replaces the real robot driver with the joint_state_publisher.
+  The latter one maintains and publishes the current joint configuration of the simulated robot.
+  It also provides a GUI to move the simulated robot around "manually".
+  This corresponds to moving around the real robot without the use of MoveIt.
+  -->
+  <arg name="use_gui" default="false" />
 
   <!-- We do not have a robot connected, so publish fake joint states -->
-  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-    <param name="/use_gui" value="false"/>
+  <node if="$(arg use_gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui">
+    <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
+		<param name="zeros/j2s6s300_joint_2" value="3.1415"/>		
+	  <param name="zeros/j2s6s300_joint_3" value="3.1415"/>    
+  </node>
+  <node unless="$(arg use_gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
     <rosparam param="/source_list">[/move_group/fake_controller_joint_states]</rosparam>
 		<param name="zeros/j2s6s300_joint_2" value="3.1415"/>		
 	  <param name="zeros/j2s6s300_joint_3" value="3.1415"/>    
@@ -31,12 +43,13 @@
   <!-- Given the published joint states, publish tf for the robot links -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
 
-  <!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
-  <include file="$(find j2s6s300_moveit_config)/launch/move_group.launch">
+  <!-- Run the main MoveIt executable -->
+  <include file="$(find j2s6s300_moveit_config)/launch/move_group_j2s6s300.launch">
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="true"/>
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
+    <arg name="joint_states_ns" value=""/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->

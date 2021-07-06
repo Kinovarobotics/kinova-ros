@@ -19,7 +19,7 @@
   <arg name="max_safe_path_cost" default="1"/>
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
-  <arg name="joint_states_ns"/>
+  <arg name="joint_states_ns" default="/j2n6s300_driver/out/joint_state"/>
 
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find j2n6s300_moveit_config)/launch/planning_pipeline.launch.xml">
@@ -27,11 +27,9 @@
   </include>
 
   <!-- Trajectory Execution Functionality -->
-  <arg name="controller_manager"/>
   <include ns="move_group" file="$(find j2n6s300_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
-    <arg name="moveit_controller_manager" value="$(arg controller_manager)"/>
-    
+    <arg name="fake_execution" value="$(arg fake_execution)"/>
   </include>
 
   <!-- Sensors Functionality -->
@@ -47,7 +45,7 @@
     <param name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
-    <param name="trajectory_execution/execution_duration_monitoring" value="false"/>
+    <param unless="$(arg fake_execution)" name="trajectory_execution/execution_duration_monitoring" value="false"/>
 
     <!-- MoveGroup capabilities to load -->
     <param name="capabilities" value="move_group/MoveGroupCartesianPathService
@@ -70,7 +68,7 @@
     <param name="planning_scene_monitor/publish_transforms_updates" value="$(arg publish_monitored_planning_scene)" />      
     
 
-    <remap from="/joint_states" to="$(arg joint_states_ns)" />
+    <remap unless="$(arg fake_execution)" from="/joint_states" to="$(arg joint_states_ns)" />
   </node>
 
 </launch>

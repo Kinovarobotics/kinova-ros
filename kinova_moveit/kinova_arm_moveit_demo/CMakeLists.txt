@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(kinova_arm_moveit_demo)
 
 add_compile_options(-std=c++11)
@@ -27,7 +27,7 @@ catkin_package(
     interactive_markers
     eigen_conversions
 )
-find_package(Eigen REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 find_package(kinova_driver REQUIRED)
 

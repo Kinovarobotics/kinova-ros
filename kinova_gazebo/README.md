@@ -1,9 +1,9 @@
 # Gazebo for Kinova robots
 
 ## Supported versions
-The recommended configuration is ROS Indigo with 64 bit Ubuntu 14.04.
+The recommended configuration is ROS Noetic with 64 bit Ubuntu 20.04.
 
-The package may work with other configurations as well, but it has only been tested for the one recommended above. 
+For older configurations, see the other branches melodic-devel, kinetic-devel and indigo-devel.
 
 # New in this release
 - Gazebo support for Jaco, Mico, 7-dof robot
@@ -17,19 +17,14 @@ The package may work with other configurations as well, but it has only been tes
 
 1. Install Gazebo. For detailed instructions see [install page](http://gazebosim.org/tutorials?tut=ros_installing "http://gazebosim.org/tutorials?tut=ros_installing").  
 ```
-sudo apt-get install ros-indigo-gazebo-ros*  
+sudo apt-get install ros-<distro>-gazebo-ros*  
 ```
-2. Install ros_control [ros_controllers repository](https://github.com/ros-controls/ros_controllers "https://github.com/ros-controls/ros_controllers").  
+2. Install ros_control ros_controllers [repository](https://github.com/ros-controls/ros_controllers "https://github.com/ros-controls/ros_controllers").  
 ```
-sudo apt-get install ros-indigo-gazebo-ros-control
-sudo apt-get install ros-indigo-ros-controllers*
+sudo apt-get install ros-<distro>-gazebo-ros-control
+sudo apt-get install ros-<distro>-ros-controllers
+sudo apt-get install ros-<distro>-trac-ik-kinematics-plugin
 ```
-
-3. Checkout kinova-ros in your catkin workspace  
-```
-git clone https://github.com/Kinovarobotics/kinova-ros
-```
-
 
 # Gazebo/ros_control parameters added to Gazebo
 
@@ -63,12 +58,17 @@ The launch file -
 1) Launches Gazebo
 2) Loads the robot model in Gazebo
 3) Launches ros_control controller for the robot
+4) Loads RViz with an empty default view
+
+To show the robot's state in RViz -
+1) in RViz (in the display section) change **Global Options** -> **Fixed Frame** to `world`
+2) add robot's model with **Add** -> **RobotModel** (in rviz folder)
 
 By default the controller is set to launch a trajectory position controller, this is how moveIt! commands the robot.
 If you would like to control the joint by joint, set use_trajectory_controller = false
 
 ```
-roslaunch kinova_gazebo robot_launch.launch kinova_robotType:=j2n6s300 use_trajectory_controller:= false
+roslaunch kinova_gazebo robot_launch.launch kinova_robotType:=j2n6s300 use_trajectory_controller:=false
 ```
 
 ### Moving the robot
@@ -79,7 +79,7 @@ To move the robot in Gazebo using the trajectory controller user can publish joi
 rosrun kinova_control move_robot.py j2n6s300
 ```
 
-The robot can also be commanded joint by joint through rqt - 
+The robot can also be commanded joint by joint through rqt (you can also add the argument `rqt:=true` when initialy launching Gazebo to launch rqt automatically) - 
 
 ```
 roslaunch kinova_control kinova_rqt.launch kinova_robotType:=j2n6s300 
@@ -104,7 +104,7 @@ You can use the interactive markers in rviz to plan trajectories and when you cl
 trajectories are executed in Gazebo.
 
 You can also run the pick and place demo, more info about it in the MoveIt wiki
-[here] (https://github.com/Kinovarobotics/kinova-ros/wiki/MoveIt)  
+[here](https://github.com/Kinovarobotics/kinova-ros/wiki/MoveIt)  
 
 ```
 rosrun kinova_arm_moveit_demo pick_place 

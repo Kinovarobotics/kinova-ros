@@ -915,6 +915,8 @@ int KinovaComm::runCOMParameterEstimation(ROBOT_TYPE type)
     {
         throw KinovaCommException("Could not set COM Parameters", result);
     }
+
+    return 1;
 }
 
 
@@ -1623,6 +1625,8 @@ int KinovaComm::SelfCollisionAvoidanceInCartesianMode(int state)
     {
         throw KinovaCommException("Could not set the self collision avoidance in cartesian mode", result);
     }
+
+    return 1;
 }
 
 int KinovaComm::SingularityAvoidanceInCartesianMode(int state)
@@ -1632,6 +1636,8 @@ int KinovaComm::SingularityAvoidanceInCartesianMode(int state)
     {
         throw KinovaCommException("Could not set the singularity avoidance in cartesian mode", result);
     }
+
+    return 1;
 }
 
 int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
@@ -1646,11 +1652,14 @@ int KinovaComm::SetRedundantJointNullSpaceMotion(int state)
     {
         throw KinovaCommException("Could not set redundant joint null space mode", result);
     }
+
+    return 1;
 }
 
 int KinovaComm::SetRedundancyResolutionToleastSquares(int state)
 {
     //Not Available in API
+    return 1;
 }
 
 

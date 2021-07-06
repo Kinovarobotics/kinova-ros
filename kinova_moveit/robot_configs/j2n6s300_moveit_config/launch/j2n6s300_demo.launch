@@ -33,7 +33,6 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="joint_states_ns" value="/j2n6s300_driver/out/joint_state"/>
-    <arg name="controller_manager" value="j2n6s300"/>
   </include>
 
   <!-- kinova-driver Controller parameters-->  

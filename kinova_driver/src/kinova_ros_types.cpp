@@ -355,7 +355,7 @@ kinova_msgs::KinovaPose KinovaPose::constructKinovaPoseMsg()
     return pose;
 }
 
-tf::Quaternion KinovaPose::getQuaternion(tf::Quaternion &q)
+void KinovaPose::getQuaternion(tf::Quaternion &q)
 {
     q = EulerXYZ2Quaternion(ThetaX, ThetaY, ThetaZ);
 }

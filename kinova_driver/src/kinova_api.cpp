@@ -330,6 +330,8 @@ int KinovaAPI::initializeKinovaAPIFunctions(KinovaAPIType connection_type)
     setTorqueInactivityType = (int (*)(int))initCommandLayerFunction("SetTorqueInactivityType");
 
         // %EndTag(experimental)%
+    
+    return 1;
 }
 
 //returns 1 if robot connection sucessful

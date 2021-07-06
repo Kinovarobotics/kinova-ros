@@ -65,3 +65,18 @@ arm:
     - TRRTkConfigDefault
     - PRMkConfigDefault
     - PRMstarkConfigDefault
+  ### For some reason this section was missing compared to the other ompl_planning (for the other robot configurations).
+  ### I am leaving this here, if anybody has a bug with this robot configuration, maybe try to uncomment this section
+  # gripper:
+  # planner_configs:
+  #   - SBLkConfigDefault
+  #   - ESTkConfigDefault
+  #   - LBKPIECEkConfigDefault
+  #   - BKPIECEkConfigDefault
+  #   - KPIECEkConfigDefault
+  #   - RRTkConfigDefault
+  #   - RRTConnectkConfigDefault
+  #   - RRTstarkConfigDefault
+  #   - TRRTkConfigDefault
+  #   - PRMkConfigDefault
+  #   - PRMstarkConfigDefault

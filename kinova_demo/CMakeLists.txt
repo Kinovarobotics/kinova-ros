@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(kinova_demo)
 
 ## Find catkin macros and libraries
@@ -57,6 +57,6 @@ install(PROGRAMS
   nodes/kinova_demo/joints_action_client.py
   nodes/kinova_demo/testActionSvr.py
   nodes/kinova_demo/gravity_compensated_mode.py
-  nodes/kinova_demo/run_COMParameters_estimation.py	
+  nodes/kinova_demo/run_COMParameters_estimation.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
