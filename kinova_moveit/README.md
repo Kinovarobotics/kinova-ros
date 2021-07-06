@@ -1,7 +1,7 @@
 # MoveIt! for Kinova robots
 
 ## Supported versions
-The recommended configuration is ROS Neotic with 64 bit Ubuntu 20.04.
+The recommended configuration is ROS Noetic with 64 bit Ubuntu 20.04.
 
 For older configurations, see the other branches melodic-devel, kinetic-devel and indigo-devel.
 

@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
     #test cartesian velocity publisher
     if (interactive == True):
-      nb = input('HERE!!! Testing Cartesian velocity control, press return, n to skip')
+      nb = input('Testing Cartesian velocity control, press return, n to skip')
     if (nb != 'n' and nb != 'N'):
       publishCatesianVelocityCommands([-0.1, 0, -0.1, 0, 0, 0], duration_sec, prefix)
       publishCatesianVelocityCommands([0.1, 0, 0.1, 0, 0, 0], duration_sec, prefix)

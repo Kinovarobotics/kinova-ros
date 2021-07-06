@@ -52,7 +52,6 @@ git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
 cd ~/catkin_ws
 catkin_make
 ```
-<!--- TODO: Change catkin_make to use catkin build --->
 <!--- TODO: Verify this list of needed ros packages: ros-<distro>-desktop, ros-<distro>-trac-ik, ros-<distro>-moveit, ros-<distro>-gazebo-ros*, ros-<distro>-gazebo-ros-control, ros-<distro>-ros-controllers*, ros-<distro>-trac-ik-kinematics-plugin --->
 To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
 ```
