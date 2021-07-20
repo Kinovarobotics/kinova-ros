@@ -52,8 +52,23 @@ git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
 cd ~/catkin_ws
 catkin_make
 ```
-<!--- TODO: Verify this list of needed ros packages: ros-<distro>-desktop, ros-<distro>-trac-ik, ros-<distro>-moveit, ros-<distro>-gazebo-ros*, ros-<distro>-gazebo-ros-control, ros-<distro>-ros-controllers*, ros-<distro>-trac-ik-kinematics-plugin --->
-To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
+Another way to build your workspace would be to use the newer `catkin build`, which is part of the `catkin_tools` package:
+```
+# using apt-get
+sudo apt-get install python-catkin-tools
+# using pip
+sudo pip install -U catkin_tools
+```
+Then, you add kinova-ros to your workspace and build it
+```
+cd ~/catkin_ws/src
+git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
+cd ~/catkin_ws
+catkin build
+```
+More about the `catkin_tools` package in the [official documentation](https://catkin-tools.readthedocs.io/en/latest/index.html)
+
+**Note :** To access the arm via usb copy the udev rule file `10-kinova-arm.rules` from `~/catkin_ws/src/kinova-ros/kinova_driver/udev` to `/etc/udev/rules.d/`:
 ```
 sudo cp kinova_driver/udev/10-kinova-arm.rules /etc/udev/rules.d/
 ```
