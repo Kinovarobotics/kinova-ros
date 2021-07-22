@@ -271,16 +271,16 @@ void JointTrajectoryController::update_state()
         kinova_comm_.getJointVelocities(current_joint_velocity);
 
 
-        traj_feedback_msg_.desired.velocities[0] = current_joint_command.Actuators.Actuator1 *M_PI/180;
-        traj_feedback_msg_.desired.velocities[1] = current_joint_command.Actuators.Actuator2 *M_PI/180;
-        traj_feedback_msg_.desired.velocities[2] = current_joint_command.Actuators.Actuator3 *M_PI/180;
-        traj_feedback_msg_.desired.velocities[3] = current_joint_command.Actuators.Actuator4 *M_PI/180;
+        traj_feedback_msg_.desired.positions[0] = current_joint_command.Actuators.Actuator1 *M_PI/180;
+        traj_feedback_msg_.desired.positions[1] = current_joint_command.Actuators.Actuator2 *M_PI/180;
+        traj_feedback_msg_.desired.positions[2] = current_joint_command.Actuators.Actuator3 *M_PI/180;
+        traj_feedback_msg_.desired.positions[3] = current_joint_command.Actuators.Actuator4 *M_PI/180;
         if (number_joint_>=6)
         {
-            traj_feedback_msg_.desired.velocities[4] = current_joint_command.Actuators.Actuator5 *M_PI/180;
-            traj_feedback_msg_.desired.velocities[5] = current_joint_command.Actuators.Actuator6 *M_PI/180;
+            traj_feedback_msg_.desired.positions[4] = current_joint_command.Actuators.Actuator5 *M_PI/180;
+            traj_feedback_msg_.desired.positions[5] = current_joint_command.Actuators.Actuator6 *M_PI/180;
             if (number_joint_==7)
-                traj_feedback_msg_.desired.velocities[5] = current_joint_command.Actuators.Actuator7 *M_PI/180;
+                traj_feedback_msg_.desired.positions[6] = current_joint_command.Actuators.Actuator7 *M_PI/180;
         }
 
         traj_feedback_msg_.actual.positions[0] = current_joint_angles.Actuator1 *M_PI/180;
@@ -292,7 +292,7 @@ void JointTrajectoryController::update_state()
             traj_feedback_msg_.actual.positions[4] = current_joint_angles.Actuator5 *M_PI/180;
             traj_feedback_msg_.actual.positions[5] = current_joint_angles.Actuator6 *M_PI/180;
             if (number_joint_==7)
-                traj_feedback_msg_.actual.positions[5] = current_joint_angles.Actuator7 *M_PI/180;
+                traj_feedback_msg_.actual.positions[6] = current_joint_angles.Actuator7 *M_PI/180;
         }
 
         traj_feedback_msg_.actual.velocities[0] = current_joint_velocity.Actuator1 *M_PI/180;
@@ -304,7 +304,7 @@ void JointTrajectoryController::update_state()
             traj_feedback_msg_.actual.velocities[4] = current_joint_velocity.Actuator5 *M_PI/180;
             traj_feedback_msg_.actual.velocities[5] = current_joint_velocity.Actuator6 *M_PI/180;
             if (number_joint_==7)
-                traj_feedback_msg_.actual.velocities[5] = current_joint_velocity.Actuator7 *M_PI/180;
+                traj_feedback_msg_.actual.velocities[6] = current_joint_velocity.Actuator7 *M_PI/180;
         }
 
         for (size_t j = 0; j<joint_names_.size(); j++)
