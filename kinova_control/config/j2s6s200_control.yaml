@@ -1,0 +1,160 @@
+j2s6s200:
+  effort_finger_trajectory_controller:
+    constraints:
+      goal_time: 1.0
+      j2s6s200_joint_finger_1:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_finger_2:
+        goal: 0.02
+        trajectory: 0.05
+      stopped_velocity_tolerance: 0.02
+    gains:
+      j2s6s200_joint_finger_1:
+        d: 0
+        i: 0
+        i_clamp: 1
+        p: 10
+      j2s6s200_joint_finger_2:
+        d: 0
+        i: 0
+        i_clamp: 1
+        p: 10
+    joints:
+    - j2s6s200_joint_finger_1
+    - j2s6s200_joint_finger_2
+    type: effort_controllers/JointTrajectoryController
+  effort_joint_trajectory_controller:
+    constraints:
+      goal_time: 1.0
+      j2s6s200_joint_1:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_2:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_3:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_4:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_5:
+        goal: 0.02
+        trajectory: 0.05
+      j2s6s200_joint_6:
+        goal: 0.02
+        trajectory: 0.05
+      stopped_velocity_tolerance: 0.02
+    gains:
+      j2s6s200_joint_1:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
+      j2s6s200_joint_2:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
+      j2s6s200_joint_3:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 5000
+      j2s6s200_joint_4:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 500
+      j2s6s200_joint_5:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 200
+      j2s6s200_joint_6:
+        d: 0
+        i: 0
+        i_clamp: 10
+        p: 500
+    joints:
+    - j2s6s200_joint_1
+    - j2s6s200_joint_2
+    - j2s6s200_joint_3
+    - j2s6s200_joint_4
+    - j2s6s200_joint_5
+    - j2s6s200_joint_6
+    type: effort_controllers/JointTrajectoryController
+  finger_1_position_controller:
+    joint: j2s6s200_joint_finger_1
+    pid:
+      d: 0
+      i: 0
+      p: 10
+    type: effort_controllers/JointPositionController
+  finger_2_position_controller:
+    joint: j2s6s200_joint_finger_2
+    pid:
+      d: 0
+      i: 0
+      p: 10
+    type: effort_controllers/JointPositionController
+  finger_tip_1_position_controller:
+    joint: j2s6s200_joint_finger_tip_1
+    pid:
+      d: 0
+      i: 0
+      p: 0.5
+    type: effort_controllers/JointPositionController
+  finger_tip_2_position_controller:
+    joint: j2s6s200_joint_finger_tip_2
+    pid:
+      d: 0
+      i: 0
+      p: 0.5
+    type: effort_controllers/JointPositionController
+  joint_1_position_controller:
+    joint: j2s6s200_joint_1
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_2_position_controller:
+    joint: j2s6s200_joint_2
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_3_position_controller:
+    joint: j2s6s200_joint_3
+    pid:
+      d: 0
+      i: 0
+      p: 5000
+    type: effort_controllers/JointPositionController
+  joint_4_position_controller:
+    joint: j2s6s200_joint_4
+    pid:
+      d: 0
+      i: 0
+      p: 500
+    type: effort_controllers/JointPositionController
+  joint_5_position_controller:
+    joint: j2s6s200_joint_5
+    pid:
+      d: 0
+      i: 0
+      p: 200
+    type: effort_controllers/JointPositionController
+  joint_6_position_controller:
+    joint: j2s6s200_joint_6
+    pid:
+      d: 0
+      i: 0
+      p: 500
+    type: effort_controllers/JointPositionController
+  joint_state_controller:
+    publish_rate: 50
+    type: joint_state_controller/JointStateController
