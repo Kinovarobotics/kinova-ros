@@ -69,7 +69,7 @@
       effort_finger_trajectory_controller    
       finger_tip_1_position_controller
       finger_tip_2_position_controller 
-      joint_state_controller"/>    
+      joint_state_controller"/>
   </group>
 
   <!-- convert joint states to TF transforms for rviz, etc -->
