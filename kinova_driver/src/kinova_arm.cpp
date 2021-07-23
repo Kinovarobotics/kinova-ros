@@ -213,7 +213,9 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     cartesian_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity", 1,
                                      &KinovaArm::cartesianVelocityCallback, this);
     cartesian_velocity_with_fingers_subscriber_ = node_handle_.subscribe("in/cartesian_velocity_with_fingers", 1,
-                                     &KinovaArm::cartesianVelocityWithFingersCallback, this);                                     
+                                     &KinovaArm::cartesianVelocityWithFingersCallback, this);   
+    cartesian_velocity_with_finger_velocity_subscriber_ = node_handle_.subscribe("in/cartesian_velocity_with_finger_velocity", 1,
+                                     &KinovaArm::cartesianVelocityWithFingerVelocityCallback, this);                                  
     joint_torque_subscriber_ = node_handle_.subscribe("in/joint_torque", 1,
                                &KinovaArm::jointTorqueSubscriberCallback, this);
     cartesian_force_subscriber_ = node_handle_.subscribe("in/cartesian_force", 1,
@@ -513,7 +515,6 @@ void KinovaArm::cartesianVelocityWithFingersCallback(const kinova_msgs::PoseVelo
         FingerAngles fingers;
         kinova_comm_.getFingerPositions(fingers);
         float error = fingers_closure_percentage / 100.0 * finger_max_turn - fingers.Finger1; 
-        ROS_INFO("%3.3f", error);
         float kp = 2.0; // tried that, it works
         float command = 0.0;
         if (fabs(error) > 20.0) // arbitrary position units
@@ -529,6 +530,27 @@ void KinovaArm::cartesianVelocityWithFingersCallback(const kinova_msgs::PoseVelo
 
         // orientation velocity of cartesian_velocities_ is based on twist.angular
         kinova_comm_.setCartesianVelocitiesWithFingers(cartesian_velocities_, fingers);
+    }
+}
+
+void KinovaArm::cartesianVelocityWithFingerVelocityCallback(const kinova_msgs::PoseVelocityWithFingerVelocityConstPtr& cartesian_vel_with_finger_velocity)
+{
+    if (!kinova_comm_.isStopped())
+    {
+        cartesian_velocities_.X = cartesian_vel_with_finger_velocity->twist_linear_x;
+        cartesian_velocities_.Y = cartesian_vel_with_finger_velocity->twist_linear_y;
+        cartesian_velocities_.Z = cartesian_vel_with_finger_velocity->twist_linear_z;
+        cartesian_velocities_.ThetaX = cartesian_vel_with_finger_velocity->twist_angular_x;
+        cartesian_velocities_.ThetaY = cartesian_vel_with_finger_velocity->twist_angular_y;
+        cartesian_velocities_.ThetaZ = cartesian_vel_with_finger_velocity->twist_angular_z;
+
+        FingerAngles fingers;
+        fingers.Finger1 = cartesian_vel_with_finger_velocity->finger1;
+        fingers.Finger2 = cartesian_vel_with_finger_velocity->finger2;
+        fingers.Finger3 = cartesian_vel_with_finger_velocity->finger3;
+
+        // orientation velocity of cartesian_velocities_ is based on twist.angular
+        kinova_comm_.setCartesianVelocitiesWithFingerVelocity(cartesian_velocities_, fingers);
     }
 }
 
