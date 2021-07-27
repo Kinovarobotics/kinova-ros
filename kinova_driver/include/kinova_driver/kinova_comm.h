@@ -139,6 +139,7 @@ class KinovaComm
     void setCartesianPosition(const KinovaPose &position, int timeout = 0, bool push = false);
     void setCartesianVelocities(const CartesianInfo &velocities);
     void setCartesianVelocitiesWithFingers(const CartesianInfo &velocities, const FingerAngles& fingers);
+    void setCartesianVelocitiesWithFingerVelocity(const CartesianInfo &velocities, const FingerAngles& fingers);
     float getMaxTranslationVelocity(void);
     void setMaxTranslationVelocity(const float &max_trans_vel);
     float getMaxOrientationVelocity(void);

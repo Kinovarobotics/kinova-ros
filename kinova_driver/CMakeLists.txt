@@ -135,7 +135,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 
 ## Mark executables and/or libraries for installation
 install(TARGETS kinova_arm_driver kinova_tf_updater
-kinova_interactive_control
+kinova_interactive_control kinova_driver
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
