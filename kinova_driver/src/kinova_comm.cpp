@@ -1156,6 +1156,48 @@ void KinovaComm::setCartesianVelocitiesWithFingers(const CartesianInfo &velociti
 
 
 /**
+ * @brief Linear and angular velocity control in Cartesian space
+ * This function sends trajectory point(CARTESIAN_VELOCITY) that will be added in the robotical arm's FIFO. Waits until the arm has stopped moving before releasing control of the API. sendAdvanceTrajectory() is called in api to complete the motion.
+ * Definition of angular velocity "Omega" is based on the skew-symmetric matrices "S = R*R^(-1)", where "R" is the rotation matrix. angular velocity vector "Omega = [S(3,2); S(1,3); S(2,1)]".
+ * @param velocities unit are meter/second for linear velocity and radians/second for "Omega".
+ * @param fingers finger velocities, unit should be steps/second (tested it, seems to be slower than that)
+ */
+void KinovaComm::setCartesianVelocitiesWithFingerVelocity(const CartesianInfo &velocities, const FingerAngles& fingers)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+
+    if (isStopped())
+    {
+        ROS_INFO("The cartesian velocities could not be set because the arm is stopped");
+        kinova_api_.eraseAllTrajectories();
+        return;
+    }
+
+    TrajectoryPoint kinova_velocity;
+    kinova_velocity.InitStruct();
+
+    memset(&kinova_velocity, 0, sizeof(kinova_velocity));  // zero structure
+
+    //startAPI();
+    kinova_velocity.Position.Type = CARTESIAN_VELOCITY;
+
+    // confusingly, velocity is passed in the position struct
+    kinova_velocity.Position.CartesianPosition = velocities;
+
+    // Fill fingers
+    kinova_velocity.Position.Fingers = fingers;
+    kinova_velocity.Position.HandMode = VELOCITY_MODE;
+
+    int result = kinova_api_.sendAdvanceTrajectory(kinova_velocity);
+    if (result != NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not send advanced Cartesian velocity trajectory", result);
+    }
+}
+
+
+
+/**
  * @brief This function returns the max translation(X, Y and Z) velocity of the robot's end effector in ClientConfigurations
  * @return MaxTranslationVelocity Unit in meter per second
  */
