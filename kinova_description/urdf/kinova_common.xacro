@@ -58,7 +58,12 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
+        <xacro:if value="${type == 'revolute'}">
         <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        </xacro:if>
+        <xacro:if value="${type == 'continuous'}">
+        <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}"/>
+        </xacro:if>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <dynamics damping="0.0" friction="0.0"/>
      </joint>
@@ -97,7 +102,9 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
+        <xacro:unless value="${type == 'fixed'}">
         <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        </xacro:unless>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
