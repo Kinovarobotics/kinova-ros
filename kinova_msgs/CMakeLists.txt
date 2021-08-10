@@ -21,6 +21,7 @@ add_message_files(
   KinovaPose.msg
   PoseVelocity.msg
   PoseVelocityWithFingers.msg
+  PoseVelocityWithFingerVelocity.msg
   CartesianForce.msg
 )
 
