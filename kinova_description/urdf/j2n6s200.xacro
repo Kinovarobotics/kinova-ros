@@ -132,7 +132,7 @@
         <xacro:kinova_armjoint joint_name="${prefix}_joint_4" type="${joint_4_type}" parent="${prefix}_link_3" child="${prefix}_link_4" joint_axis_xyz="${joint_4_axis_xyz}" joint_origin_xyz="${joint_4_origin_xyz}" joint_origin_rpy="${joint_4_origin_rpy}" joint_velocity_limit="${joint_4_velocity_limit}" joint_torque_limit="${joint_4_torque_limit}"/>
 
         <xacro:kinova_armlink link_name="${prefix}_link_5" link_mesh="${link_5_mesh}" use_ring_mesh="true" ring_mesh="ring_small" mesh_no="${link_5_mesh_no}"/>
-        <xacro:kinova_armjoint joint_name="${prefix}_joint_5" type="${joint_5_type}" parent="${prefix}_link_4" child="${prefix}_link_5" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" oint_velocity_limit="${joint_5_velocity_limit}" joint_torque_limit="${joint_5_torque_limit}"/>
+        <xacro:kinova_armjoint joint_name="${prefix}_joint_5" type="${joint_5_type}" parent="${prefix}_link_4" child="${prefix}_link_5" joint_axis_xyz="${joint_5_axis_xyz}" joint_origin_xyz="${joint_5_origin_xyz}" joint_origin_rpy="${joint_5_origin_rpy}" joint_velocity_limit="${joint_5_velocity_limit}" joint_torque_limit="${joint_5_torque_limit}"/>
 
         <xacro:kinova_armlink link_name="${prefix}_link_6" link_mesh="${link_6_mesh}" use_ring_mesh="true" ring_mesh="ring_small" mesh_no="${link_6_mesh_no}"/>
         <xacro:kinova_armjoint joint_name="${prefix}_joint_6" type="${joint_6_type}" parent="${prefix}_link_5" child="${prefix}_link_6" joint_axis_xyz="${joint_6_axis_xyz}" joint_origin_xyz="${joint_6_origin_xyz}" joint_origin_rpy="${joint_6_origin_rpy}" joint_velocity_limit="${joint_6_velocity_limit}" joint_torque_limit="${joint_6_torque_limit}"/>
