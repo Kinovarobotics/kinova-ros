@@ -53,12 +53,46 @@
 
     </xacro:macro>
 
-  <xacro:macro name="kinova_armjoint" params="joint_name type parent child joint_axis_xyz joint_origin_xyz joint_origin_rpy joint_lower_limit joint_upper_limit joint_velocity_limit joint_torque_limit fixed:=false">
+  <!--
+    We use dummy default values for values only required when type=='revolute':
+    joint_lower_limit and joint_upper_limit (set to 1234567890)
+    We check during macro execution that these values have been set properly if
+    the joint type requires it (revolute).
+    Similarly, we check that velocity and torque limits are set unless the joint
+    type is fixed, and that the fixed parameter is set consistently.
+  -->
+  <xacro:property name="dummy_default_value" value="1234567890"/>
+  <xacro:macro name="kinova_armjoint" params="joint_name
+                                              type
+                                              parent
+                                              child
+                                              joint_axis_xyz
+                                              joint_origin_xyz
+                                              joint_origin_rpy
+                                              joint_lower_limit:=${dummy_default_value}
+                                              joint_upper_limit:=${dummy_default_value}
+                                              joint_velocity_limit:=${dummy_default_value}
+                                              joint_torque_limit:=${dummy_default_value}
+                                              fixed:=false">
+    <xacro:if value="${(type == 'fixed' and not fixed) or (type != 'fixed' and fixed)}"><xacro:ERROR_inconsistent_joint_type_specification/></xacro:if>
+    <xacro:if value="${type == 'revolute'}">
+      <xacro:if value="${joint_lower_limit == dummy_default_value}"><xacro:ERROR_joint_lower_limit_needs_to_be_set_for_a_revolute_joint/></xacro:if>
+      <xacro:if value="${joint_upper_limit == dummy_default_value}"><xacro:ERROR_joint_upper_limit_needs_to_be_set_for_a_revolute_joint/></xacro:if>
+    </xacro:if>
+    <xacro:unless value="${type =='fixed'}">
+      <xacro:if value="${joint_velocity_limit == dummy_default_value}"><xacro:ERROR_joint_velocity_limit_needs_to_be_set_for_a_non_fixed_joint/></xacro:if>
+      <xacro:if value="${joint_torque_limit == dummy_default_value}"><xacro:ERROR_joint_torque_limit_needs_to_be_set_for_a_non_fixed_joint/></xacro:if>
+    </xacro:unless>
     <joint name="${joint_name}" type="${type}">
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
+        <xacro:if value="${type == 'revolute'}">
         <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        </xacro:if>
+        <xacro:if value="${type == 'continuous'}">
+        <limit effort="${joint_torque_limit}" velocity="${joint_velocity_limit}"/>
+        </xacro:if>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
         <dynamics damping="0.0" friction="0.0"/>
      </joint>
@@ -97,7 +131,9 @@
         <parent link="${parent}"/>
         <child link="${child}"/>
         <axis xyz="${joint_axis_xyz}"/>
+        <xacro:unless value="${type == 'fixed'}">
         <limit effort="2000" velocity="1" lower="${joint_lower_limit}" upper="${joint_upper_limit}"/>
+        </xacro:unless>
         <origin xyz="${joint_origin_xyz}" rpy="${joint_origin_rpy}"/>
      </joint>
     </xacro:macro>
