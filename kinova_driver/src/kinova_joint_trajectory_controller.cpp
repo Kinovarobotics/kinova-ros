@@ -270,6 +270,8 @@ void JointTrajectoryController::update_state()
         kinova_comm_.getJointAngles(current_joint_angles);
         kinova_comm_.getJointVelocities(current_joint_velocity);
 
+        // desired velocity correspond to (previous desired postion - previous actual position) / time it took
+        update_desired_velocity();
 
         traj_feedback_msg_.desired.positions[0] = current_joint_command.Actuators.Actuator1 *M_PI/180;
         traj_feedback_msg_.desired.positions[1] = current_joint_command.Actuators.Actuator2 *M_PI/180;
@@ -310,6 +312,7 @@ void JointTrajectoryController::update_state()
         for (size_t j = 0; j<joint_names_.size(); j++)
         {
             traj_feedback_msg_.error.positions[j] = traj_feedback_msg_.actual.positions[j] - traj_feedback_msg_.desired.positions[j];
+            traj_feedback_msg_.error.velocities[j] = traj_feedback_msg_.actual.velocities[j] - traj_feedback_msg_.desired.velocities[j];
         }
 
         //        ROS_WARN_STREAM("I'm publishing after second: " << (ros::Time::now() - previous_pub_).toSec());
@@ -318,4 +321,22 @@ void JointTrajectoryController::update_state()
         update_rate.sleep();
     }
     //ROS_DEBUG_STREAM_ONCE("Get out: " << __PRETTY_FUNCTION__);
+}
+
+
+void JointTrajectoryController::update_desired_velocity()
+{
+    const double step_time = (traj_feedback_msg_.header.stamp - previous_pub_).toSec();
+
+    traj_feedback_msg_.desired.velocities[0] = (traj_feedback_msg_.desired.positions[0] - traj_feedback_msg_.actual.positions[0])/step_time;
+    traj_feedback_msg_.desired.velocities[1] = (traj_feedback_msg_.desired.positions[1] - traj_feedback_msg_.actual.positions[1])/step_time;
+    traj_feedback_msg_.desired.velocities[2] = (traj_feedback_msg_.desired.positions[2] - traj_feedback_msg_.actual.positions[2])/step_time;
+    traj_feedback_msg_.desired.velocities[3] = (traj_feedback_msg_.desired.positions[3] - traj_feedback_msg_.actual.positions[3])/step_time;
+    if (number_joint_>=6)
+    {
+        traj_feedback_msg_.desired.velocities[4] = (traj_feedback_msg_.desired.positions[4] - traj_feedback_msg_.actual.positions[4])/step_time;
+        traj_feedback_msg_.desired.velocities[5] = (traj_feedback_msg_.desired.positions[5] - traj_feedback_msg_.actual.positions[5])/step_time;
+        if (number_joint_==7)
+            traj_feedback_msg_.desired.velocities[6] = (traj_feedback_msg_.desired.positions[6] - traj_feedback_msg_.actual.positions[6])/step_time;
+    }
 }

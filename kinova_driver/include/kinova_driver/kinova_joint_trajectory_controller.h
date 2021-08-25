@@ -73,6 +73,8 @@ private:
     // reflash the robot state and publish the joint state: either by timer or thread
     void update_state(); // by thread
 
+    void update_desired_velocity();
+
     void pub_joint_vel(const ros::TimerEvent&); // by timer
     int test;
 
