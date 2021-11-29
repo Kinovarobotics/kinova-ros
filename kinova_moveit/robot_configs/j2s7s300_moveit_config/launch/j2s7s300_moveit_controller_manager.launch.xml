@@ -1,5 +1,6 @@
 <launch>
   <arg name="fake_execution" default="false"/>
+  <arg name="gazebo_sim" default="false"/>
 
 <!-- Fake Arm -->
   <group if="$(arg fake_execution)">
@@ -16,6 +17,7 @@
     <param name="moveit_controller_manager" value="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
 
     <!-- The rest of the params are specific to this plugin -->
-    <rosparam file="$(find j2s7s300_moveit_config)/config/controllers.yaml"/>
+    <rosparam unless="$(arg gazebo_sim)" file="$(find j2s7s300_moveit_config)/config/controllers.yaml"/>
+    <rosparam if="$(arg gazebo_sim)" file="$(find j2s7s300_moveit_config)/config/controllers_ros_control.yaml"/>
   </group>
 </launch>

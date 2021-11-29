@@ -32,6 +32,7 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="joint_states_ns" value="/m1n6s300_driver/out/joint_state"/> 
+    <arg name="gazebo_sim" value="true"/>
   </include>
 
   <!-- kinova-driver Controller parameters-->   
