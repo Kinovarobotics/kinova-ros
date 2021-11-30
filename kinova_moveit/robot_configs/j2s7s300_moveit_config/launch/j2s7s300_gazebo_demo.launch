@@ -25,7 +25,7 @@
     <arg name="info" value="true"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="joint_states_ns" value="/j2s7s300/joint_states"/>
-    <arg name="controller_manager" value="j2s7s300_ros_control"/>
+    <arg name="gazebo_sim" value="true"/>
   </include>  
 
   <!-- ros-control Controller parameters-->  

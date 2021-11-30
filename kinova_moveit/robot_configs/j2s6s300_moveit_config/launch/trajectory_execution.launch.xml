@@ -13,8 +13,10 @@
 
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
   <arg name="fake_execution" default="false" />
+  <arg name="gazebo_sim" default="false"/>
   <include file="$(find j2s6s300_moveit_config)/launch/j2s6s300_moveit_controller_manager.launch.xml">
     <arg name="fake_execution" value="$(arg fake_execution)"/>
+    <arg name="gazebo_sim" value="$(arg gazebo_sim)"/>
   </include>
 
 </launch>

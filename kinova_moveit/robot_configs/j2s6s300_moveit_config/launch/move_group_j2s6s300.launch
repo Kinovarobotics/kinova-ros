@@ -20,6 +20,7 @@
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
   <arg name="joint_states_ns" default="/j2s6s300_driver/out/joint_state"/>
+  <arg name="gazebo_sim" default="false"/>
 
   <!-- Planning Functionality -->
   <include ns="move_group" file="$(find j2s6s300_moveit_config)/launch/planning_pipeline.launch.xml">
@@ -30,7 +31,7 @@
   <include ns="move_group" file="$(find j2s6s300_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
     <arg name="fake_execution" value="$(arg fake_execution)"/>
-    
+    <arg name="gazebo_sim" value="$(arg gazebo_sim)"/>
   </include>
 
   <!-- Sensors Functionality -->
