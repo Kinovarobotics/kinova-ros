@@ -171,8 +171,6 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
                 kinova_angle_command_[i].Actuator7 = traj_command_points_[i].velocities[6] *180/M_PI;
         }
     }
-    // replace last velocity command (which is zero) to previous non-zero value, trying to drive robot moving a forward to get closer to the goal.
-    kinova_angle_command_[traj_command_points_.size()-1] = kinova_angle_command_[traj_command_points_.size()-2];
 
     std::vector<double> durations(traj_command_points_.size(), 0.0); // computed by time_from_start
     double trajectory_duration = traj_command_points_[0].time_from_start.toSec();
