@@ -23,6 +23,7 @@
   <run_depend>xacro</run_depend>
   <build_depend>kinova_description</build_depend>
   <run_depend>kinova_description</run_depend>
+  <run_depend>warehouse_ros_mongo</run_depend> 
 
 
   <buildtool_depend>catkin</buildtool_depend>
