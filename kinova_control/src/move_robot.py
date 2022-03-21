@@ -49,6 +49,7 @@ def moveFingers (jointcmds,prefix,nbJoints):
   point = JointTrajectoryPoint()
   jointCmd.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.0);  
   point.time_from_start = rospy.Duration.from_sec(5.0)
+  
   for i in range(0, nbJoints):
     jointCmd.joint_names.append(prefix +'_joint_finger_'+str(i+1))
     point.positions.append(jointcmds[i])
