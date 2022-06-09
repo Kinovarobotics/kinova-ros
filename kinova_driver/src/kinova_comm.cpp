@@ -130,17 +130,6 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         throw KinovaCommException("Could not get devices list count.", result);
     }
 
-    // DEBUG
-    for (int device_i = 0; device_i < devices_count; device_i++)
-    {
-        ROS_INFO_STREAM("Device: " << device_i << ", SerialNumber: "
-            << devices_list_[device_i].SerialNumber << ", strcmp: "
-            << std::strncmp(serial_number.c_str(),
-            devices_list_[device_i].SerialNumber,
-            strlen(devices_list_[device_i].SerialNumber)-1));
-    }
-    ROS_INFO_STREAM("Given serial number:     " << serial_number.c_str() << ".");
-
     bool found_arm = false;
     for (int device_i = 0; device_i < devices_count; device_i++)
         {
@@ -148,7 +137,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
         if (serial_number == "" || serial_number == "not_set" ||
             std::strncmp(serial_number.c_str(),
                          devices_list_[device_i].SerialNumber,
-                         strlen(devices_list_[device_i].SerialNumber)-1) == 0) // Exculde trailing whitespace of device serial number from check
+                         strlen(devices_list_[device_i].SerialNumber)-1) == 0)
         {
             result = kinova_api_.setActiveDevice(devices_list_[device_i]);
             if (result != NO_ERROR_KINOVA)
