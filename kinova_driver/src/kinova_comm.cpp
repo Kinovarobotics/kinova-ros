@@ -132,7 +132,7 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
 
     bool found_arm = false;
     for (int device_i = 0; device_i < devices_count; device_i++)
-        {
+    {
         // If no device is specified, just use the first available device
         if (serial_number == "" || serial_number == "not_set" ||
             std::strncmp(serial_number.c_str(),
