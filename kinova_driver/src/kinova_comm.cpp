@@ -135,7 +135,11 @@ KinovaComm::KinovaComm(const ros::NodeHandle& node_handle,
     {
         // If no device is specified, just use the first available device
         if (serial_number == "" || serial_number == "not_set" ||
-            std::strcmp(serial_number.c_str(), devices_list_[device_i].SerialNumber) == 0)
+            std::strncmp(serial_number.c_str(),
+                         devices_list_[device_i].SerialNumber,
+                         std::min(serial_number.length(), 
+                                  strlen(devices_list_[device_i].SerialNumber))) 
+            == 0)
         {
             result = kinova_api_.setActiveDevice(devices_list_[device_i]);
             if (result != NO_ERROR_KINOVA)
@@ -1457,36 +1461,36 @@ void KinovaComm::setFingerPositions(const FingerAngles &fingers, int timeout, bo
 	{
 		kinova_point.Position.Type = CARTESIAN_POSITION;
 		CartesianPosition pose;
-                memset(&pose, 0, sizeof(pose));  // zero structure   
+                memset(&pose, 0, sizeof(pose));  // zero structure
 		result = kinova_api_.getCartesianCommand(pose);
     		if (result != NO_ERROR_KINOVA)
     		{
         		throw KinovaCommException("Could not get the Cartesian position", result);
-    		}    
+    		}
 		kinova_point.Position.CartesianPosition=pose.Coordinates;
 	}
         else if(control_type==1) //angular
-	{	
-		kinova_point.Position.Type = ANGULAR_POSITION;	
+	{
+		kinova_point.Position.Type = ANGULAR_POSITION;
 		AngularPosition joint_angles;
-    		memset(&joint_angles, 0, sizeof(joint_angles));  // zero structure    
+    		memset(&joint_angles, 0, sizeof(joint_angles));  // zero structure
 		result = kinova_api_.getAngularCommand(joint_angles);
     		if (result != NO_ERROR_KINOVA)
     		{
         		throw KinovaCommException("Could not get the angular position", result);
-    		}    
+    		}
 		kinova_point.Position.Actuators = joint_angles.Actuators;
 	}
 	else
-	{ 
+	{
 		throw KinovaCommException("Wrong control type", result);
-	}  
+	}
     }
-     
+
 
     // getAngularPosition will cause arm drop
     // result = kinova_api_.getAngularPosition(joint_angles);
-       
+
     result = kinova_api_.sendBasicTrajectory(kinova_point);
     if (result != NO_ERROR_KINOVA)
     {
