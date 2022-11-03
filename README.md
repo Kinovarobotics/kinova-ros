@@ -48,7 +48,7 @@ The `kinova-ros` stack provides a ROS interface for the Kinova Robotics JACO, JA
 To make kinova-ros part of your workspace, follow these steps (assuming your workspace is setup following the standard conventions):
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
+git clone -b <branch-name> git@github.com:Kinovarobotics/kinova-ros.git kinova-ros
 cd ~/catkin_ws
 catkin_make
 ```
@@ -62,7 +62,7 @@ sudo pip install -U catkin_tools
 Then, you add kinova-ros to your workspace and build it
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/Kinovarobotics/kinova-ros.git kinova-ros
+git clone -b <branch-name> git@github.com:Kinovarobotics/kinova-ros.git kinova-ros
 cd ~/catkin_ws
 catkin build
 ```
