@@ -42,6 +42,7 @@ JointTrajectoryController::JointTrajectoryController(kinova::KinovaComm &kinova_
 
     // counter in the timer to publish joint velocity command: pub_joint_vel()
     traj_command_points_index_ = 0;
+    for(int i=0; i<num_possible_joints; i++) current_velocity_command[i] = 0;
 }
 
 JointTrajectoryController::~JointTrajectoryController()
@@ -69,6 +70,7 @@ void JointTrajectoryController::commandCB(const trajectory_msgs::JointTrajectory
 
     traj_command_points_ = traj_msg->points;
     ROS_INFO_STREAM_NAMED("Trajectory controller", "Receive trajectory with points number: " << traj_command_points_.size());
+    if(traj_command_points_.empty()) return;    // abort if 
     // Map the index in joint_names and the msg
     std::vector<int> lookup(number_joint_, -1);
 
@@ -161,19 +163,45 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 
     if (traj_command_points_index_ <  kinova_angle_command_.size() && ros::ok())
     {
-        joint_velocity_msg.joint1 = kinova_angle_command_[traj_command_points_index_][0];
-        joint_velocity_msg.joint2 = kinova_angle_command_[traj_command_points_index_][1];
-        joint_velocity_msg.joint3 = kinova_angle_command_[traj_command_points_index_][2];
-        joint_velocity_msg.joint4 = kinova_angle_command_[traj_command_points_index_][3];
-        joint_velocity_msg.joint5 = kinova_angle_command_[traj_command_points_index_][4];
-        joint_velocity_msg.joint6 = kinova_angle_command_[traj_command_points_index_][5];
-        joint_velocity_msg.joint7 = kinova_angle_command_[traj_command_points_index_][6];
+        const ros::Duration current_time_from_start = ros::Time::now() - time_pub_joint_vel_;
+        // check for remaining motion time if in last command
+        if(traj_command_points_index_ == kinova_angle_command_.size()-1)
+        {
+            const double current_time = current_time_from_start.toSec();
+            for(int i=0; i<number_joint_; i++)
+            {
+                if(current_time > remaining_motion_time[i]) 
+                    current_velocity_command[i] = 0;
+            }
+        }
+        
+        joint_velocity_msg.joint1 = current_velocity_command[0];
+        joint_velocity_msg.joint2 = current_velocity_command[1];
+        joint_velocity_msg.joint3 = current_velocity_command[2];
+        joint_velocity_msg.joint4 = current_velocity_command[3];
+        joint_velocity_msg.joint5 = current_velocity_command[4];
+        joint_velocity_msg.joint6 = current_velocity_command[5];
+        joint_velocity_msg.joint7 = current_velocity_command[6];
 
         pub_joint_velocity_.publish(joint_velocity_msg);
 
-        if( (ros::Time::now() - time_pub_joint_vel_) >= traj_command_points_[traj_command_points_index_].time_from_start)
+        if( current_time_from_start >= traj_command_points_[traj_command_points_index_].time_from_start)
         {
             ROS_INFO_STREAM("Moved to point " << traj_command_points_index_++);
+            for(int i=0; i<num_possible_joints; i++) // store next angle commands per joint
+                current_velocity_command[i] = kinova_angle_command_[traj_command_points_index_][i];
+
+            // if the last command is reached, calculate remaining motion time
+            if(traj_command_points_index_ == kinova_angle_command_.size()-1)
+            {
+                const double t1 = traj_command_points_[traj_command_points_index_ -1].time_from_start.toSec();
+                for(int i=0; i<number_joint_; i++)
+                {
+                    current_velocity_command[i] = kinova_angle_command_[traj_command_points_index_ - 1][i];
+                    const double position_delta = traj_command_points_[traj_command_points_index_].positions[i] - traj_command_points_[traj_command_points_index_-1].positions[i];
+                    remaining_motion_time[i] = t1 + position_delta / (current_velocity_command[i] * M_PI / 180.);
+                }
+            }
         }
     }
     else // if come accross all the points, then stop timer.
@@ -185,8 +213,10 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
         joint_velocity_msg.joint5 = 0;
         joint_velocity_msg.joint6 = 0;
         joint_velocity_msg.joint7 = 0;
+        pub_joint_velocity_.publish(joint_velocity_msg);
 
         traj_command_points_.clear();
+        for(int i=0; i<num_possible_joints; i++) current_velocity_command[i] = 0;
 
         traj_command_points_index_ = 0;
         timer_pub_joint_vel_.stop();
@@ -196,7 +226,6 @@ void JointTrajectoryController::pub_joint_vel(const ros::TimerEvent&)
 void JointTrajectoryController::update_state()
 {
     ros::Rate update_rate(10);
-    previous_pub_ = ros::Time::now();
     while (nh_.ok())
     {
         // check if terminate command is sent from main thread
@@ -231,7 +260,6 @@ void JointTrajectoryController::update_state()
         }
 
         pub_joint_feedback_.publish(traj_feedback_msg_);
-        previous_pub_ = ros::Time::now();
         update_rate.sleep();
     }
 }
