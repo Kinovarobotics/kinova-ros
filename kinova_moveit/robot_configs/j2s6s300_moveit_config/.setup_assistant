@@ -5,6 +5,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/j2s6s300.srdf
   CONFIG:
-    author_name: samuel hovington
-    author_email: shovington@kinova.ca
+    author_name: Kinova Support
+    author_email: support@kinova.ca
     generated_timestamp: 1539804391
