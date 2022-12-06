@@ -113,6 +113,6 @@ rosrun kinova_arm_moveit_demo pick_place
 
 
 ## Report a Bug
-Any bugs, issues or suggestions may be sent to ros@kinovarobotics.com.
+Any bugs, issues or suggestions may be sent to support@kinova.ca.
 
 

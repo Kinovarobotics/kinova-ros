@@ -13,7 +13,7 @@
   <author email="abencz@clearpathrobotics.com">Alex Bencz (Clearpath)</author>
   <author>Matt DeDonato (WPI)</author>
   <author email="braden@stenning.com">Braden Stenning</author>
-  <maintainer email="ros@kinovarobotics.com">Kinova ROS Support</maintainer>
+  <maintainer email="support@kinova.ca">Kinova Support</maintainer>
   <license>BSD</license>
 
   <url>http://wiki.ros.org/kinova_driver</url>
