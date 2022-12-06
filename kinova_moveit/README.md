@@ -167,5 +167,5 @@ The recommended kinematics plugin to use is **Trac_IK** with parameter solve typ
 
 
 ## Report a Bug
-Any bugs, issues or suggestions may be sent to ros@kinovarobotics.com.
+Any bugs, issues or suggestions may be sent to support@kinova.ca.
 
