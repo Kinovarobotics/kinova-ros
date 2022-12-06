@@ -5,8 +5,7 @@
   <description>The moveit_motion_plan package</description>
   <license>BSD</license>
 
-  <author email="lzhao@kinova.ca">Longfei Zhao</author>
-  <maintainer email="lzhao@kinova.ca">Longfei Zhao</maintainer>
+  <maintainer email="support@kinova.ca">Kinova Support</maintainer>
 
   <buildtool_depend>catkin</buildtool_depend>
 

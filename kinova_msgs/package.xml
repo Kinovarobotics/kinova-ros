@@ -11,7 +11,7 @@
   <author email="jschmidt@clearpathrobotics.com">Jeff Schmidt (Clearpath)</author>
   <author email="abencz@clearpathrobotics.com">Alex Bencz (Clearpath)</author>
   <author>Matt DeDonato (WPI)</author>
-  <maintainer email="ros@kinovarobotics.com">Kinova ROS Support</maintainer>
+  <maintainer email="support@kinova.ca">Kinova Support</maintainer>
   <license>BSD</license>
 
   <url>http://ros.org/wiki/jaco</url>
