@@ -1,0 +1,17 @@
+controller_list:
+  - name: fake_arm_controller
+    joints:
+      - m1n6s200_joint_1
+      - m1n6s200_joint_2
+      - m1n6s200_joint_3
+      - m1n6s200_joint_4
+      - m1n6s200_joint_5
+      - m1n6s200_joint_6
+  - name: fake_gripper_controller
+    joints:
+      - m1n6s200_joint_finger_1
+      - m1n6s200_joint_finger_2
+
+initial:
+  - group: arm
+    pose: Home

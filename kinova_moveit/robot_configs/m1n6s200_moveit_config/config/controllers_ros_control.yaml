@@ -1,0 +1,19 @@
+controller_list:
+  - name: m1n6s200/effort_joint_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - m1n6s200_joint_1
+      - m1n6s200_joint_2
+      - m1n6s200_joint_3
+      - m1n6s200_joint_4
+      - m1n6s200_joint_5
+      - m1n6s200_joint_6
+  - name: m1n6s200/effort_finger_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true    
+    joints:
+      - m1n6s200_joint_finger_1
+      - m1n6s200_joint_finger_2
