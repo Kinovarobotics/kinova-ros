@@ -165,6 +165,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
+    cartesian_control_service_ = node_handle_.advertiseService("in/cartesian_control", &KinovaArm::angular_controlServiceCallback, this);
+    angular_control_service_ = node_handle_.advertiseService("in/angular_control", &KinovaArm::angular_controlServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &KinovaArm::homeArmServiceCallback, this);
     add_trajectory_ = node_handle_.advertiseService("in/add_pose_to_Cartesian_trajectory",
                       &KinovaArm::addCartesianPoseToTrajectory, this);
@@ -369,6 +371,30 @@ bool KinovaArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs
     ROS_DEBUG("Arm stop requested");
     return true;
 }
+
+/*
+ * Handler for service to change to cartesian control mode.
+ */
+bool KinovaArm::cartesian_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
+    kinova_comm_.setCartesianControl();
+    res.message = "Cartesian Control activated";
+    res.success = true;
+    ROS_DEBUG("Cartesian Control requested");
+    return true;
+}
+/*
+ * Handler for service to change to angular control mode.
+ */
+bool KinovaArm::angular_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
+    kinova_comm_.setAngularControl();
+    res.message  = "Angular Control activated";
+    res.success = true;
+    ROS_DEBUG("Angular Control requested");
+    return true;
+}
+
 
 
 /*!

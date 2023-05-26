@@ -18,6 +18,7 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <sensor_msgs/JointState.h>
+#include <std_srvs/Trigger.h>
 
 #include <kinova_msgs/Stop.h>
 #include <kinova_msgs/Start.h>
@@ -78,6 +79,8 @@ class KinovaArm
     // Service callbacks -----------------------------------------------------------
     bool stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs::Stop::Response &res);
     bool startServiceCallback(kinova_msgs::Start::Request &req, kinova_msgs::Start::Response &res);
+    bool cartesian_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+    bool angular_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
     bool homeArmServiceCallback(kinova_msgs::HomeArm::Request &req, kinova_msgs::HomeArm::Response &res);
     bool ActivateNullSpaceModeCallback(kinova_msgs::SetNullSpaceModeState::Request &req,
                                        kinova_msgs::SetNullSpaceModeState::Response &res);
@@ -141,6 +144,8 @@ class KinovaArm
 
     ros::ServiceServer stop_service_;
     ros::ServiceServer start_service_;
+    ros::ServiceServer cartesian_control_service_;
+    ros::ServiceServer angular_control_service_;
     ros::ServiceServer homing_service_;
     ros::ServiceServer start_null_space_service_;
     ros::ServiceServer add_trajectory_;
