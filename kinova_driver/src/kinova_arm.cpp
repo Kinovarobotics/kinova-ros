@@ -204,6 +204,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
             ("out/tool_wrench", 2);
     finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>
             ("out/finger_position", 2);
+    joystick_command_publisher_ = node_handle_.advertise<sensor_msgs::Joy>
+            ("out/joystick_command", 2);
 
     // Publish last command for relative motion (read current position cause arm drop)
     joint_command_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_command", 2);
@@ -782,12 +784,41 @@ void KinovaArm::publishFingerPosition(void)
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
+/**
+ * \brief Publishes the current command of the joystick 
+ */
+void KinovaArm::publishJoystickCommand(void)
+{
+    JoystickCommand command;
+    kinova_comm_.getJoystickCommand(command);
+
+    sensor_msgs::Joy msg;
+    msg.header.stamp = ros::Time::now();
+    msg.header.frame_id = "kinova_joystick";
+    msg.axes = {command.InclineLeftRight,
+                command.InclineForwardBackward,
+                command.Rotate,
+                command.MoveLeftRight,
+                command.MoveForwardBackward,
+                command.PushPull
+               };
+    // The ButtonValue array seems to be ill-formed:  
+    // Tests show it consists of 1-byte (char) sized values and is actually offset by 4 bytes
+    const int data_offset_bytes = 4;
+    const char* actual_button_array = (char*) command.ButtonValue + data_offset_bytes;
+    for(int i=0; i<JOYSTICK_BUTTON_COUNT; i++){
+        msg.buttons.push_back(actual_button_array[i]);
+    }    
+    joystick_command_publisher_.publish(msg);
+}
+
 void KinovaArm::statusTimer(const ros::TimerEvent&)
 {
     publishJointAngles();
     publishToolPosition();
     publishToolWrench();
     publishFingerPosition();
+    publishJoystickCommand();
 }
 
 }  // namespace kinova

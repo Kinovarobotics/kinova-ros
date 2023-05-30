@@ -18,6 +18,7 @@
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 #include <sensor_msgs/JointState.h>
+#include <sensor_msgs/Joy.h>
 #include <std_srvs/Trigger.h>
 
 #include <kinova_msgs/Stop.h>
@@ -119,6 +120,7 @@ class KinovaArm
     void publishToolPosition(void);
     void publishToolWrench(void);
     void publishFingerPosition(void);
+    void publishJoystickCommand(void);
 
     tf::TransformListener tf_listener_;
     ros::NodeHandle node_handle_;
@@ -138,6 +140,7 @@ class KinovaArm
     ros::Publisher tool_wrench_publisher_;
     ros::Publisher finger_position_publisher_;
     ros::Publisher joint_state_publisher_;
+    ros::Publisher joystick_command_publisher_;
 
     ros::Publisher joint_command_publisher_;
     ros::Publisher cartesian_command_publisher_;
