@@ -973,7 +973,6 @@ void KinovaComm::setCartesianControl()
         return;
     }
     int result = kinova_api_.setCartesianControl();
-    ROS_WARN("%d", result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set Cartesian control", result);
