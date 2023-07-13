@@ -27,8 +27,9 @@
 
 # Important
 
-This repository contains source code and configuration files to support the Jaco, Jaco2 and Mico arms in ROS.
+This branch is no longer maintained as Ubuntu 18.04 Bionic Beaver and ROS Melodic are end-of-life.
 
+This repository contains source code and configuration files to support the Jaco, Jaco2 and Mico arms in ROS.
 This repository doesn't support the Gen3 arm in ROS. Have a look at the [ros_kortex repository](https://github.com/Kinovarobotics/ros_kortex) for Gen3 ROS support!
 
 # Supported versions
@@ -36,7 +37,7 @@ This branch branch has been tested with ROS Melodic on Ubuntu 18.04.
 
 For other ROS version, checkout on corresponding branch : 
 
-- [noetic-devel](https://github.com/Kinovarobotics/kinova-ros/tree/noetic-devel) for ROS Melodic and Ubuntu 20.04 support. 
+- [noetic-devel](https://github.com/Kinovarobotics/kinova-ros/tree/noetic-devel) for ROS Noetic and Ubuntu 20.04 support. 
 - [kinetic-devel](https://github.com/Kinovarobotics/kinova-ros/tree/kinetic-devel) for ROS Kinetic and Ubuntu 16.04 support, but the branch is no longer maintained (the melodic-devel branch might work for this configuration). 
 - [indigo-devel](https://github.com/Kinovarobotics/kinova-ros/tree/indigo-devel) for ROS Indigo and Ubuntu 14.04 support, but the branch is no longer maintained. 
 
