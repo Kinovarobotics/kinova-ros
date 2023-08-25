@@ -165,6 +165,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
     /* Set up Services */
     stop_service_ = node_handle_.advertiseService("in/stop", &KinovaArm::stopServiceCallback, this);
     start_service_ = node_handle_.advertiseService("in/start", &KinovaArm::startServiceCallback, this);
+    cartesian_control_service_ = node_handle_.advertiseService("in/cartesian_control", &KinovaArm::cartesian_controlServiceCallback, this);
+    angular_control_service_ = node_handle_.advertiseService("in/angular_control", &KinovaArm::angular_controlServiceCallback, this);
     homing_service_ = node_handle_.advertiseService("in/home_arm", &KinovaArm::homeArmServiceCallback, this);
     add_trajectory_ = node_handle_.advertiseService("in/add_pose_to_Cartesian_trajectory",
                       &KinovaArm::addCartesianPoseToTrajectory, this);
@@ -202,6 +204,8 @@ KinovaArm::KinovaArm(KinovaComm &arm, const ros::NodeHandle &nodeHandle, const s
             ("out/tool_wrench", 2);
     finger_position_publisher_ = node_handle_.advertise<kinova_msgs::FingerPosition>
             ("out/finger_position", 2);
+    joystick_command_publisher_ = node_handle_.advertise<sensor_msgs::Joy>
+            ("out/joystick_command", 2);
 
     // Publish last command for relative motion (read current position cause arm drop)
     joint_command_publisher_ = node_handle_.advertise<kinova_msgs::JointAngles>("out/joint_command", 2);
@@ -370,6 +374,29 @@ bool KinovaArm::stopServiceCallback(kinova_msgs::Stop::Request &req, kinova_msgs
     return true;
 }
 
+/*
+ * Handler for service to change to cartesian control mode.
+ */
+bool KinovaArm::cartesian_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
+    kinova_comm_.setCartesianControl();
+    res.message = "Cartesian Control activated";
+    res.success = true;
+    ROS_DEBUG("Cartesian Control requested");
+    return true;
+}
+
+/*
+ * Handler for service to change to angular control mode.
+ */
+bool KinovaArm::angular_controlServiceCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
+    kinova_comm_.setAngularControl();
+    res.message  = "Angular Control activated";
+    res.success = true;
+    ROS_DEBUG("Angular Control requested");
+    return true;
+}
 
 /*!
  * \brief Handler for "start" service.
@@ -756,12 +783,41 @@ void KinovaArm::publishFingerPosition(void)
     finger_position_publisher_.publish(fingers.constructFingersMsg());
 }
 
+/**
+ * \brief Publishes the current command of the joystick 
+ */
+void KinovaArm::publishJoystickCommand(void)
+{
+    JoystickCommand command;
+    kinova_comm_.getJoystickCommand(command);
+
+    sensor_msgs::Joy msg;
+    msg.header.stamp = ros::Time::now();
+    msg.header.frame_id = "kinova_joystick";
+    msg.axes = {command.InclineLeftRight,
+                command.InclineForwardBackward,
+                command.Rotate,
+                command.MoveLeftRight,
+                command.MoveForwardBackward,
+                command.PushPull
+               };
+    // The ButtonValue array seems to be ill-formed:  
+    // Tests show it consists of 1-byte (char) sized values and is actually offset by 4 bytes
+    const int data_offset_bytes = 4;
+    const char* actual_button_array = (char*) command.ButtonValue + data_offset_bytes;
+    for(int i=0; i<JOYSTICK_BUTTON_COUNT; i++){
+        msg.buttons.push_back(actual_button_array[i]);
+    }    
+    joystick_command_publisher_.publish(msg);
+}
+
 void KinovaArm::statusTimer(const ros::TimerEvent&)
 {
     publishJointAngles();
     publishToolPosition();
     publishToolWrench();
     publishFingerPosition();
+    publishJoystickCommand();
 }
 
 }  // namespace kinova

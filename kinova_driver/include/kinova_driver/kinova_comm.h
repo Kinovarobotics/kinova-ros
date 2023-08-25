@@ -88,6 +88,7 @@ class KinovaComm
     void initFingers(void);
     void setEndEffectorOffset(unsigned int status, float x, float y, float z);
     void getEndEffectorOffset(unsigned int &status, float &x, float &y, float &z);
+    void getJoystickCommand(JoystickCommand &joystick_command);
 
     // %EndTag(general functions)
 

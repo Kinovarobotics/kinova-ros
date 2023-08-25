@@ -419,6 +419,21 @@ void KinovaComm::getControlType(int &controlType)
     }
 }
 
+/**
+ * Requests the current joystick command from the robotical arm
+ * Warning: There might be an issue with the ButtonValue Attribute
+ *          Our tests show them to be a byte array with an initial offset of 4 bytes
+ */
+void KinovaComm::getJoystickCommand(JoystickCommand &joystick_command)
+{
+    boost::recursive_mutex::scoped_lock lock(api_mutex_);
+    int result = kinova_api_.getJoystickValue(joystick_command);
+    if (result!=NO_ERROR_KINOVA)
+    {
+        throw KinovaCommException("Could not get joystick command", result);
+    }
+}
+
 
 /**
  * @brief get almost all information of the robotical arm.
@@ -958,7 +973,6 @@ void KinovaComm::setCartesianControl()
         return;
     }
     int result = kinova_api_.setCartesianControl();
-    ROS_WARN("%d", result);
     if (result != NO_ERROR_KINOVA)
     {
         throw KinovaCommException("Could not set Cartesian control", result);
